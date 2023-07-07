@@ -59,10 +59,10 @@
 			<div class="card">Card</div>
 		</div>
 	</main>
-	<footer class="footer">
+	<!-- <footer class="footer">
 		<div class="footer_copyright">&copy;2020</div>
 		<div class="footer_byline">Made with &hearts;</div>
-	</footer>
+	</footer> -->
 </div>
 
 <style lang="postcss">
@@ -88,7 +88,7 @@
           'header'
           'main'
           'footer';
-        height: 100vh;
+        height: 100svh;
       }
 
       .header {
@@ -125,7 +125,7 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        width: 240px;
+        width: 70px;
         position: fixed;
         overflow-y: auto;
         z-index: 2;
@@ -143,7 +143,7 @@
       }
 
       .aside_list-item {
-        padding: 20px 20px 20px 40px;
+        padding: 10px;
         color: #ddd;
       }
 
@@ -206,13 +206,13 @@
       @media only screen and (min-width: 750px) {
         .grid-container {
           display: grid;
-          grid-template-columns: 240px 1fr;
-          grid-template-rows: 50px 1fr 50px;
+          grid-template-columns: 70px 1fr;
+          grid-template-rows: 50px 1fr;
           grid-template-areas:
             'aside header'
-            'aside main'
-            'aside footer';
-          height: 100vh;
+            'aside main';
+            /* 'aside footer'; */
+          /* height: 100vh; */
         }
 
         .aside {
