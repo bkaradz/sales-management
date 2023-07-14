@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
-	import Toasts from '$lib/components/Toasts.svelte';
+	
 
 	export let data: LayoutData;
 </script>
@@ -13,7 +13,7 @@
 		<h1>Header</h1>
 	</header>
 	<main class="main">
-		<Toasts />
+		
 		<slot />
 	</main>
 </div>
