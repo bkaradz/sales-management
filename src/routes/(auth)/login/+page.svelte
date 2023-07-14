@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import logo from '$lib/assets/logo.png';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 </script>
@@ -24,7 +25,7 @@
 									<h4 class="mb-12 mt-1 pb-1 text-xl font-semibold">We are The Lotus Team</h4>
 								</div>
 
-								<form method="POST" action="?/login">
+								<form method="POST" action="?/login" use:enhance>
 									<p class="mb-4">Please login to your account</p>
 									<!--Username input-->
 									<div class="relative mb-4" data-te-input-wrapper-init>
@@ -80,7 +81,7 @@
 									<div class="flex items-center justify-between pb-6">
 										<p class="mb-0 mr-2">Don't have an account?</p>
 										
-										<a href="sign-up"
+										<a href="/register"
 											type="button"
 											class="inline-block rounded border-2 border-danger px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-danger transition duration-150 ease-in-out hover:border-danger-600 hover:bg-neutral-500 hover:bg-opacity-10 hover:text-danger-600 focus:border-danger-600 focus:text-danger-600 focus:outline-none focus:ring-0 active:border-danger-700 active:text-danger-700 dark:hover:bg-neutral-100 dark:hover:bg-opacity-10"
 											data-te-ripple-init
