@@ -5,7 +5,9 @@
 	export let data: LayoutData;
 </script>
 
-<div class="grid-container">
+<slot/>
+
+<!-- <div class="grid-container">
 	<aside class="aside">
 		<h1>Aside</h1>
 	</aside>
@@ -13,7 +15,6 @@
 		<h1>Header</h1>
 	</header>
 	<main class="main">
-		
 		<slot />
 	</main>
 </div>
@@ -40,4 +41,4 @@
 		grid-area: header;
 		background-color: crimson;
 	}
-</style>
+</style> -->

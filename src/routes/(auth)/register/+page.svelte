@@ -7,10 +7,10 @@
 	export let data: PageData;
 
 	export let form;
-	$: console.log('🚀 ~ file: +page.svelte:8 ~ form:', form);
+	
 	$: if (form?.errors) {
+		
 		for (const [key, value] of form.errors.entries()) {
-			console.log(`${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`);
 
 			toasts.add({ message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`, type: 'error' });
 		}
