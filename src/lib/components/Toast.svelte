@@ -5,7 +5,7 @@
 		svgInfo,
 		svgShieldExclamation,
 		svgXSmall
-	} from '$lib/utility/svgLogos';
+	} from '$lib/assets/svgLogos';
 	import { fade } from 'svelte/transition';
 	export let type: string;
 	export let message: string;

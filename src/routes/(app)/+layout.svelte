@@ -1,44 +1,22 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
+	import Header from '$lib/components/Header.svelte';
+	import Aside from '$lib/components/Aside.svelte';
 	
 
 	export let data: LayoutData;
 </script>
 
-<slot/>
-
-<!-- <div class="grid-container">
-	<aside class="aside">
-		<h1>Aside</h1>
-	</aside>
-	<header class="header">
-		<h1>Header</h1>
-	</header>
-	<main class="main">
-		<slot />
-	</main>
+<div
+	class="bg-gray-100 dark:bg-gray-900 dark:text-white text-gray-600 h-screen flex overflow-hidden text-sm"
+>
+	<!-- Aside -->
+	<Aside/>
+	<!-- Header and Main -->
+	<div class="flex-grow overflow-hidden h-full flex flex-col">
+		<!-- Header -->
+		<Header {data}/>
+		<!-- Main -->
+		<slot/>
+	</div>
 </div>
-
-<style lang="postcss">
-	.grid-container {
-		display: grid;
-		grid-template-columns: 70px 1fr;
-		grid-template-rows: 50px 1fr;
-		grid-template-areas:
-			'aside header'
-			'aside main';
-		height: 100svh;
-	}
-	.aside {
-		grid-area: aside;
-		background-color: blue;
-	}
-	.main {
-		grid-area: main;
-		background-color: blueviolet;
-	}
-	.header {
-		grid-area: header;
-		background-color: crimson;
-	}
-</style> -->

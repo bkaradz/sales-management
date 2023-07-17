@@ -1,6 +1,7 @@
 import { auth } from "$lib/server/lucia/client"
 import prisma from "$lib/server/prisma/client"
 import type { LoginCredentials, UserRegister } from "$lib/validation/authentication.validate"
+import { redirect } from "@sveltejs/kit"
 import type { Context } from "../context"
 
 
@@ -36,6 +37,22 @@ export const loginUserPrisma = async (input: LoginCredentials, ctx: Context) => 
   const key = await auth.useKey('username', username, password)
   const session = await auth.createSession(key.userId)
   ctx.event.locals.auth.setSession(session)
+
+}
+
+export const logoutUserPrisma = async ( ctx: Context) => {
+console.log("🚀 ~ validateUser:", await ctx.event.locals.auth.validateUser())
+
+  const { session, user } = await ctx.event.locals.auth.validateUser()
+  console.log("🚀 ~ file: authentication.prisma.ts:46 ~ logoutUserPrisma ~ user:", user)
+  console.log("🚀 ~ file: authentication.prisma.ts:46 ~ logoutUserPrisma ~ session:", session)
+
+  if (!user) {
+      throw redirect(302, `/`)
+  }
+
+  await auth.invalidateSession(session.sessionId)
+  ctx.event.locals.auth.setSession(null)
 
 }
 
