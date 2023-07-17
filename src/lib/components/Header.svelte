@@ -59,9 +59,13 @@
 				class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-md w-52 mt-4"
 			>
 				<li><button class="rounded-sm">Account</button></li>
-				<li><button on:click={logout} class="rounded-sm">Logout</button></li>
 				<li>
-					<button formaction="/logout" type="submit" class="rounded-sm">Log Out</button>
+					<form class="rounded-sm" action="/register?/logout" use:enhance method="post">
+						<button type="submit">Sign out</button>
+					</form>
+				</li>
+				<li>
+					<button formaction="/register?/logout" type="submit" class="rounded-sm">Log Out</button>
 				</li>
 			</ul>
 		</div>

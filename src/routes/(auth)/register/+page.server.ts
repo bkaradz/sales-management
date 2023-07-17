@@ -40,5 +40,8 @@ export const actions = {
         }
 
         throw redirect(302, "/login")
+    },
+    logout: async (event) => {
+        await router.createCaller(await createContext(event)).authentication.logoutUser()
     }
 };
