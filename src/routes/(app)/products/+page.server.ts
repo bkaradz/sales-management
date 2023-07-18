@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { auth } from '$lib/server/lucia/client';
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
@@ -8,7 +8,7 @@ export const load = (async () => {
     return {};
 }) satisfies PageServerLoad;
 
-export const actions = {
+export const actions: Actions = {
     default: async (event) => {
         await router.createCaller(await createContext(event)).authentication.logoutUser()
 	}

@@ -6,5 +6,5 @@
 </script>
 
 <form use:enhance method="post">
-	<button class="p-4 bg-red-700" type="submit">Sign out</button>
+	<button class="p-4 bg-red-700 btn-block" type="submit">Sign out</button>
 </form>

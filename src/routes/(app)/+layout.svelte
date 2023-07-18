@@ -34,11 +34,15 @@
 			</div>
 			<div class="ml-auto flex items-center space-x-7">
 				<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500">Deposit</button>
+				<form class="rounded-sm " action="/logout" method="post">
+					<button class="h-8 px-3 rounded-md shadow text-white bg-red-500" type="submit">Log Out</button>
+					<!-- <button class="bg-sky-500 btn-block z-50" type="submit">Sign out2</button> -->
+				</form>
 		
 				<div class="dropdown dropdown-bottom dropdown-end">
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label tabindex="0" class=" flex items-center">
+					<label tabindex="0" class="flex items-center">
 						<span class="relative flex-shrink-0">
 							<img
 								class="w-7 h-7 rounded-full"
@@ -55,17 +59,19 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
 						tabindex="0"
-						class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-md w-52 mt-4"
+						class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 					>
 						<li><button class="rounded-sm">Account</button></li>
-						<li>
+						<!-- <li>
 							<form class="rounded-sm" action="/register?/logout" use:enhance method="post">
 								<button type="submit">Sign out</button>
 							</form>
 						</li>
-						<li>
-							<button formaction="/logout" type="submit" class="rounded-sm">Log Out</button>
-						</li>
+						<li >
+							<form class="rounded-sm " action="/logout" method="post">
+								<button class="bg-sky-500 btn-block z-50" type="submit">Sign out2</button>
+							</form>
+						</li> -->
 					</ul>
 				</div>
 			</div>
