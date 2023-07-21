@@ -1,27 +1,18 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { svgDropdown } from '$lib/assets/svgLogos';
+	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
 	import { menuTabs } from '$lib/data/tabsData';
 	import { trpc } from '$lib/trpc/client';
 	import { page } from '$app/stores';
 
 	export let data;
-
-	const logout = async () => {
-		console.log('Entered logout');
-		try {
-			console.log("🚀 ~ $page:", $page)
-			const test = await trpc().authentication.logoutUser.query();
-			console.log("🚀 ~ file: Header.svelte:14 ~ logout ~ test:", test)
-		} catch (error) {
-			console.log('Error', error);
-		}
-	};
 </script>
 
-<div class="h-16 lg:flex w-full border-b border-gray-200 dark:border-gray-800 hidden px-10">
+<div
+	class="h-11 lg:flex w-full border-b border-gray-200 dark:border-gray-800 hidden px-10 flex-shrink-0"
+>
 	<div class="flex h-full text-gray-600 dark:text-gray-400">
-		{#each menuTabs as tab (tab.id)}
+		<!-- {#each menuTabs as tab (tab.id)}
 			<button
 				class={`cursor-pointer h-full border-b-2 inline-flex items-center mr-8 ${
 					tab.selected
@@ -31,7 +22,12 @@
 			>
 				{tab.name}
 			</button>
-		{/each}
+		{/each} -->
+		<div class="tabs tabs-boxed">
+			{#each menuTabs as tab (tab.id)}
+				<button class={`tab ${tab.selected ? 'tab-active' : ''}`}>{tab.name}</button>
+			{/each}
+		</div>
 	</div>
 	<div class="ml-auto flex items-center space-x-7">
 		<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500">Deposit</button>
@@ -39,7 +35,7 @@
 		<div class="dropdown dropdown-bottom dropdown-end">
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label tabindex="0" class=" flex items-center">
+			<label tabindex="0" class="flex items-center">
 				<span class="relative flex-shrink-0">
 					<img
 						class="w-7 h-7 rounded-full"
@@ -56,18 +52,15 @@
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul
 				tabindex="0"
-				class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-md w-52 mt-4"
+				class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 			>
 				<li><button class="rounded-sm">Account</button></li>
-				<li>
-					<form class="rounded-sm" action="/register?/logout" use:enhance method="post">
-						<button type="submit">Sign out</button>
-					</form>
-				</li>
-				<li>
-					<button formaction="/register?/logout" type="submit" class="rounded-sm">Log Out</button>
-				</li>
 			</ul>
 		</div>
+		<form class="rounded-sm" action="/logout" method="post">
+			<button class="" type="submit">
+				{@html svgLogOut}
+			</button>
+		</form>
 	</div>
 </div>
