@@ -1,11 +1,18 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
 	import { menuTabs } from '$lib/data/tabsData';
-	import { trpc } from '$lib/trpc/client';
-	import { page } from '$app/stores';
 
 	export let data;
+
+	const changeTab = (tab: { id: string; name: string; selected: boolean }) => {
+		menuTabs.forEach((menuTab) => {
+			if (menuTab.name === tab.name) {
+				menuTab.selected = true;
+			} else {
+				menuTab.selected = false;
+			}
+		});
+	};
 </script>
 
 <div
@@ -25,7 +32,9 @@
 		{/each} -->
 		<div class="tabs tabs-boxed">
 			{#each menuTabs as tab (tab.id)}
-				<button class={`tab ${tab.selected ? 'tab-active' : ''}`}>{tab.name}</button>
+				<button class={`tab ${tab.selected ? 'tab-active' : ''}`} on:click={() => changeTab(tab)}
+					>{tab.name}</button
+				>
 			{/each}
 		</div>
 	</div>
