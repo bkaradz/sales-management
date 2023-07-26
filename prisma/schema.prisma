@@ -19,6 +19,8 @@ model AuthUser {
   active       Boolean
   // here you can add custom fields for your user
   // e.g. name, email, username, roles, etc.
+  Contacts     Contacts[]
+  Products     Products[]
 
   @@map("auth_user")
 }
@@ -44,4 +46,62 @@ model AuthKey {
 
   @@index([user_id])
   @@map("auth_key")
+}
+
+model Contacts {
+  id                   Int        @id @default(autoincrement())
+  AuthUser             AuthUser   @relation(fields: [createdBy], references: [id])
+  createdBy            String
+  organisation_id      Int?
+  organisation         Contacts?  @relation("organisation", fields: [organisation_id], references: [id])
+  organisationContacts Contacts[] @relation("organisation")
+  name                 String     @unique
+  isCorporate          Boolean    @default(false)
+  notes                String?
+  vatOrBpNo            String?
+  email                Email[]
+  phone                Phone[]
+  address              Address[]
+  balanceDue           Json?      @default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}")
+  totalReceipts        Json?      @default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}")
+  isActive             Boolean    @default(true)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt()
+}
+
+model Phone {
+  id         Int      @id @default(autoincrement())
+  phone      String   @unique
+  Contacts   Contacts @relation(fields: [contactsId], references: [id])
+  contactsId Int
+}
+
+model Email {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  Contacts   Contacts? @relation(fields: [contactsId], references: [id])
+  contactsId Int?
+}
+
+model Address {
+  id         Int       @id @default(autoincrement())
+  address    String
+  Contacts   Contacts? @relation(fields: [contactsId], references: [id])
+  contactsId Int?
+}
+
+model Products {
+  id                Int      @id @default(autoincrement())
+  AuthUser          AuthUser @relation(fields: [createdBy], references: [id])
+  createdBy         String
+  name              String   @unique
+  description       String?
+  unitPrice         Json?    @default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}")
+  productCategories String
+  stitches          Int?
+  units             Int?
+  isActive          Boolean
+  utilisation       Int?     @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt()
 }
