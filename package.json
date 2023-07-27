@@ -46,6 +46,7 @@
 		"@trpc/client": "^10.35.0",
 		"@trpc/server": "^10.35.0",
 		"dinero.js": "2.0.0-alpha.14",
+		"lodash-es": "^4.17.21",
 		"lucia-auth": "^1.8.0",
 		"superjson": "^1.13.1",
 		"trpc-sveltekit": "^3.5.17",
