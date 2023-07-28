@@ -1,11 +1,11 @@
 import prisma from '$lib/server/prisma/client';
 import { getPagination } from '$lib/utility/pagination.util';
 import { getBoolean } from '$lib/utility/toBoolean';
-import type { SaveContact, SaveContactKeys } from '$lib/validation/saveContact.validate';
+import type { SaveContact, SaveContactKeys } from '$lib/trpc/routes/contacts/contact.validate';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Prisma } from '@prisma/client';
 import omit from 'lodash-es/omit';
-import type { Context } from '../context';
+import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 
 export const getContactsPrisma = async (input: SearchParams) => {

@@ -1,8 +1,8 @@
 import { auth } from "$lib/server/lucia/client"
 import prisma from "$lib/server/prisma/client"
-import type { LoginCredentials, UserRegister } from "$lib/validation/authentication.validate"
+import type { LoginCredentials, UserRegister } from "$lib/trpc/routes/authentication/authentication.validate"
 import { redirect } from "@sveltejs/kit"
-import type { Context } from "../context"
+import type { Context } from "$lib/trpc/context"
 
 
 export const registerUserPrisma = async (input: UserRegister) => {
@@ -41,11 +41,8 @@ export const loginUserPrisma = async (input: LoginCredentials, ctx: Context) => 
 }
 
 export const logoutUserPrisma = async ( ctx: Context) => {
-console.log("🚀 ~ validateUser:", await ctx.event.locals.auth.validateUser())
 
   const { session, user } = await ctx.event.locals.auth.validateUser()
-  console.log("🚀 ~ file: authentication.prisma.ts:46 ~ logoutUserPrisma ~ user:", user)
-  console.log("🚀 ~ file: authentication.prisma.ts:46 ~ logoutUserPrisma ~ session:", session)
 
   if (!user) {
       throw redirect(302, `/`)

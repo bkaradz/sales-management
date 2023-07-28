@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { loginCredentialsSchema } from '$lib/validation/authentication.validate';
+import { loginCredentialsSchema } from '$lib/trpc/routes/authentication/authentication.validate';
 import { router } from '$lib/trpc/router';
 import { createContext } from '$lib/trpc/context';
 

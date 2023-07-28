@@ -1,5 +1,5 @@
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { userRegisterSchema } from '$lib/validation/authentication.validate';
+import { userRegisterSchema } from '$lib/trpc/routes/authentication/authentication.validate';
 import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { router } from '$lib/trpc/router';

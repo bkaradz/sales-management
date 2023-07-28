@@ -4,18 +4,12 @@ import { auth } from '$lib/server/lucia/client';
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 
-export const load = (async () => {
-    return {};
+export const load = (async (event) => {
+	const products = async () => {
+		return await router.createCaller(await createContext(event)).products.getProducts({});
+	}
+    return {
+		products: products()
+	};
 }) satisfies PageServerLoad;
 
-export const actions: Actions = {
-    default: async (event) => {
-        await router.createCaller(await createContext(event)).authentication.logoutUser()
-	}
-    // default: async ({ locals }) => {
-	// 	const { session } = await locals.auth.validateUser();
-	// 	if (!session) return fail(401);
-	// 	await auth.invalidateSession(session.sessionId); // invalidate session
-	// 	locals.auth.setSession(null); // remove cookie
-	// }
-};
