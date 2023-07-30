@@ -1,17 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
-	import { menuTabs } from '$lib/data/tabsData';
+	import { menuTabsList } from '$lib/stores/menuTabsList';
 
 	export let data;
 
-	const changeTab = (tab: { id: string; name: string; selected: boolean }) => {
-		menuTabs.forEach((menuTab) => {
-			if (menuTab.name === tab.name) {
-				menuTab.selected = true;
-			} else {
-				menuTab.selected = false;
-			}
-		});
+	const changeTab = (tabElement: { id: string; name: string; selected: boolean }, url: string) => {
+		menuTabsList.changeSelected({ url, tabElement });
 	};
 </script>
 
@@ -31,10 +26,13 @@
 			</button>
 		{/each} -->
 		<div class="tabs tabs-boxed">
-			{#each menuTabs as tab (tab.id)}
-				<button class={`tab ${tab.selected ? 'tab-active' : ''}`} on:click={() => changeTab(tab)}
-					>{tab.name}</button
+			{#each $menuTabsList.get($page.url.pathname) || [] as tab (tab.id)}
+				<a href={tab.url || "#"}
+					class={`tab ${tab.selected ? 'tab-active' : ''}`}
+					on:click={() => changeTab(tab, $page.url.pathname)}
 				>
+					{tab.name}
+		</a>
 			{/each}
 		</div>
 	</div>

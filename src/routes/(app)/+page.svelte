@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { svgCompLogo, svgDropdown, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
-	import { menuTabs, activitiesTabs } from '$lib/data/tabsData';
+	import { svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
+	import { activitiesTabs } from '$lib/data/tabsData';
 	import { deptColor, users } from '$lib/data/users';
-	import { anchorTagsList } from '$lib/stores/asideMenuList';
 
 </script>
 
