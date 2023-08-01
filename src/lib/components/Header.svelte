@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
-	import { menuTabsList } from '$lib/stores/menuTabsList';
+	import { menuTabsList } from '$lib/stores/menuTabsList.store';
+	$: console.log("🚀 ~ file: Header.svelte:5 ~ menuTabsList:", menuTabsList)
 
 	export let data;
 
@@ -28,7 +29,7 @@
 		<div class="tabs tabs-boxed">
 			{#each $menuTabsList.get($page.url.pathname) || [] as tab (tab.id)}
 				<a href={tab.url || "#"}
-					class={`tab ${tab.selected ? 'tab-active' : ''}`}
+					class={`tab ${tab.selected ? 'tab-active' : ''} ${tab.hidden ? 'hidden':''}`}
 					on:click={() => changeTab(tab, $page.url.pathname)}
 				>
 					{tab.name}

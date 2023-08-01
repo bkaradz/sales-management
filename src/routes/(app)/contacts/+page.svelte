@@ -3,7 +3,7 @@
 	import { svgCompLogo, svgDropdown, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { menuTabs, activitiesTabs } from '$lib/data/tabsData';
 	import { deptColor, users } from '$lib/data/users';
-	import { anchorTagsList } from '$lib/stores/asideMenuList';
+	import { anchorTagsList } from '$lib/stores/asideMenuList.store';
 	import type { PageData } from './$types';
 	
 	export let data: PageData;
@@ -123,9 +123,9 @@
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Name</th>
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Phone</th>
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Address</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Active</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Corporate</th>
+						<!-- <th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Active</th> -->
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Balance</th>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Actions</th>
 					</tr>
 				</thead>
 				<tbody class="text-gray-600 dark:text-gray-100">
@@ -135,9 +135,9 @@
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.name}</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts?.phone[0]?.phone || "None"}</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts?.address[0]?.address || "None"}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isActive}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isCorporate}</td>
+							<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isActive}</td> -->
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.balanceDue}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isCorporate}</td>
 						</tr>
 					{/each}
 				</tbody>

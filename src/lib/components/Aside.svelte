@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { svgCompLogo, svgSales } from '$lib/assets/svgLogos';
-	import { anchorTagsList } from '$lib/stores/asideMenuList';
+	import { anchorTagsList } from '$lib/stores/asideMenuList.store';
+	$: console.log("Url", $page.url.pathname);
 
 </script>
 
