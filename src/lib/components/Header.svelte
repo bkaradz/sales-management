@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
 	import { menuTabsList } from '$lib/stores/menuTabsList.store';
-	$: console.log("🚀 ~ file: Header.svelte:5 ~ menuTabsList:", menuTabsList)
 
 	export let data;
 

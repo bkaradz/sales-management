@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
+	import { svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
-	import { deptColor, users } from '$lib/data/users';
     import type { PageData } from './$types';
     
     export let data: PageData;
+    $: console.log("🚀 ~ file: +page.svelte:5 ~ data:", data)
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -36,13 +36,13 @@
 						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
 						<!-- <img src={user.img} class="w-7 h-7 mr-2 rounded-full" alt="profile" /> -->
-						{data.contact.name}
+						{data.product?.name}
 					</div>
 					<div class="flex items-center w-full">
 						<div
 							class={` text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}
 						>
-							{data.contact.isCorporate}
+							{data.product?.productCategories}
 						</div>
 						<div class="ml-auto text-xs text-gray-500">$100</div>
 					</div>

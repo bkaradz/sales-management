@@ -1,12 +1,17 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { svgCompLogo, svgDropdown, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
+	import { svgBin, svgCompLogo, svgDropdown, svgEye, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { menuTabs, activitiesTabs } from '$lib/data/tabsData';
 	import { deptColor, users } from '$lib/data/users';
 	import { anchorTagsList } from '$lib/stores/asideMenuList.store';
 	import type { PageData } from './$types';
 	
 	export let data: PageData;
+
+	const viewContact = async (id: number) => {
+		goto(`/contacts/view/${id}`);
+	};
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -129,15 +134,30 @@
 					</tr>
 				</thead>
 				<tbody class="text-gray-600 dark:text-gray-100">
-					{#each data.contacts.results as contacts (contacts.id)}
-						<tr>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.id}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.name}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts?.phone[0]?.phone || "None"}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts?.address[0]?.address || "None"}</td>
+					{#each data.contacts.results as contact (contact.id)}
+						<tr  class="hover:bg-gray-100">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.id}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.name}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact?.phone[0]?.phone || "None"}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact?.address[0]?.address || "None"}</td>
 							<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isActive}</td> -->
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.balanceDue}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isCorporate}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.balanceDue}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<div class="flex items-center">
+									<button 
+									on:click|preventDefault={() => viewContact(contact.id)}
+									>
+										{@html svgEye}
+									</button>
+									<button class="px-2">
+										{@html svgPen}
+									</button>
+									<button>
+										{@html svgBin}
+									</button>
+								
+								</div>
+							</td>
 						</tr>
 					{/each}
 				</tbody>
