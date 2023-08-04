@@ -7,12 +7,13 @@
 	export let data: PageData;
 
 	export let form;
-	
-	$: if (form?.errors) {
-		
-		for (const [key, value] of form.errors.entries()) {
 
-			toasts.add({ message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`, type: 'error' });
+	$: if (form?.errors) {
+		for (const [key, value] of form.errors.entries()) {
+			toasts.add({
+				message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+				type: 'error'
+			});
 		}
 	}
 </script>
@@ -109,9 +110,7 @@
 											type="submit"
 											data-te-ripple-init
 											data-te-ripple-color="light"
-											style="
-                          background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
-                        "
+											style="background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593)"
 										>
 											Sign Up
 										</button>
