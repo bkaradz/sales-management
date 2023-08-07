@@ -4,6 +4,9 @@
 	import { enhance } from '$app/forms';
 
 	export let data: PageData;
+
+	export let form
+	$: console.log("🚀 ~ file: +page.svelte:10 ~ form:", form)
 </script>
 
 <section
