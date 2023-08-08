@@ -6,7 +6,6 @@
 	export let data: PageData;
 
 	export let form
-	$: console.log("🚀 ~ file: +page.svelte:10 ~ form:", form)
 </script>
 
 <section
@@ -31,7 +30,7 @@
 								<form method="POST" action="?/login" use:enhance>
 									<p class="mb-4">Please login to your account</p>
 									<!--Username input-->
-									<div class="relative mb-4" data-te-input-wrapper-init>
+									<div class="relative mb-4" >
 										<input
 											type="text"
 											name="username"
@@ -47,7 +46,7 @@
 									</div>
 
 									<!--Password input-->
-									<div class="relative mb-4" data-te-input-wrapper-init>
+									<div class="relative mb-4" >
 										<input
 											type="password"
 											name="password"
