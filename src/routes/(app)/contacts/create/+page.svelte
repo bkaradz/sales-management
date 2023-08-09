@@ -14,21 +14,19 @@
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Create Contact</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
-					<div class="text-right">
+					<!-- <div class="text-right">
 						<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
 						<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
-					</div>
-					<button
-						class="w-8 h-8 ml-4 text-gray-400 shadow dark:text-gray-400 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700"
-					>
-						{@html svgThreeDots}
+					</div> -->
+					<button class="mb-2 h-8 px-3 rounded-md shadow text-white bg-blue-500">
+						Upload Contacts
 					</button>
 				</div>
 			</div>
 		</div>
 
 		<div class="px-4 md:px-0 lg:w-6/12 bg-gray-50 m-auto h-full">
-			<div class="md:mx-6 md:p-12 ">
+			<div class="md:mx-6 md:p-12">
 				<div class="text-center">
 					<h4 class="mb-6 pb-1 text-xl font-semibold">Please Create a Contact</h4>
 				</div>
@@ -52,7 +50,7 @@
 					</div>
 
 					<!--Email input-->
-					<div class="relative mb-4" >
+					<div class="relative mb-4">
 						<input
 							type="text"
 							class="border border-gray-300 peer block min-h-[auto] w-full rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
@@ -68,7 +66,7 @@
 					</div>
 
 					<!--Phone input-->
-					<div class="relative mb-4" >
+					<div class="relative mb-4">
 						<input
 							type="text"
 							class="border border-gray-300 peer block min-h-[auto] w-full rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
@@ -82,13 +80,13 @@
 							>Phone
 						</label>
 					</div>
-          
+
 					<!--Address input-->
-					<div class="relative mb-4" >
+					<div class="relative mb-4">
 						<textarea
 							class="border border-gray-300 peer block min-h-[auto] w-full rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
 							id="address"
-              rows="4"
+							rows="4"
 							name="address"
 							placeholder="Address"
 						/>
@@ -98,10 +96,6 @@
 							>Address
 						</label>
 					</div>
-
-					
-
-					
 
 					<!--Submit button-->
 					<div class="mb-12 pb-1 pt-1 text-center">
