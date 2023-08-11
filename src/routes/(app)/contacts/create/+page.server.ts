@@ -1,7 +1,6 @@
 import { router } from '$lib/trpc/router';
 import type { PageServerLoad } from './$types';
 import { createContext } from '$lib/trpc/context';
-// import logger from '$lib/utility/logger';
 import { fail, type Actions, redirect } from '@sveltejs/kit';
 import type { Contacts, Prisma } from '@prisma/client';
 import parseCsv from '$lib/utility/parseCsv';
@@ -35,7 +34,6 @@ export const actions: Actions = {
 		const file = data.get('contacts')
 
 		if (!(file instanceof File)) {
-			logger.error('File is empty');
 			return fail(400, {
 				message: 'File is empty',
 				errors: {}
@@ -56,7 +54,6 @@ export const actions: Actions = {
 				const contactsQuery = await prisma.contacts.create({ data: contact });
 				allDocsPromises.push(contactsQuery);
 			} catch (err: unknown) {
-				logger.error(`Error: ${err}`);
 				return fail(500, {
 					message: 'A server error occurred',
 					errors: err

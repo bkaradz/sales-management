@@ -18,9 +18,10 @@
 						<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
 						<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
 					</div> -->
-					<button class="mb-2 h-8 px-3 rounded-md shadow text-white bg-blue-500">
+					<input type="file" class="mb-2 file-input rounded-md file-input-bordered file-input-sm w-full max-w-xs bg-blue-500 text-white" />
+					<!-- <button class="mb-2 h-8 px-3 rounded-md shadow text-white bg-blue-500">
 						Upload Contacts
-					</button>
+					</button> -->
 				</div>
 			</div>
 		</div>

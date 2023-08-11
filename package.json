@@ -41,6 +41,7 @@
 	"type": "module",
 	"dependencies": {
 		"@dinero.js/currencies": "2.0.0-alpha.1",
+		"@fast-csv/parse": "^4.3.6",
 		"@lucia-auth/adapter-prisma": "^2.0.0",
 		"@prisma/client": "^5.1.1",
 		"@trpc/client": "^10.37.1",
