@@ -69,9 +69,7 @@
 											type="submit"
 											data-te-ripple-init
 											data-te-ripple-color="light"
-											style="
-                          background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
-                        "
+											style="background: linear-gradient(to right, #06b6d4, #3b82f6)"
 										>
 											Log in
 										</button>
@@ -101,7 +99,7 @@
 						<!-- Right column container with background and description-->
 						<div
 							class="flex items-center rounded-b-lg lg:w-6/12 lg:rounded-r-lg lg:rounded-bl-none"
-							style="background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593)"
+							style="background: linear-gradient(to right, #06b6d4, #3b82f6)"
 						>
 							<div class="px-4 py-6 text-white md:mx-6 md:p-12">
 								<h4 class="mb-6 text-xl font-semibold">We are more than just a company</h4>

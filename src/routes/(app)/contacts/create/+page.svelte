@@ -110,7 +110,7 @@
 							type="submit"
 							data-te-ripple-init
 							data-te-ripple-color="light"
-							style="background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593)"
+							style="background: linear-gradient(to right, #06b6d4, #3b82f6)"
 						>
 							Sign Up
 						</button>

@@ -33,7 +33,7 @@
 						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
 						<img src={user.img} class="w-7 h-7 mr-2 rounded-full" alt="profile" />
-						{user.full_name}
+						{user.name}
 					</div>
 					<div class="flex items-center w-full">
 						<div

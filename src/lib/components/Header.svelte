@@ -53,7 +53,7 @@
 						class="absolute right-0 -mb-0.5 bottom-0 w-2 h-2 rounded-full bg-green-500 border border-white dark:border-gray-900"
 					/>
 				</span>
-				<span class="ml-2">{data.user.name}</span>
+				<span class="ml-2">{data.user.full_name}</span>
 				{@html svgDropdown}
 			</label>
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->

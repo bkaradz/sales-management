@@ -125,7 +125,7 @@
 				<thead>
 					<tr class="text-gray-400">
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Id</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Name</th>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Full Name</th>
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Phone</th>
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Address</th>
 						<!-- <th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Active</th> -->
