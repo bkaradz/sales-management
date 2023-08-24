@@ -7,7 +7,7 @@ export const test = router({
 		prisma.contacts.findMany({
 			select: {
 				id: true,
-				name: true
+				full_name: true
 			},
 			orderBy: { updatedAt: 'desc' }
 		})

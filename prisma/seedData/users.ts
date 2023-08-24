@@ -1,6 +1,6 @@
 export const users = [
 	{
-		name: 'John Doe',
+		full_name: 'John Doe',
 		username: 'john',
 		password: 'johndoe123',
 		active: true

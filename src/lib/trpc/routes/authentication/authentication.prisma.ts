@@ -7,7 +7,7 @@ import type { Context } from "$lib/trpc/context"
 
 export const registerUserPrisma = async (input: UserRegister) => {
 
-  const { name, username, password } = input
+  const { full_name, username, password } = input
 
   const usersCount = await prisma.authUser.count()
 
@@ -22,7 +22,7 @@ export const registerUserPrisma = async (input: UserRegister) => {
       password
     },
     attributes: {
-      name,
+      full_name,
       username,
       active
     }

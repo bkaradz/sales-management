@@ -13,7 +13,7 @@ declare global {
 		type Auth = import("$lib/server/lucia").Auth;
 		type UserAttributes = {
 			username: string
-			name: string
+			full_name: string
 			active: boolean
 		};
 	}

@@ -44,14 +44,14 @@
 										<input
 											type="text"
 											class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-											id="name"
-											name="name"
-											placeholder="name"
+											id="full_name"
+											name="full_name"
+											placeholder="Full Name"
 										/>
 										<label
-											for="name"
+											for="full_name"
 											class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-											>Name
+											>Full Name
 										</label>
 									</div>
 

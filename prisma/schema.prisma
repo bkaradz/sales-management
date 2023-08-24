@@ -14,7 +14,7 @@ model AuthUser {
   id           String        @id @unique
   auth_session AuthSession[]
   auth_key     AuthKey[]
-  name         String
+  full_name    String
   username     String        @unique
   active       Boolean
   // here you can add custom fields for your user
@@ -55,7 +55,7 @@ model Contacts {
   organisation_id      Int?
   organisation         Contacts?  @relation("organisation", fields: [organisation_id], references: [id])
   organisationContacts Contacts[] @relation("organisation")
-  name                 String     @unique
+  full_name            String     @unique
   isCorporate          Boolean    @default(false)
   notes                String?
   vatOrBpNo            String?

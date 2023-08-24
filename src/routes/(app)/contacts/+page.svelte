@@ -137,7 +137,7 @@
 					{#each data.contacts.results as contact (contact.id)}
 						<tr  class="hover:bg-gray-100 hover:dark:bg-gray-500">
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.id}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.name}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.full_name}</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact?.phone[0]?.phone || "None"}</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact?.address[0]?.address || "None"}</td>
 							<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isActive}</td> -->

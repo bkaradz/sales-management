@@ -21,7 +21,7 @@ import {
 type User = {
   userId: string,
   username: string,
-  name: string
+  full_name: string
 }
 
 export const auth = lucia({
@@ -32,7 +32,7 @@ export const auth = lucia({
 		return {
 			userId: userData.id,
 			username: userData.username,
-			name: userData.name
+			full_name: userData.full_name
 		}
 	}
 });
@@ -46,7 +46,7 @@ async function main() {
 	await prisma.products.deleteMany();
 
 	users.forEach(async (user) => {
-		const { name, username, password, active } = user
+		const { full_name, username, password, active } = user
 
 		const newUser = await auth.createUser({
 			primaryKey: {
@@ -55,7 +55,7 @@ async function main() {
 				password
 			},
 			attributes: {
-				name,
+				full_name,
 				username,
 				active
 			}

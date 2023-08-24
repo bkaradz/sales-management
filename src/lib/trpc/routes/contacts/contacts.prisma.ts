@@ -78,7 +78,7 @@ export const getContactsPrisma = async (input: SearchParams) => {
 		},
 		orderBy: [
 			{
-				name: 'asc'
+				full_name: 'asc'
 			}
 		]
 	});
@@ -165,7 +165,7 @@ export const getCorporatePrisma = async (input: SearchParams) => {
 		},
 		orderBy: [
 			{
-				name: 'asc'
+				full_name: 'asc'
 			}
 		]
 	});

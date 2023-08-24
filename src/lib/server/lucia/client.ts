@@ -13,8 +13,8 @@ export const auth = lucia({
 		return {
 			userId: userData.id,
 			username: userData.username,
-			name: userData.name,
-      active: userData.active
+			full_name: userData.full_name,
+			active: userData.active
 		}
 	}
 });

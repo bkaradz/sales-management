@@ -67,10 +67,10 @@ export const actions: Actions = {
 	}
 };
 
-const querySelection = (reqContact: any, user: { userId: string, username: string, name: string }) => {
-	let { name, email, phone, address } = reqContact;
+const querySelection = (reqContact: any, user: { userId: string, username: string, full_name: string }) => {
+	let { full_name, email, phone, address } = reqContact;
 
-	name = name.trim();
+	full_name = full_name.trim();
 	if (email) {
 		email = email.split(',').map((data: string) => {
 			return { email: data.trim() };
@@ -89,7 +89,7 @@ const querySelection = (reqContact: any, user: { userId: string, username: strin
 
 	contact = {
 		createdBy: user.userId,
-		name,
+		full_name,
 		isActive: true,
 	};
 

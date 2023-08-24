@@ -3,10 +3,10 @@ import { z } from 'zod';
 export const editUserSchema = z
 	.object({
 		id: z.number().optional(),
-		name: z
+		full_name: z
 			.string({
-				required_error: 'Name is required',
-				invalid_type_error: 'Name must be a string'
+				required_error: 'Full Name is required',
+				invalid_type_error: 'Full Name must be a string'
 			})
 			.min(3)
 			.trim(),
