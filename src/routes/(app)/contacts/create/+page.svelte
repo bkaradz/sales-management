@@ -18,10 +18,15 @@
 						<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
 						<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
 					</div> -->
-					<input
-						type="file"
-						class="mb-2 file-input rounded-md file-input-bordered file-input-sm w-full max-w-xs bg-blue-500 text-white"
-					/>
+					<form class="flex" action="?/upload" method="post" enctype="multipart/form-data">
+						<input
+							type="file"
+							name="contacts"
+							accept=".csv"
+							class="mb-2 file-input rounded-md file-input-bordered file-input-sm w-full max-w-xs bg-blue-500 text-white"
+						/>
+						<button type="submit" class="h-8 px-3 ml-2 rounded-md shadow text-white bg-blue-500">Upload</button>
+					</form>
 					<!-- <button class="mb-2 h-8 px-3 rounded-md shadow text-white bg-blue-500">
 						Upload Contacts
 					</button> -->

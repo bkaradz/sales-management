@@ -5,6 +5,7 @@ import { fail, type Actions, redirect } from '@sveltejs/kit';
 import type { Contacts, Prisma } from '@prisma/client';
 import parseCsv from '$lib/utility/parseCsv';
 import prisma from '$lib/server/prisma/client';
+import normalizePhone from '$lib/utility/normalizePhone.util';
 
 export const load = (async (event) => {
 	const queryParams = {
@@ -31,7 +32,7 @@ export const actions: Actions = {
 		}
 
 		const data = await request.formData()
-		const file = data.get('contacts')
+		const file = data.get('contacts') as File
 
 		if (!(file instanceof File)) {
 			return fail(400, {
@@ -61,7 +62,9 @@ export const actions: Actions = {
 			}
 		});
 
+		console.log("🚀 ~ file: +page.server.ts:67 ~ upload: ~ allDocsPromises:", allDocsPromises)
 		const allDocs = await Promise.all(allDocsPromises);
+		console.log("🚀 ~ file: +page.server.ts:67 ~ upload: ~ allDocs:", allDocs)
 
 		return { success: true, payload: JSON.stringify(allDocs) }
 	}
@@ -88,7 +91,7 @@ const querySelection = (reqContact: any, user: { userId: string, username: strin
 	let contact: Prisma.ContactsCreateInput;
 
 	contact = {
-		createdBy: user.userId,
+		created_by: user.userId,
 		full_name,
 		isActive: true,
 	};

@@ -122,7 +122,7 @@
 					</svg>
 				</button>
 				<button
-					class="inline-flex mr-3 items-center h-8 pl-2.5 pr-2 rounded-md shadow text-gray-700 dark:text-gray-400 dark:border-gray-800 border border-gray-200 leading-none py-0"
+					class="inline-flex items-center h-8 pl-2.5 pr-2 rounded-md shadow text-gray-700 dark:text-gray-400 dark:border-gray-800 border border-gray-200 leading-none py-0"
 				>
 					Filter by
 					<svg
@@ -137,7 +137,7 @@
 						<polyline points="6 9 12 15 18 9" />
 					</svg>
 				</button>
-				<div class="relative">
+				<div class="relative ml-3">
 					<input
 						type="text"
 						class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"

@@ -67,7 +67,7 @@ async function main() {
 		contacts.forEach(async (contact) => {
 			await prisma.contacts.create({
 				data: {
-					createdBy: adminId,
+					created_by: adminId,
 					...contact,
 					isActive: true,
 					isCorporate: false,
@@ -87,7 +87,7 @@ async function main() {
 		products.forEach(async (product) => {
 			await prisma.products.create({
 				data: {
-					createdBy: adminId,
+					created_by: adminId,
 					...product
 				}
 			});

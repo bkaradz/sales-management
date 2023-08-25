@@ -105,7 +105,7 @@ export const saveOrUpdateProductsPrisma = async (input: saveProduct, ctx: Contex
 		throw error(404,'User not authorised');
 	}
 
-	const createdBy = ctx.userId;
+	const created_by = ctx.userId;
 
 	if (input.id) {
 		return await prisma.products.update({
@@ -114,14 +114,14 @@ export const saveOrUpdateProductsPrisma = async (input: saveProduct, ctx: Contex
 			},
 			data: {
 				...input,
-				createdBy
+				created_by
 			}
 		});
 	} else {
 		return await prisma.products.create({
 			data: {
 				...input,
-				createdBy
+				created_by
 			}
 		});
 	}
