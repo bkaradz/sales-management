@@ -1,13 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { svgBin, svgEye, svgPen, svgThreeDots } from '$lib/assets/svgLogos';
-    import type { PageData } from './$types';
-    
-    export let data: PageData;
+	import type { PageData } from './$types';
 
-	const viewProduct = async (id: number) => {
-		goto(`/products/view/${id}`);
-	};
+	export let data: PageData;
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -16,9 +12,7 @@
 			class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
 		>
 			<div class="flex w-full items-center">
-				<div class="flex items-center text-3xl text-gray-900 dark:text-white">
-					Products
-				</div>
+				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Products</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<div class="text-right">
 						<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
@@ -31,7 +25,6 @@
 					</button>
 				</div>
 			</div>
-			
 		</div>
 		<div class="sm:p-7 p-4">
 			<div class="flex w-full items-center mb-7">
@@ -119,31 +112,55 @@
 			<table class="table table-sm">
 				<thead>
 					<tr class="text-gray-400">
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Id</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Name</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Stitches</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Units</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Unit Price</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Product Categories</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Actions</th>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Id</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Name</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Stitches</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Units</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Unit Price</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Product Categories</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Actions</th
+						>
 					</tr>
 				</thead>
 				<tbody class="text-gray-600 dark:text-gray-100">
 					{#each data.products.results as product (product.id)}
 						<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{product.id}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{product.name}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{product.stitches || "None"}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{product.units || "None"}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{product.unitPrice || "None"}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{product.productCategories}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{product.id}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{product.name}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{product.stitches || 'None'}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{product.units || 'None'}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{product.unitPrice || 'None'}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{product.productCategories}</td
+							>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 								<div class="flex items-center">
-									<button 
-									on:click|preventDefault={() => viewProduct(product.id)}
-									>
+									<a href={`/products/view/${product.id}`}>
 										{@html svgEye}
-									</button>
+									</a>
 									<button class="px-2">
 										{@html svgPen}
 									</button>
@@ -155,7 +172,6 @@
 						</tr>
 					{/each}
 				</tbody>
-				
 			</table>
 
 			<div class="flex w-full mt-5 space-x-2 justify-end">

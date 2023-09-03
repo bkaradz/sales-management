@@ -1,16 +1,20 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { svgBin, svgCompLogo, svgDropdown, svgEye, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
-	import { menuTabs, activitiesTabs } from '$lib/data/tabsData';
-	import { deptColor, users } from '$lib/data/users';
-	import { anchorTagsList } from '$lib/stores/asideMenuList.store';
+	import { svgBin, svgEye, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
+	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
-	
-	export let data: PageData;
 
-	const viewContact = async (id: number) => {
-		goto(`/contacts/view/${id}`);
+	export let data: PageData;
+	$: console.log("🚀 ~ file: +page.svelte:6 ~ data:", data)
+	const changeLimit = (e: Event) => {
+		console.log("limit", e?.target?.value);
+
+	}
+
+	const checkValue = (e: Event) => {
+		const limit = +(e?.target?.value)
+		if (limit < 1) {
+			data.contacts.limit = 1;
+		}
 	};
 </script>
 
@@ -20,10 +24,7 @@
 			class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
 		>
 			<div class="flex w-full items-center">
-				<div class="flex items-center text-3xl text-gray-900 dark:text-white">
-					
-					Contacts
-				</div>
+				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Contacts</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<div class="text-right">
 						<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
@@ -36,7 +37,6 @@
 					</button>
 				</div>
 			</div>
-			
 		</div>
 		<div class="sm:p-7 p-4">
 			<div class="flex w-full items-center mb-7">
@@ -97,40 +97,56 @@
 				<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 					<div>
 						<span class="mr-3">Page {data.contacts.page} of {data.contacts.totalPages}</span>
-						<button
-							class="inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-						>
-							<svg
-								class="w-4"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								stroke-width="2"
-								fill="none"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+						<form class="inline-block" action="?/previous_page" method="post">
+							<input type="hidden" name="previous_page" value={data.contacts.previous}>
+							<button
+								class="inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 							>
-								<polyline points="15 18 9 12 15 6" />
-							</svg>
-						</button>
-						<button
-							class="inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-						>
-							<svg
-								class="w-4"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								stroke-width="2"
-								fill="none"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+								<svg
+									class="w-4"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									stroke-width="2"
+									fill="none"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<polyline points="15 18 9 12 15 6" />
+								</svg>
+							</button>
+						</form>
+						<form class="inline-block" action="?/next_page" method="post">
+							<input type="hidden" name="next_page" value={ data.contacts.next}>
+							<button
+								class="inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 							>
-								<polyline points="9 18 15 12 9 6" />
-							</svg>
-						</button>
+								<svg
+									class="w-4"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									stroke-width="2"
+									fill="none"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<polyline points="9 18 15 12 9 6" />
+								</svg>
+							</button>
+						</form>
 					</div>
-					<div class="mr-3">
-						<span >Show</span>
-						<button
+					<div class="ml-3 items-center flex">
+						<span class="mr-2">Show</span>
+						<input
+							use:selectTextOnFocus
+							type="number"
+							class="appearance-none h-8 mr-2 w-20 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white rounded-md text-sm"
+							value={data.contacts.limit}
+							name="list"
+							on:change={e => changeLimit(e)}
+							on:input={e => checkValue(e)}
+						/>
+						
+						<!-- <button
 							class="inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 						>
 							<svg
@@ -144,8 +160,8 @@
 							>
 								<polyline points="15 18 9 12 15 6" />
 							</svg>
-						</button>
-						<span class="mr-2">entries</span>
+						</button> -->
+						<span class="">entries</span>
 					</div>
 				</div>
 			</div>
@@ -153,44 +169,62 @@
 			<table class="table table-sm">
 				<thead>
 					<tr class="text-gray-400">
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Id</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Full Name</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Phone</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Address</th>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Id</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Full Name</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Phone</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Address</th
+						>
 						<!-- <th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Active</th> -->
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Balance</th>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Actions</th>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Balance</th
+						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							>Actions</th
+						>
 					</tr>
 				</thead>
 				<tbody class="text-gray-600 dark:text-gray-100">
 					{#each data.contacts.results as contact (contact.id)}
-						<tr  class="hover:bg-gray-100 hover:dark:bg-gray-500">
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.id}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.full_name}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact?.phone[0]?.phone || "None"}</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact?.address[0]?.address || "None"}</td>
+						<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{contact.id}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{contact.full_name}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{contact?.phone[0]?.phone || 'None'}</td
+							>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{contact?.address[0]?.address || 'None'}</td
+							>
 							<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isActive}</td> -->
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contact.balanceDue}</td>
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								>{contact.balanceDue}</td
+							>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 								<div class="flex items-center">
-									<button 
-									on:click|preventDefault={() => viewContact(contact.id)}
-									>
+									<a href={`/contacts/view/${contact.id}`}>
 										{@html svgEye}
-									</button>
+									</a>
 									<button class="px-2">
 										{@html svgPen}
 									</button>
 									<button>
 										{@html svgBin}
 									</button>
-								
 								</div>
 							</td>
 						</tr>
 					{/each}
 				</tbody>
-				
 			</table>
 
 			<div class="flex w-full mt-5 space-x-2 justify-end">

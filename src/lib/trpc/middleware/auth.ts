@@ -2,7 +2,7 @@ import { t } from '$lib/trpc/t';
 // import { redirect } from '@sveltejs/kit';
 import { TRPCError } from '@trpc/server';
 
-export const isAuthenticated = t.middleware(async ({ next, ctx }) => {
+const isAuthenticated = t.middleware(async ({ next, ctx }) => {
 	if (!ctx?.sessionId) {
 		// throw redirect(302, "/auth/login")
 		throw new TRPCError({
@@ -14,3 +14,5 @@ export const isAuthenticated = t.middleware(async ({ next, ctx }) => {
 });
 
 export const protectedProcedure = t.procedure.use(isAuthenticated);
+
+export const publicProcedure = t.procedure;
