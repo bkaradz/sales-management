@@ -12,7 +12,7 @@
 	<div
 		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 	>
-		<div class="text-xs text-gray-400 tracking-wider">CONTACT</div>
+		<div class="text-3xl text-gray-900 dark:text-white capitalize">Product</div>
 		<!-- <div class="relative mt-2">
 			<input
 				type="text"
