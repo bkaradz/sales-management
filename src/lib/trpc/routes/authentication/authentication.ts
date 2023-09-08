@@ -2,21 +2,22 @@ import { router } from '$lib/trpc/t';
 import { loginCredentialsSchema, userRegisterSchema } from '$lib/trpc/routes/authentication/authentication.validate';
 import { z } from 'zod';
 import { protectedProcedure, publicProcedure } from '$lib/trpc/middleware/auth';
-import {  getAllUsersPrisma, loginUserPrisma, logoutUserPrisma, registerUserPrisma } from './authentication.prisma';
+// import {  getAllUsersPrisma, loginUserPrisma, logoutUserPrisma, registerUserPrisma } from './authentication.prisma';
+import { getAllUsers, loginUser, logoutUser, registerUser } from './authentication.drizzle';
 
 export const authentication = router({
 	getAllUsers: protectedProcedure.query(async () => {
-		return await getAllUsersPrisma();
+		return await getAllUsers();
 	}),
 	registerUser: publicProcedure.input(userRegisterSchema).mutation(async ({ input }) => {
-		return await registerUserPrisma(input);
+		return await registerUser(input);
 	}),
 	loginUser: publicProcedure.input(loginCredentialsSchema).mutation(async ({ input, ctx }) => {
-		return await loginUserPrisma(input, ctx);
+		return await loginUser(input, ctx);
 	}),
 	logoutUser: publicProcedure.query(async ({ ctx }) => {
 		try {
-			await logoutUserPrisma(ctx);
+			await logoutUser(ctx);
 			
 		} catch (error) {
 		}

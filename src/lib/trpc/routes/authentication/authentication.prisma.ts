@@ -16,9 +16,9 @@ export const registerUserPrisma = async (input: UserRegister) => {
   if (usersCount < 1) active = true // if no user exist create Admin user
 
   await auth.createUser({
-    primaryKey: {
+    key: {
       providerId: 'username',
-      providerUserId: username,
+      providerUserId: username.toLowerCase(),
       password
     },
     attributes: {
@@ -27,25 +27,25 @@ export const registerUserPrisma = async (input: UserRegister) => {
       active
     }
   })
-
 }
 
 export const loginUserPrisma = async (input: LoginCredentials, ctx: Context) => {
 
   const { username, password } = input
 
-  const key = await auth.useKey('username', username, password)
-  const session = await auth.createSession(key.userId)
+  const key = await auth.useKey('username', username.toLowerCase(), password)
+
+  const session = await auth.createSession({ userId: key.userId, attributes: {} })
   ctx.event.locals.auth.setSession(session)
 
 }
 
-export const logoutUserPrisma = async ( ctx: Context) => {
+export const logoutUserPrisma = async (ctx: Context) => {
 
-  const { session, user } = await ctx.event.locals.auth.validateUser()
+  const session = await ctx.event.locals.auth.validate()
 
-  if (!user) {
-      throw redirect(302, `/`)
+  if (!session) {
+    throw redirect(302, `/`)
   }
 
   await auth.invalidateSession(session.sessionId)

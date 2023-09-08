@@ -25,9 +25,9 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	upload: async ({ request, locals }) => {
 
-		const { user } = await locals.auth.validateUser()
+		const session = await locals.auth.validate()
 
-		if (!user) {
+		if (!session) {
 			throw redirect(303, "/auth/login")
 		}
 
@@ -62,9 +62,7 @@ export const actions: Actions = {
 			}
 		});
 
-		console.log("🚀 ~ file: +page.server.ts:67 ~ upload: ~ allDocsPromises:", allDocsPromises)
 		const allDocs = await Promise.all(allDocsPromises);
-		console.log("🚀 ~ file: +page.server.ts:67 ~ upload: ~ allDocs:", allDocs)
 
 		return { success: true, payload: JSON.stringify(allDocs) }
 	}

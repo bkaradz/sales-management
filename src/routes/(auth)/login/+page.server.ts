@@ -7,7 +7,7 @@ import { createContext } from '$lib/trpc/context';
 
 export const load = (async ({ locals }) => {
 
-    const { session } = await locals.auth.validateUser()
+    const session = await locals.auth.validate()
 
     if (session) throw redirect(302, "/")
 
@@ -32,10 +32,9 @@ export const actions = {
             }
 
            const test = await router.createCaller(await createContext(event)).authentication.loginUser(parsedUser.data)
-           console.log("🚀 ~ file: +page.server.ts:35 ~ login: ~ test:", test)
 
         } catch (error) {
-            console.log("🚀 ~ file: +page.server.ts:37 ~ login: ~ error:", error)
+            console.error("🚀 ~ file: +page.server.ts:37 ~ login: ~ error:", error)
             return fail(400, {
                 message: 'Could not login user',
                 errors: {}

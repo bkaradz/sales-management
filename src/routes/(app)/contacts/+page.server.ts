@@ -15,9 +15,9 @@ export const load = (async (event) => {
 
 export const actions: Actions = {
     next_page: async ({ request, locals }) => {
-        const { user } = await locals.auth.validateUser()
+        const session = await locals.auth.validate()
 
-        if (!user) {
+        if (!session) {
             throw redirect(303, "/auth/login")
         }
 
@@ -42,14 +42,13 @@ export const actions: Actions = {
     },
 
     previous_page: async ({ request, locals }) => {
-        const { user } = await locals.auth.validateUser()
+        const session = await locals.auth.validate()
 
-        if (!user) {
+        if (!session) {
             throw redirect(303, "/auth/login")
         }
 
         const data = await request.formData();
         const formData = Object.fromEntries(data)
-        console.log("🚀 ~ file: +page.server.ts:37 ~ previous_page: ~ formData:", formData.previous_page)
     }
 }

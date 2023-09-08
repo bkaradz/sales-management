@@ -49,7 +49,7 @@ async function main() {
 		const { full_name, username, password, active } = user
 
 		const newUser = await auth.createUser({
-			primaryKey: {
+			key: {
 				providerId: 'username',
 				providerUserId: username,
 				password

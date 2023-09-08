@@ -7,7 +7,7 @@ import { createContext } from '$lib/trpc/context';
 
 export const load = (async ({ locals }) => {
 
-    const { session } = await locals.auth.validateUser()
+    const session = await locals.auth.validate()
 
     if (session) throw redirect(302, "/")
 
