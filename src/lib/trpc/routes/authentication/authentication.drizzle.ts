@@ -1,5 +1,4 @@
 import { auth } from "$lib/server/lucia/client"
-import prisma from "$lib/server/prisma/client"
 import type { LoginCredentials, UserRegister } from "$lib/trpc/routes/authentication/authentication.validate"
 import { redirect } from "@sveltejs/kit"
 import type { Context } from "$lib/trpc/context"
@@ -58,6 +57,6 @@ export const logoutUser = async (ctx: Context) => {
 
 export const getAllUsers = async () => {
 
-  return await prisma.authUser.findMany()
+  return await db.query.users.findMany({})
 
 }

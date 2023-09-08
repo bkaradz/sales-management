@@ -1,4 +1,5 @@
 import { drizzle } from "drizzle-orm/postgres-js";
+import * as schema from './schema/index';
 // import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from "postgres";
 import * as dotenv from 'dotenv';
@@ -16,4 +17,4 @@ if (!connectionString) {
 // migrate(drizzle(migrationClient),)
 
 export const sql = postgres(connectionString)
-export const db = drizzle(sql);
+export const db = drizzle(sql , { schema });

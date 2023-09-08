@@ -3,28 +3,24 @@ import { saveProductsSchema } from '$lib/trpc/routes/products/product.validate';
 import { searchParamsSchema } from '$lib/validation/searchParams.validate';
 import { z } from 'zod';
 import { protectedProcedure } from '$lib/trpc/middleware/auth';
-import {
-	deleteByIdPrisma,
-	getByIdPrisma,
-	getProductsPrisma,
-	saveOrUpdateProductsPrisma
-} from './products.prisma';
+import { deleteById, getById, getProducts, saveOrUpdateProducts } from './products.drizzle';
+
 
 export const products = router({
 	getProducts: protectedProcedure
 		.input(searchParamsSchema.passthrough())
 		.query(async ({ input }) => {
-			return await getProductsPrisma(input);
+			return await getProducts(input);
 		}),
 	getById: protectedProcedure.input(z.number()).query(async ({ input }) => {
-		return await getByIdPrisma(input);
+		return await getById(input);
 	}),
 	deleteById: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
-		return await deleteByIdPrisma(input);
+		return await deleteById(input);
 	}),
 	saveOrUpdateProducts: protectedProcedure
 		.input(saveProductsSchema)
 		.mutation(async ({ input, ctx }) => {
-			return await saveOrUpdateProductsPrisma(input, ctx);
+			return await saveOrUpdateProducts(input, ctx);
 		})
 });
