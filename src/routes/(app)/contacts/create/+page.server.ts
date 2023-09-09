@@ -2,10 +2,10 @@ import { router } from '$lib/trpc/router';
 import type { PageServerLoad } from './$types';
 import { createContext } from '$lib/trpc/context';
 import { fail, type Actions, redirect } from '@sveltejs/kit';
-import type { Contacts, Prisma } from '@prisma/client';
 import parseCsv from '$lib/utility/parseCsv';
-import prisma from '$lib/server/prisma/client';
 import normalizePhone from '$lib/utility/normalizePhone.util';
+import { db } from '$lib/server/drizzle/client';
+import { contact } from '$lib/server/drizzle/schema/index';
 
 export const load = (async (event) => {
 	const queryParams = {
@@ -43,16 +43,15 @@ export const actions: Actions = {
 
 		const csvString = (await file.text()) as string;
 
-		type pContact = Partial<Contacts>;
 
-		const contactsArray = (await parseCsv(csvString)) as pContact[];
+		const contactsArray = (await parseCsv(csvString))
 
-		const allDocsPromises: pContact[] = [];
+		const allDocsPromises = [];
 
 		contactsArray.forEach(async (element) => {
 			try {
-				const contact = querySelection(element, user);
-				const contactsQuery = await prisma.contacts.create({ data: contact });
+				const contactData = querySelection(element, user);
+				const contactsQuery = await db.insert(contact).values( contactData );
 				allDocsPromises.push(contactsQuery);
 			} catch (err: unknown) {
 				return fail(500, {
@@ -86,7 +85,7 @@ const querySelection = (reqContact: any, user: { userId: string, username: strin
 		});
 	}
 
-	let contact: Prisma.ContactsCreateInput;
+	let contact;
 
 	contact = {
 		created_by: user.userId,

@@ -1,8 +1,6 @@
 import { router } from '$lib/trpc/t';
 import { loginCredentialsSchema, userRegisterSchema } from '$lib/trpc/routes/authentication/authentication.validate';
-import { z } from 'zod';
 import { protectedProcedure, publicProcedure } from '$lib/trpc/middleware/auth';
-// import {  getAllUsersPrisma, loginUserPrisma, logoutUserPrisma, registerUserPrisma } from './authentication.prisma';
 import { getAllUsers, loginUser, logoutUser, registerUser } from './authentication.drizzle';
 
 export const authentication = router({

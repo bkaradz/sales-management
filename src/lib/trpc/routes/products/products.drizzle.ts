@@ -57,9 +57,9 @@ export const getProducts = async (input: SearchParams) => {
 		};
 	}
 
-	const productsQuery = await prisma.products.findMany(query);
+	const productsQuery = await db.query.products.findMany(query);
 
-	pagination.totalRecords = await prisma.products.count(queryTotal);
+	pagination.totalRecords = await db.query.products.count(queryTotal);
 	pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 	if (pagination.endIndex >= pagination.totalRecords) {
@@ -70,10 +70,9 @@ export const getProducts = async (input: SearchParams) => {
 };
 
 export type GetProducts = typeof getProducts;
-export type GetProductsReturn = Prisma.PromiseReturnType<typeof getProducts>;
 
 export const getById = async (input: number) => {
-	const product = await prisma.products.findUnique({
+	const product = await db.query.products.findUnique({
 		where: {
 			id: input
 		}
@@ -83,10 +82,9 @@ export const getById = async (input: number) => {
 };
 
 export type GetById = typeof getById;
-export type GetByIdReturn = Prisma.PromiseReturnType<typeof getById>;
 
 export const deleteById = async (input: number) => {
-	const product = await prisma.products.update({
+	const product = await db.query.products.update({
 		where: {
 			id: input
 		},
@@ -96,7 +94,6 @@ export const deleteById = async (input: number) => {
 };
 
 export type DeleteById = typeof deleteById;
-export type DeleteByIdReturn = Prisma.PromiseReturnType<typeof deleteById>;
 
 export const saveOrUpdateProducts = async (input: saveProduct, ctx: Context) => {
 	if (!ctx?.userId) {
@@ -106,7 +103,7 @@ export const saveOrUpdateProducts = async (input: saveProduct, ctx: Context) => 
 	const created_by = ctx.userId;
 
 	if (input.id) {
-		return await prisma.products.update({
+		return await db.query.products.update({
 			where: {
 				id: input.id
 			},
@@ -116,7 +113,7 @@ export const saveOrUpdateProducts = async (input: saveProduct, ctx: Context) => 
 			}
 		});
 	} else {
-		return await prisma.products.create({
+		return await db.query.products.create({
 			data: {
 				...input,
 				created_by
@@ -126,6 +123,4 @@ export const saveOrUpdateProducts = async (input: saveProduct, ctx: Context) => 
 };
 
 export type SaveOrUpdateProducts = typeof saveOrUpdateProducts;
-export type SaveOrUpdateProductsReturn = Prisma.PromiseReturnType<
-	typeof saveOrUpdateProducts
->;
+

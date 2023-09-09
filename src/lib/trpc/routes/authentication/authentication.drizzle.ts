@@ -37,7 +37,6 @@ export const loginUser = async (input: LoginCredentials, ctx: Context) => {
   const { username, password } = input
 
   const key = await auth.useKey('username', username, password)
-  const user = await auth.getUser(key.userId);
   const session = await auth.createSession({ userId: key.userId, attributes: {} })
   ctx.event.locals.auth.setSession(session)
 }

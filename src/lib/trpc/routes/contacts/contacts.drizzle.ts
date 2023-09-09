@@ -5,6 +5,7 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import omit from 'lodash-es/omit';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
+import { db } from '$lib/server/drizzle/client';
 
 export const getContacts = async (input: SearchParams) => {
 	const pagination = getPagination(input);
@@ -67,7 +68,7 @@ export const getContacts = async (input: SearchParams) => {
 		};
 	}
 
-	const contactsQuery = await prisma.contacts.findMany({
+	const contactsQuery = await db.query.contact.findMany({
 		...query,
 		include: {
 			email: true,
@@ -80,7 +81,7 @@ export const getContacts = async (input: SearchParams) => {
 			}
 		]
 	});
-	pagination.totalRecords = await prisma.contacts.count(queryTotal);
+	pagination.totalRecords = await db.query.contact.count(queryTotal);
 	pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 	if (pagination.endIndex >= pagination.totalRecords) {
@@ -91,7 +92,6 @@ export const getContacts = async (input: SearchParams) => {
 };
 
 export type GetContacts = typeof getContacts;
-export type GetContactsReturn = Prisma.PromiseReturnType<typeof getContacts>;
 
 export const getCorporate = async (input: SearchParams) => {
 	const pagination = getPagination(input);
@@ -154,7 +154,7 @@ export const getCorporate = async (input: SearchParams) => {
 		};
 	}
 
-	const contactsQuery = await prisma.contacts.findMany({
+	const contactsQuery = await db.query.contact.findMany({
 		...query,
 		include: {
 			email: true,
@@ -167,7 +167,7 @@ export const getCorporate = async (input: SearchParams) => {
 			}
 		]
 	});
-	pagination.totalRecords = await prisma.contacts.count(queryTotal);
+	pagination.totalRecords = await db.query.contact.count(queryTotal);
 	pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 	if (pagination.endIndex >= pagination.totalRecords) {
@@ -178,10 +178,10 @@ export const getCorporate = async (input: SearchParams) => {
 };
 
 export type GetCorporate = typeof getCorporate;
-export type GetCorporateReturn = Prisma.PromiseReturnType<typeof getCorporate>;
+
 
 export const getById = async (input: number) => {
-	const contacts = await prisma.contacts.findUnique({
+	const contacts = await db.query.contact.findUnique({
 		where: {
 			id: input
 		},
@@ -200,10 +200,9 @@ export const getById = async (input: number) => {
 };
 
 export type GetById = typeof getById;
-export type GetByIdReturn = Prisma.PromiseReturnType<typeof getById>;
 
 export const deleteById = async (input: number) => {
-	const product = await prisma.contacts.update({
+	const product = await db.query.contact.update({
 		where: {
 			id: input
 		},
@@ -213,7 +212,6 @@ export const deleteById = async (input: number) => {
 };
 
 export type DeleteById = typeof deleteById;
-export type DeleteByIdReturn = Prisma.PromiseReturnType<typeof deleteById>;
 
 export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
 	if (!ctx.userId) {
@@ -221,7 +219,7 @@ export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
 	}
 
 	if (input.id) {
-		return await prisma.contacts.update({
+		return await db.query.contact.update({
 			where: {
 				id: input.id
 			},
@@ -239,7 +237,7 @@ export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
 			}
 		});
 	} else {
-		return await prisma.contacts.create({
+		return await db.query.contacts.create({
 			data: {
 				...input,
 				email: {
@@ -257,4 +255,3 @@ export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
 };
 
 export type SaveOrUpdateContact = typeof saveOrUpdateContact;
-export type SaveOrUpdateContactReturn = Prisma.PromiseReturnType<typeof saveOrUpdateContact>;

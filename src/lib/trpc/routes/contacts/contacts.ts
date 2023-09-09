@@ -3,8 +3,7 @@ import { z } from "zod";
 import { protectedProcedure } from '$lib/trpc/middleware/auth';
 import { searchParamsSchema } from "$lib/validation/searchParams.validate";
 import { saveContactsSchema } from "$lib/trpc/routes/contacts/contact.validate";
-import { getContacts, saveOrUpdateContact, deleteById, getById } from "./contacts.drizzle";
-import { getCorporatePrisma } from "./contacts.prisma";
+import { getContacts, saveOrUpdateContact, deleteById, getById, getCorporate } from "./contacts.drizzle";
 
 
 export const contacts = router({
@@ -16,7 +15,7 @@ export const contacts = router({
     getCorporate: protectedProcedure
         .input(searchParamsSchema.passthrough())
         .query(async ({ input }) => {
-            return await getCorporatePrisma(input);
+            return await getCorporate(input);
         }),
     getById: protectedProcedure.input(z.number()).query(async ({ input }) => {
         return await getById(input);
