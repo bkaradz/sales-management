@@ -6,6 +6,7 @@ import omit from 'lodash-es/omit';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
+import { asc } from 'drizzle-orm';
 
 export const getContacts = async (input: SearchParams) => {
 	const pagination = getPagination(input);
@@ -33,7 +34,7 @@ export const getContacts = async (input: SearchParams) => {
 	const baseQuery = {
 		take: pagination.limit,
 		skip: (pagination.page - 1) * pagination.limit,
-		include: {
+		with: {
 			email: true,
 			phone: true,
 			address: true
@@ -68,20 +69,16 @@ export const getContacts = async (input: SearchParams) => {
 		};
 	}
 
-	const contactsQuery = await db.query.contact.findMany({
+	const contactsQuery = await db.query.contacts.findMany({
 		...query,
-		include: {
+		with: {
 			email: true,
 			phone: true,
 			address: true
 		},
-		orderBy: [
-			{
-				full_name: 'asc'
-			}
-		]
+		orderBy: [asc(contacts.full_name)]
 	});
-	pagination.totalRecords = await db.query.contact.count(queryTotal);
+	pagination.totalRecords = await db.contact.count(queryTotal);
 	pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 	if (pagination.endIndex >= pagination.totalRecords) {
@@ -119,7 +116,7 @@ export const getCorporate = async (input: SearchParams) => {
 	const baseQuery = {
 		take: pagination.limit,
 		skip: (pagination.page - 1) * pagination.limit,
-		include: {
+		with: {
 			email: true,
 			phone: true,
 			address: true
@@ -154,9 +151,9 @@ export const getCorporate = async (input: SearchParams) => {
 		};
 	}
 
-	const contactsQuery = await db.query.contact.findMany({
+	const contactsQuery = await db.query.contacts.findMany({
 		...query,
-		include: {
+		with: {
 			email: true,
 			phone: true,
 			address: true
@@ -167,7 +164,7 @@ export const getCorporate = async (input: SearchParams) => {
 			}
 		]
 	});
-	pagination.totalRecords = await db.query.contact.count(queryTotal);
+	pagination.totalRecords = await db.query.contacts.count(queryTotal);
 	pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 	if (pagination.endIndex >= pagination.totalRecords) {
@@ -181,11 +178,11 @@ export type GetCorporate = typeof getCorporate;
 
 
 export const getById = async (input: number) => {
-	const contacts = await db.query.contact.findUnique({
+	const contacts = await db.query.contacts.findUnique({
 		where: {
 			id: input
 		},
-		include: {
+		with: {
 			email: true,
 			phone: true,
 			address: true

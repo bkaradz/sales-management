@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const editUserSchema = z
 	.object({
-		id: z.number().optional(),
+		id: z.string().optional(),
 		full_name: z
 			.string({
 				required_error: 'Full Name is required',

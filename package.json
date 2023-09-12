@@ -53,6 +53,7 @@
 		"@trpc/server": "^10.37.1",
 		"dinero.js": "2.0.0-alpha.14",
 		"drizzle-orm": "^0.28.6",
+		"drizzle-zod": "^0.5.1",
 		"lodash-es": "^4.17.21",
 		"lucia": "^2.3.0",
 		"pg": "^8.11.3",

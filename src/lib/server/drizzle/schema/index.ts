@@ -1,4 +1,5 @@
 import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const users = pgTable('auth_user', {
   id: text('id').primaryKey(),
@@ -9,6 +10,12 @@ export const users = pgTable('auth_user', {
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
 
+// Schema for inserting a user - can be used to validate API requests
+export const insertUserSchema = createInsertSchema(users);
+// Schema for selecting a user - can be used to validate API responses
+export const selectUserSchema = createSelectSchema(users);
+ 
+
 export const key = pgTable('user_key', {
   id: text('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
@@ -16,6 +23,9 @@ export const key = pgTable('user_key', {
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
+
+export const insertKeySchema = createInsertSchema(key);
+export const selectKeySchema = createSelectSchema(key);
 
 export const session = pgTable('user_session', {
   id: text('id').primaryKey(),
@@ -26,7 +36,10 @@ export const session = pgTable('user_session', {
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const contact = pgTable('contact', {
+export const insertSessionSchema = createInsertSchema(session);
+export const selectSessionSchema = createSelectSchema(session);
+
+export const contacts = pgTable('contacts', {
   id: text('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   full_name: text('full_name').notNull(),
@@ -40,30 +53,42 @@ export const contact = pgTable('contact', {
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const phone = pgTable('phone', {
+export const insertContactSchema = createInsertSchema(contacts);
+export const selectContactSchema = createSelectSchema(contacts);
+
+export const phones = pgTable('phones', {
   id: text('id').primaryKey(),
-  contact_id: text('contact_id').notNull().references(() => contact.id),
-  phone: varchar('phone', { length: 256 }).unique(),
+  contact_id: text('contact_id').notNull().references(() => contacts.id),
+  phone: varchar('phone', { length: 256 }).notNull().unique(),
 })
 
-export const email = pgTable('email', {
+export const insertPhoneSchema = createInsertSchema(phones);
+export const selectPhoneSchema = createSelectSchema(phones);
+
+export const emails = pgTable('emails', {
   id: text('id').primaryKey(),
-  contact_id: text('contact_id').notNull().references(() => contact.id),
-  email: text('email').unique(),
+  contact_id: text('contact_id').notNull().references(() => contacts.id),
+  email: text('email').notNull().unique(),
 })
+
+export const insertEmailSchema = createInsertSchema(emails);
+export const selectEmailSchema = createSelectSchema(emails);
 
 export const address = pgTable('address', {
   id: text('id').primaryKey(),
-  contact_id: text('contact_id').notNull().references(() => contact.id),
-  address: text('address'),
+  contact_id: text('contact_id').notNull().references(() => contacts.id),
+  address: text('address').notNull(),
 })
 
-export const product = pgTable('product', {
+export const insertAddressSchema = createInsertSchema(address);
+export const selectAddressSchema = createSelectSchema(address);
+
+export const products = pgTable('products', {
   id: text('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   name: text('name').notNull().unique(),
   description: text('description'),
-  product_category: text('product_category'),
+  product_category: text('product_category').notNull(),
   unit_price: json('unit_price'),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
@@ -71,3 +96,6 @@ export const product = pgTable('product', {
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
+
+export const insertProductSchema = createInsertSchema(products);
+export const selectProductSchema = createSelectSchema(products);
