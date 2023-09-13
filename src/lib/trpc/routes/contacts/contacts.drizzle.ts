@@ -11,66 +11,65 @@ import { asc } from 'drizzle-orm';
 export const getContacts = async (input: SearchParams) => {
 	const pagination = getPagination(input);
 
-	const finalQuery = omit(input, ['page', 'limit', 'sort']);
+	// const finalQuery = omit(input, ['page', 'limit', 'sort']);
 
-	const objectKeys = Object.keys(finalQuery)[0] as SaveContactKeys;
+	// const objectKeys = Object.keys(finalQuery)[0] as SaveContactKeys;
 
-	let whereQuery;
+	// let whereQuery;
 
-	if (objectKeys === 'isCorporate' || objectKeys === 'isActive') {
-		whereQuery = {
-			equals: getBoolean(finalQuery[objectKeys] as any)
-		};
-	} else {
-		whereQuery = {
-			contains: finalQuery[objectKeys],
-			mode: 'insensitive'
-		};
-	}
+	// if (objectKeys === 'isCorporate' || objectKeys === 'isActive') {
+	// 	whereQuery = {
+	// 		equals: getBoolean(finalQuery[objectKeys] as any)
+	// 	};
+	// } else {
+	// 	whereQuery = {
+	// 		contains: finalQuery[objectKeys],
+	// 		mode: 'insensitive'
+	// 	};
+	// }
 
-	let query;
-	let queryTotal;
+	// let query;
+	// let queryTotal;
 
-	const baseQuery = {
-		take: pagination.limit,
-		skip: (pagination.page - 1) * pagination.limit,
-		with: {
-			email: true,
-			phone: true,
-			address: true
-		}
-	};
+	// const baseQuery = {
+	// 	take: pagination.limit,
+	// 	skip: (pagination.page - 1) * pagination.limit,
+	// 	with: {
+	// 		email: true,
+	// 		phone: true,
+	// 		address: true
+	// 	}
+	// };
 
-	if (objectKeys) {
-		query = {
-			...baseQuery,
-			where: {
-				isActive: true,
-				[objectKeys]: whereQuery
-			}
-		};
-		queryTotal = {
-			where: {
-				isActive: true,
-				[objectKeys]: whereQuery
-			}
-		};
-	} else {
-		query = {
-			...baseQuery,
-			where: {
-				isActive: true
-			}
-		};
-		queryTotal = {
-			where: {
-				isActive: true
-			}
-		};
-	}
+	// if (objectKeys) {
+	// 	query = {
+	// 		...baseQuery,
+	// 		where: {
+	// 			isActive: true,
+	// 			[objectKeys]: whereQuery
+	// 		}
+	// 	};
+	// 	queryTotal = {
+	// 		where: {
+	// 			isActive: true,
+	// 			[objectKeys]: whereQuery
+	// 		}
+	// 	};
+	// } else {
+	// 	query = {
+	// 		...baseQuery,
+	// 		where: {
+	// 			isActive: true
+	// 		}
+	// 	};
+	// 	queryTotal = {
+	// 		where: {
+	// 			isActive: true
+	// 		}
+	// 	};
+	// }
 
 	const contactsQuery = await db.query.contacts.findMany({
-		...query,
 		with: {
 			email: true,
 			phone: true,
@@ -78,14 +77,15 @@ export const getContacts = async (input: SearchParams) => {
 		},
 		orderBy: [asc(contacts.full_name)]
 	});
-	pagination.totalRecords = await db.contact.count(queryTotal);
-	pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
+	console.log("🚀 ~ file: contacts.drizzle.ts:80 ~ getContacts ~ contactsQuery:", contactsQuery)
+	// pagination.totalRecords = await db.contact.count(queryTotal);
+	// pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
-	if (pagination.endIndex >= pagination.totalRecords) {
-		pagination.next = undefined;
-	}
+	// if (pagination.endIndex >= pagination.totalRecords) {
+	// 	pagination.next = undefined;
+	// }
 
-	return { results: contactsQuery, ...pagination };
+	// return { results: contactsQuery, ...pagination };
 };
 
 export type GetContacts = typeof getContacts;
