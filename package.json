@@ -12,7 +12,9 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"generate": "drizzle-kit generate:pg",
-		"push": "drizzle-kit push:pg"
+		"push": "drizzle-kit push:pg",
+		"seed": "tsx -r dotenv/config ./src/lib/server/drizzle/seed.ts",
+		"seeding": "npx vite-node ./src/lib/server/drizzle/seed.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.1.0",
@@ -42,6 +44,7 @@
 		"tsx": "^3.12.7",
 		"typescript": "^5.1.6",
 		"vite": "^4.4.9",
+		"vite-node": "^0.34.4",
 		"vitest": "^0.32.4"
 	},
 	"type": "module",

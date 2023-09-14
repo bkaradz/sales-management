@@ -1,4 +1,4 @@
-export const contacts = [
+export const contactsList = [
 	{
 		full_name: 'Noland Linney',
 		phone: [{ phone: '5054321374' }]

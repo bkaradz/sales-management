@@ -50,7 +50,7 @@ export const insertSessionSchema = createInsertSchema(session);
 export const selectSessionSchema = createSelectSchema(session);
 
 export const contacts = pgTable('contacts', {
-  id: text('id').primaryKey(),
+  id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   full_name: text('full_name').notNull(),
   is_corporate: boolean('is_corporate').notNull().default(false),
@@ -70,8 +70,8 @@ export const insertContactSchema = createInsertSchema(contacts);
 export const selectContactSchema = createSelectSchema(contacts);
 
 export const phones = pgTable('phones', {
-  id: text('id').primaryKey(),
-  contact_id: text('contact_id').notNull().references(() => contacts.id),
+  id: serial('id').primaryKey(),
+  contact_id: integer('contact_id').notNull().references(() => contacts.id),
   phone: varchar('phone', { length: 256 }).notNull().unique(),
 })
 
@@ -82,8 +82,8 @@ export const insertPhoneSchema = createInsertSchema(phones);
 export const selectPhoneSchema = createSelectSchema(phones);
 
 export const emails = pgTable('emails', {
-  id: text('id').primaryKey(),
-  contact_id: text('contact_id').notNull().references(() => contacts.id),
+  id: serial('id').primaryKey(),
+  contact_id: integer('contact_id').notNull().references(() => contacts.id),
   email: text('email').notNull().unique(),
 })
 
@@ -94,8 +94,8 @@ export const insertEmailSchema = createInsertSchema(emails);
 export const selectEmailSchema = createSelectSchema(emails);
 
 export const address = pgTable('address', {
-  id: text('id').primaryKey(),
-  contact_id: text('contact_id').notNull().references(() => contacts.id),
+  id: serial('id').primaryKey(),
+  contact_id: integer('contact_id').notNull().references(() => contacts.id),
   address: text('address').notNull(),
 })
 
@@ -106,7 +106,7 @@ export const insertAddressSchema = createInsertSchema(address);
 export const selectAddressSchema = createSelectSchema(address);
 
 export const products = pgTable('products', {
-  id: text('id').primaryKey(),
+  id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   name: text('name').notNull().unique(),
   description: text('description'),
