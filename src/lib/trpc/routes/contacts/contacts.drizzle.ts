@@ -6,7 +6,8 @@ import omit from 'lodash-es/omit';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { asc } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
+import { address, contacts, emails, phones } from '$lib/server/drizzle/schema';
 
 export const getContacts = async (input: SearchParams) => {
 	const pagination = getPagination(input);
@@ -69,15 +70,34 @@ export const getContacts = async (input: SearchParams) => {
 	// 	};
 	// }
 
-	const contactsQuery = await db.query.contacts.findMany({
-		with: {
-			email: true,
-			phone: true,
-			address: true
-		},
-		orderBy: [asc(contacts.full_name)]
-	});
-	console.log("🚀 ~ file: contacts.drizzle.ts:80 ~ getContacts ~ contactsQuery:", contactsQuery)
+	try {
+		const totalContactsRecords =  await db.select({ count: sql<number>`count(*)` }).from(contacts);
+		console.log("🚀 ~ file: contacts.drizzle.ts:76 ~ getContacts ~ totalContactsRecords:", totalContactsRecords)
+
+		pagination.totalRecords =  +totalContactsRecords[0].count
+		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
+
+		const contactsQuery = await db.select().from(contacts)
+		.orderBy(asc(contacts.full_name))
+		.leftJoin(phones, eq(contacts.id, phones.contact_id))
+		.leftJoin(emails, eq(contacts.id, emails.contact_id))
+		.leftJoin(address, eq(contacts.id, address.contact_id))
+		.limit(10).offset(10)
+		console.log("🚀 ~ file: contacts.drizzle.ts:80 ~ getContacts ~ contactsQuery:", contactsQuery)
+		console.log("🚀 ~ file: contacts.drizzle.ts:14 ~ getContacts ~ pagination:", pagination)
+
+		return {
+			payload: contactsQuery,
+			pagination
+		}
+
+	} catch (error) {
+
+		console.log("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		
+	}
+
+	
 	// pagination.totalRecords = await db.contact.count(queryTotal);
 	// pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 

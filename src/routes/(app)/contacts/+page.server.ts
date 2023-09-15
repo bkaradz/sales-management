@@ -2,14 +2,14 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { trpc } from '$lib/trpc/client';
 
 export const load = (async (event) => {
     const contacts = async () => {
         return await router.createCaller(await createContext(event)).contacts.getContacts({});
     };
+
     return {
-        contacts: contacts()
+        results: contacts()
     };
 }) satisfies PageServerLoad;
 
