@@ -42,7 +42,6 @@ async function main() {
 
     contactsList.forEach(async (contact) => {
       const contactResult = await db.insert(contacts).values({ user_id: adminId, full_name: contact.full_name, active: true, is_corporate: false, }).returning({ id: contacts.id });
-      console.log("🚀 ~ file: seed.ts:45 ~ contactsList.forEach ~ contactResult:", contactResult)
       contactArray.push(contactResult)
       if (contact?.phone) {
         contact.phone.forEach(async (item) => {
@@ -71,7 +70,6 @@ async function main() {
 
     productsList.forEach(async (product) => {
       const productsResults = await db.insert(products).values({ user_id: adminId, ...product }).returning()
-      console.log("🚀 ~ file: seed.ts:74 ~ productsList.forEach ~ productsResults:", productsResults)
       productsArray.push(productsResults)
     });
 
@@ -84,6 +82,6 @@ main().catch((e) => {
   console.error(`Error: ${e}`)
   process.exit(1);
 }).finally(() => {
-  console.log("Done seeding.....");
+  console.info("Done seeding.....");
   // process.exit();
 });

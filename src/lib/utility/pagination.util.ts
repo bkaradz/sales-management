@@ -1,5 +1,5 @@
-type Limit = number | string;
-type Page = number | string;
+type Limit = number;
+type Page = number;
 export type Previous = { page: number; limit: number } | undefined;
 export type Current = { page: number; limit: number };
 export type Next = { page: number; limit: number } | undefined;
@@ -16,8 +16,11 @@ export interface Pagination {
 }
 
 export const getPagination = (queryParams: any) => {
-	const limit: Limit = isNaN(+queryParams?.limit) ? 15 : +queryParams?.limit;
-	const page: Page = isNaN(+queryParams?.page) ? 1 : +queryParams?.page;
+	
+	let limit: Limit = isNaN(+queryParams?.limit) ? 2 : +queryParams?.limit;
+	if (limit < 1 ) limit = 1
+	let page: Page = isNaN(+queryParams?.page) ? 1 : +queryParams?.page;
+	if (page < 1 ) page = 1
 
 	const startIndex: number = (page - 1) * limit;
 	const endIndex: number = page * limit;

@@ -10,69 +10,11 @@ import { asc, eq, sql } from 'drizzle-orm';
 import { address, contacts, emails, phones } from '$lib/server/drizzle/schema';
 
 export const getContacts = async (input: SearchParams) => {
+	
 	const pagination = getPagination(input);
-
-	// const finalQuery = omit(input, ['page', 'limit', 'sort']);
-
-	// const objectKeys = Object.keys(finalQuery)[0] as SaveContactKeys;
-
-	// let whereQuery;
-
-	// if (objectKeys === 'isCorporate' || objectKeys === 'isActive') {
-	// 	whereQuery = {
-	// 		equals: getBoolean(finalQuery[objectKeys] as any)
-	// 	};
-	// } else {
-	// 	whereQuery = {
-	// 		contains: finalQuery[objectKeys],
-	// 		mode: 'insensitive'
-	// 	};
-	// }
-
-	// let query;
-	// let queryTotal;
-
-	// const baseQuery = {
-	// 	take: pagination.limit,
-	// 	skip: (pagination.page - 1) * pagination.limit,
-	// 	with: {
-	// 		email: true,
-	// 		phone: true,
-	// 		address: true
-	// 	}
-	// };
-
-	// if (objectKeys) {
-	// 	query = {
-	// 		...baseQuery,
-	// 		where: {
-	// 			isActive: true,
-	// 			[objectKeys]: whereQuery
-	// 		}
-	// 	};
-	// 	queryTotal = {
-	// 		where: {
-	// 			isActive: true,
-	// 			[objectKeys]: whereQuery
-	// 		}
-	// 	};
-	// } else {
-	// 	query = {
-	// 		...baseQuery,
-	// 		where: {
-	// 			isActive: true
-	// 		}
-	// 	};
-	// 	queryTotal = {
-	// 		where: {
-	// 			isActive: true
-	// 		}
-	// 	};
-	// }
 
 	try {
 		const totalContactsRecords =  await db.select({ count: sql<number>`count(*)` }).from(contacts);
-		console.log("🚀 ~ file: contacts.drizzle.ts:76 ~ getContacts ~ totalContactsRecords:", totalContactsRecords)
 
 		pagination.totalRecords =  +totalContactsRecords[0].count
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
@@ -82,9 +24,7 @@ export const getContacts = async (input: SearchParams) => {
 		.leftJoin(phones, eq(contacts.id, phones.contact_id))
 		.leftJoin(emails, eq(contacts.id, emails.contact_id))
 		.leftJoin(address, eq(contacts.id, address.contact_id))
-		.limit(10).offset(10)
-		console.log("🚀 ~ file: contacts.drizzle.ts:80 ~ getContacts ~ contactsQuery:", contactsQuery)
-		console.log("🚀 ~ file: contacts.drizzle.ts:14 ~ getContacts ~ pagination:", pagination)
+		.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
 		return {
 			payload: contactsQuery,
@@ -93,7 +33,7 @@ export const getContacts = async (input: SearchParams) => {
 
 	} catch (error) {
 
-		console.log("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
 		
 	}
 

@@ -4,12 +4,25 @@ import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
-    const contacts = async () => {
-        return await router.createCaller(await createContext(event)).contacts.getContacts({});
+
+    let query = {}
+
+    const limit = event.url.searchParams.get('limit')
+    if (limit) query = { ...query, limit: +limit }
+    console.log("🚀 ~ file: +page.server.ts:9 ~ load ~ query:", query)
+
+    const page = event.url.searchParams.get('page')
+    if (page) query = { ...query, page: +page }
+    console.log("🚀 ~ file: +page.server.ts:16 ~ load ~ page:", page)
+    
+
+
+    const contacts = async (query: any) => {
+        return await router.createCaller(await createContext(event)).contacts.getContacts(query);
     };
 
     return {
-        results: contacts()
+        results: contacts(query)
     };
 }) satisfies PageServerLoad;
 
