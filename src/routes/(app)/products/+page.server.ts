@@ -1,6 +1,4 @@
-import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { auth } from '$lib/server/lucia/client';
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 

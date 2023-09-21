@@ -4,96 +4,64 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import omit from 'lodash-es/omit';
 import type { Context } from '$lib/trpc/context';
 import { error } from '@sveltejs/kit';
+import { db } from '$lib/server/drizzle/client';
+import { products } from '$lib/server/drizzle/schema';
+import { asc, eq, sql } from 'drizzle-orm';
 
 export const getProducts = async (input: SearchParams) => {
 	const pagination = getPagination(input);
 
-	const finalQuery = omit(input, ['page', 'limit', 'sort']);
+	try {
+		const totalContactsRecords = await db.select({ count: sql<number>`count(*)` }).from(products);
 
-	const objectKeys = Object.keys(finalQuery)[0];
+		pagination.totalRecords = +totalContactsRecords[0].count
+		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
-	let query: any;
-	let queryTotal: any;
+		const productsQuery = await db.select().from(products)
+			.orderBy(asc(products.name))
+			.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
-	const baseQuery = {
-		take: pagination.limit,
-		skip: (pagination.page - 1) * pagination.limit,
-		orderBy: {
-			name: 'asc'
+		return {
+			payload: productsQuery,
+			pagination
 		}
-	};
 
-	if (objectKeys) {
-		query = {
-			...baseQuery,
-			where: {
-				isActive: true,
-				[objectKeys]: {
-					contains: finalQuery[objectKeys],
-					mode: 'insensitive'
-				}
-			}
-		};
-		queryTotal = {
-			where: {
-				isActive: true,
-				[objectKeys]: {
-					contains: finalQuery[objectKeys],
-					mode: 'insensitive'
-				}
-			}
-		};
-	} else {
-		query = {
-			where: {
-				isActive: true
-			},
-			...baseQuery
-		};
-		queryTotal = {
-			where: {
-				isActive: true
-			}
-		};
+	} catch (error) {
+		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
 	}
-
-	const productsQuery = await db.query.products.findMany(query);
-
-	pagination.totalRecords = await db.query.products.count(queryTotal);
-	pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
-
-	if (pagination.endIndex >= pagination.totalRecords) {
-		pagination.next = undefined;
-	}
-
-	return { results: productsQuery, ...pagination };
 };
-
-export type GetProducts = typeof getProducts;
 
 export const getById = async (input: number) => {
-	const product = await db.query.products.findUnique({
-		where: {
-			id: input
-		}
-	});
+	try {
 
-	return product;
+		const productsQuery = await db.select().from(products).where(eq(products.id, input)).orderBy(asc(contacts.full_name))
+
+		return {
+			payload: productsQuery,
+		}
+
+	} catch (error) {
+		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+	}
 };
 
-export type GetById = typeof getById;
 
 export const deleteById = async (input: number) => {
-	const product = await db.query.products.update({
-		where: {
-			id: input
-		},
-		data: { isActive: false }
-	});
-	return product;
+	try {
+
+		await db.update(products)
+  			.set({ active: false })
+  			.where(eq(products.id, input));
+
+		return {
+			message: "success",
+		}
+
+	} catch (error) {
+		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+	}
 };
 
-export type DeleteById = typeof deleteById;
 
 export const saveOrUpdateProducts = async (input: saveProduct, ctx: Context) => {
 	if (!ctx?.userId) {

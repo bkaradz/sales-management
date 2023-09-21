@@ -5,7 +5,9 @@ import { fail, type Actions, redirect } from '@sveltejs/kit';
 import parseCsv from '$lib/utility/parseCsv';
 import normalizePhone from '$lib/utility/normalizePhone.util';
 import { db } from '$lib/server/drizzle/client';
-import { contact } from '$lib/server/drizzle/schema/index';
+import { address, contacts, emails, phones, users } from '$lib/server/drizzle/schema';
+import { eq } from 'drizzle-orm';
+
 
 export const load = (async (event) => {
 	const queryParams = {
@@ -26,6 +28,8 @@ export const actions: Actions = {
 	upload: async ({ request, locals }) => {
 
 		const session = await locals.auth.validate()
+		console.log("🚀 ~ file: +page.server.ts:30 ~ upload: ~ session:", session)
+
 
 		if (!session) {
 			throw redirect(303, "/auth/login")
@@ -44,15 +48,29 @@ export const actions: Actions = {
 		const csvString = (await file.text()) as string;
 
 
-		const contactsArray = (await parseCsv(csvString))
+		const contactsArray = (await parseCsv(csvString)) as any[]
 
-		const allDocsPromises = [];
+		const allDocsPromises: any[] = [];
 
-		contactsArray.forEach(async (element) => {
+		contactsArray.forEach(async (contact) => {
 			try {
-				const contactData = querySelection(element, user);
-				const contactsQuery = await db.insert(contact).values( contactData );
-				allDocsPromises.push(contactsQuery);
+				const contactResult = await db.insert(contacts).values({ user_id: session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
+				allDocsPromises.push(contactResult)
+				if (contact?.phone) {
+					contact.phone.forEach(async (item: { phone: any; }) => {
+					  await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
+					})
+				  }
+				  if (contact?.email) {
+					contact.email.forEach(async (item: { email: any; }) => {
+					  await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
+					})
+				  }
+				  if (contact?.address) {
+					contact.address.forEach(async (item: { address: any; }) => {
+					  await db.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
+					})
+				  }
 			} catch (err: unknown) {
 				return fail(500, {
 					message: 'A server error occurred',
@@ -61,86 +79,8 @@ export const actions: Actions = {
 			}
 		});
 
-		const allDocs = await Promise.all(allDocsPromises);
+		await Promise.all(allDocsPromises);
 
-		return { success: true, payload: JSON.stringify(allDocs) }
+		return { success: true }
 	}
 };
-
-const querySelection = (reqContact: any, user: { userId: string, username: string, full_name: string }) => {
-	let { full_name, email, phone, address } = reqContact;
-
-	full_name = full_name.trim();
-	if (email) {
-		email = email.split(',').map((data: string) => {
-			return { email: data.trim() };
-		});
-	}
-	if (phone) {
-		phone = normalizePhone(phone);
-	}
-	if (address) {
-		address = address.split(',').map((data: string) => {
-			return { address: data.trim() };
-		});
-	}
-
-	let contact;
-
-	contact = {
-		created_by: user.userId,
-		full_name,
-		isActive: true,
-	};
-
-	if (email) {
-		contact = {
-			...contact,
-			email: { createMany: { data: email } }
-		};
-	}
-	if (phone) {
-		contact = {
-			...contact,
-			phone: { createMany: { data: phone } }
-		};
-	}
-	if (address) {
-		contact = {
-			...contact,
-			address: { createMany: { data: address } }
-		};
-	}
-	if (email && phone) {
-		contact = {
-			...contact,
-			email: { createMany: { data: email } },
-			phone: { createMany: { data: phone } }
-		};
-	}
-	if (email && address) {
-		contact = {
-			...contact,
-			email: { createMany: { data: email } },
-			address: { createMany: { data: address } }
-		};
-	}
-	if (phone && address) {
-		contact = {
-			...contact,
-			phone: { createMany: { data: phone } },
-			address: { createMany: { data: address } }
-		};
-	}
-	if (email && phone && address) {
-		contact = {
-			...contact,
-			email: { createMany: { data: email } },
-			phone: { createMany: { data: phone } },
-			address: { createMany: { data: address } }
-		};
-	}
-
-	return contact;
-};
-
