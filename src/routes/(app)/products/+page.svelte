@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { svgBin, svgEye, svgPen, svgThreeDots } from '$lib/assets/svgLogos';
+	import { svgBin, svgEye, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -74,38 +74,78 @@
 							<polyline points="6 9 12 15 18 9" />
 						</svg>
 					</button>
+					<div class="relative ml-3">
+						<input
+							type="text"
+							class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+							placeholder="Search"
+						/>
+						{@html svgSearch}
+					</div>
 					<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
-						<span class="mr-3">Page 2 of 4</span>
-						<button
-							class="inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-						>
-							<svg
-								class="w-4"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								stroke-width="2"
-								fill="none"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+						<div>
+							<span class="mr-3"
+								>Page {data?.results.pagination.page} of {data?.results.pagination.totalPages}</span
 							>
-								<polyline points="15 18 9 12 15 6" />
-							</svg>
-						</button>
-						<button
-							class="inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-						>
-							<svg
-								class="w-4"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								stroke-width="2"
-								fill="none"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							>
-								<polyline points="9 18 15 12 9 6" />
-							</svg>
-						</button>
+							<form class="inline-block" method="get">
+								<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
+								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+								<button
+									type="submit"
+									class="inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+								>
+									<svg
+										class="w-4"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<polyline points="15 18 9 12 15 6" />
+									</svg>
+								</button>
+							</form>
+							<form class="inline-block" method="get">
+								<input type="hidden" name="page" value={data?.results.pagination.next?.page} />
+								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+								<button
+									type="submit"
+									class="inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+								>
+									<svg
+										class="w-4"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<polyline points="9 18 15 12 9 6" />
+									</svg>
+								</button>
+							</form>
+						</div>
+						<div class="ml-3 items-center flex">
+							<span class="mr-2">Show</span>
+							<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get" use:enhance={({controller})=>{
+								old_req_limit_controller?.abort();
+								old_req_limit_controller = controller;
+							}}>
+								<input
+									use:selectTextOnFocus
+									type="number"
+									class="appearance-none h-8 mr-2 w-20 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white rounded-md text-sm"
+									value={data?.results.pagination.limit}
+									name="limit"
+									on:input={debounceSearch}
+									on:change={debounceSearch}
+								/>
+							</form>
+							<span class="">entries</span>
+						</div>
 					</div>
 				</div>
 
