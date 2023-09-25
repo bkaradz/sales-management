@@ -130,7 +130,7 @@
 						</div>
 						<div class="ml-3 items-center flex">
 							<span class="mr-2">Show</span>
-							<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get" use:enhance={({controller})=>{
+							<form data-sveltekit-keepfocus data-sveltekit-replacestate method="post" use:enhance={({controller})=>{
 								old_req_limit_controller?.abort();
 								old_req_limit_controller = controller;
 							}}>

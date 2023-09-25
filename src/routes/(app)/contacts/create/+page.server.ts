@@ -28,8 +28,6 @@ export const actions: Actions = {
 	upload: async ({ request, locals }) => {
 
 		const session = await locals.auth.validate()
-		console.log("🚀 ~ file: +page.server.ts:30 ~ upload: ~ session:", session)
-
 
 		if (!session) {
 			throw redirect(303, "/auth/login")

@@ -33,7 +33,6 @@
 			clearTimeout(timeoutId);
 
 			timeoutId = setTimeout(() => {
-				console.log('calling')
 				func.apply(this, args);
 			}, delay);
 		};

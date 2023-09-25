@@ -5,7 +5,6 @@ export const load = (async ({ url }) => {
 
 	// your search logic goes here
 	const query = url.searchParams.get('search')
-	console.log("🚀 ~ file: +page.server.ts:8 ~ load ~ query:", query)
 	const flavours = library.filter(el => el.includes(query))
 
 	// artificial delay

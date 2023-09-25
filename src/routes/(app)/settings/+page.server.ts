@@ -21,11 +21,9 @@ export const actions = {
 		const posts = result.filter((post: any) =>
 			post.title.toLowerCase().includes(search.toString().toLowerCase())
 		);
-		console.log("Now the waiting game");
 		for (let post of posts) {
 			await wait(100);
 		}
-		console.log("Waited enough");
 		return { posts, search };
 	}
 };

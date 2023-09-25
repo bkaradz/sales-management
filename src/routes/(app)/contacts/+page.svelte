@@ -6,27 +6,25 @@
 
 	export let data: PageData;
 
-	function debounce(func: Function, delay: number) {
+	const debounce = (func: Function, delay: number) => {
 		let timeoutId: string | number | NodeJS.Timeout | undefined;
 
-		return  (...args: any) => {
+		return (...args: any) => {
 			clearTimeout(timeoutId);
 
 			timeoutId = setTimeout(() => {
-				// console.log('calling')
 				func.apply(this, args);
 			}, delay);
 		};
 	}
 
-	const search = (e: { target: { form: { requestSubmit: () => void; }; }; }) => {
-		e.target.form.requestSubmit()
-	}
+	const search = (e: { target: { form: { requestSubmit: () => void } } }) => {
+		e.target.form.requestSubmit();
+	};
 
-	const debounceSearch = debounce(search, 400)
+	const debounceSearch = debounce(search, 400);
 
-	let old_req_limit_controller:AbortController;
-
+	let old_req_limit_controller: AbortController;
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -112,7 +110,11 @@
 								>Page {data?.results.pagination.page} of {data?.results.pagination.totalPages}</span
 							>
 							<form class="inline-block" method="get">
-								<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
+								<input
+									type="hidden"
+									name="page"
+									value={data?.results.pagination.previous?.page || 1}
+								/>
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
 								<button
 									type="submit"
@@ -154,10 +156,7 @@
 						</div>
 						<div class="ml-3 items-center flex">
 							<span class="mr-2">Show</span>
-							<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get" use:enhance={({controller})=>{
-								old_req_limit_controller?.abort();
-								old_req_limit_controller = controller;
-							}}>
+							<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
 								<input
 									use:selectTextOnFocus
 									type="number"
