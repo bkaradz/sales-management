@@ -1,5 +1,5 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { bigint, boolean, integer, json, numeric, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const users = pgTable('auth_user', {
@@ -56,8 +56,8 @@ export const contacts = pgTable('contacts', {
   is_corporate: boolean('is_corporate').notNull().default(false),
   notes: text('notes'),
   vat_or_bp_number: text('vat_or_bp_number'),
-  balance_due: json('balance_due'),
-  total_receipts: json('total_receipts'),
+  balance_due: numeric('balance_due', { precision: 15, scale: 6 }),
+  total_receipts: numeric('total_receipts', { precision: 15, scale: 6 }),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
@@ -111,7 +111,7 @@ export const products = pgTable('products', {
   name: text('name').notNull().unique(),
   description: text('description'),
   product_category: text('product_category').notNull(),
-  unit_price: json('unit_price'),
+  unit_price: numeric('unit_price', { precision: 15, scale: 6 }),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
   active: boolean('active').notNull().default(true),
