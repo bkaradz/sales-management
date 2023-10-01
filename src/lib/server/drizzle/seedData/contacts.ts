@@ -1,12 +1,12 @@
 export const contactsList = [
 	{
 		full_name: 'Noland Linney',
-		phone: [{ phone: '5054321374' }]
+		phone: [{ phone: '5054321374' }, { phone: '5054321774' }]
 	},
 	{
 		full_name: 'Leia Feary',
-		email: [{ email: 'lfeary1@aboutads.info' }],
-		phone: [{ phone: '3257919012' }],
+		email: [{ email: 'lfeary1@aboutads.info' }, { email: 'lfeary1@aboutads.gov.zw' }],
+		phone: [{ phone: '3257919012' }, { phone: '3456919012' }],
 		address: [{ address: '60683 Cody Park' }]
 	},
 	{

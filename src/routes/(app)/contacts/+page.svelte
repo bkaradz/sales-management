@@ -5,6 +5,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	$: console.log("🚀 ~ file: +page.svelte:8 ~ data:", data.results?.payload)
 
 	const debounce = (func: Function, delay: number) => {
 		let timeoutId: string | number | NodeJS.Timeout | undefined;
@@ -113,12 +114,13 @@
 								<input
 									type="hidden"
 									name="page"
-									value={data?.results.pagination.previous?.page || 1}
+									value={data?.results.pagination.previous?.page}
 								/>
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
 								<button
 									type="submit"
-									class="inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+									class="{!data?.results.pagination.previous ? 'cursor-not-allowed' : ''} inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+									disabled={!data?.results.pagination.previous}
 								>
 									<svg
 										class="w-4"
@@ -138,7 +140,8 @@
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
 								<button
 									type="submit"
-									class="inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+									class="{!data?.results.pagination.next ? 'cursor-not-allowed' : ''} inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+									disabled={!data?.results.pagination.next}
 								>
 									<svg
 										class="w-4"

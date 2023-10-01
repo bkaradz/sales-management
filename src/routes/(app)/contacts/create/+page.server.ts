@@ -47,29 +47,69 @@ export const actions: Actions = {
 
 
 		const contactsArray = (await parseCsv(csvString)) as any[]
+		// console.log("🚀 ~ file: +page.server.ts:50 ~ upload: ~ contactsArray:", contactsArray)
 
 		const allDocsPromises: any[] = [];
 
 		contactsArray.forEach(async (contact) => {
+			console.log("🚀 ~ file: +page.server.ts:81 ~ contactsArray.forEach ~ contact:", contact)
+
 			try {
-				const contactResult = await db.insert(contacts).values({ user_id: session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
-				allDocsPromises.push(contactResult)
-				if (contact?.phone) {
-					contact.phone.forEach(async (item: { phone: any; }) => {
-					  await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
-					})
-				  }
-				  if (contact?.email) {
-					contact.email.forEach(async (item: { email: any; }) => {
-					  await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
-					})
-				  }
-				  if (contact?.address) {
-					contact.address.forEach(async (item: { address: any; }) => {
-					  await db.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
-					})
-				  }
+				const contactsTx = await db.transaction(async (tx) => {
+
+					const contactResult = await tx.insert(contacts).values({ user_id: session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
+					console.log("🚀 ~ file: +page.server.ts:60 ~ contactsTx ~ contactResult:", contactResult)
+
+					if (contact?.phone) {
+						normalizePhone(contact.phone).forEach(async (item: { phone: any; }) => {
+							console.log("🚀 ~ file: +page.server.ts:67 ~ normalizePhone ~ phone:", item)
+							await tx.transaction(async (tx2) => {
+								await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
+							})
+						})
+						
+					}
+					
+					if (contact?.email) {
+						contact.email.split(',').forEach(async (item: { email: any; }) => {
+							await tx.transaction(async (tx2) => {
+								await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
+							})
+						})
+					}
+
+					if (contact?.address) {
+						contact.address.split(',').forEach(async (item: { address: any; }) => {
+							await tx.transaction(async (tx2) => {
+								await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
+							})
+						})
+					}
+				});
+
+				allDocsPromises.push(contactsTx)
+
+				// const contactResult = await db.insert(contacts).values({ user_id: session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
+				// console.log("🚀 ~ file: +page.server.ts:57 ~ contactsArray.forEach ~ contactResult:", contactResult)
+				// allDocsPromises.push(contactResult)
+				// if (contact?.phone) {
+				// 	normalizePhone(contact.phone).forEach(async (item: { phone: any; }) => {
+				// 		await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
+				// 	})
+				// }
+				// if (contact?.email) {
+				// 	contact.email.split(',').forEach(async (item: { email: any; }) => {
+				// 		await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
+				// 	})
+				// }
+				// if (contact?.address) {
+				// 	contact.address.split(',').forEach(async (item: { address: any; }) => {
+				// 		await db.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
+				// 	})
+				// }
 			} catch (err: unknown) {
+				console.log("🚀 ~ file: +page.server.ts:111 ~ contactsArray.forEach ~ err:", err)
+				
 				return fail(500, {
 					message: 'A server error occurred',
 					errors: err
