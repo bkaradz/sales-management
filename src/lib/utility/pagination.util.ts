@@ -17,7 +17,7 @@ export interface Pagination {
 
 export const getPagination = (queryParams: any) => {
 	
-	let limit: Limit = isNaN(+queryParams?.limit) ? 2 : +queryParams?.limit;
+	let limit: Limit = isNaN(+queryParams?.limit) ? 13 : +queryParams?.limit;
 	if (limit < 1 ) limit = 1
 	let page: Page = isNaN(+queryParams?.page) ? 1 : +queryParams?.page;
 	if (page < 1 ) page = 1

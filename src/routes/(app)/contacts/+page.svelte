@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { svgBin, svgEye, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	$: console.log("🚀 ~ file: +page.svelte:8 ~ data:", data.results?.payload)
 
 	const debounce = (func: Function, delay: number) => {
 		let timeoutId: string | number | NodeJS.Timeout | undefined;
@@ -17,7 +15,7 @@
 				func.apply(this, args);
 			}, delay);
 		};
-	}
+	};
 
 	const search = (e: { target: { form: { requestSubmit: () => void } } }) => {
 		e.target.form.requestSubmit();
@@ -98,12 +96,19 @@
 						</svg>
 					</button>
 					<div class="relative ml-3">
-						<input
-							type="text"
-							class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
-							placeholder="Search"
-						/>
-						{@html svgSearch}
+						<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
+							<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+							<input
+								use:selectTextOnFocus
+								type="text"
+								name="search"
+								class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+								placeholder="Search"
+								on:input={debounceSearch}
+								on:change={debounceSearch}
+							/>
+							{@html svgSearch}
+						</form>
 					</div>
 					<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 						<div>
@@ -111,15 +116,13 @@
 								>Page {data?.results.pagination.page} of {data?.results.pagination.totalPages}</span
 							>
 							<form class="inline-block" method="get">
-								<input
-									type="hidden"
-									name="page"
-									value={data?.results.pagination.previous?.page}
-								/>
+								<input type="hidden" name="page" value={data?.results.pagination.previous?.page} />
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
 								<button
 									type="submit"
-									class="{!data?.results.pagination.previous ? 'cursor-not-allowed' : ''} inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+									class="{!data?.results.pagination.previous
+										? 'cursor-not-allowed'
+										: ''} inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 									disabled={!data?.results.pagination.previous}
 								>
 									<svg
@@ -140,7 +143,9 @@
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
 								<button
 									type="submit"
-									class="{!data?.results.pagination.next ? 'cursor-not-allowed' : ''} inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
+									class="{!data?.results.pagination.next
+										? 'cursor-not-allowed'
+										: ''} inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 									disabled={!data?.results.pagination.next}
 								>
 									<svg
@@ -184,13 +189,7 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Full Name</th
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Phone</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Address</th
-							>
-							<!-- <th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">Active</th> -->
+
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Balance</th
 							>
@@ -200,27 +199,21 @@
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
-						{#each data.results?.payload as contact (contact.contacts.id)}
+						{#each data.results?.contacts as contact (contact.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{contact.contacts.id}</td
+									>{contact.id}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{contact.contacts.full_name}</td
+									>{contact.full_name}</td
 								>
+
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>"None"</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>"None"</td
-								>
-								<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">{contacts.isActive}</td> -->
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{contact.contacts.balance_due}</td
+									>{contact.balance_due}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/contacts/view/${contact.contacts.id}`}>
+										<a href={`/contacts/view/${contact.id}`}>
 											{@html svgEye}
 										</a>
 										<button class="px-2">
@@ -236,54 +229,7 @@
 					</tbody>
 				</table>
 
-				<div class="flex w-full mt-5 space-x-2 justify-end">
-					<button
-						class="inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none"
-					>
-						<svg
-							class="w-4"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							stroke-width="2"
-							fill="none"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<polyline points="15 18 9 12 15 6" />
-						</svg>
-					</button>
-					<button
-						class="inline-flex items-center h-8 w-8 justify-center text-gray-500 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none"
-						>1</button
-					>
-					<button
-						class="inline-flex items-center h-8 w-8 justify-center text-gray-500 rounded-md shadow border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-800 dark:text-white leading-none"
-						>2</button
-					>
-					<button
-						class="inline-flex items-center h-8 w-8 justify-center text-gray-500 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none"
-						>3</button
-					>
-					<button
-						class="inline-flex items-center h-8 w-8 justify-center text-gray-500 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none"
-						>4</button
-					>
-					<button
-						class="inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none"
-					>
-						<svg
-							class="w-4"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							stroke-width="2"
-							fill="none"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<polyline points="9 18 15 12 9 6" />
-						</svg>
-					</button>
-				</div>
+				
 			</div>
 		</div>
 	{/if}

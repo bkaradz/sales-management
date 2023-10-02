@@ -14,7 +14,17 @@ export const getContacts = async (input: SearchParams) => {
 	const pagination = getPagination(input);
 
 	try {
-		const totalContactsRecords = await db.select({ count: sql<number>`count(*)` }).from(contacts);
+
+		let totalContactsRecords
+
+		if (!input.search) {
+			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
+				.from(contacts)
+		} else {
+			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
+				.from(contacts)
+				.where(sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`);
+		}
 
 		pagination.totalRecords = +totalContactsRecords[0].count
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
@@ -23,51 +33,21 @@ export const getContacts = async (input: SearchParams) => {
 			pagination.next = undefined;
 		}
 
-		const contactsQuery = await db.select({
-			contact: contacts,
-			phones,
-			emails,
-			address
-		}).from(contacts)
-			.orderBy(asc(contacts.full_name))
-			.leftJoin(phones, eq(contacts.id, phones.contact_id))
-			.leftJoin(emails, eq(contacts.id, emails.contact_id))
-			.leftJoin(address, eq(contacts.id, address.contact_id))
-			.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-		console.log("🚀 ~ file: contacts.drizzle.ts:37 ~ getContacts ~ contactsQuery:", contactsQuery)
+		let contactsQuery
 
-		const result = contactsQuery.reduce<Record<number, { contact: Contacts; phones: Phones[]; emails: Emails[]; address: Address[] }>>(
-			(acc, row) => {
-				const contact = row.contact;
-				const phones = row.phones;
-				const emails = row.emails;
-				const address = row.address;
-
-				if (!acc[contact.id]) {
-					acc[contact.id] = { contact, phones: [], emails: [], address: [] };
-				}
-
-				if (phones) {
-					acc[contact.id].phones.push(phones);
-				}
-
-				if (emails) {
-					acc[contact.id].emails.push(emails);
-				}
-
-
-				if (address) {
-					acc[contact.id].address.push(address);
-				}
-
-				return acc;
-			}, {},
-		);
-
-		console.log("🚀 ~ file: contacts.drizzle.ts:39 ~ getContacts ~ result:", result)
+		if (!input.search) {
+			contactsQuery = await db.select().from(contacts)
+				.orderBy(asc(contacts.full_name))
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+		} else {
+			contactsQuery = await db.select().from(contacts)
+				.orderBy(asc(contacts.full_name))
+				.where(sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`)
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+		}
 
 		return {
-			payload: result,
+			contacts: contactsQuery,
 			pagination
 		}
 
@@ -100,10 +80,20 @@ export const getById = async (input: number) => {
 
 	try {
 
-		const contactsQuery = await db.select().from(contacts).where(eq(contacts.id, input)).orderBy(asc(contacts.full_name))
+		const contactsQuery = await db.select({
+			contact: contacts,
+			phones,
+			emails,
+			address
+		}).from(contacts)
+			.orderBy(asc(contacts.full_name))
+			.leftJoin(phones, eq(contacts.id, phones.contact_id))
+			.leftJoin(emails, eq(contacts.id, emails.contact_id))
+			.leftJoin(address, eq(contacts.id, address.contact_id))
+			.where(eq(contacts.id, input))
 
 		return {
-			payload: contactsQuery,
+			contact: contactsQuery,
 		}
 
 	} catch (error) {
@@ -172,3 +162,15 @@ export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
 };
 
 export type SaveOrUpdateContact = typeof saveOrUpdateContact;
+
+// const contactsQuery = await db.select({
+// 	contact: contacts,
+// 	phones,
+// 	emails,
+// 	address
+// }).from(contacts)
+// 	.orderBy(asc(contacts.full_name))
+// 	.leftJoin(phones, eq(contacts.id, phones.contact_id))
+// 	.leftJoin(emails, eq(contacts.id, emails.contact_id))
+// 	.leftJoin(address, eq(contacts.id, address.contact_id))
+// 	.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)

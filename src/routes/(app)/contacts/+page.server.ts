@@ -12,6 +12,9 @@ export const load = (async (event) => {
 
     const page = event.url.searchParams.get('page')
     if (page) query = { ...query, page: +page }
+
+    const search = event.url.searchParams.get('search')
+    if (search) query = { ...query, search }
     
     const contacts = async (query: any) => {
         return await router.createCaller(await createContext(event)).contacts.getContacts(query);
