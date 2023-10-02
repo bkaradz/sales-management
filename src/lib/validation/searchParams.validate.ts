@@ -4,7 +4,8 @@ export const searchParamsSchema = z
 	.object({
 		limit: z.number().optional(),
 		page: z.number().optional(),
-		sort: z.string().optional()
+		sort: z.string().optional(),
+		search: z.string().optional()
 	})
 	.passthrough();
 

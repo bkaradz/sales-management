@@ -1,13 +1,12 @@
 import { getPagination } from '$lib/utility/pagination.util';
-import { getBoolean } from '$lib/utility/toBoolean';
 import type { SaveContact, SaveContactKeys } from '$lib/trpc/routes/contacts/contact.validate';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
-import omit from 'lodash-es/omit';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { asc, eq, sql } from 'drizzle-orm';
 import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema';
+import trim from 'lodash-es/trim';
 
 export const getContacts = async (input: SearchParams) => {
 
@@ -17,7 +16,7 @@ export const getContacts = async (input: SearchParams) => {
 
 		let totalContactsRecords
 
-		if (!input.search) {
+		if (!trim(input.search)) {
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
 		} else {
@@ -35,7 +34,7 @@ export const getContacts = async (input: SearchParams) => {
 
 		let contactsQuery
 
-		if (!input.search) {
+		if (!trim(input.search)) {
 			contactsQuery = await db.select().from(contacts)
 				.orderBy(asc(contacts.full_name))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
@@ -92,9 +91,7 @@ export const getById = async (input: number) => {
 			.leftJoin(address, eq(contacts.id, address.contact_id))
 			.where(eq(contacts.id, input))
 
-		return {
-			contact: contactsQuery,
-		}
+		return contactsQuery[0]
 
 	} catch (error) {
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)

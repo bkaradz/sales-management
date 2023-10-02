@@ -9,6 +9,6 @@ export const load = (async (event) => {
             .contacts.getById(parseInt(event.params.id, 10));
     };
     return {
-        contact: contact()
+        results: contact()
     };
 }) satisfies PageServerLoad;
