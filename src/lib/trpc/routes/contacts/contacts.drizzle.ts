@@ -85,13 +85,41 @@ export const getById = async (input: number) => {
 			emails,
 			address
 		}).from(contacts)
-			.orderBy(asc(contacts.full_name))
 			.leftJoin(phones, eq(contacts.id, phones.contact_id))
 			.leftJoin(emails, eq(contacts.id, emails.contact_id))
 			.leftJoin(address, eq(contacts.id, address.contact_id))
 			.where(eq(contacts.id, input))
+		console.log("🚀 ~ file: contacts.drizzle.ts:93 ~ getById ~ contactsQuery:", contactsQuery)
 
-		return contactsQuery[0]
+		const result = contactsQuery.reduce<Record<number, { contact: Contacts; phones: Phones[]; emails: Emails[]; address: Address[] }>>(
+			(acc, row) => {
+				const contact = row.contact;
+				const phones = row.phones;
+				const emails = row.emails;
+				const address = row.address;
+
+				if (!acc[contact.id]) {
+					acc[contact.id] = { contact, phones: [], emails: [], address: [] };
+				}
+
+				if (phones) {
+					acc[contact.id].phones.push(phones);
+				}
+
+				if (emails) {
+					acc[contact.id].emails.push(emails);
+				}
+
+
+				if (address) {
+					acc[contact.id].address.push(address);
+				}
+
+				return acc;
+			}, {},
+		);
+
+		return result[input]
 
 	} catch (error) {
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
