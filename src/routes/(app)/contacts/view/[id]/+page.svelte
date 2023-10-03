@@ -14,28 +14,12 @@
 		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 	>
 		<div class="text-3xl text-gray-900 dark:text-white capitalize">Contact</div>
-		<!-- <div class="relative mt-2">
-			<input
-				type="text"
-				class="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
-				placeholder="Search"
-			/>
-			{@html svgSearch}
-		</div> -->
+
 		<div class="space-y-4 mt-3">
-			<!-- {#each users as user} -->
-			<button
-				class={`${
-					// true
-					// 	? 'shadow-lg relative ring-2 ring-blue-500 focus:outline-none'
-					// 	:
-					'shadow'
-				} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
-			>
+			<div class="shadow bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
 				<div
 					class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 				>
-					<!-- <img src={user.img} class="w-7 h-7 mr-2 rounded-full" alt="profile" /> -->
 					{data.results?.contact?.full_name}
 				</div>
 				<div class="flex items-center w-full">
@@ -44,8 +28,7 @@
 						{data.results?.contact.is_corporate}
 					</div>
 				</div>
-			</button>
-			<!-- {/each} -->
+			</div>
 		</div>
 	</div>
 	<!-- User Table -->

@@ -64,11 +64,11 @@ export const deleteById = async (input: number) => {
 
 
 export const saveOrUpdateProducts = async (input: saveProduct, ctx: Context) => {
-	if (!ctx?.userId) {
+	if (!ctx.session.sessionId) {
 		throw error(404,'User not authorised');
 	}
 
-	const created_by = ctx.userId;
+	const created_by = ctx.session.userId;
 
 	if (input.id) {
 		return await db.query.products.update({

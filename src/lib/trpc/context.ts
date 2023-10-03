@@ -6,15 +6,13 @@ export async function createContext(event: RequestEvent) {
 
 	if (session) {
 		return {
-			sessionId: session.sessionId,
-			userId: session.userId,
+			session: session,
 			event
 		};
 	}
 
 	return {
-		sessionId: null,
-		userId: null,
+		session: null,
 		event
 	};
 }

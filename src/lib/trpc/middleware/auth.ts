@@ -3,7 +3,7 @@ import { t } from '$lib/trpc/t';
 import { TRPCError } from '@trpc/server';
 
 const isAuthenticated = t.middleware(async ({ next, ctx }) => {
-	if (!ctx?.sessionId) {
+	if (!ctx?.session.sessionId) {
 		// throw redirect(302, "/auth/login")
 		throw new TRPCError({
 			code: 'UNAUTHORIZED',

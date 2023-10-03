@@ -2,11 +2,12 @@ import { getPagination } from '$lib/utility/pagination.util';
 import type { SaveContact, SaveContactKeys } from '$lib/trpc/routes/contacts/contact.validate';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from "$lib/trpc/context"
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
+import normalizePhone from '$lib/utility/normalizePhone.util';
 
 export const getContacts = async (input: SearchParams) => {
 
@@ -29,7 +30,7 @@ export const getContacts = async (input: SearchParams) => {
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
 		} else {
-			
+
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
 				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`), (eq(contacts.active, true))));
@@ -48,19 +49,6 @@ export const getContacts = async (input: SearchParams) => {
 			pagination.next = undefined;
 		}
 
-
-
-		// if (!trim(input.search)) {
-		// 	contactsQuery = await db.select().from(contacts)
-		// 		.orderBy(asc(contacts.full_name))
-		// 		.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-		// } else {
-		// 	contactsQuery = await db.select().from(contacts)
-		// 		.orderBy(asc(contacts.full_name))
-		// 		.where(sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`)
-		// 		.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-		// }
-
 		return {
 			contacts: contactsQuery,
 			pagination
@@ -70,24 +58,6 @@ export const getContacts = async (input: SearchParams) => {
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
 	}
 };
-
-export const getCorporate = async (input: SearchParams) => {
-
-	try {
-
-		const contactsQuery = await db.select().from(contacts).where(eq(contacts.is_corporate, true)).orderBy(asc(contacts.full_name))
-
-		return {
-			payload: contactsQuery,
-		}
-
-	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
-	}
-};
-
-export type GetCorporate = typeof getCorporate;
-
 
 export const getById = async (input: number) => {
 
@@ -163,7 +133,7 @@ export const deleteById = async (input: number) => {
 
 
 export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
-	if (!ctx.userId) {
+	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
 	}
 
@@ -203,16 +173,66 @@ export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
 	}
 };
 
-export type SaveOrUpdateContact = typeof saveOrUpdateContact;
+export const uploadContacts = async (input: any[], ctx: Context) => {
 
-// const contactsQuery = await db.select({
-// 	contact: contacts,
-// 	phones,
-// 	emails,
-// 	address
-// }).from(contacts)
-// 	.orderBy(asc(contacts.full_name))
-// 	.leftJoin(phones, eq(contacts.id, phones.contact_id))
-// 	.leftJoin(emails, eq(contacts.id, emails.contact_id))
-// 	.leftJoin(address, eq(contacts.id, address.contact_id))
-// 	.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+	if (!ctx.session) {
+		throw error(404, 'User not found');
+	}
+
+	try {
+
+		const allDocsPromises: any[] = [];
+
+		input.forEach(async (contact) => {
+
+			try {
+				const contactsTx = await db.transaction(async (tx) => {
+
+					const contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
+
+					if (contact?.phone) {
+						normalizePhone(contact.phone).forEach(async (item: { phone: any; }) => {
+
+							await tx.transaction(async (tx2) => {
+								await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
+							})
+						})
+
+					}
+
+					if (contact?.email) {
+						contact.email.split(',').forEach(async (item: { email: any; }) => {
+							await tx.transaction(async (tx2) => {
+								await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
+							})
+						})
+					}
+
+					if (contact?.address) {
+						contact.address.split(',').forEach(async (item: { address: any; }) => {
+							await tx.transaction(async (tx2) => {
+								await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
+							})
+						})
+					}
+				});
+
+				allDocsPromises.push(contactsTx)
+
+			} catch (err: unknown) {
+
+				return fail(500, {
+					message: 'A server error occurred',
+					errors: err
+				})
+			}
+		});
+
+		await Promise.all(allDocsPromises);
+
+		return { success: true }
+
+	} catch (error) {
+		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+	}
+};

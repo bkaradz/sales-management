@@ -1,9 +1,6 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
 	import Aside from '$lib/components/Aside.svelte';
-	import { svgDropdown } from '$lib/assets/svgLogos';
-	import { menuTabs } from '$lib/data/tabsData';
-	import { enhance } from '$app/forms';
 	import Header from '$lib/components/Header.svelte';
 	
 
