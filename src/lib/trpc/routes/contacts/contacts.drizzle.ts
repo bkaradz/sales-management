@@ -4,7 +4,7 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
 import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
 
@@ -15,14 +15,30 @@ export const getContacts = async (input: SearchParams) => {
 	try {
 
 		let totalContactsRecords
+		let contactsQuery
 
 		if (!trim(input.search)) {
+
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
+				.where(eq(contacts.active, true))
+
+			contactsQuery = await db.select().from(contacts)
+				.orderBy(asc(contacts.full_name))
+				.where(eq(contacts.active, true))
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+
 		} else {
+			
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
-				.where(sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`);
+				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`), (eq(contacts.active, true))));
+
+			contactsQuery = await db.select().from(contacts)
+				.orderBy(asc(contacts.full_name))
+				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`), (eq(contacts.active, true))))
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+
 		}
 
 		pagination.totalRecords = +totalContactsRecords[0].count
@@ -32,18 +48,18 @@ export const getContacts = async (input: SearchParams) => {
 			pagination.next = undefined;
 		}
 
-		let contactsQuery
 
-		if (!trim(input.search)) {
-			contactsQuery = await db.select().from(contacts)
-				.orderBy(asc(contacts.full_name))
-				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-		} else {
-			contactsQuery = await db.select().from(contacts)
-				.orderBy(asc(contacts.full_name))
-				.where(sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`)
-				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-		}
+
+		// if (!trim(input.search)) {
+		// 	contactsQuery = await db.select().from(contacts)
+		// 		.orderBy(asc(contacts.full_name))
+		// 		.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+		// } else {
+		// 	contactsQuery = await db.select().from(contacts)
+		// 		.orderBy(asc(contacts.full_name))
+		// 		.where(sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`)
+		// 		.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+		// }
 
 		return {
 			contacts: contactsQuery,
@@ -56,8 +72,6 @@ export const getContacts = async (input: SearchParams) => {
 };
 
 export const getCorporate = async (input: SearchParams) => {
-
-	const pagination = getPagination(input);
 
 	try {
 
@@ -79,17 +93,29 @@ export const getById = async (input: number) => {
 
 	try {
 
-		const contactsQuery = await db.select({
-			contact: contacts,
-			phones,
-			emails,
-			address
-		}).from(contacts)
-			.leftJoin(phones, eq(contacts.id, phones.contact_id))
-			.leftJoin(emails, eq(contacts.id, emails.contact_id))
-			.leftJoin(address, eq(contacts.id, address.contact_id))
-			.where(eq(contacts.id, input))
-		console.log("🚀 ~ file: contacts.drizzle.ts:93 ~ getById ~ contactsQuery:", contactsQuery)
+		let contactsQuery: any[] = []
+
+		contactsQuery = [...contactsQuery, ...(
+			(await db.select({
+				contact: contacts, phones
+			}).from(contacts)
+				.leftJoin(phones, eq(contacts.id, phones.contact_id))
+				.where(eq(contacts.id, input)))
+		)]
+		contactsQuery = [...contactsQuery, ...(
+			(await db.select({
+				contact: contacts, address
+			}).from(contacts)
+				.leftJoin(address, eq(contacts.id, address.contact_id))
+				.where(eq(contacts.id, input)))
+		)]
+		contactsQuery = [...contactsQuery, ...(
+			(await db.select({
+				contact: contacts, emails
+			}).from(contacts)
+				.leftJoin(emails, eq(contacts.id, emails.contact_id))
+				.where(eq(contacts.id, input)))
+		)]
 
 		const result = contactsQuery.reduce<Record<number, { contact: Contacts; phones: Phones[]; emails: Emails[]; address: Address[] }>>(
 			(acc, row) => {
@@ -98,22 +124,13 @@ export const getById = async (input: number) => {
 				const emails = row.emails;
 				const address = row.address;
 
-				if (!acc[contact.id]) {
-					acc[contact.id] = { contact, phones: [], emails: [], address: [] };
-				}
+				if (!acc[contact.id]) acc[contact.id] = { contact, phones: [], emails: [], address: [] };
 
-				if (phones) {
-					acc[contact.id].phones.push(phones);
-				}
+				if (phones) acc[contact.id].phones.push(phones);
 
-				if (emails) {
-					acc[contact.id].emails.push(emails);
-				}
+				if (emails) acc[contact.id].emails.push(emails);
 
-
-				if (address) {
-					acc[contact.id].address.push(address);
-				}
+				if (address) acc[contact.id].address.push(address);
 
 				return acc;
 			}, {},

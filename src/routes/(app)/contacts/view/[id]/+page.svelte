@@ -5,7 +5,6 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	$: console.log('🚀 ~ file: +page.svelte:9 ~ data:', data.results);
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">

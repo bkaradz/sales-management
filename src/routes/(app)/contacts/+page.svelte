@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { svgBin, svgEye, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
@@ -216,12 +217,17 @@
 										<a href={`/contacts/view/${contact.id}`}>
 											{@html svgEye}
 										</a>
-										<button class="px-2">
+										<a 
+										href={`/contacts/edit/${contact.id}`}
+										class="px-2">
 											{@html svgPen}
-										</button>
-										<button>
-											{@html svgBin}
-										</button>
+										</a>
+										<form action="?/delete" method="post" use:enhance>
+											<input type="hidden" name="delete" value={contact.id} />
+											<button>
+												{@html svgBin}
+											</button>
+										</form>
 									</div>
 								</td>
 							</tr>
