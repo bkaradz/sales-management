@@ -1,5 +1,4 @@
 import { getPagination } from '$lib/utility/pagination.util';
-import type { SaveContact, SaveContactKeys } from '$lib/trpc/routes/contacts/contact.validate';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from "$lib/trpc/context"
 import { error, fail } from '@sveltejs/kit';
@@ -132,45 +131,50 @@ export const deleteById = async (input: number) => {
 };
 
 
-export const saveOrUpdateContact = async (input: SaveContact, ctx: Context) => {
+export const createContact = async (input: any, ctx: Context) => {
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
 	}
 
-	if (input.id) {
-		return await db.query.contact.update({
-			where: {
-				id: input.id
-			},
-			data: {
-				...input,
-				email: {
-					create: input.email
-				},
-				phone: {
-					create: input.phone
-				},
-				address: {
-					create: input.address
-				}
+	try {
+
+		await db.transaction(async (tx) => {
+
+			const contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: input?.is_corporate || false, }).returning({ id: contacts.id });
+
+			if (input?.phone) {
+				normalizePhone(input.phone).forEach(async (item: { phone: any; }) => {
+
+					await tx.transaction(async (tx2) => {
+						await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
+					})
+				})
+
+			}
+
+			if (input?.email) {
+				input.email.split(',').forEach(async (item: { email: any; }) => {
+					await tx.transaction(async (tx2) => {
+						await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
+					})
+				})
+			}
+
+			if (input?.address) {
+				input.address.split(',').forEach(async (item: { address: any; }) => {
+					await tx.transaction(async (tx2) => {
+						await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
+					})
+				})
 			}
 		});
-	} else {
-		return await db.query.contacts.create({
-			data: {
-				...input,
-				email: {
-					create: input.email
-				},
-				phone: {
-					create: input.phone
-				},
-				address: {
-					create: input.address
-				}
-			}
-		});
+
+		return { success: true }
+
+	} catch (error) {
+		console.error("🚀 ~ file: contacts.drizzle.ts:143 ~ createContact ~ error:", error)
 	}
+
 };
 
 export const uploadContacts = async (input: any[], ctx: Context) => {
