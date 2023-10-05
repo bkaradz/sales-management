@@ -5,6 +5,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	$: console.log("🚀 ~ file: +page.svelte:8 ~ data:", data.results?.pagination)
 
 	const debounce = (func: Function, delay: number) => {
 		let timeoutId: string | number | NodeJS.Timeout | undefined;
@@ -25,6 +26,7 @@
 	const debounceSearch = debounce(search, 400);
 
 	let old_req_limit_controller: AbortController;
+	let openModal = false
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -176,7 +178,7 @@
 									on:change={debounceSearch}
 								/>
 							</form>
-							<span class="">entries</span>
+							<span class="">of {data?.results.pagination.totalRecords} entries</span>
 						</div>
 					</div>
 				</div>
@@ -224,11 +226,26 @@
 										</a>
 										<form action="?/delete" method="post" use:enhance>
 											<input type="hidden" name="delete" value={contact.id} />
-											<button>
+											<button type="submit">
 												{@html svgBin}
 											</button>
 										</form>
-									</div>
+										<!-- <button class="m-0 p-0" on:click={() => openModal = true}>
+											{@html svgBin}
+										</button>
+										<dialog id="my_modal_4" class="modal backdrop-blur-sm bg-white/30" class:modal-open={openModal}>
+											<form method="post" class="modal-box" action="?/delete" use:enhance>
+												<input type="hidden" name="delete" value={contact.id} />
+												<p class="py-4">Are you sure you want to delete</p>
+												<div class="modal-action">
+													
+													<input  class="btn" on:click={() => openModal = false} type="submit" value="Yes">
+													<input  class="btn" on:click={() => openModal = false} type="dialog" value="No">
+												</div>
+												
+											</form>
+										</dialog>
+									</div> -->
 								</td>
 							</tr>
 						{/each}

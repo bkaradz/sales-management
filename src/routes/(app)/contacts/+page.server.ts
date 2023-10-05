@@ -37,6 +37,7 @@ export const actions: Actions = {
 
         const data = await event.request.formData();
         const formData = Object.fromEntries(data)
+        console.log("🚀 ~ file: +page.server.ts:40 ~ delete: ~ formData:", formData)
         
         return await router.createCaller(await createContext(event)).contacts.deleteById(+formData.delete)
 
