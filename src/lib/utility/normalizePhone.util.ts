@@ -7,7 +7,7 @@ const normalizePhone = (phone: string) => {
 		}
 		remNonNumeric;
 		const zeros = remNonNumeric.replace(/\+/g, '00');
-		return { phone: zeros };
+		return zeros;
 	});
 };
 

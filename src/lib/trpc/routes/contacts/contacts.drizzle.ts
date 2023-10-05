@@ -132,42 +132,33 @@ export const deleteById = async (input: number) => {
 
 
 export const createContact = async (input: any, ctx: Context) => {
+
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
 	}
 
 	try {
 
-		await db.transaction(async (tx) => {
+		const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: input?.is_corporate || false, }).returning({ id: contacts.id });
 
-			const contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: input?.is_corporate || false, }).returning({ id: contacts.id });
+		if (input?.phone) {
+			normalizePhone(input.phone).forEach(async (item: string) => {
+				await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+			})
 
-			if (input?.phone) {
-				normalizePhone(input.phone).forEach(async (item: { phone: any; }) => {
+		}
 
-					await tx.transaction(async (tx2) => {
-						await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
-					})
-				})
+		if (input?.email) {
+			input.email.split(',').forEach(async (item: string) => {
+				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+			})
+		}
 
-			}
-
-			if (input?.email) {
-				input.email.split(',').forEach(async (item: { email: any; }) => {
-					await tx.transaction(async (tx2) => {
-						await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
-					})
-				})
-			}
-
-			if (input?.address) {
-				input.address.split(',').forEach(async (item: { address: any; }) => {
-					await tx.transaction(async (tx2) => {
-						await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
-					})
-				})
-			}
-		});
+		if (input?.address) {
+			input.address.split(',').forEach(async (item: string) => {
+				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+			})
+		}
 
 		return { success: true }
 
@@ -185,43 +176,30 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 
 	try {
 
-		const allDocsPromises: any[] = [];
-
 		input.forEach(async (contact) => {
 
 			try {
-				const contactsTx = await db.transaction(async (tx) => {
 
-					const contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
+				const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: contact.full_name, active: true, is_corporate: input?.is_corporate || false, }).returning({ id: contacts.id });
 
-					if (contact?.phone) {
-						normalizePhone(contact.phone).forEach(async (item: { phone: any; }) => {
-
-							await tx.transaction(async (tx2) => {
-								await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
-							})
-						})
-
-					}
-
-					if (contact?.email) {
-						contact.email.split(',').forEach(async (item: { email: any; }) => {
-							await tx.transaction(async (tx2) => {
-								await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
-							})
-						})
-					}
-
-					if (contact?.address) {
-						contact.address.split(',').forEach(async (item: { address: any; }) => {
-							await tx.transaction(async (tx2) => {
-								await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
-							})
-						})
-					}
-				});
-
-				allDocsPromises.push(contactsTx)
+				if (contact?.phone) {
+					normalizePhone(contact.phone).forEach(async (item: string) => {
+						await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+					})
+		
+				}
+		
+				if (contact?.email) {
+					contact.email.split(',').forEach(async (item: string) => {
+						await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+					})
+				}
+		
+				if (contact?.address) {
+					contact.address.split(',').forEach(async (item: string) => {
+						await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+					})
+				}
 
 			} catch (err: unknown) {
 
@@ -230,9 +208,8 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 					errors: err
 				})
 			}
-		});
 
-		await Promise.all(allDocsPromises);
+		});
 
 		return { success: true }
 
