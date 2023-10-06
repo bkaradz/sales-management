@@ -139,7 +139,54 @@ export const createContact = async (input: any, ctx: Context) => {
 
 	try {
 
-		const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: input?.is_corporate || false, }).returning({ id: contacts.id });
+		const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), }).returning({ id: contacts.id });
+
+		if (input?.phone) {
+			normalizePhone(input.phone).forEach(async (item: string) => {
+				await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+			})
+
+		}
+
+		if (input?.email) {
+			input.email.split(',').forEach(async (item: string) => {
+				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+			})
+		}
+
+		if (input?.address) {
+			input.address.split(',').forEach(async (item: string) => {
+				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+			})
+		}
+
+		return { success: true }
+
+	} catch (error) {
+		console.error("🚀 ~ file: contacts.drizzle.ts:143 ~ createContact ~ error:", error)
+	}
+
+};
+
+export const updateContact = async (input: any, ctx: Context) => {
+console.log("🚀 ~ file: contacts.drizzle.ts:172 ~ updateContact ~ input:", input)
+
+	if (!ctx.session.sessionId) {
+		throw error(404, 'User not found');
+	}
+
+	try {
+
+		const deleteWait = []
+
+		// delete address, phone and email with contact id from database then add new details
+		deleteWait.push(await db.delete(phones).where(eq(phones.contact_id, input.id)).returning({id: phones.id}))
+		deleteWait.push(await db.delete(emails).where(eq(emails.contact_id, input.id)).returning({id: emails.id}))
+		deleteWait.push(await db.delete(address).where(eq(address.contact_id, input.id)).returning({id: address.id}))
+
+		await Promise.all(deleteWait)
+
+		const contactResult = await db.update(contacts).set({  user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), }).where(eq(input.id, contacts.id)).returning({ id: contacts.id });
 
 		if (input?.phone) {
 			normalizePhone(input.phone).forEach(async (item: string) => {

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { protectedProcedure } from '$lib/trpc/middleware/auth';
 import { searchParamsSchema } from "$lib/validation/searchParams.validate";
 import { saveContactsSchema } from "$lib/trpc/routes/contacts/contact.validate";
-import { getContacts, createContact, deleteById, getById, uploadContacts } from "./contacts.drizzle";
+import { getContacts, createContact, deleteById, getById, uploadContacts, updateContact } from "./contacts.drizzle";
 
 
 export const contacts = router({
@@ -20,6 +20,9 @@ export const contacts = router({
         return await deleteById(input);
     }),
     createContact: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
+        return await createContact(input, ctx);
+    }),
+    updateContact: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
         return await createContact(input, ctx);
     })
 });

@@ -1,24 +1,150 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { svgThreeDots } from '$lib/assets/svgLogos';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	$: console.log("🚀 ~ file: +page.svelte:7 ~ data:", data)
 
-    let openModal = false
-
+	let corporate = data.results.contact?.is_corporate || false;
 </script>
 
-<!-- You can open the modal using ID.showModal() method -->
-<button class="btn" on:click={() => openModal = true}>open modal</button>
-    
-<dialog id="my_modal_4" class="modal" class:modal-open={openModal}>
-  <form method="dialog" class="modal-box">
-    <h3 class="font-bold text-lg">Hello!</h3>
-    <p class="py-4">Click the button below to close</p>
-    <div class="modal-action">
-      <!-- if there is a button, it will close the modal -->
-      <button class="btn" on:click={() => openModal = false}>Close</button>
-    </div>
-  </form>
-</dialog>
+<div class="flex-grow flex overflow-x-hidden">
+	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
+		<div
+			class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
+		>
+			<div class="flex w-full items-center">
+				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Update Contact</div>
+				<div class="ml-auto sm:flex hidden items-center justify-end">
+					<!--  -->
+				</div>
+			</div>
+		</div>
 
+		<div
+			class="px-4 md:px-0 lg:w-6/12 bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-700 m-auto"
+		>
+			<div class="md:mx-6 md:p-12">
+				<div class="text-center">
+					<h4 class="mb-6 pb-1 text-xl font-semibold">Please edit the Contact</h4>
+				</div>
+
+				<form method="POST" action="?/update" use:enhance>
+					<input hidden type="number" name="id" id="id" value={data.results.contact?.id}>
+					<!--Username input-->
+					<div class="relative mb-4">
+						<input
+							type="text"
+							class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+							id="full_name"
+							name="full_name"
+							placeholder="Full Name"
+							value={data.results.contact?.full_name}
+						/>
+						<label
+							for="full_name"
+							class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+							>Full Name
+						</label>
+					</div>
+
+					<!-- Corporate  -->
+					<div class=" mb-4 ml-3">
+						<label class="">
+							<input name="is_corporate" type="checkbox" bind:checked={corporate} />
+							{#if corporate}
+								<span class="text-neutral-500 ml-2"> Corporate </span>
+							{:else}
+								<span class="text-neutral-500 ml-2"> Individual </span>
+							{/if}
+						</label>
+					</div>
+
+					{#if corporate}
+					<!--Vat No or Bp Number-->
+					<div class="relative mb-4">
+						<input
+							type="text"
+							class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+							id="vat_or_bp_number"
+							name="vat_or_bp_number"
+							placeholder="Vat No or Bp Number"
+							value={data.results.contact?.vat_or_bp_number}
+						/>
+						<label
+							for="vat_or_bp_number"
+							class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+							>Vat No or Bp Number
+						</label>
+					</div>
+					{/if}
+
+					<!--Email input-->
+					<div class="relative mb-4">
+						<input
+							type="text"
+							class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+							id="email"
+							name="email"
+							placeholder="Email"
+							value={data.results.emails}
+						/>
+						<label
+							for="email"
+							class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+							>Email
+						</label>
+					</div>
+
+					<!--Phone input-->
+					<div class="relative mb-4">
+						<input
+							type="text"
+							class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+							id="phone"
+							name="phone"
+							placeholder="Phone"
+							value={data.results.phones}
+						/>
+						<label
+							for="phone"
+							class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+							>Phone
+						</label>
+					</div>
+
+					<!--Address input-->
+					<div class="relative mb-4">
+						<textarea
+							class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+							id="address"
+							rows="4"
+							name="address"
+							placeholder="Address"
+							value={data.results.address}
+						/>
+						<label
+							for="address"
+							class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+							>Address
+						</label>
+					</div>
+
+					<!--Submit button-->
+					<div class="mb-12 pb-1 pt-1 text-center">
+						<button
+							class="mb-3 inline-block w-full rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_rgba(0,0,0,0.2)] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)]"
+							type="submit"
+							data-te-ripple-init
+							data-te-ripple-color="light"
+							style="background: linear-gradient(to right, #06b6d4, #3b82f6)"
+						>
+							Submit
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
