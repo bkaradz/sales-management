@@ -139,7 +139,7 @@ export const createContact = async (input: any, ctx: Context) => {
 
 	try {
 
-		const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), }).returning({ id: contacts.id });
+		const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, vat_or_bp_number: input.vat_or_bp_number, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), }).returning({ id: contacts.id });
 
 		if (input?.phone) {
 			normalizePhone(input.phone).forEach(async (item: string) => {
@@ -169,7 +169,6 @@ export const createContact = async (input: any, ctx: Context) => {
 };
 
 export const updateContact = async (input: any, ctx: Context) => {
-console.log("🚀 ~ file: contacts.drizzle.ts:172 ~ updateContact ~ input:", input)
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
@@ -180,13 +179,16 @@ console.log("🚀 ~ file: contacts.drizzle.ts:172 ~ updateContact ~ input:", inp
 		const deleteWait = []
 
 		// delete address, phone and email with contact id from database then add new details
-		deleteWait.push(await db.delete(phones).where(eq(phones.contact_id, input.id)).returning({id: phones.id}))
-		deleteWait.push(await db.delete(emails).where(eq(emails.contact_id, input.id)).returning({id: emails.id}))
-		deleteWait.push(await db.delete(address).where(eq(address.contact_id, input.id)).returning({id: address.id}))
+		deleteWait.push(await db.delete(phones).where(eq(phones.contact_id, input.id)).returning({ id: phones.id }))
+		deleteWait.push(await db.delete(emails).where(eq(emails.contact_id, input.id)).returning({ id: emails.id }))
+		deleteWait.push(await db.delete(address).where(eq(address.contact_id, input.id)).returning({ id: address.id }))
 
-		await Promise.all(deleteWait)
+		const allDeleted = await Promise.all(deleteWait)
 
-		const contactResult = await db.update(contacts).set({  user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), }).where(eq(input.id, contacts.id)).returning({ id: contacts.id });
+		const contactResult = await db.update(contacts)
+			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), vat_or_bp_number: input.vat_or_bp_number, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), })
+			.where(eq(input.id, contacts.id))
+			.returning({ id: contacts.id });
 
 		if (input?.phone) {
 			normalizePhone(input.phone).forEach(async (item: string) => {
@@ -210,7 +212,7 @@ console.log("🚀 ~ file: contacts.drizzle.ts:172 ~ updateContact ~ input:", inp
 		return { success: true }
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:143 ~ createContact ~ error:", error)
+		console.error("🚀 ~ file: contacts.drizzle.ts:216 ~ updateContact ~ error:", error)
 	}
 
 };
@@ -233,15 +235,15 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 					normalizePhone(contact.phone).forEach(async (item: string) => {
 						await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 					})
-		
+
 				}
-		
+
 				if (contact?.email) {
 					contact.email.split(',').forEach(async (item: string) => {
 						await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 					})
 				}
-		
+
 				if (contact?.address) {
 					contact.address.split(',').forEach(async (item: string) => {
 						await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
@@ -264,3 +266,10 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
 	}
 };
+
+// .values({ id: input.id, user_id: ctx.session.user.userId, full_name: input.full_name })
+// 			.onConflictDoUpdate({
+// 				target: contacts.id,
+// 				set: { user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false) }
+// 			})
+// 			.returning({ id: contacts.id });

@@ -23,6 +23,6 @@ export const contacts = router({
         return await createContact(input, ctx);
     }),
     updateContact: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
-        return await createContact(input, ctx);
+        return await updateContact(input, ctx);
     })
 });

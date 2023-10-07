@@ -5,7 +5,6 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	$: console.log("🚀 ~ file: +page.svelte:8 ~ data:", data.results?.pagination)
 
 	const debounce = (func: Function, delay: number) => {
 		let timeoutId: string | number | NodeJS.Timeout | undefined;

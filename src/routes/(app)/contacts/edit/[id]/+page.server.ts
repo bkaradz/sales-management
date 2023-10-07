@@ -6,10 +6,9 @@ import type { PageServerLoad } from './$types';
 export const load = (async (event) => {
     
         const contactResults = await router.createCaller(await createContext(event)).contacts.getById(+event.params.id);
-        console.log("🚀 ~ file: +page.server.ts:8 ~ load ~ contactResults:", contactResults)
 
         const contact = {
-            contact: contactResults?.contact,
+            ...contactResults?.contact,
             phones: '',
             emails: '',
             address: ''
@@ -22,7 +21,6 @@ export const load = (async (event) => {
             contact.emails = contactResults?.emails.map(email => email.email).toString() || ''
 
             contact.address = contactResults?.address.map(address => address.address).toString() || ''
-            
         }
 
 
@@ -43,7 +41,7 @@ export const actions: Actions = {
 
 		const data = await event.request.formData()
 		const formData = Object.fromEntries(data)
-		console.log("🚀 ~ file: +page.server.ts:48 ~ create: ~ formData:", formData)
+        formData.id = +formData.id as any
 	
 		return await router.createCaller(await createContext(event)).contacts.updateContact(formData)
 

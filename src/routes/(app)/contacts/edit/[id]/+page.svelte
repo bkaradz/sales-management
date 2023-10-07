@@ -4,9 +4,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	$: console.log("🚀 ~ file: +page.svelte:7 ~ data:", data)
 
-	let corporate = data.results.contact?.is_corporate || false;
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -31,7 +29,7 @@
 				</div>
 
 				<form method="POST" action="?/update" use:enhance>
-					<input hidden type="number" name="id" id="id" value={data.results.contact?.id}>
+					<input hidden type="number" name="id" id="id" value={data.results.id}>
 					<!--Username input-->
 					<div class="relative mb-4">
 						<input
@@ -40,7 +38,7 @@
 							id="full_name"
 							name="full_name"
 							placeholder="Full Name"
-							value={data.results.contact?.full_name}
+							bind:value={data.results.full_name}
 						/>
 						<label
 							for="full_name"
@@ -52,8 +50,8 @@
 					<!-- Corporate  -->
 					<div class=" mb-4 ml-3">
 						<label class="">
-							<input name="is_corporate" type="checkbox" bind:checked={corporate} />
-							{#if corporate}
+							<input name="is_corporate" type="checkbox" bind:checked={data.results.is_corporate} />
+							{#if data.results.is_corporate}
 								<span class="text-neutral-500 ml-2"> Corporate </span>
 							{:else}
 								<span class="text-neutral-500 ml-2"> Individual </span>
@@ -61,7 +59,7 @@
 						</label>
 					</div>
 
-					{#if corporate}
+					{#if data.results.is_corporate}
 					<!--Vat No or Bp Number-->
 					<div class="relative mb-4">
 						<input
@@ -70,7 +68,7 @@
 							id="vat_or_bp_number"
 							name="vat_or_bp_number"
 							placeholder="Vat No or Bp Number"
-							value={data.results.contact?.vat_or_bp_number}
+							bind:value={data.results.vat_or_bp_number}
 						/>
 						<label
 							for="vat_or_bp_number"
