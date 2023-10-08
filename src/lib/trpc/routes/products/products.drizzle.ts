@@ -1,94 +1,156 @@
 import { getPagination } from '$lib/utility/pagination.util';
-import type { saveProduct } from '$lib/trpc/routes/products/product.validate';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
-import omit from 'lodash-es/omit';
 import type { Context } from '$lib/trpc/context';
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { products } from '$lib/server/drizzle/schema';
-import { asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
+import trim from 'lodash-es/trim';
 
 export const getProducts = async (input: SearchParams) => {
+
 	const pagination = getPagination(input);
 
 	try {
-		const totalContactsRecords = await db.select({ count: sql<number>`count(*)` }).from(products);
 
-		pagination.totalRecords = +totalContactsRecords[0].count
+		let totalProductsRecords
+		let productsQuery
+
+		if (!trim(input.search)) {
+
+			totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
+				.from(products)
+				.where(eq(products.active, true))
+
+			productsQuery = await db.select().from(products)
+				.orderBy(asc(products.name))
+				.where(eq(products.active, true))
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+
+		} else {
+
+			totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
+				.from(products)
+				.where(and((sql`to_tsvector('simple', ${products.name}) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))));
+
+			productsQuery = await db.select().from(products)
+				.orderBy(asc(products.name))
+				.where(and((sql`to_tsvector('simple', ${products.name}) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))))
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+
+		}
+
+		pagination.totalRecords = +totalProductsRecords[0].count
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
-		const productsQuery = await db.select().from(products)
-			.orderBy(asc(products.name))
-			.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+		if (pagination.endIndex >= pagination.totalRecords) {
+			pagination.next = undefined;
+		}
 
 		return {
-			payload: productsQuery,
+			products: productsQuery,
 			pagination
 		}
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: products.drizzle.ts:84 ~ getProducts ~ error:", error)
 	}
 };
 
 export const getById = async (input: number) => {
 	try {
 
-		const productsQuery = await db.select().from(products).where(eq(products.id, input)).orderBy(asc(contacts.full_name))
+		const productsQuery = await db.select().from(products).where(eq(products.id, input))
 
 		return {
-			payload: productsQuery,
+			product: productsQuery[0],
 		}
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: products.drizzle.ts:84 ~ getProducts ~ error:", error)
 	}
 };
-
 
 export const deleteById = async (input: number) => {
 	try {
 
-		await db.update(products)
-  			.set({ active: false })
-  			.where(eq(products.id, input));
+		await db.update(products).set({ active: false }).where(eq(products.id, input));
 
 		return {
 			message: "success",
 		}
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: products.drizzle.ts:84 ~ getProducts ~ error:", error)
 	}
 };
 
+export const createProduct = async (input: any, ctx: Context) => {
 
-export const saveOrUpdateProducts = async (input: saveProduct, ctx: Context) => {
 	if (!ctx.session.sessionId) {
-		throw error(404,'User not authorised');
+		throw error(404, 'User not found');
 	}
 
-	const created_by = ctx.session.userId;
+	try {
 
-	if (input.id) {
-		return await db.query.products.update({
-			where: {
-				id: input.id
-			},
-			data: {
-				...input,
-				created_by
-			}
-		});
-	} else {
-		return await db.query.products.create({
-			data: {
-				...input,
-				created_by
-			}
-		});
+		await db.insert(products).values({ user_id: ctx.session.user.userId, product_category: 'embroidery', ...input });
+
+		return { success: true }
+
+	} catch (error) {
+		console.error("🚀 ~ file: products.drizzle.ts:143 ~ createProduct ~ error:", error)
 	}
+
 };
 
-export type SaveOrUpdateProducts = typeof saveOrUpdateProducts;
+export const updateProduct = async (input: any, ctx: Context) => {
 
+	if (!ctx.session.sessionId) {
+		throw error(404, 'User not found');
+	}
+
+	try {
+
+		await db.update(products)
+			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), product_category: 'embroidery', ...input })
+			.where(eq(input.id, products.id))
+			.returning({ id: products.id });
+
+		return { success: true }
+
+	} catch (error) {
+		console.error("🚀 ~ file: products.drizzle.ts:216 ~ updateProduct ~ error:", error)
+	}
+
+};
+
+export const uploadProducts = async (input: any[], ctx: Context) => {
+
+	if (!ctx.session) {
+		throw error(404, 'User not found');
+	}
+
+	try {
+
+		input.forEach(async (product) => {
+
+			try {
+
+				await db.insert(products).values({ user_id: ctx.session.user.userId, name: product.name, stitches: product.stitches, product_category: 'embroidery'})
+
+			} catch (err: unknown) {
+
+				return fail(500, {
+					message: 'A server error occurred',
+					errors: err
+				})
+			}
+
+		});
+
+		return { success: true }
+
+	} catch (error) {
+		console.error("🚀 ~ file: products.drizzle.ts:84 ~ getProducts ~ error:", error)
+	}
+};

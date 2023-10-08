@@ -1,6 +1,6 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
-import { redirect, type Actions, fail } from '@sveltejs/kit';
+import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {

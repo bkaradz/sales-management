@@ -8,66 +8,59 @@
 
 <div class="flex-grow flex overflow-x-hidden">
 	<!-- Users Cards -->
-
 	<div
 		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 	>
-		<div class="text-3xl text-gray-900 dark:text-white capitalize">Product</div>
-		<!-- <div class="relative mt-2">
-			<input
-				type="text"
-				class="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
-				placeholder="Search"
-			/>
-			{@html svgSearch}
-		</div> -->
-		<div class="space-y-4 mt-3">
-			<!-- {#each users as user} -->
-			<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
-				<div
-					class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-				>
-					{data.product?.name}
-				</div>
-				<div
-					class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-				>
-					<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Id</div>
-					<div class="ml-auto text-xs text-gray-500">{data.product?.id}</div>
-				</div>
-				<div
-					class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-				>
-					<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Stitches</div>
-					<div class="ml-auto text-xs text-gray-500">{data.product?.stitches}</div>
-				</div>
-				<div
-					class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-				>
-					<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Active</div>
-					<div class="ml-auto text-xs text-gray-500">{data.product?.isActive}</div>
-				</div>
-				<div
-					class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-				>
-					<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Category</div>
-					<div class="ml-auto text-xs text-gray-500">{data.product?.productCategories}</div>
-				</div>
-				<div
-					class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-				>
-					<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Unit Price</div>
-					<div class="ml-auto text-xs text-gray-500">{data.product?.unitPrice}</div>
-				</div>
-				<div
-					class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-				>
-					<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Quantity</div>
-					<div class="ml-auto text-xs text-gray-500">{data.product?.units}</div>
-				</div>
-			</button>
-			<!-- {/each} -->
-		</div>
+		<div class="text-3xl text-gray-900 dark:text-white">Product</div>
+		{#if data.results?.product}
+			<div class="space-y-4 mt-3">
+				<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
+					<div
+						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					>
+						{data.results?.product.name}
+					</div>
+					<div
+						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					>
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Id</div>
+						<div class="ml-auto text-xs text-gray-500">{data.results?.product.id}</div>
+					</div>
+					<div
+						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					>
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Stitches</div>
+						<div class="ml-auto text-xs text-gray-500">{data.results?.product.stitches}</div>
+					</div>
+					<div
+						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					>
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Active</div>
+						<div class="ml-auto text-xs text-gray-500">{data.results?.product.active}</div>
+					</div>
+					<div
+						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					>
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Category</div>
+						<div class="ml-auto text-xs text-gray-500">{data.results?.product.product_category}</div>
+					</div>
+					<div
+						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					>
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+							Unit Price
+						</div>
+						<div class="ml-auto text-xs text-gray-500">{data.results?.product.unit_price}</div>
+					</div>
+					<div
+						class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					>
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Quantity</div>
+						<div class="ml-auto text-xs text-gray-500">{data.results?.product.quantity}</div>
+					</div>
+				</button>
+			</div>
+		{/if}
 	</div>
 	<!-- User Table -->
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">

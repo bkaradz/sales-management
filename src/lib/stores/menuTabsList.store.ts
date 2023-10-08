@@ -11,16 +11,16 @@ const tabs = new Map([
         { id: uuidv4(), name: 'Currency Exchange', hidden: false, selected: false, url: "/currency" }
     ]],
     ["/contacts", [
-        { id: uuidv4(), name: 'Contacts', hidden: false, selected: true, url: "/contacts" },
+        { id: uuidv4(), name: 'Contacts', hidden: true, selected: true, url: "/contacts" },
         { id: uuidv4(), name: 'View', hidden: true, selected: false, url: "/contacts/view" },
         { id: uuidv4(), name: 'Edit', hidden: true, selected: false, url: "/contacts/edit" },
         { id: uuidv4(), name: 'Create', hidden: false, selected: false, url: "/contacts/create" },
     ]],
     ["/products", [
-        { id: uuidv4(), name: 'Products', hidden: false, selected: true, url: "/products" },
-        { id: uuidv4(), name: 'View', hidden: false, selected: false, url: "/products/view" },
+        { id: uuidv4(), name: 'Products', hidden: true, selected: true, url: "/products" },
+        { id: uuidv4(), name: 'View', hidden: true, selected: false, url: "/products/view" },
         { id: uuidv4(), name: 'Create', hidden: false, selected: false, url: "/products/create" },
-        { id: uuidv4(), name: 'Edit', hidden: false, selected: false, url: "/products/edit" },
+        { id: uuidv4(), name: 'Edit', hidden: true, selected: false, url: "/products/edit" },
     ]],
     ["/sales", [
         { id: uuidv4(), name: 'Sales', hidden: false, selected: true, url: "/sales" },

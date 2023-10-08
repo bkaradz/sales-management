@@ -32,11 +32,11 @@ export const getContacts = async (input: SearchParams) => {
 
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
-				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`), (eq(contacts.active, true))));
+				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${input.search})`), (eq(contacts.active, true))));
 
 			contactsQuery = await db.select().from(contacts)
 				.orderBy(asc(contacts.full_name))
-				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ to_tsquery('simple', ${input.search})`), (eq(contacts.active, true))))
+				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${input.search})`), (eq(contacts.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		}
@@ -266,10 +266,3 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
 	}
 };
-
-// .values({ id: input.id, user_id: ctx.session.user.userId, full_name: input.full_name })
-// 			.onConflictDoUpdate({
-// 				target: contacts.id,
-// 				set: { user_id: ctx.session.user.userId, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false) }
-// 			})
-// 			.returning({ id: contacts.id });

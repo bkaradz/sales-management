@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { svgThreeDots } from '$lib/assets/svgLogos';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
