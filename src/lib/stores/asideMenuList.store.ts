@@ -1,8 +1,6 @@
 import { readable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-
-
-import { svgBag, svgContacts, svgDashboard, svgFolder, svgGear, svgHome, svgProductList, svgSales } from '$lib/assets/svgLogos';
+import { svgContacts, svgDashboard, svgGear, svgProductList, svgSales } from '$lib/assets/svgLogos';
 
 const anchorTags = [
 	{

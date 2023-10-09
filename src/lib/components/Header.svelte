@@ -3,7 +3,17 @@
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
 	import { menuTabsList } from '$lib/stores/menuTabsList.store';
 
-	export let data;
+	type data = {
+		user: {
+		id: string;
+		username: string;
+		full_name: string;
+		active: boolean;
+		created_at: Date;
+		updated_at: Date;
+	}};
+
+	export let data: data;
 
 	const changeTab = (tabElement: { id: string; name: string; selected: boolean }, url: string) => {
 		menuTabsList.changeSelected({ url, tabElement });
@@ -14,25 +24,17 @@
 	class="h-11 lg:flex w-full border-b border-gray-200 dark:border-gray-800 hidden px-10 flex-shrink-0"
 >
 	<div class="flex h-full text-gray-600 dark:text-gray-400">
-		<!-- {#each menuTabs as tab (tab.id)}
-			<button
-				class={`cursor-pointer h-full border-b-2 inline-flex items-center mr-8 ${
-					tab.selected
-						? 'border-blue-500 text-blue-500 dark:text-white dark:border-white'
-						: 'border-transparent'
-				} `}
-			>
-				{tab.name}
-			</button>
-		{/each} -->
-		<div class="tabs tabs-boxed">
+		<div class="tabs tabs-boxed bg-transparent">
 			{#each $menuTabsList.get($page.url.pathname) || [] as tab (tab.id)}
-				<a href={tab.url || "#"}
-					class={`tab ${tab.selected ? 'tab-active' : ''} ${tab.hidden ? 'hidden':''}`}
+				<a
+					href={tab.url || '#'}
+					class={`btn btn-sm ${tab.hidden ? 'hidden' : ''}
+					h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-2
+					`}
 					on:click={() => changeTab(tab, $page.url.pathname)}
 				>
 					{tab.name}
-		</a>
+				</a>
 			{/each}
 		</div>
 	</div>

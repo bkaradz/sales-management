@@ -4,7 +4,6 @@
     import 'iconify-icon';
     import '../app.css';
     
-    export let data: LayoutData;
 </script>
 
 <Toasts />
