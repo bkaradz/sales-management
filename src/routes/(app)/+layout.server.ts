@@ -11,6 +11,7 @@ export const load = (async ({ locals }) => {
 
     if (!session) throw redirect(302, "/login")
 
+    // TODO: change to trpc
     const user = await db.select().from(users).where(eq(users.id, session.user.userId));
 
     return { user: user[0] };
