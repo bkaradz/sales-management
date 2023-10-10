@@ -12,6 +12,8 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"generate": "drizzle-kit generate:pg",
+		"custom": "drizzle-kit generate:pg --custom",
+		"migrate": "tsx -r dotenv/config ./src/lib/server/drizzle/migrate.ts",
 		"push": "drizzle-kit push:pg",
 		"seed": "tsx -r dotenv/config ./src/lib/server/drizzle/seed.ts",
 		"seeding": "npx vite-node ./src/lib/server/drizzle/seed.ts"

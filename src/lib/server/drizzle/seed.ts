@@ -6,14 +6,18 @@ import { address, contacts, emails, key, phones, products, session, users } from
 
 
 async function main() {
-  await db.delete(key)
-  await db.delete(session)
-  await db.delete(phones)
-  await db.delete(emails)
-  await db.delete(address)
-  await db.delete(contacts)
-  await db.delete(products)
-  await db.delete(users)
+  console.info("seeding started.....");
+  const deleteArray = []
+  deleteArray.push(await db.delete(key))
+  deleteArray.push(await db.delete(session))
+  deleteArray.push(await db.delete(phones))
+  deleteArray.push(await db.delete(emails))
+  deleteArray.push(await db.delete(address))
+  deleteArray.push(await db.delete(contacts))
+  deleteArray.push(await db.delete(products))
+  deleteArray.push(await db.delete(users))
+
+  await Promise.all(deleteArray);
 
   usersList.forEach(async (user) => {
     const { full_name, username, password, active } = user
@@ -75,13 +79,15 @@ async function main() {
 
     await Promise.all(productsArray);
 
+    console.info("seeding finished.....");
+    // process.exit(0);
   });
 }
 
 main().catch((e) => {
   console.error(`Error: ${e}`)
-  process.exit(1);
+  process.exit(0);
 }).finally(() => {
   console.info("Done seeding.....");
-  // process.exit();
+  // process.exit(0);
 });
