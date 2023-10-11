@@ -2,6 +2,8 @@
 	import { enhance } from '$app/forms';
 	import { svgBackArrow, svgBin, svgCalender, svgDropdownArrow, svgEye, svgForwardArrow, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import { dinero, toDecimal } from 'dinero.js';
+	// import { USD } from '@dinero.js/currencies
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -141,6 +143,9 @@
 								>Balance</th
 							>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+								>Total Receipts</th
+							>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Actions</th
 							>
 						</tr>
@@ -156,7 +161,10 @@
 								>
 
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{contact.balance_due}</td
+									>{toDecimal(dinero(contact.balance_due))}</td
+								>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+									>{toDecimal(dinero(contact.total_receipts))}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">

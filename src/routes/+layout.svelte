@@ -3,11 +3,11 @@
     import type { LayoutData } from './$types';
     import Toasts from '$lib/components/Toasts.svelte';
     import '../app.css';
-	import { writable } from 'svelte/store';
+	import { pricelist } from '$lib/stores/cartStore';
 
     export let data: LayoutData
-    $: console.log("🚀 ~ file: +layout.svelte:10 ~ data:", data)
 
+    pricelist.add(data.pricelists)
     // setContext('localization', writable(data.pricelists))
     
 </script>

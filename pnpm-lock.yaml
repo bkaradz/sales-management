@@ -100,9 +100,6 @@ devDependencies:
   eslint-plugin-svelte:
     specifier: ^2.34.0
     version: 2.34.0(eslint@8.51.0)(svelte@4.2.1)(ts-node@10.9.1)
-  iconify-icon:
-    specifier: ^1.0.8
-    version: 1.0.8
   postcss:
     specifier: ^8.4.31
     version: 8.4.31
@@ -454,10 +451,6 @@ packages:
 
   /@humanwhocodes/object-schema@1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
-    dev: true
-
-  /@iconify/types@2.0.0:
-    resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
     dev: true
 
   /@jest/schemas@29.6.3:
@@ -1943,12 +1936,6 @@ packages:
 
   /heap@0.2.7:
     resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
-    dev: true
-
-  /iconify-icon@1.0.8:
-    resolution: {integrity: sha512-jvbUKHXf8EnGGArmhlP2IG8VqQLFFyTvTqb9LVL2TKTh7/eCCD1o2HHE9thpbJJb6B8hzhcFb6rOKhvo7reNKA==}
-    dependencies:
-      '@iconify/types': 2.0.0
     dev: true
 
   /ignore@5.2.4:
