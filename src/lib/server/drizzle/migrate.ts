@@ -14,16 +14,16 @@ async function main() {
         throw new Error("Database not found");
     }
 
-    console.log("migrations started......");
+    console.info("migrations started......");
 
     const migrationClient = postgres(connectionString, { max: 1 });
     await migrate(drizzle(migrationClient), { migrationsFolder: "drizzle/migrations" })
 
-    console.log("migrations finished......");
+    console.info("migrations finished......");
     process.exit(0)
 }
 
 main().catch((err) => {
-    console.log(err);
+    console.error(err);
     process.exit(0)
 })

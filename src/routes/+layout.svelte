@@ -8,9 +8,7 @@
 	import { trpc } from '$lib/trpc/client';
 
     export let data: LayoutData
-    console.log("🚀 ~ file: +layout.svelte:9 ~ data:", data.pricelists)
 
-    // pricelist.add(data.pricelists)
     $:  pricelist.add(data.pricelists)
 
 </script>

@@ -3,8 +3,6 @@
 	import { pricelist } from '$lib/stores/cartStore';
 	import { getContext } from 'svelte';
 	
-	$: console.log("🚀 ~ file: +page.svelte:4 ~ pricelist:", $pricelist)
-
 	export let form;
 	
 </script>

@@ -132,7 +132,7 @@ export const pricelist = pgTable('pricelist', {
   name: text('name').notNull().unique(),
   description: text('description'),
   active: boolean('active').notNull().default(true),
-  default: boolean('default').notNull().default(true),
+  default: boolean('default').notNull().default(false),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -176,7 +176,7 @@ export const selectExchangeRateSchema = createSelectSchema(exchange_rates);
 
 export const exchange_rate_details = pgTable('exchange_rate_details', {
   id: serial('id').primaryKey(),
-  exchange_rates_id: text('exchange_rates_id').notNull().references(() => exchange_rates.id).notNull(),
+  exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
   currency: text('currency').notNull(),
   rate: json('rate').default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}").notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
@@ -188,15 +188,3 @@ export type NewExchangeRateDetails = InferInsertModel<typeof exchange_rate_detai
 
 export const insertExchangeRateDetailsSchema = createInsertSchema(exchange_rate_details);
 export const selectExchangeRateDetailsSchema = createSelectSchema(exchange_rate_details);
-
-
-
-// model ExchangeRateDetails {
-//   id             Int          @id @default(autoincrement())
-//   ExchangeRate   ExchangeRate @relation(fields: [exchangeRateId], references: [id])
-//   exchangeRateId Int
-//   currency       String
-//   rate           Json         @default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}")
-//   createdAt      DateTime     @default(now())
-//   updatedAt      DateTime     @updatedAt()
-// }
