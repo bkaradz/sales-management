@@ -152,8 +152,51 @@ export const pricelist_details = pgTable('pricelist_details', {
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
 })
 
-export type pricelistDetails = InferSelectModel<typeof pricelist_details>;
+export type PricelistDetails = InferSelectModel<typeof pricelist_details>;
 export type NewPricelistDetails = InferInsertModel<typeof pricelist_details>;
 
 export const insertPricelistDetailsSchema = createInsertSchema(pricelist_details);
 export const selectPricelistDetailsSchema = createSelectSchema(pricelist_details);
+
+export const exchange_rates = pgTable('exchange_rates', {
+  id: serial('id').primaryKey(),
+  user_id: text('user_id').notNull().references(() => users.id),
+  description: text('description'),
+  active: boolean('active').notNull().default(true),
+  default: boolean('default').notNull().default(true),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type ExchangeRate = InferSelectModel<typeof exchange_rates>;
+export type NewExchangeRate = InferInsertModel<typeof exchange_rates>;
+
+export const insertExchangeRateSchema = createInsertSchema(exchange_rates);
+export const selectExchangeRateSchema = createSelectSchema(exchange_rates);
+
+export const exchange_rate_details = pgTable('exchange_rate_details', {
+  id: serial('id').primaryKey(),
+  exchange_rates_id: text('exchange_rates_id').notNull().references(() => exchange_rates.id).notNull(),
+  currency: text('currency').notNull(),
+  rate: json('rate').default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}").notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type ExchangeRateDetails = InferSelectModel<typeof exchange_rate_details>;
+export type NewExchangeRateDetails = InferInsertModel<typeof exchange_rate_details>;
+
+export const insertExchangeRateDetailsSchema = createInsertSchema(exchange_rate_details);
+export const selectExchangeRateDetailsSchema = createSelectSchema(exchange_rate_details);
+
+
+
+// model ExchangeRateDetails {
+//   id             Int          @id @default(autoincrement())
+//   ExchangeRate   ExchangeRate @relation(fields: [exchangeRateId], references: [id])
+//   exchangeRateId Int
+//   currency       String
+//   rate           Json         @default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}")
+//   createdAt      DateTime     @default(now())
+//   updatedAt      DateTime     @updatedAt()
+// }

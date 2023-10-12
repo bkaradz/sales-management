@@ -12,13 +12,13 @@ export const load = (async (event) => {
 
     if (session) {
 
-        const pricelists = async () => {
-            // TODO: change to get values from database
-            return await router.createCaller(await createContext(event)).pricelists.getDefaultPricelists();
-            // return JSON.parse(pricelistsObj, reviver); // dummy data
-        }
 
-        pricelist = pricelists()
+        // TODO: change to get values from database
+        const pricelists = await router.createCaller(await createContext(event)).pricelists.getDefaultPricelists();
+        console.log("🚀 ~ file: +layout.server.ts:18 ~ load ~ pricelists:", pricelists)
+        // return JSON.parse(pricelistsObj, reviver); // dummy dat
+
+        pricelist = pricelists
     }
 
 

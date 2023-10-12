@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { pricelist } from '$lib/stores/cartStore';
+	import { getContext } from 'svelte';
+	
+	$: console.log("🚀 ~ file: +page.svelte:4 ~ pricelist:", $pricelist)
 
 	export let form;
 	
 </script>
 
-{#each [...$pricelist] as [key, value] }
+<!-- {#each $pricelist.pricelist_details as price }
 	<p>
-		{key}
-	<span>Quantity: {value.quantity}</span>
+		{price}
+	<span></span>
 	</p>
-{/each}
+{/each} -->

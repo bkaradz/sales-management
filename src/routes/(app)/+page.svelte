@@ -2,7 +2,7 @@
 	import { svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
 	import { deptColor, users } from '$lib/data/users';
-
+	
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -24,9 +24,7 @@
 			{#each users as user}
 				<button
 					class={`${
-						user.selected
-							? 'shadow-lg relative ring-2 ring-blue-500 focus:outline-none'
-							: 'shadow'
+						user.selected ? 'shadow-lg relative ring-2 ring-blue-500 focus:outline-none' : 'shadow'
 					} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
 				>
 					<div
@@ -244,8 +242,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Subscription renewal</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $120.00</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -323,8 +320,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Subscription renewal</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $9.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -394,8 +390,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Macbook Pro 13"</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $1.499.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -524,8 +519,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Product purchased</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $49.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -591,8 +585,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Subscription renewal</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $5.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -674,8 +667,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>PlayStation 5</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $399.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -808,8 +800,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Subscription renewal</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $120.00</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -887,8 +878,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Subscription renewal</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $9.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -958,8 +948,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Macbook Pro 13"</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $1.499.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -1088,8 +1077,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Product purchased</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $49.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -1155,8 +1143,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>Subscription renewal</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $5.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -1238,8 +1225,7 @@
 							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 md:table-cell hidden"
 							>PlayStation 5</td
 						>
-						<td
-							class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
+						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-red-500"
 							>- $399.99</td
 						>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

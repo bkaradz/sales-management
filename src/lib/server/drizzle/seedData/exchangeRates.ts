@@ -1,27 +1,27 @@
 export const exchangeRates = [
 	{
-		isActive: true,
-		isDefault: true,
-		ExchangeRateDetails: [
+		active: true,
+		default: true,
+		exchange_rate_details: [
 			{
 				currency: 'USD',
 				rate: 1
 			},
 			{
 				currency: 'ZAR',
-				rate: '20'
+				rate: 20
 			},
 			{
 				currency: 'BWP',
-				rate: '13'
+				rate: 13
 			},
 			{
 				currency: 'ZWB',
-				rate: '1000'
+				rate: 1000
 			},
 			{
 				currency: 'ZWR',
-				rate: '920'
+				rate: 6100
 			}
 		]
 	}

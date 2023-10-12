@@ -1,8 +1,8 @@
 
-import { contactsList, productsList, usersList, pricelistData } from './seedData';
+import { contactsList, productsList, usersList, pricelistData, exchangeRates } from './seedData';
 import { auth } from '../lucia/clientSeed';
 import { db } from './client';
-import { address, contacts, emails, key, phones, pricelist, pricelist_details, products, session, users } from './schema';
+import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema';
 import { dinero, toSnapshot } from 'dinero.js';
 // import { USD } from '@dinero.js/currencies';
 
@@ -14,6 +14,8 @@ async function main() {
   const deleteArray = []
   deleteArray.push(await db.delete(pricelist))
   deleteArray.push(await db.delete(pricelist_details))
+  deleteArray.push(await db.delete(exchange_rates))
+  deleteArray.push(await db.delete(exchange_rate_details))
   deleteArray.push(await db.delete(key))
   deleteArray.push(await db.delete(session))
   deleteArray.push(await db.delete(phones))
@@ -83,6 +85,19 @@ async function main() {
           minimum_quantity: detail.minimum_quantity, 
           minimum_price: toSnapshot(dollars(detail.minimum_price * 1000)), 
           price_per_thousand_stitches: toSnapshot(dollars(detail.price_per_thousand_stitches * 1000)) 
+        })
+      })
+    });
+
+    exchangeRates.forEach(async (rates) => {
+
+      const exchangeRatesResult = await db.insert(exchange_rates).values({ user_id: adminId, active: rates.active, default: rates.default }).returning({ id: exchange_rates.id });
+      
+      rates.exchange_rate_details.forEach(async (detail) => {
+        await db.insert(exchange_rate_details).values({ 
+          exchange_rates_id: exchangeRatesResult[0].id, 
+          currency: detail.currency, 
+          rate: toSnapshot(dollars(detail.rate * 1000)) 
         })
       })
     });
