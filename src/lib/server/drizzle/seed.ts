@@ -1,13 +1,19 @@
 
-import { contactsList, productsList, usersList } from './seedData';
+import { contactsList, productsList, usersList, pricelistData } from './seedData';
 import { auth } from '../lucia/clientSeed';
 import { db } from './client';
-import { address, contacts, emails, key, phones, products, session, users } from './schema';
+import { address, contacts, emails, key, phones, pricelist, pricelist_details, products, session, users } from './schema';
+import { dinero, toSnapshot } from 'dinero.js';
+// import { USD } from '@dinero.js/currencies';
+
+const dollars = (amount: number) => dinero({ amount, currency: "USD", scale: 3 });
 
 
 async function main() {
   console.info("seeding started.....");
   const deleteArray = []
+  deleteArray.push(await db.delete(pricelist))
+  deleteArray.push(await db.delete(pricelist_details))
   deleteArray.push(await db.delete(key))
   deleteArray.push(await db.delete(session))
   deleteArray.push(await db.delete(phones))
@@ -67,6 +73,20 @@ async function main() {
       }
     });
 
+    pricelistData.forEach(async (priceList) => {
+
+      const pricelistResult = await db.insert(pricelist).values({ user_id: adminId, name: priceList.name, active: priceList.active, default: priceList.default }).returning({ id: pricelist.id });
+      
+      priceList.pricelist_details.forEach(async (detail) => {
+        await db.insert(pricelist_details).values({ pricelist_id: pricelistResult[0].id, 
+          embroidery_types: detail.embroidery_types, 
+          minimum_quantity: detail.minimum_quantity, 
+          minimum_price: toSnapshot(dollars(detail.minimum_price * 1000)), 
+          price_per_thousand_stitches: toSnapshot(dollars(detail.price_per_thousand_stitches * 1000)) 
+        })
+      })
+    });
+
     await Promise.all(contactArray);
     await Promise.all(phonesArray);
     await Promise.all(emailsArray);
@@ -76,6 +96,8 @@ async function main() {
       const productsResults = await db.insert(products).values({ user_id: adminId, ...product }).returning()
       productsArray.push(productsResults)
     });
+
+   
 
     await Promise.all(productsArray);
 

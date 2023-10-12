@@ -132,7 +132,7 @@ export const pricelist = pgTable('pricelist', {
   name: text('name').notNull().unique(),
   description: text('description'),
   active: boolean('active').notNull().default(true),
-  default: boolean('active').notNull().default(true),
+  default: boolean('default').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
