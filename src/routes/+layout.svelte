@@ -3,13 +3,12 @@
     import type { LayoutData } from './$types';
     import Toasts from '$lib/components/Toasts.svelte';
     import '../app.css';
-	import { pricelist } from '$lib/stores/cartStore';
-	import { page } from '$app/stores';
-	import { trpc } from '$lib/trpc/client';
+	import { exchangeRatesStore, pricelistStore } from '$lib/stores/cartStore';
 
     export let data: LayoutData
 
-    $:  pricelist.add(data.pricelists)
+    $:  pricelistStore.add(data.pricelists)
+    $:  exchangeRatesStore.add(data.exchangeRates)
 
 </script>
 

@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { pricelist } from '$lib/stores/cartStore';
+	import { pricelistStore, exchangeRatesStore } from '$lib/stores/cartStore';
+	import { getPricelist } from '$lib/utility/calculateCart.util.js';
 	import { getContext } from 'svelte';
 	
 	export let form;
+
+	console.log("Calc", getPricelist($pricelistStore, 2, 'flat'));
 	
 </script>
 
