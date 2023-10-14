@@ -1,19 +1,18 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import logo from '$lib/assets/logo.png';
 	import { enhance } from '$app/forms';
 	import { toasts } from '$lib/stores/toasts.store';
 
-	export let data: PageData;
-
 	export let form;
 
 	$: if (form?.errors) {
-		for (const [key, value] of form.errors.entries()) {
-			toasts.add({
-				message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
-				type: 'error'
-			});
+		if (form.errors instanceof Map) {
+			for (const [key, value] of form.errors.entries()) {
+				toasts.add({
+					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+					type: 'error'
+				});
+			}
 		}
 	}
 </script>

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	// import type { PageData } from './$types';
 	import logo from '$lib/assets/logo.png';
 	import { enhance } from '$app/forms';
 
-	export let data: PageData;
+	// export let data: PageData;
 
-	export let form;
+	// export let form;
 </script>
 
 <section

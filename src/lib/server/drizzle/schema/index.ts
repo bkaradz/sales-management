@@ -1,6 +1,9 @@
+import { toSnapshot, type DineroSnapshot, dinero } from "dinero.js";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { bigint, boolean, integer, json, numeric, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+
+export const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
 
 export const users = pgTable('auth_user', {
   id: text('id').primaryKey(),
@@ -57,8 +60,8 @@ export const contacts = pgTable('contacts', {
   is_corporate: boolean('is_corporate').notNull().default(false),
   notes: text('notes'),
   vat_or_bp_number: text('vat_or_bp_number'),
-  balance_due: json('balance_due').default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}"),
-  total_receipts: json('total_receipts').default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}"),
+  balance_due: json('balance_due').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
+  total_receipts: json('total_receipts').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -111,7 +114,7 @@ export const products = pgTable('products', {
   name: text('name').notNull().unique(),
   description: text('description'),
   product_category: text('product_category').notNull(),
-  unit_price: json('minimum_price'),
+  unit_price: json('minimum_price').$type<DineroSnapshot<number>>(),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
   active: boolean('active').notNull().default(true),
@@ -145,8 +148,8 @@ export const selectPricelistSchema = createSelectSchema(pricelist);
 
 export const pricelist_details = pgTable('pricelist_details', {
   id: serial('id').primaryKey(),
-  minimum_price: json('minimum_price').default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}"),
-  price_per_thousand_stitches: json('price_per_thousand_stitches').default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}"),
+  minimum_price: json('minimum_price').$type<DineroSnapshot<number>>().default(toSnapshot(dollars(0))),
+  price_per_thousand_stitches: json('price_per_thousand_stitches').$type<DineroSnapshot<number>>().default(toSnapshot(dollars(0))),
   minimum_quantity: integer("minimum_quantity").default(0).notNull(),
   embroidery_types: text('embroidery_types').notNull(),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
@@ -178,7 +181,7 @@ export const exchange_rate_details = pgTable('exchange_rate_details', {
   id: serial('id').primaryKey(),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
   currency: text('currency').notNull(),
-  rate: json('rate').default("{\"amount\":0,\"currency\":{\"code\":\"USD\",\"base\":10,\"exponent\":2},\"scale\":3}").notNull(),
+  rate: json('rate').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })

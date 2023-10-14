@@ -12,9 +12,5 @@ if (!connectionString) {
     throw new Error("Database not found");
 }
 
-// for migrations
-// const migrationClient = postgres(connectionString, { max: 1 });
-// migrate(drizzle(migrationClient), { migrationsFolder: "drizzle/migrations" })
-
 export const sql = postgres(connectionString)
 export const db = drizzle(sql, { schema });

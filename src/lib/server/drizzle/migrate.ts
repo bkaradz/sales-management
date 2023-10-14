@@ -7,8 +7,6 @@ dotenv.config();
 
 const connectionString = process.env.DATABASE_URL
 
-// for migrations
-
 async function main() {
     if (!connectionString) {
         throw new Error("Database not found");

@@ -26,10 +26,10 @@
 	
 	export let data;
 
-	function debounce(func, delay) {
-		let timeoutId;
+	function debounce(func: any, delay: any) {
+		let timeoutId: any;
 
-		return function (...args) {
+		return function (...args: any) {
 			clearTimeout(timeoutId);
 
 			timeoutId = setTimeout(() => {
@@ -38,7 +38,7 @@
 		};
 	}
 
-	const search = e => {
+	const search =( e: any ) => {
 		e.target.form.requestSubmit()
 	}
 

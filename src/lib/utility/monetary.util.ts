@@ -1,7 +1,7 @@
 import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } from "$lib/server/drizzle/schema"
 import sortBy  from "lodash-es/sortBy"
 
-export const exchangeRateMapObj = (list: { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }) => {
+export const exchangeRateToMapObj = (list: { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }) => {
   const exchange_rate_details = new Map()
 
   list.exchange_rate_details.forEach((item) => {
@@ -19,7 +19,7 @@ export const exchangeRateMapObj = (list: { exchange_rates: ExchangeRate, exchang
   }
 }
 
-export const pricelistMapObj = (list: { pricelist: Pricelist, pricelist_details: PricelistDetails[] }) => {
+export const pricelistToMapObj = (list: { pricelist: Pricelist, pricelist_details: PricelistDetails[] }) => {
   const pricelist_details = new Map<string, PricelistDetails[]>()
 
   list.pricelist_details.forEach((item) => {
@@ -42,4 +42,3 @@ export const pricelistMapObj = (list: { pricelist: Pricelist, pricelist_details:
     pricelist_details: pricelist_details
   }
 }
-

@@ -2,7 +2,10 @@
 	import { enhance } from '$app/forms';
 	import { svgBackArrow, svgBin, svgCalender, svgDropdownArrow, svgEye, svgForwardArrow, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import { toDecimal } from 'dinero.js';
 	import type { PageData } from './$types';
+	import { calcPrice } from '$lib/utility/calculateCart.util';
+	import { pricelistStore } from '$lib/stores/cartStore';
 
 	export let data: PageData;
 
@@ -168,7 +171,7 @@
 									>{product.quantity || 'None'}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{product.unit_price || 'None'}</td
+									>{toDecimal(calcPrice(product, $pricelistStore, 1, "flat").unit_price)}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
 									>{product.product_category}</td

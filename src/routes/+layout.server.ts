@@ -1,6 +1,6 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
-import { exchangeRateMapObj, pricelistMapObj } from '$lib/utility/monetary.util';
+import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.util';
 import type { LayoutServerLoad } from './$types';
 
 export const load = (async (event) => {
@@ -16,10 +16,10 @@ export const load = (async (event) => {
         const exchangeRateResults = await router.createCaller(await createContext(event)).rates.getDefaultRates()
 
         if (pricelistResults) {
-            pricelists = pricelistMapObj(pricelistResults)
+            pricelists = pricelistToMapObj(pricelistResults)
         }
         if (exchangeRateResults) {
-            exchangeRates = exchangeRateMapObj(exchangeRateResults)
+            exchangeRates = exchangeRateToMapObj(exchangeRateResults)
         }
     }
 

@@ -1,5 +1,4 @@
 
-import { test } from '$lib/trpc/routes/test';
 import { authentication } from '$lib/trpc/routes/authentication/authentication';
 import { contacts } from '$lib/trpc/routes/contacts/contacts';
 import { products } from '$lib/trpc/routes/products/products';
@@ -14,7 +13,6 @@ export const router = t.router({
 	products,
 	pricelists,
 	rates,
-	test,
 });
 
 export type Router = typeof router;
