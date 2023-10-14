@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
+	import { dinero, toDecimal } from 'dinero.js';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -46,7 +46,9 @@
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Balance</div>
-						<div class="ml-auto text-xs text-gray-500">{data.results.contact.balance_due}</div>
+						<div class="ml-auto text-xs text-gray-500">
+							{toDecimal(dinero(data.results.contact.balance_due))}
+						</div>
 					</div>
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -54,14 +56,18 @@
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 							Total Receipts
 						</div>
-						<div class="ml-auto text-xs text-gray-500">{data.results.contact.total_receipts}</div>
+						<div class="ml-auto text-xs text-gray-500">
+							{toDecimal(dinero(data.results.contact.total_receipts))}
+						</div>
 					</div>
-					<div
-						class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-					>
-						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Notes</div>
-						<div class="ml-auto text-xs text-gray-500">{data.results.contact.notes}</div>
-					</div>
+					{#if data.results.contact.notes}
+						<div
+							class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+						>
+							<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Notes</div>
+							<div class="ml-auto text-xs text-gray-500">{data.results.contact.notes}</div>
+						</div>
+					{/if}
 					{#each data.results.phones as phone (phone.id)}
 						<div
 							class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -82,7 +88,9 @@
 						<div
 							class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 						>
-							<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Address</div>
+							<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+								Address
+							</div>
 							<div class="ml-auto text-xs text-gray-500">{address.address}</div>
 						</div>
 					{/each}

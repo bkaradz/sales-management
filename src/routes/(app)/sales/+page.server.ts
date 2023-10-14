@@ -5,7 +5,11 @@ export const load = (async ({ url }) => {
 
 	// your search logic goes here
 	const query = url.searchParams.get('search')
-	const flavours = library.filter(el => el.includes(query))
+
+	let flavours: string[] = []
+	if (query) {
+		flavours = library.filter(el => el.includes(query))
+	}
 
 	// artificial delay
 	await new Promise((res, rej) => {

@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
+	import { pricelistStore } from '$lib/stores/cartStore';
+	import { toDecimal } from 'dinero.js';
 	import type { PageData } from './$types';
+	import { calcPrice } from '$lib/utility/calculateCart.util';
 
 	export let data: PageData;
 </script>
@@ -42,7 +45,9 @@
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Category</div>
-						<div class="ml-auto text-xs text-gray-500">{data.results?.product.product_category}</div>
+						<div class="ml-auto text-xs text-gray-500">
+							{data.results?.product.product_category}
+						</div>
 					</div>
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -58,6 +63,25 @@
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Quantity</div>
 						<div class="ml-auto text-xs text-gray-500">{data.results?.product.quantity}</div>
 					</div>
+					{#each $pricelistStore.pricelist_details as [key, value] (key)}
+						<p
+						class="flex items-center justify-center"
+						>
+						{key}
+					</p>
+						{#each value as list (list.id)}
+							<div
+								class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+							>
+								<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+									{list.minimum_quantity}
+								</div>
+								<div class="ml-auto text-xs text-gray-500">
+									{toDecimal(calcPrice(data.results.product, $pricelistStore, list.minimum_quantity, key).unit_price)}
+								</div>
+							</div>
+						{/each}
+					{/each}
 				</button>
 			</div>
 		{/if}

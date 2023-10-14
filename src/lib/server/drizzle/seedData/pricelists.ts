@@ -104,7 +104,7 @@ export const pricelistData = [
 			{
 				embroidery_types: 'nameTag',
 				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.0,
+				price_per_thousand_stitches: 0.25,
 				minimum_price: 2
 			}
 		]
