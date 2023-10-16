@@ -21,28 +21,10 @@
 -->
 
 <script lang="ts">
-	import { page, navigating } from '$app/stores'
-	import { goto } from '$app/navigation'
+	import { navigating } from '$app/stores'
+	import { debounceSearch } from '$lib/utility/debounceSearch.util.js';
 	
 	export let data;
-
-	function debounce(func: any, delay: any) {
-		let timeoutId: any;
-
-		return function (...args: any) {
-			clearTimeout(timeoutId);
-
-			timeoutId = setTimeout(() => {
-				func.apply(this, args);
-			}, delay);
-		};
-	}
-
-	const search =( e: any ) => {
-		e.target.form.requestSubmit()
-	}
-
-	const debounceSearch = debounce(search, 400)
 
 	$: pluralize = data.flavours.length === 1  ? '' : 's'
 	$: pageResults = `- ${data.flavours.length} flavour${pluralize} found`

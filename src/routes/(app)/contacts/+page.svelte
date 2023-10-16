@@ -5,28 +5,10 @@
 	import { dinero, toDecimal } from 'dinero.js';
 	// import { USD } from '@dinero.js/currencies
 	import type { PageData } from './$types';
-	import { unknown } from 'zod';
 	import { format } from '$lib/utility/calculateCart.util';
+	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 
 	export let data: PageData;
-
-	const debounce = (func: Function, delay: number) => {
-		let timeoutId: string | number | NodeJS.Timeout | undefined;
-
-		return (...args: any) => {
-			clearTimeout(timeoutId);
-
-			timeoutId = setTimeout(() => {
-				func.apply(this, args);
-			}, delay);
-		};
-	};
-
-	const search = (e: { target: { form: { requestSubmit: () => void } } }) => {
-		e.target.form.requestSubmit();
-	};
-
-	const debounceSearch = debounce(search, 400);
 
 </script>
 

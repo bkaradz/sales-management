@@ -1,8 +1,15 @@
 <script lang="ts">
 	import { svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
-	import { deptColor, users } from '$lib/data/users';
-	
+	import { format } from '$lib/utility/calculateCart.util';
+	import { dinero } from 'dinero.js';
+	import type { PageData } from './$types';
+	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import { debounceSearch } from '$lib/utility/debounceSearch.util';
+
+	export let data: PageData;
+
+	let selected = 0;
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -13,38 +20,50 @@
 	>
 		<div class="text-xs text-gray-400 tracking-wider">USERS</div>
 		<div class="relative mt-2">
-			<input
+			<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
+				<input
+					use:selectTextOnFocus
+					type="text"
+					name="search"
+					class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+					placeholder="Search"
+					on:input={debounceSearch}
+					on:change={debounceSearch}
+				/>
+				{@html svgSearch}
+			</form>
+			<!-- <input
 				type="text"
 				class="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
 				placeholder="Search"
 			/>
-			{@html svgSearch}
+			{@html svgSearch} -->
 		</div>
 		<div class="space-y-4 mt-3">
-			{#each users as user}
-				<button
-					class={`${
-						user.selected ? 'shadow-lg relative ring-2 ring-blue-500 focus:outline-none' : 'shadow'
-					} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
-				>
-					<div
-						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+			{#if data.results}
+				{#each data.results.contacts as user}
+					<button
+						on:click={() => (selected = user.id)}
+						class={`${
+							selected === user.id
+								? 'shadow-lg relative ring-2 ring-blue-500 focus:outline-none'
+								: 'shadow'
+						} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
 					>
-						<img src={user.img} class="w-7 h-7 mr-2 rounded-full" alt="profile" />
-						{user.name}
-					</div>
-					<div class="flex items-center w-full">
 						<div
-							class={`${deptColor.get(
-								user.department
-							)} text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}
+							class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 						>
-							{user.department}
+							{user.full_name}
 						</div>
-						<div class="ml-auto text-xs text-gray-500">{user.amount}</div>
-					</div>
-				</button>
-			{/each}
+						<div class="flex items-center w-full">
+							<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
+								<p>Balance</p>
+							</div>
+							<div class="ml-auto text-xs text-gray-500">{format(dinero(user.balance_due))}</div>
+						</div>
+					</button>
+				{/each}
+			{/if}
 		</div>
 	</div>
 	<!-- User Table -->
@@ -53,9 +72,7 @@
 			class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
 		>
 			<div class="flex w-full items-center">
-				<div class="flex items-center text-3xl text-gray-900 dark:text-white">
-					Cart Products
-				</div>
+				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<div class="text-right">
 						<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>

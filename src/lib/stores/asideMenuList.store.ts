@@ -1,6 +1,6 @@
 import { readable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-import { svgContacts, svgDashboard, svgGear, svgProductList, svgSales } from '$lib/assets/svgLogos';
+import { svgCart, svgContacts, svgDashboard, svgGear, svgProductList, svgSales } from '$lib/assets/svgLogos';
 
 const anchorTags = [
 	{
@@ -25,7 +25,7 @@ const anchorTags = [
 		id: uuidv4(),
 		url: '/cart',
 		name: 'Cart',
-		icon: svgProductList
+		icon: svgCart
 	},
 	{
 		id: uuidv4(),
