@@ -3,6 +3,7 @@
 	import { activitiesTabs } from '$lib/data/tabsData';
 	import { dinero, toDecimal } from 'dinero.js';
 	import type { PageData } from './$types';
+	import { format } from '$lib/utility/calculateCart.util';
 
 	export let data: PageData;
 </script>
@@ -47,7 +48,7 @@
 					>
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Balance</div>
 						<div class="ml-auto text-xs text-gray-500">
-							{toDecimal(dinero(data.results.contact.balance_due))}
+							{format(dinero(data.results.contact.balance_due))}
 						</div>
 					</div>
 					<div
@@ -57,7 +58,7 @@
 							Total Receipts
 						</div>
 						<div class="ml-auto text-xs text-gray-500">
-							{toDecimal(dinero(data.results.contact.total_receipts))}
+							{format(dinero(data.results.contact.total_receipts))}
 						</div>
 					</div>
 					{#if data.results.contact.notes}

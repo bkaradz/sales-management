@@ -1,6 +1,6 @@
 import type { Pricelist, Products } from "$lib/server/drizzle/schema"
-import { dinero, multiply, maximum, add } from "dinero.js";
-import type { DineroSnapshot, Dinero } from "dinero.js";
+import { dinero, multiply, maximum, add, toDecimal } from "dinero.js";
+import type { DineroSnapshot, Dinero, Currency, Transformer } from "dinero.js";
 import { USD } from '@dinero.js/currencies';
 
 export const dollars = (amount: number) => dinero({ amount, currency: USD, scale: 3 });
@@ -51,7 +51,7 @@ export const getPricelist = (pricelist: pricelistCombined, quantity: number, emb
 // check that the product_category is embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
-export const calcPrice = (product: Products, pricelist: pricelistCombined, quantity: number, embType: key) => {
+export const calcPrice = (product: Products, pricelist: pricelistCombined, quantity: number, embType: key = 'flat') => {
 
   // TODO: Call a function that calculate non embroidery products
   if (!(product.product_category === "embroidery")) throw new Error("Embroidery product needed");
@@ -78,3 +78,17 @@ export const calcPrice = (product: Products, pricelist: pricelistCombined, quant
   }
 
 }
+
+function createFormatter(transformer: any) {
+  return function formatter(dineroObject: Dinero<number>) {
+    return toDecimal(dineroObject, transformer)
+  }
+}
+
+export const format = createFormatter(({value, currency}: {value: string, currency: Currency<number>}) =>
+  `${currency.code} ${Number(value).toFixed(2)}`
+)
+
+// const transformer = ({value, currency}: {value: string, currency: Currency<number>}) => {
+//   return`${currency.code} ${Number(value).toFixed(2)}`
+// }

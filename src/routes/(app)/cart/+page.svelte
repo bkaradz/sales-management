@@ -1,77 +1,51 @@
 <script lang="ts">
-	import { svgThreeDots } from '$lib/assets/svgLogos';
+	import { svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
-	import { pricelistStore } from '$lib/stores/cartStore';
-	import { toDecimal } from 'dinero.js';
-	import type { PageData } from './$types';
-	import { calcPrice, format } from '$lib/utility/calculateCart.util';
-
-	export let data: PageData;
+	import { deptColor, users } from '$lib/data/users';
+	
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
 	<!-- Users Cards -->
+
 	<div
 		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 	>
-		<div class="text-3xl text-gray-900 dark:text-white">Product</div>
-		{#if data.results?.product}
-			<div class="space-y-4 mt-3">
-				<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
+		<div class="text-xs text-gray-400 tracking-wider">USERS</div>
+		<div class="relative mt-2">
+			<input
+				type="text"
+				class="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+				placeholder="Search"
+			/>
+			{@html svgSearch}
+		</div>
+		<div class="space-y-4 mt-3">
+			{#each users as user}
+				<button
+					class={`${
+						user.selected ? 'shadow-lg relative ring-2 ring-blue-500 focus:outline-none' : 'shadow'
+					} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
+				>
 					<div
-						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						{data.results?.product.name}
+						<img src={user.img} class="w-7 h-7 mr-2 rounded-full" alt="profile" />
+						{user.name}
 					</div>
-					<div
-						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-					>
-						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Id</div>
-						<div class="ml-auto text-xs text-gray-500">{data.results?.product.id}</div>
-					</div>
-					<div
-						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-					>
-						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Stitches</div>
-						<div class="ml-auto text-xs text-gray-500">{data.results?.product.stitches}</div>
-					</div>
-					<div
-						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-					>
-						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Active</div>
-						<div class="ml-auto text-xs text-gray-500">{data.results?.product.active}</div>
-					</div>
-					<div
-						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-					>
-						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Category</div>
-						<div class="ml-auto text-xs text-gray-500">
-							{data.results?.product.product_category}
-						</div>
-					</div>
-				
-					{#each $pricelistStore.pricelist_details as [key, value] (key)}
-						<p
-						class="py-2 mt-0.5 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+					<div class="flex items-center w-full">
+						<div
+							class={`${deptColor.get(
+								user.department
+							)} text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}
 						>
-						{key}
-					</p>
-						{#each value as list (list.id)}
-							<div
-								class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-							>
-								<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-									{list.minimum_quantity}
-								</div>
-								<div class="ml-auto text-xs text-gray-500">
-									{format(calcPrice(data.results.product, $pricelistStore, list.minimum_quantity, key).unit_price)}
-								</div>
-							</div>
-						{/each}
-					{/each}
+							{user.department}
+						</div>
+						<div class="ml-auto text-xs text-gray-500">{user.amount}</div>
+					</div>
 				</button>
-			</div>
-		{/if}
+			{/each}
+		</div>
 	</div>
 	<!-- User Table -->
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
@@ -80,12 +54,7 @@
 		>
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">
-					<img
-						src="https://assets.codepen.io/344846/internal/avatars/users/default.png?fit=crop&format=auto&height=512&version=1582611188&width=512"
-						class="w-12 mr-4 rounded-full"
-						alt="profile"
-					/>
-					Mert Cukuren
+					Cart Products
 				</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<div class="text-right">
@@ -161,6 +130,14 @@
 						<polyline points="6 9 12 15 18 9" />
 					</svg>
 				</button>
+				<div class="relative ml-3">
+					<input
+						type="text"
+						class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+						placeholder="Search"
+					/>
+					{@html svgSearch}
+				</div>
 				<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 					<span class="mr-3">Page 2 of 4</span>
 					<button

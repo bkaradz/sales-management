@@ -23,6 +23,12 @@ const anchorTags = [
 	},
 	{
 		id: uuidv4(),
+		url: '/cart',
+		name: 'Cart',
+		icon: svgProductList
+	},
+	{
+		id: uuidv4(),
 		url: '/sales',
 		name: 'Sales',
 		icon: svgSales

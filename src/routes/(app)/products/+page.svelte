@@ -1,11 +1,20 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { svgBackArrow, svgBin, svgCalender, svgDropdownArrow, svgEye, svgForwardArrow, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
+	import {
+		svgBackArrow,
+		svgBin,
+		svgCalender,
+		svgDropdownArrow,
+		svgEye,
+		svgForwardArrow,
+		svgPen,
+		svgSearch,
+		svgThreeDots
+	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import { toDecimal } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { calcPrice } from '$lib/utility/calculateCart.util';
-	import { pricelistStore } from '$lib/stores/cartStore';
+	import { calcPrice, format } from '$lib/utility/calculateCart.util';
+	import { cart, pricelistStore} from '$lib/stores/cartStore';
 
 	export let data: PageData;
 
@@ -94,7 +103,7 @@
 										: ''} inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 									disabled={!data?.results.pagination.previous}
 								>
-								{@html svgBackArrow}
+									{@html svgBackArrow}
 								</button>
 							</form>
 							<form class="inline-block" method="get">
@@ -107,7 +116,7 @@
 										: ''} inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 									disabled={!data?.results.pagination.next}
 								>
-								{@html svgForwardArrow}
+									{@html svgForwardArrow}
 								</button>
 							</form>
 						</div>
@@ -158,31 +167,38 @@
 					<tbody class="text-gray-600 dark:text-gray-100">
 						{#each data.results.products as product (product.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{product.id}</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{product.name}</td
-								>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{product.id}
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{product.name}
+								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
 									>{product.stitches || 'None'}</td
 								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{product.quantity || 'None'}</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{toDecimal(calcPrice(product, $pricelistStore, 1, "flat").unit_price)}</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{product.product_category}</td
-								>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{$cart.has(product.id) ? ($cart.get(product.id).quantity) : 0 }
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{format(calcPrice(product, $pricelistStore, 1, 'flat').unit_price)}
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{product.product_category}
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<button class="h-5 px-3 rounded-sm shadow text-white bg-blue-500"
+									on:click={() => cart.add(product)}
+									on:dblclick={(e) => cart.remove(product)}
+									>
+										Cart {$cart.has(product.id) ? ($cart.get(product.id).quantity) : '' }
+									</button>
+								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
 										<a href={`/products/view/${product.id}`}>
 											{@html svgEye}
 										</a>
-										<a href={`/products/edit/${product.id}`}
-										class="px-2">
+										<a href={`/products/edit/${product.id}`} class="px-2">
 											{@html svgPen}
 										</a>
 										<form action="?/delete" method="post" use:enhance>

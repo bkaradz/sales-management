@@ -6,6 +6,7 @@
 	// import { USD } from '@dinero.js/currencies
 	import type { PageData } from './$types';
 	import { unknown } from 'zod';
+	import { format } from '$lib/utility/calculateCart.util';
 
 	export let data: PageData;
 
@@ -162,10 +163,10 @@
 								>
 
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{toDecimal(dinero(contact.balance_due))}</td
+									>{format(dinero(contact.balance_due))}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{toDecimal(dinero(contact.total_receipts))}</td
+									>{format(dinero(contact.total_receipts))}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">

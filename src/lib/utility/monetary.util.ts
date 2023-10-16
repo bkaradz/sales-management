@@ -42,3 +42,4 @@ export const pricelistToMapObj = (list: { pricelist: Pricelist, pricelist_detail
     pricelist_details: pricelist_details
   }
 }
+
