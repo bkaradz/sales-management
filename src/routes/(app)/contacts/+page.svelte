@@ -2,8 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { svgBackArrow, svgBin, svgCalender, svgDropdownArrow, svgEye, svgForwardArrow, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import { dinero, toDecimal } from 'dinero.js';
-	// import { USD } from '@dinero.js/currencies
+	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';

@@ -7,6 +7,14 @@ import { dinero, toSnapshot } from 'dinero.js';
 
 const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
 
+const currencyMap = new Map([
+  ["USD", { code: 'USD', base: 10, exponent: 2 }],
+  ["BWP", { code: 'BWP', base: 10, exponent: 2 }],
+  ["ZAR", { code: 'ZAR', base: 10, exponent: 2 }],
+  ["ZWR", { code: 'ZWR', base: 10, exponent: 2 }],
+  ["ZWB", { code: 'ZWB', base: 10, exponent: 2 }],
+])
+
 
 async function main() {
   console.info("seeding started.....");
@@ -94,10 +102,17 @@ async function main() {
       const exchangeRatesResult = await db.insert(exchange_rates).values({ user_id: adminId, active: rates.active, default: rates.default }).returning({ id: exchange_rates.id });
 
       rates.exchange_rate_details.forEach(async (detail) => {
-        const newRate = { [detail.currency]: { amount: (detail.rate * 3), scale: 3 } }
+
+        const newRate = { [detail.currency]: { amount: (detail.rate * 100), scale: 2 } } // times 100 for % and times 100 for scale
+
+        const currencyObject = currencyMap.get(detail.currency)
+
+        if (!currencyObject) throw new Error("Currency object not found");
+
         await db.insert(exchange_rate_details).values({
           exchange_rates_id: exchangeRatesResult[0].id,
           currency: detail.currency,
+          currency_object: currencyObject,
           rate: newRate
         })
       })

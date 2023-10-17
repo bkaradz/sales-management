@@ -1,4 +1,4 @@
-import { toSnapshot, type DineroSnapshot, dinero, type Rates } from "dinero.js";
+import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { bigint, boolean, integer, json, numeric, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
@@ -181,7 +181,8 @@ export const exchange_rate_details = pgTable('exchange_rate_details', {
   id: serial('id').primaryKey(),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
   currency: text('currency').notNull(),
-  rate: json('rate').$type<Rates<number>>().notNull().default({ 'USD': { amount: 0, scale: 3 } }),
+  currency_object: json('currency_object').$type<Currency<number>>().notNull(),
+  rate: json('rate').$type<Rates<number>>().notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })

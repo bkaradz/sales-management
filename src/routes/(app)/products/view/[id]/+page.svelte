@@ -2,7 +2,6 @@
 	import { svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
 	import { pricelistStore } from '$lib/stores/cartStore';
-	import { toDecimal } from 'dinero.js';
 	import type { PageData } from './$types';
 	import { calcPrice, format } from '$lib/utility/calculateCart.util';
 

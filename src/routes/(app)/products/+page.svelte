@@ -14,10 +14,13 @@
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
 	import { calcPrice, format } from '$lib/utility/calculateCart.util';
-	import { cart, pricelistStore} from '$lib/stores/cartStore';
+	import { cartStore, exchangeRatesStore, pricelistStore} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
+	import { converter } from '$lib/utility/currencyConvertor.util';
 
 	export let data: PageData;
+
+	const rate = 'USD'
 
 </script>
 
@@ -161,20 +164,20 @@
 									>{product.stitches || 'None'}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{$cart.has(product.id) ? ($cart.get(product.id).quantity) : 0 }
+									{$cartStore.has(product.id) ? ($cartStore.get(product.id).quantity) : 0 }
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{format(calcPrice(product, $pricelistStore, 1, 'flat').unit_price)}
+									{format(converter((calcPrice(product, $pricelistStore, 1, 'flat').unit_price), rate, $exchangeRatesStore))}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.product_category}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<button class="h-5 px-3 rounded-sm shadow text-white bg-blue-500"
-									on:click={() => cart.add(product)}
-									on:dblclick={(e) => cart.remove(product)}
+									on:click={() => cartStore.add(product)}
+									on:dblclick={(e) => cartStore.remove(product)}
 									>
-										Cart {$cart.has(product.id) ? ($cart.get(product.id).quantity) : '' }
+										Cart {$cartStore.has(product.id) ? ($cartStore.get(product.id).quantity) : '' }
 									</button>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

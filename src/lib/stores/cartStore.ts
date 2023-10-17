@@ -1,9 +1,9 @@
-import type { Products } from '$lib/server/drizzle/schema';
+import type { ExchangeRate, ExchangeRateDetails, Products } from '$lib/server/drizzle/schema';
 import { addMany, calcPrice, dollars, type pricelistCombined } from '$lib/utility/calculateCart.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
-function cartStore() {
+function cart() {
 	const { subscribe, set, update } = writable<Map<number, Products>>(new Map);
 
 	return {
@@ -45,10 +45,10 @@ function cartStore() {
 	};
 }
 
-export const cart = cartStore();
+export const cartStore = cart();
 
 
-function pricelistSt() {
+function pricelist() {
 	const { subscribe, set, update } = writable<pricelistCombined>();
 
 	return {
@@ -59,7 +59,7 @@ function pricelistSt() {
 	};
 }
 
-export const pricelistStore = pricelistSt();
+export const pricelistStore = pricelist();
 
 function vat() {
 	const { subscribe, set, update } = writable<number>(0);
@@ -74,8 +74,8 @@ function vat() {
 
 export const vatStore = vat();
 
-function exchangeRatesSt() {
-	const { subscribe, set, update } = writable();
+function exchangeRates() {
+	const { subscribe, set, update } = writable<{ exchange_rates: ExchangeRate, exchange_rate_details: Map<string, ExchangeRateDetails> }>();
 
 	return {
 		subscribe,
@@ -85,7 +85,7 @@ function exchangeRatesSt() {
 	};
 }
 
-export const exchangeRatesStore = exchangeRatesSt();
+export const exchangeRatesStore = exchangeRates();
 
 type CartResults = {
 	total_price: Dinero<number>;
@@ -96,10 +96,10 @@ type CartResults = {
 	product_id: number;
 }
 
-export const cartPrices = derived([cart, pricelistStore], ([$cart, $pricelistStore]) => {
+export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore, $pricelistStore]) => {
 	const cartResults = new Map<number, CartResults>()
 
-	$cart.forEach((value, key) => {
+	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore, value.quantity || 0)
 		cartResults.set(value.id, results)
 	})
@@ -107,11 +107,11 @@ export const cartPrices = derived([cart, pricelistStore], ([$cart, $pricelistSto
 	return cartResults
 })
 
-export const cartTotals = derived([cartPrices, vatStore], ([$cartPrices, $vatStore]) => {
+export const cartTotalsStore = derived([cartPricesStore, vatStore], ([$cartPricesStore, $vatStore]) => {
 
 	let totalArray: Dinero<number>[] = [dollars(0)]
-	
-	$cartPrices.forEach((value, key) => {
+
+	$cartPricesStore.forEach((value, key) => {
 		totalArray.push(value.total_price)
 	})
 
@@ -123,6 +123,6 @@ export const cartTotals = derived([cartPrices, vatStore], ([$cartPrices, $vatSto
 		vat: vatTotal,
 		grand_total: addMany([total, vatTotal])
 	}
-	
+
 })
 
