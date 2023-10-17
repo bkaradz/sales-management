@@ -77,13 +77,14 @@ async function main() {
     pricelistData.forEach(async (priceList) => {
 
       const pricelistResult = await db.insert(pricelist).values({ user_id: adminId, name: priceList.name, active: priceList.active, default: priceList.default }).returning({ id: pricelist.id });
-      
+
       priceList.pricelist_details.forEach(async (detail) => {
-        await db.insert(pricelist_details).values({ pricelist_id: pricelistResult[0].id, 
-          embroidery_types: detail.embroidery_types, 
-          minimum_quantity: detail.minimum_quantity, 
-          minimum_price: toSnapshot(dollars(detail.minimum_price * 1000)), 
-          price_per_thousand_stitches: toSnapshot(dollars(detail.price_per_thousand_stitches * 1000)) 
+        await db.insert(pricelist_details).values({
+          pricelist_id: pricelistResult[0].id,
+          embroidery_types: detail.embroidery_types,
+          minimum_quantity: detail.minimum_quantity,
+          minimum_price: toSnapshot(dollars(detail.minimum_price * 1000)),
+          price_per_thousand_stitches: toSnapshot(dollars(detail.price_per_thousand_stitches * 1000))
         })
       })
     });
@@ -91,12 +92,13 @@ async function main() {
     exchangeRates.forEach(async (rates) => {
 
       const exchangeRatesResult = await db.insert(exchange_rates).values({ user_id: adminId, active: rates.active, default: rates.default }).returning({ id: exchange_rates.id });
-      
+
       rates.exchange_rate_details.forEach(async (detail) => {
-        await db.insert(exchange_rate_details).values({ 
-          exchange_rates_id: exchangeRatesResult[0].id, 
-          currency: detail.currency, 
-          rate: toSnapshot(dollars(detail.rate * 1000)) 
+        const newRate = { [detail.currency]: { amount: (detail.rate * 3), scale: 3 } }
+        await db.insert(exchange_rate_details).values({
+          exchange_rates_id: exchangeRatesResult[0].id,
+          currency: detail.currency,
+          rate: newRate
         })
       })
     });
@@ -111,7 +113,7 @@ async function main() {
       productsArray.push(productsResults)
     });
 
-   
+
 
     await Promise.all(productsArray);
 
