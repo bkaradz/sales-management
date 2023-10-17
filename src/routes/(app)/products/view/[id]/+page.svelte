@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
-	import { pricelistStore } from '$lib/stores/cartStore';
+	import { exchangeRatesStore, pricelistStore, selectedRateStore } from '$lib/stores/cartStore';
 	import type { PageData } from './$types';
 	import { calcPrice, format } from '$lib/utility/calculateCart.util';
+	import { converter } from '$lib/utility/currencyConvertor.util';
 
 	export let data: PageData;
 </script>
@@ -63,7 +64,7 @@
 									{list.minimum_quantity}
 								</div>
 								<div class="ml-auto text-xs text-gray-500">
-									{format(calcPrice(data.results.product, $pricelistStore, list.minimum_quantity, key).unit_price)}
+									{format(converter((calcPrice(data.results.product, $pricelistStore, list.minimum_quantity, key).unit_price), $selectedRateStore, $exchangeRatesStore))}
 								</div>
 							</div>
 						{/each}

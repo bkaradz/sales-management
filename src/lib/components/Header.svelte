@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
+	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
 	import { menuTabsList } from '$lib/stores/menuTabsList.store';
+	import { entries } from 'lodash-es';
 
 	type data = {
 		user: {
-		id: string;
-		username: string;
-		full_name: string;
-		active: boolean;
-		created_at: Date;
-		updated_at: Date;
-	}};
+			id: string;
+			username: string;
+			full_name: string;
+			active: boolean;
+			created_at: Date;
+			updated_at: Date;
+		};
+	};
 
 	export let data: data;
 
@@ -38,7 +41,49 @@
 			{/each}
 		</div>
 	</div>
-	<div class="ml-auto flex items-center space-x-7">
+	<div class="ml-auto flex items-center space-x-4">
+		<!-- <label for="small" class="block text-sm font-medium text-gray-900 dark:text-gray-400"
+			>Select Currency</label
+		>
+		<select
+			class="block m-0 px-3 py-1 text-sm text-white bg-blue-500 rounded-md "
+		>
+			<option selected>Choose a country</option>
+			<option value="US">United States</option>
+			<option value="CA">Canada</option>
+			<option value="FR">France</option>
+			<option value="DE">Germany</option>
+		</select> -->
+
+		<div class="dropdown dropdown-bottom dropdown-end">
+			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label
+				tabindex="0"
+				class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500"
+			>
+				<span class="ml-2"
+					>{$exchangeRatesStore.exchange_rate_details.get($selectedRateStore)?.name}</span
+				>
+				{@html svgDropdown}
+			</label>
+			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+			<ul
+				tabindex="0"
+				class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+			>
+				{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
+					{#if !($selectedRateStore === key)}
+						<li>
+							<button on:click={() => selectedRateStore.add(key)} class="rounded-sm">
+								{value.name}
+							</button>
+						</li>
+					{/if}
+				{/each}
+			</ul>
+		</div>
+
 		<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500">Deposit</button>
 
 		<div class="dropdown dropdown-bottom dropdown-end">

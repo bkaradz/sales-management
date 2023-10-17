@@ -6,6 +6,8 @@
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
+	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 
 	export let data: PageData;
 
@@ -144,10 +146,10 @@
 								>
 
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{format(dinero(contact.balance_due))}</td
+									>{format(converter(dinero(contact.balance_due), $selectedRateStore, $exchangeRatesStore))}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{format(dinero(contact.total_receipts))}</td
+									>{format(converter(dinero(contact.total_receipts), $selectedRateStore, $exchangeRatesStore))}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">

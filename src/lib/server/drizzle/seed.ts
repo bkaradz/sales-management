@@ -111,6 +111,7 @@ async function main() {
 
         await db.insert(exchange_rate_details).values({
           exchange_rates_id: exchangeRatesResult[0].id,
+          name: detail.name,
           currency: detail.currency,
           currency_object: currencyObject,
           rate: newRate

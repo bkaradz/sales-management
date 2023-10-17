@@ -14,14 +14,16 @@
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
 	import { calcPrice, format } from '$lib/utility/calculateCart.util';
-	import { cartStore, exchangeRatesStore, pricelistStore} from '$lib/stores/cartStore';
+	import {
+		cartStore,
+		exchangeRatesStore,
+		pricelistStore,
+		selectedRateStore
+	} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 
 	export let data: PageData;
-
-	const rate = 'USD'
-
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -147,6 +149,9 @@
 								>Product Categories</th
 							>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+								>Cart</th
+							>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Actions</th
 							>
 						</tr>
@@ -164,22 +169,35 @@
 									>{product.stitches || 'None'}</td
 								>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{$cartStore.has(product.id) ? ($cartStore.get(product.id).quantity) : 0 }
+									{$cartStore.has(product.id) ? $cartStore.get(product.id).quantity : 0}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{format(converter((calcPrice(product, $pricelistStore, 1, 'flat').unit_price), rate, $exchangeRatesStore))}
+									{format(
+										converter(
+											calcPrice(product, $pricelistStore, 1, 'flat').unit_price,
+											$selectedRateStore,
+											$exchangeRatesStore
+										)
+									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.product_category}
 								</td>
+
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<button class="h-5 px-3 rounded-sm shadow text-white bg-blue-500"
-									on:click={() => cartStore.add(product)}
-									on:dblclick={(e) => cartStore.remove(product)}
-									>
-										Cart {$cartStore.has(product.id) ? ($cartStore.get(product.id).quantity) : '' }
-									</button>
+									<div class="flex items-center">
+										<button on:click={() => cartStore.remove(product)} class="bg-slate-600 px-2 hover:bg-blue-500">
+											<span>-</span>
+										</button>
+										<div  class="px-3">
+											<span>{$cartStore.has(product.id) ? $cartStore.get(product.id).quantity : 0}</span>
+										</div>
+										<button on:click={() => cartStore.add(product)} class="bg-slate-600 px-2 hover:bg-blue-500">
+											<span>+</span>
+										</button>
+									</div>
 								</td>
+
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
 										<a href={`/products/view/${product.id}`}>

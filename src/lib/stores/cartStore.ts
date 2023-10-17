@@ -87,6 +87,19 @@ function exchangeRates() {
 
 export const exchangeRatesStore = exchangeRates();
 
+function selectedRate() {
+	const { subscribe, set, update } = writable<string>('USD');
+
+	return {
+		subscribe,
+		add: (rate: string) => {
+			update(() => rate)
+		},
+	};
+}
+
+export const selectedRateStore = selectedRate();
+
 type CartResults = {
 	total_price: Dinero<number>;
 	unit_price: Dinero<number>;

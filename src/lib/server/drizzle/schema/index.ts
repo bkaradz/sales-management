@@ -180,6 +180,7 @@ export const selectExchangeRateSchema = createSelectSchema(exchange_rates);
 export const exchange_rate_details = pgTable('exchange_rate_details', {
   id: serial('id').primaryKey(),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
+  name: text('name').notNull(),
   currency: text('currency').notNull(),
   currency_object: json('currency_object').$type<Currency<number>>().notNull(),
   rate: json('rate').$type<Rates<number>>().notNull(),

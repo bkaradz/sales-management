@@ -6,6 +6,8 @@
 	import type { PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
+	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 
 	export let data: PageData;
 
@@ -59,7 +61,10 @@
 							<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
 								<p>Balance</p>
 							</div>
-							<div class="ml-auto text-xs text-gray-500">{format(dinero(user.balance_due))}</div>
+							<div class="ml-auto text-xs text-gray-500">
+								<!-- {format(dinero(user.balance_due))} -->
+								{format(converter(dinero(user.balance_due), $selectedRateStore, $exchangeRatesStore))}
+							</div>
 						</div>
 					</button>
 				{/each}
