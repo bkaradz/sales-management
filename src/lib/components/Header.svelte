@@ -42,18 +42,6 @@
 		</div>
 	</div>
 	<div class="ml-auto flex items-center space-x-4">
-		<!-- <label for="small" class="block text-sm font-medium text-gray-900 dark:text-gray-400"
-			>Select Currency</label
-		>
-		<select
-			class="block m-0 px-3 py-1 text-sm text-white bg-blue-500 rounded-md "
-		>
-			<option selected>Choose a country</option>
-			<option value="US">United States</option>
-			<option value="CA">Canada</option>
-			<option value="FR">France</option>
-			<option value="DE">Germany</option>
-		</select> -->
 
 		<div class="dropdown dropdown-bottom dropdown-end">
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->

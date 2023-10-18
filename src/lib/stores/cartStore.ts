@@ -1,5 +1,5 @@
 import type { ExchangeRate, ExchangeRateDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type pricelistCombined } from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, dollars, type embTypekey, type pricelistCombined } from '$lib/utility/calculateCart.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
@@ -25,7 +25,7 @@ function cart() {
 				}
 			})
 		},
-		remove: (product: Products) => {
+		subtract: (product: Products) => {
 			update((productMap) => {
 				if (productMap.has(product.id)) {
 					const productGet = productMap.get(product.id) as Products
@@ -41,6 +41,15 @@ function cart() {
 				}
 			})
 		},
+		removeProduct: (id: number) => {update((productMap) => {
+			productMap.delete(id)
+			return productMap
+		})},
+		changeEmbType: ({id, type}: {id: number, type: string}) => {update((productMap) => {
+			const productGet = productMap.get(id) as Products
+			productGet.embroidery_type = type
+			return productMap
+		})},
 		reset: () => set(new Map())
 	};
 }
@@ -113,7 +122,7 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 	const cartResults = new Map<number, CartResults>()
 
 	$cartStore.forEach((value, key) => {
-		const results = calcPrice(value, $pricelistStore, value.quantity || 0)
+		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as embTypekey)
 		cartResults.set(value.id, results)
 	})
 
