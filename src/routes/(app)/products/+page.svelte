@@ -186,13 +186,13 @@
 
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<button on:click={() => cartStore.subtract(product)} class="bg-slate-600 px-2 hover:bg-blue-500">
+										<button on:click={() => cartStore.subtract(product)} class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500">
 											<span>-</span>
 										</button>
 										<div  class="px-3">
 											<span>{$cartStore.has(product.id) ? $cartStore.get(product.id).quantity : 0}</span>
 										</div>
-										<button on:click={() => cartStore.add(product)} class="bg-slate-600 px-2 hover:bg-blue-500">
+										<button on:click={() => cartStore.add(product)} class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500">
 											<span>+</span>
 										</button>
 									</div>
