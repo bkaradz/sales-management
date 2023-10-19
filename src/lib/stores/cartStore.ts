@@ -1,5 +1,6 @@
-import type { ExchangeRate, ExchangeRateDetails, Products } from '$lib/server/drizzle/schema';
+import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails, Products } from '$lib/server/drizzle/schema';
 import { addMany, calcPrice, dollars, type embTypekey, type pricelistCombined } from '$lib/utility/calculateCart.util';
+import { pricelistToMapObj } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
@@ -62,7 +63,8 @@ function pricelist() {
 
 	return {
 		subscribe,
-		add: (pricelist: any) => {
+		add: (pricelist: { pricelist: Pricelist, pricelist_details: PricelistDetails[] }) => {
+			// update(() => pricelistToMapObj(pricelist))
 			update(() => pricelist)
 		},
 	};

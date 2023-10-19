@@ -18,7 +18,17 @@ export const load = (async (event) => {
         return await router.createCaller(await createContext(event)).contacts.getContacts(query);
     };
 
+    const pricelist = async () => {
+        return await router.createCaller(await createContext(event)).pricelists.getAllPricelists();
+    };
+
+    const exchangeRate = async () => {
+        return await router.createCaller(await createContext(event)).rates.getAllRates();
+    };
+
     return {
-        results: contacts(query)
+        results: contacts(query),
+        pricelistAll: pricelist(),
+        exchangeRateAll: exchangeRate()
     };
 }) satisfies PageServerLoad;

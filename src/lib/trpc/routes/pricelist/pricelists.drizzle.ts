@@ -63,7 +63,8 @@ export const getAllPricelists = async () => {
       }, {},
     );
 
-    return result
+    return Object.values(result)
+    // return result
 
   } catch (error) {
 

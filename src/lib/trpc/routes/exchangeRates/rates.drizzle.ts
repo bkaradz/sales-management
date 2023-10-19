@@ -62,7 +62,7 @@ export const getAllRates = async () => {
       }, {},
     );
 
-    return result
+    return Object.values(result)
 
   } catch (error) {
 

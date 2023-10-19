@@ -3,7 +3,6 @@
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
 	import { menuTabsList } from '$lib/stores/menuTabsList.store';
-	import { entries } from 'lodash-es';
 
 	type data = {
 		user: {

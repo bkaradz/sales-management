@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { svgBin, svgDropdown, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
-	import { calcPrice, format } from '$lib/utility/calculateCart.util';
+	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
+	import { format } from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -11,7 +11,8 @@
 		cartStore,
 		exchangeRatesStore,
 		cartTotalsStore,
-		selectedRateStore
+		selectedRateStore,
+		pricelistStore
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { Contacts } from '$lib/server/drizzle/schema';
@@ -78,7 +79,7 @@
 			</form>
 		</div>
 		<div class="space-y-4 mt-3">
-			{#if data.results}
+			{#if data.results?.contacts}
 				{#each data.results.contacts as user (user.id)}
 					<button
 						on:click={() => (customerSelected = user)}
@@ -332,255 +333,288 @@
 			</div>
 		{/if}
 		{#if selectedActivitiesTab.name === 'Cart Details'}
-		<div class="grid grid-cols-3 gap-4">
-
-			<div class="w-full">
-				<div
-					class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
-				>
-					<div class="pl-3 text-xl text-gray-900 dark:text-white">Contact</div>
-					{#if customerSelected}
-						<div class="space-y-4 mt-3">
-							<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
-								<div
-									class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									{customerSelected.full_name}
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Id</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.id}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Corporate
-									</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.is_corporate}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Active
-									</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.active}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Balance
-									</div>
-									<div class="ml-auto text-xs text-gray-500">
-										{format(
-											converter(
-												dinero(customerSelected.balance_due),
-												$selectedRateStore,
-												$exchangeRatesStore
-											)
-										)}
-									</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Total Receipts
-									</div>
-									<div class="ml-auto text-xs text-gray-500">
-										{format(
-											converter(
-												dinero(customerSelected.total_receipts),
-												$selectedRateStore,
-												$exchangeRatesStore
-											)
-										)}
-									</div>
-								</div>
-								{#if customerSelected.notes}
+			<div class="grid grid-cols-3 gap-4">
+				<div class="w-full">
+					<div
+						class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
+					>
+						<div class="pl-3 text-xl text-gray-900 dark:text-white">Contact</div>
+						{#if customerSelected}
+							<div class="space-y-4 mt-3">
+								<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
 									<div
-										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										{customerSelected.full_name}
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											Notes
+											Id
 										</div>
-										<div class="ml-auto text-xs text-gray-500">{customerSelected.notes}</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.id}</div>
 									</div>
-								{/if}
-							</button>
-						</div>
-					{/if}
-				</div>
-			</div>
-			<div class="w-full">
-				<div
-					class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
-				>
-					<div class="pl-3 text-xl text-gray-900 dark:text-white">Pricelist</div>
-					{#if customerSelected}
-						<div class="space-y-4 mt-3">
-							<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
-								<div
-									class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									{customerSelected.full_name}
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Id</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.id}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Corporate
-									</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.is_corporate}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Active
-									</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.active}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Balance
-									</div>
-									<div class="ml-auto text-xs text-gray-500">
-										{format(
-											converter(
-												dinero(customerSelected.balance_due),
-												$selectedRateStore,
-												$exchangeRatesStore
-											)
-										)}
-									</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Total Receipts
-									</div>
-									<div class="ml-auto text-xs text-gray-500">
-										{format(
-											converter(
-												dinero(customerSelected.total_receipts),
-												$selectedRateStore,
-												$exchangeRatesStore
-											)
-										)}
-									</div>
-								</div>
-								{#if customerSelected.notes}
 									<div
-										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											Notes
+											Corporate
 										</div>
-										<div class="ml-auto text-xs text-gray-500">{customerSelected.notes}</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.is_corporate}</div>
 									</div>
-								{/if}
-							</button>
-						</div>
-					{/if}
-				</div>
-			</div>
-			<div class="w-full">
-				<div
-					class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
-				>
-					<div class="pl-3 text-xl text-gray-900 dark:text-white">Exchange Rate</div>
-					{#if customerSelected}
-						<div class="space-y-4 mt-3">
-							<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
-								<div
-									class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									{customerSelected.full_name}
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Id</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.id}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Corporate
-									</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.is_corporate}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Active
-									</div>
-									<div class="ml-auto text-xs text-gray-500">{customerSelected.active}</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Balance
-									</div>
-									<div class="ml-auto text-xs text-gray-500">
-										{format(
-											converter(
-												dinero(customerSelected.balance_due),
-												$selectedRateStore,
-												$exchangeRatesStore
-											)
-										)}
-									</div>
-								</div>
-								<div
-									class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Total Receipts
-									</div>
-									<div class="ml-auto text-xs text-gray-500">
-										{format(
-											converter(
-												dinero(customerSelected.total_receipts),
-												$selectedRateStore,
-												$exchangeRatesStore
-											)
-										)}
-									</div>
-								</div>
-								{#if customerSelected.notes}
 									<div
-										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											Notes
+											Active
 										</div>
-										<div class="ml-auto text-xs text-gray-500">{customerSelected.notes}</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.active}</div>
 									</div>
-								{/if}
-							</button>
-						</div>
-					{/if}
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Balance
+										</div>
+										<div class="ml-auto text-xs text-gray-500">
+											{format(
+												converter(
+													dinero(customerSelected.balance_due),
+													$selectedRateStore,
+													$exchangeRatesStore
+												)
+											)}
+										</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Total Receipts
+										</div>
+										<div class="ml-auto text-xs text-gray-500">
+											{format(
+												converter(
+													dinero(customerSelected.total_receipts),
+													$selectedRateStore,
+													$exchangeRatesStore
+												)
+											)}
+										</div>
+									</div>
+									{#if customerSelected.notes}
+										<div
+											class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+										>
+											<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+												Notes
+											</div>
+											<div class="ml-auto text-xs text-gray-500">{customerSelected.notes}</div>
+										</div>
+									{/if}
+								</button>
+							</div>
+						{/if}
+					</div>
+				</div>
+				<div class="w-full">
+					<div
+						class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
+					>
+						<div class="pl-3 text-xl text-gray-900 dark:text-white">Pricelist</div>
+						{#if data.pricelistAll}
+							<div class="space-y-4 mt-3">
+								<!--  -->
+								<div class="dropdown dropdown-bottom dropdown-left w-full">
+									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+									<!-- svelte-ignore a11y-label-has-associated-control -->
+									<label
+										tabindex="0"
+										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500"
+									>
+										<span class="ml-2">{$pricelistStore.pricelist.name}</span>
+										{@html svgDropdown}
+									</label>
+									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+									<ul
+										tabindex="0"
+										class="dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+									>
+										{#each data.pricelistAll as pricelist (pricelist.pricelist.id)}
+											{#if !($pricelistStore.pricelist.name === pricelist.pricelist.name)}
+												<li>
+													<button on:click={() => pricelistStore.add(pricelist)} class="rounded-sm">
+														{pricelist.pricelist.name}
+													</button>
+												</li>
+											{/if}
+										{/each}
+									</ul>
+								</div>
+								<!--  -->
+								<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800 z-1`}>
+									<div
+										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										{customerSelected.full_name}
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Id
+										</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.id}</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Corporate
+										</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.is_corporate}</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Active
+										</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.active}</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Balance
+										</div>
+										<div class="ml-auto text-xs text-gray-500">
+											{format(
+												converter(
+													dinero(customerSelected.balance_due),
+													$selectedRateStore,
+													$exchangeRatesStore
+												)
+											)}
+										</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Total Receipts
+										</div>
+										<div class="ml-auto text-xs text-gray-500">
+											{format(
+												converter(
+													dinero(customerSelected.total_receipts),
+													$selectedRateStore,
+													$exchangeRatesStore
+												)
+											)}
+										</div>
+									</div>
+									{#if customerSelected.notes}
+										<div
+											class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+										>
+											<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+												Notes
+											</div>
+											<div class="ml-auto text-xs text-gray-500">{customerSelected.notes}</div>
+										</div>
+									{/if}
+								</button>
+							</div>
+						{/if}
+					</div>
+				</div>
+				<div class="w-full">
+					<div
+						class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
+					>
+						<div class="pl-3 text-xl text-gray-900 dark:text-white">Exchange Rate</div>
+						{#if customerSelected}
+							<div class="space-y-4 mt-3">
+								<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
+									<div
+										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										{customerSelected.full_name}
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Id
+										</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.id}</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Corporate
+										</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.is_corporate}</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Active
+										</div>
+										<div class="ml-auto text-xs text-gray-500">{customerSelected.active}</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Balance
+										</div>
+										<div class="ml-auto text-xs text-gray-500">
+											{format(
+												converter(
+													dinero(customerSelected.balance_due),
+													$selectedRateStore,
+													$exchangeRatesStore
+												)
+											)}
+										</div>
+									</div>
+									<div
+										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Total Receipts
+										</div>
+										<div class="ml-auto text-xs text-gray-500">
+											{format(
+												converter(
+													dinero(customerSelected.total_receipts),
+													$selectedRateStore,
+													$exchangeRatesStore
+												)
+											)}
+										</div>
+									</div>
+									{#if customerSelected.notes}
+										<div
+											class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+										>
+											<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+												Notes
+											</div>
+											<div class="ml-auto text-xs text-gray-500">{customerSelected.notes}</div>
+										</div>
+									{/if}
+								</button>
+							</div>
+						{/if}
+					</div>
 				</div>
 			</div>
-		</div>
 		{/if}
 	</div>
 </div>
