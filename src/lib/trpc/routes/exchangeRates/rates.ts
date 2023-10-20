@@ -1,11 +1,11 @@
 import { router } from "$lib/trpc/t";
 import { z } from "zod";
-import { protectedProcedure } from '$lib/trpc/middleware/auth';
+import { protectedProcedure, publicProcedure } from '$lib/trpc/middleware/auth';
 import { getDefaultRates, createRate, deleteById, getById, getAllRates } from "./rates.drizzle";
 
 
 export const rates = router({
-    getDefaultRates: protectedProcedure.query(async () => {
+    getDefaultRates: publicProcedure.query(async () => {
         return await getDefaultRates();
     }),
     getAllRates: protectedProcedure.query(async () => {

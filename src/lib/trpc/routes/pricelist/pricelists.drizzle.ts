@@ -1,6 +1,7 @@
 import { db } from "$lib/server/drizzle/client";
 import { pricelist, pricelist_details, type Pricelist, type PricelistDetails } from "$lib/server/drizzle/schema";
 import type { Context } from "$lib/trpc/context";
+import { pricelistToMapObj } from "$lib/utility/monetary.util";
 import { error } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 
@@ -31,7 +32,9 @@ export const getDefaultPricelists = async () => {
 
     const pricelistId = pricelistResults[0].pricelist.id
 
-    return result[pricelistId]
+    const pricelistMap = pricelistToMapObj(result[pricelistId])
+
+    return pricelistMap
 
   } catch (error) {
 

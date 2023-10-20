@@ -1,12 +1,12 @@
-import type { embTypekey } from "$lib/utility/calculateCart.util";
+import type { GarmentPlacement, embTypekey } from "$lib/utility/calculateCart.util";
 import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
-import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
+
+
 const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
-
-
 
 export const users = pgTable('auth_user', {
   id: text('id').primaryKey(),
@@ -116,11 +116,12 @@ export const products = pgTable('products', {
   user_id: text('user_id').notNull().references(() => users.id),
   name: text('name').notNull().unique(),
   description: text('description'),
-  product_category: text('product_category').notNull(),
+  product_category: text('product_category').notNull().default('embroidery'),
   unit_price: json('minimum_price').$type<DineroSnapshot<number>>(),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
   embroidery_type: text('embroidery_type').$type<embTypekey>().notNull().default('flat'),
+  garment_placement: text('garment_placement').$type<GarmentPlacement>().notNull().default('Front Left'),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
@@ -197,3 +198,45 @@ export type NewExchangeRateDetails = InferInsertModel<typeof exchange_rate_detai
 
 export const insertExchangeRateDetailsSchema = createInsertSchema(exchange_rate_details);
 export const selectExchangeRateDetailsSchema = createSelectSchema(exchange_rate_details);
+
+export const orders = pgTable('orders', {
+  id: serial('id').primaryKey(),
+  user_id: text('user_id').notNull().references(() => users.id),
+  customer: integer('customer').notNull().references(() => contacts.id),
+  pricelist: integer('pricelist').notNull().references(() => pricelist.id),
+  exchange_rates: integer('exchange_rates').notNull().references(() => exchange_rates.id),
+  description: text('description'),
+  active: boolean('active').notNull().default(true),
+  default: boolean('default').notNull().default(true),
+  delivery_date: timestamp('delivery_date').notNull().default(sql`now() + INTERVAL '7 days'`),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type Orders = InferSelectModel<typeof orders>;
+export type NewOrders = InferInsertModel<typeof orders>;
+
+export const insertOrdersSchema = createInsertSchema(orders);
+export const selectOrdersSchema = createSelectSchema(orders);
+
+export const orders_details = pgTable('orders_details', {
+  id: serial('id').primaryKey(),
+  order_id: integer('order_id').notNull().references(() => orders.id),
+  product_id: integer('product_id').notNull().references(() => products.id),
+  unit_price: json('minimum_price').notNull().$type<DineroSnapshot<number>>(),
+  total_price: json('total_price').notNull().$type<DineroSnapshot<number>>(),
+  stitches: integer('stitches').notNull(),
+  quantity: integer('quantity').notNull(),
+  embroidery_type: text('embroidery_type').$type<embTypekey>().notNull().default('flat'),
+  garment_placement: text('garment_placement').$type<GarmentPlacement>().notNull().default('Front Left'),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type OrdersDetails = InferSelectModel<typeof orders_details>;
+export type NewOrdersDetails = InferInsertModel<typeof orders_details>;
+
+export const insertOrdersDetailsSchema = createInsertSchema(orders_details);
+export const selectOrdersDetailsSchema = createSelectSchema(orders_details);
+
+

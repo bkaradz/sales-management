@@ -1,11 +1,11 @@
 import { router } from "$lib/trpc/t";
 import { z } from "zod";
-import { protectedProcedure } from '$lib/trpc/middleware/auth';
+import { protectedProcedure, publicProcedure } from '$lib/trpc/middleware/auth';
 import { getDefaultPricelists, createPricelist, deleteById, getById, getAllPricelists } from "./pricelists.drizzle";
 
 
 export const pricelists = router({
-    getDefaultPricelists: protectedProcedure.query(async () => {
+    getDefaultPricelists: publicProcedure.query(async () => {
         return await getDefaultPricelists();
     }),
     getAllPricelists: protectedProcedure.query(async () => {

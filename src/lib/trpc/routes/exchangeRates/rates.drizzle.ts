@@ -1,6 +1,7 @@
 import { db } from "$lib/server/drizzle/client";
 import { exchange_rates, exchange_rate_details, type ExchangeRate, type ExchangeRateDetails } from "$lib/server/drizzle/schema";
 import type { Context } from "$lib/trpc/context";
+import { exchangeRateToMapObj } from "$lib/utility/monetary.util";
 import { error } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 
@@ -31,7 +32,9 @@ export const getDefaultRates = async () => {
 
     const rateId = rateResults[0].exchange_rates.id
 
-    return result[rateId]
+    const exchangeRateMap = exchangeRateToMapObj(result[rateId])
+
+    return exchangeRateMap
 
   } catch (error) {
 

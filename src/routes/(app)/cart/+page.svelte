@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
 	import { calcPrice, dollars, format, type embTypekey } from '$lib/utility/calculateCart.util';
-	import { add, convert, dinero } from 'dinero.js';
+	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -13,12 +13,9 @@
 		cartTotalsStore,
 		selectedRateStore,
 		pricelistStore,
-
 		customerSelectedStore
-
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
-	import type { Contacts } from '$lib/server/drizzle/schema';
 
 	export let data: PageData;
 
@@ -57,7 +54,9 @@
 		activitiesTabs = activitiesTabs;
 	};
 
-	// let customerSelected: Contacts | null = null;
+	const handleSubmit = () => {
+		
+	}
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -121,6 +120,11 @@
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
+					<button 
+					on:click|preventDefault={() => handleSubmit}
+					class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8">
+						Submit
+					</button>
 					<div class="text-right">
 						<div class="text-xs text-gray-400 dark:text-gray-400">Cart Total:</div>
 						<div class="text-gray-900 text-lg dark:text-white">
@@ -189,10 +193,10 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.name}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{product.stitches || 'None'}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
 									<div class="dropdown dropdown-bottom dropdown-end">
 										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 										<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -226,7 +230,7 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{$cartPricesStore.get(key)?.quantity}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{format(
 										converter(
 											$cartPricesStore.get(key)?.unit_price,
@@ -235,7 +239,7 @@
 										)
 									)}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{format(
 										converter(
 											$cartPricesStore.get(key)?.total_price,
@@ -245,7 +249,7 @@
 									)}
 								</td>
 
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									<div class="flex items-center">
 										<button
 											on:click={() => cartStore.subtract(product)}
@@ -255,7 +259,7 @@
 										</button>
 										<div class="px-3">
 											<span>
-												{$cartStore.has(product.id) ? $cartStore.get(product.id).quantity : 0}
+												{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
 											</span>
 										</div>
 										<button
@@ -267,7 +271,7 @@
 									</div>
 								</td>
 
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
 									<div class="flex items-center">
 										<button on:click={() => cartStore.removeProduct(product.id)}>
 											{@html svgBin}
@@ -282,10 +286,10 @@
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								<span>Sub Total</span>
 							</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
 									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore)
 								)}
@@ -301,10 +305,10 @@
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								<span>Vat</span>
 							</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore))}
 							</td>
 
@@ -318,10 +322,10 @@
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								<span>Total</span>
 							</td>
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
 									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore)
 								)}
@@ -526,6 +530,7 @@
 																	stitches: 1537,
 																	quantity: null,
 																	embroidery_type: 'flat',
+																	garment_placement: 'Front Left',
 																	active: true,
 																	created_at: new Date(),
 																	updated_at: new Date()

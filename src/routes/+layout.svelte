@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount, setContext } from 'svelte';
     import type { LayoutData } from './$types';
     import Toasts from '$lib/components/Toasts.svelte';
     import '../app.css';

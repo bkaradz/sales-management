@@ -15,6 +15,8 @@ export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
  * Function to get pricelist for a given Quantity and Embroidery Type
  */
 
+export type GarmentPlacement = 'Front Left' | 'Front Right' | 'Upper Back' | 'Lower Back' | 'Right Sleeve' | 'Left Sleeve' | 'Cap Front' | 'Cap Right Side' | 'Cap Left Side' | 'Name Tag' | 'Marked Position'
+
 export type embTypekey = 'flat' | 'cap' | 'applique' | 'nameTag'
 
 export type PricelistDetailsMap = Map<embTypekey, {
