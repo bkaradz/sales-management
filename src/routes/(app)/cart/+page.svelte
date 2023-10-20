@@ -16,6 +16,7 @@
 		customerSelectedStore
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
+	import { DateInput } from 'date-picker-svelte';
 
 	export let data: PageData;
 
@@ -54,9 +55,9 @@
 		activitiesTabs = activitiesTabs;
 	};
 
-	const handleSubmit = () => {
-		
-	}
+	const handleSubmit = () => {};
+
+	let date = new Date();
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -84,7 +85,7 @@
 			{#if data.results?.contacts}
 				{#each data.results.contacts as user (user.id)}
 					<button
-						on:click={() => (customerSelectedStore.add(user))}
+						on:click={() => customerSelectedStore.add(user)}
 						class={`${
 							$customerSelectedStore?.id === user.id
 								? 'shadow-lg relative ring-2 ring-blue-500 focus:outline-none'
@@ -120,9 +121,10 @@
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
-					<button 
-					on:click|preventDefault={() => handleSubmit}
-					class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8">
+					<button
+						on:click|preventDefault={() => handleSubmit}
+						class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
+					>
 						Submit
 					</button>
 					<div class="text-right">
@@ -193,10 +195,14 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.name}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{product.stitches || 'None'}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
+								>
 									<div class="dropdown dropdown-bottom dropdown-end">
 										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 										<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -230,7 +236,9 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{$cartPricesStore.get(key)?.quantity}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{format(
 										converter(
 											$cartPricesStore.get(key)?.unit_price,
@@ -239,7 +247,9 @@
 										)
 									)}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{format(
 										converter(
 											$cartPricesStore.get(key)?.total_price,
@@ -249,7 +259,9 @@
 									)}
 								</td>
 
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									<div class="flex items-center">
 										<button
 											on:click={() => cartStore.subtract(product)}
@@ -271,7 +283,9 @@
 									</div>
 								</td>
 
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
+								>
 									<div class="flex items-center">
 										<button on:click={() => cartStore.removeProduct(product.id)}>
 											{@html svgBin}
@@ -348,7 +362,9 @@
 						<div class="pl-3 text-xl text-gray-900 dark:text-white">Contact</div>
 						{#if $customerSelectedStore}
 							<div class="space-y-4 mt-3">
-								<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
+								<button
+									class={`bg-white relative p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
+								>
 									<div
 										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
@@ -368,7 +384,9 @@
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 											Corporate
 										</div>
-										<div class="ml-auto text-xs text-gray-500">{$customerSelectedStore.is_corporate}</div>
+										<div class="ml-auto text-xs text-gray-500">
+											{$customerSelectedStore.is_corporate}
+										</div>
 									</div>
 									<div
 										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -417,9 +435,38 @@
 											<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 												Notes
 											</div>
-											<div class="ml-auto text-xs text-gray-500">{$customerSelectedStore.notes}</div>
+											<div class="ml-auto text-xs text-gray-500">
+												{$customerSelectedStore.notes}
+											</div>
 										</div>
 									{/if}
+									<div
+										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											<DateInput bind:value={date} class="z-50" />
+										</div>
+										<div class="ml-auto text-xs text-gray-500">Delivery Date</div>
+									</div>
+									<div
+										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class="relative w-full mb-4">
+											<textarea
+												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+												id="notes"
+												rows="4"
+												name="notes"
+												placeholder="Notes"
+											/>
+											<label
+												for="notes"
+												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+											>
+												Notes
+											</label>
+										</div>
+									</div>
 								</button>
 							</div>
 						{/if}
@@ -471,7 +518,7 @@
 											{$pricelistStore.pricelist.id}
 										</div>
 									</div>
-								
+
 									<div
 										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
@@ -482,7 +529,7 @@
 											{$pricelistStore.pricelist.default}
 										</div>
 									</div>
-								
+
 									<div
 										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
@@ -599,7 +646,7 @@
 											{$exchangeRatesStore.exchange_rates.id}
 										</div>
 									</div>
-								
+
 									<div
 										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
@@ -622,9 +669,7 @@
 									</div>
 									<div
 										class="flex items-center text-gray-900 dark:text-white mt-0.5 xl:border-t border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-									>
-									
-									</div>
+									/>
 									{#each $exchangeRatesStore.exchange_rate_details as [key, value] (key)}
 										<div
 											class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
