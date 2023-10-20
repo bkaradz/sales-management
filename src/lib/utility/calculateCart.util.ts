@@ -22,13 +22,13 @@ export type PricelistDetailsMap = Map<embTypekey, {
   minimum_price: DineroSnapshot<number>;
   price_per_thousand_stitches: DineroSnapshot<number>;
   minimum_quantity: number;
-  embroidery_types: string;
+  embroidery_types: embTypekey;
   pricelist_id: number;
 }[]>
 
-export type pricelistCombined = { pricelist: Pricelist, pricelist_details: PricelistDetailsMap }
+export type PricelistCombinedMap = { pricelist: Pricelist, pricelist_details: PricelistDetailsMap }
 
-export const getPricelist = (pricelist: pricelistCombined, quantity: number, embType: embTypekey) => {
+export const getPricelist = (pricelist: PricelistCombinedMap, quantity: number, embType: embTypekey) => {
   if (!pricelist) throw new Error("Pricelist is required");
   if (!quantity) throw new Error("Quantity is required");
   if (!embType) throw new Error("Embroidery Type is required");
@@ -51,7 +51,7 @@ export const getPricelist = (pricelist: pricelistCombined, quantity: number, emb
 // check that the product_category is embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
-export const calcPrice = (product: Products, pricelist: pricelistCombined, quantity: number, embType: embTypekey = 'flat') => {
+export const calcPrice = (product: Products, pricelist: PricelistCombinedMap, quantity: number, embType: embTypekey = 'flat') => {
 
   // TODO: Call a function that calculate non embroidery products
   if (!(product.product_category === "embroidery")) throw new Error("Embroidery product needed");
@@ -88,7 +88,3 @@ function createFormatter(transformer: any) {
 export const format = createFormatter(({value, currency}: {value: string, currency: Currency<number>}) =>
   `${currency.code} ${Number(value).toFixed(2)}`
 )
-
-// const transformer = ({value, currency}: {value: string, currency: Currency<number>}) => {
-//   return`${currency.code} ${Number(value).toFixed(2)}`
-// }

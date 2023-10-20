@@ -1,6 +1,6 @@
-import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type embTypekey, type pricelistCombined } from '$lib/utility/calculateCart.util';
-import { pricelistToMapObj } from '$lib/utility/monetary.util';
+import type { Contacts, Products } from '$lib/server/drizzle/schema';
+import { addMany, calcPrice, dollars, type embTypekey, type PricelistCombinedMap } from '$lib/utility/calculateCart.util';
+import type { ExchangeRateCombinedMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
@@ -42,29 +42,44 @@ function cart() {
 				}
 			})
 		},
-		removeProduct: (id: number) => {update((productMap) => {
-			productMap.delete(id)
-			return productMap
-		})},
-		changeEmbType: ({id, type}: {id: number, type: string}) => {update((productMap) => {
-			const productGet = productMap.get(id) as Products
-			productGet.embroidery_type = type
-			return productMap
-		})},
+		removeProduct: (id: number) => {
+			update((productMap) => {
+				productMap.delete(id)
+				return productMap
+			})
+		},
+		changeEmbType: ({ id, type }: { id: number, type: embTypekey }) => {
+			update((productMap) => {
+				const productGet = productMap.get(id) as Products
+				productGet.embroidery_type = type
+				return productMap
+			})
+		},
 		reset: () => set(new Map())
 	};
 }
 
 export const cartStore = cart();
 
-
-function pricelist() {
-	const { subscribe, set, update } = writable<pricelistCombined>();
+function customerSelected() {
+	const { subscribe, set, update } = writable<Contacts | null>(null);
 
 	return {
 		subscribe,
-		add: (pricelist: { pricelist: Pricelist, pricelist_details: PricelistDetails[] }) => {
-			// update(() => pricelistToMapObj(pricelist))
+		add: (customer: Contacts) => {
+			update(() => customer)
+		},
+	};
+}
+
+export const customerSelectedStore = customerSelected();
+
+function pricelist() {
+	const { subscribe, set, update } = writable<PricelistCombinedMap>();
+
+	return {
+		subscribe,
+		add: (pricelist: PricelistCombinedMap) => {
 			update(() => pricelist)
 		},
 	};
@@ -86,11 +101,11 @@ function vat() {
 export const vatStore = vat();
 
 function exchangeRates() {
-	const { subscribe, set, update } = writable<{ exchange_rates: ExchangeRate, exchange_rate_details: Map<string, ExchangeRateDetails> }>();
+	const { subscribe, set, update } = writable<ExchangeRateCombinedMap>();
 
 	return {
 		subscribe,
-		add: (exchangeRates: any) => {
+		add: (exchangeRates: ExchangeRateCombinedMap) => {
 			update(() => exchangeRates)
 		},
 	};
@@ -98,6 +113,7 @@ function exchangeRates() {
 
 export const exchangeRatesStore = exchangeRates();
 
+// TODO: Change to selected currency
 function selectedRate() {
 	const { subscribe, set, update } = writable<string>('USD');
 

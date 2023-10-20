@@ -159,19 +159,19 @@
 					<tbody class="text-gray-600 dark:text-gray-100">
 						{#each data.results.products as product (product.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{product.id}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.name}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>{product.stitches || 'None'}</td
 								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{$cartStore.has(product.id) ? $cartStore.get(product.id).quantity : 0}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{format(
 										converter(
 											calcPrice(product, $pricelistStore, 1, 'flat').unit_price,
@@ -180,7 +180,7 @@
 										)
 									)}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
 									{product.product_category}
 								</td>
 

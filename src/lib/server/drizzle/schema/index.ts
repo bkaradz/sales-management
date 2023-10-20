@@ -1,9 +1,12 @@
+import type { embTypekey } from "$lib/utility/calculateCart.util";
 import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { bigint, boolean, integer, json, numeric, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
-export const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
+const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
+
+
 
 export const users = pgTable('auth_user', {
   id: text('id').primaryKey(),
@@ -117,7 +120,7 @@ export const products = pgTable('products', {
   unit_price: json('minimum_price').$type<DineroSnapshot<number>>(),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
-  embroidery_type: text('embroidery_type').notNull().default('flat'),
+  embroidery_type: text('embroidery_type').$type<embTypekey>().notNull().default('flat'),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
@@ -149,10 +152,10 @@ export const selectPricelistSchema = createSelectSchema(pricelist);
 
 export const pricelist_details = pgTable('pricelist_details', {
   id: serial('id').primaryKey(),
-  minimum_price: json('minimum_price').$type<DineroSnapshot<number>>().default(toSnapshot(dollars(0))),
-  price_per_thousand_stitches: json('price_per_thousand_stitches').$type<DineroSnapshot<number>>().default(toSnapshot(dollars(0))),
+  minimum_price: json('minimum_price').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
+  price_per_thousand_stitches: json('price_per_thousand_stitches').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   minimum_quantity: integer("minimum_quantity").default(0).notNull(),
-  embroidery_types: text('embroidery_types').notNull(),
+  embroidery_types: text('embroidery_types').$type<embTypekey>().notNull(),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
 })
 

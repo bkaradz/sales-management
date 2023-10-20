@@ -1,9 +1,13 @@
 import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } from "$lib/server/drizzle/schema"
 import sortBy from "lodash-es/sortBy"
+import type { embTypekey } from "./calculateCart.util"
+
+export type ExchangeRateCombinedMap = { exchange_rates: ExchangeRate, exchange_rate_details: Map<string, ExchangeRateDetails> }
+export type ExchangeRateCombinedArray = { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }
 
 
-export const exchangeRateToMapObj = (list: { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }) => {
-  const exchange_rate_details = new Map()
+export const exchangeRateToMapObj = (list: ExchangeRateCombinedArray) => {
+  const exchange_rate_details = new Map<string, ExchangeRateDetails>()
 
   list.exchange_rate_details.forEach((item) => {
 
@@ -21,11 +25,8 @@ export const exchangeRateToMapObj = (list: { exchange_rates: ExchangeRate, excha
 }
 
 export const pricelistToMapObj = (list: { pricelist: Pricelist, pricelist_details: PricelistDetails[] }) => {
-  console.log("🚀 ~ file: monetary.util.ts:48 ~ pricelistToMapObj ~ list:", list)
 
-  const pricelist_details = new Map<string, PricelistDetails[]>()
-
-  // if (!list) return
+  const pricelist_details = new Map<embTypekey, PricelistDetails[]>()
 
   list.pricelist_details.forEach((item) => {
 
