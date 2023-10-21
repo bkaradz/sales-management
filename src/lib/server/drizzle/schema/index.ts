@@ -1,4 +1,4 @@
-import type { GarmentPlacement, embTypekey } from "$lib/utility/calculateCart.util";
+import type { GarmentPlacement, EmbTypekey } from "$lib/utility/calculateCart.util";
 import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
 import { sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
@@ -120,7 +120,7 @@ export const products = pgTable('products', {
   unit_price: json('minimum_price').$type<DineroSnapshot<number>>(),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
-  embroidery_type: text('embroidery_type').$type<embTypekey>().notNull().default('flat'),
+  embroidery_type: text('embroidery_type').$type<EmbTypekey>().notNull().default('flat'),
   garment_placement: text('garment_placement').$type<GarmentPlacement>().notNull().default('Front Left'),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
@@ -156,7 +156,7 @@ export const pricelist_details = pgTable('pricelist_details', {
   minimum_price: json('minimum_price').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   price_per_thousand_stitches: json('price_per_thousand_stitches').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   minimum_quantity: integer("minimum_quantity").default(0).notNull(),
-  embroidery_types: text('embroidery_types').$type<embTypekey>().notNull(),
+  embroidery_types: text('embroidery_types').$type<EmbTypekey>().notNull(),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
 })
 
@@ -227,7 +227,7 @@ export const orders_details = pgTable('orders_details', {
   total_price: json('total_price').notNull().$type<DineroSnapshot<number>>(),
   stitches: integer('stitches').notNull(),
   quantity: integer('quantity').notNull(),
-  embroidery_type: text('embroidery_type').$type<embTypekey>().notNull().default('flat'),
+  embroidery_type: text('embroidery_type').$type<EmbTypekey>().notNull().default('flat'),
   garment_placement: text('garment_placement').$type<GarmentPlacement>().notNull().default('Front Left'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()

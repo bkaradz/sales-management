@@ -233,7 +233,7 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 
 			try {
 
-				const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: contact.full_name, active: true, is_corporate: input?.is_corporate || false, }).returning({ id: contacts.id });
+				const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
 
 				if (contact?.phone) {
 					normalizePhone(contact.phone).forEach(async (item: string) => {

@@ -4,7 +4,7 @@ import { auth } from '../lucia/clientSeed';
 import { db } from './client';
 import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema';
 import { dinero, toSnapshot } from 'dinero.js';
-import type { embTypekey } from '$lib/utility/calculateCart.util';
+import type { EmbTypekey } from '$lib/utility/calculateCart.util';
 
 const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
 
@@ -90,7 +90,7 @@ async function main() {
       priceList.pricelist_details.forEach(async (detail) => {
         await db.insert(pricelist_details).values({
           pricelist_id: pricelistResult[0].id,
-          embroidery_types: detail.embroidery_types as embTypekey,
+          embroidery_types: detail.embroidery_types as EmbTypekey,
           minimum_quantity: detail.minimum_quantity,
           minimum_price: toSnapshot(dollars(detail.minimum_price * 1000)),
           price_per_thousand_stitches: toSnapshot(dollars(detail.price_per_thousand_stitches * 1000))

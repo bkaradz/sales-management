@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { svgDropdown, svgLogOut } from '$lib/assets/svgLogos';
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
-	import { menuTabsList } from '$lib/stores/menuTabsList.store';
+	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
 
 	type data = {
 		user: {
@@ -17,7 +17,7 @@
 
 	export let data: data;
 
-	const changeTab = (tabElement: { id: string; name: string; selected: boolean }, url: string) => {
+	const changeTab = (tabElement: TabElement, url: string) => {
 		menuTabsList.changeSelected({ url, tabElement });
 	};
 </script>

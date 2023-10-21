@@ -1,5 +1,5 @@
 import type { Contacts, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type embTypekey, type PricelistCombinedMap } from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, dollars, type EmbTypekey, type GarmentPlacement, type PricelistCombinedMap } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateCombinedMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
@@ -48,10 +48,17 @@ function cart() {
 				return productMap
 			})
 		},
-		changeEmbType: ({ id, type }: { id: number, type: embTypekey }) => {
+		changeEmbType: ({ id, type }: { id: number, type: EmbTypekey }) => {
 			update((productMap) => {
 				const productGet = productMap.get(id) as Products
 				productGet.embroidery_type = type
+				return productMap
+			})
+		},
+		changeGarmentPosition: ({ id, type }: { id: number, type: GarmentPlacement }) => {
+			update((productMap) => {
+				const productGet = productMap.get(id) as Products
+				productGet.garment_placement = type
 				return productMap
 			})
 		},
@@ -79,7 +86,8 @@ function pricelist() {
 
 	return {
 		subscribe,
-		add: (pricelist: PricelistCombinedMap) => {
+		add: (pricelist: PricelistCombinedMap | undefined) => {
+			if (!pricelist) return
 			update(() => pricelist)
 		},
 	};
@@ -105,7 +113,8 @@ function exchangeRates() {
 
 	return {
 		subscribe,
-		add: (exchangeRates: ExchangeRateCombinedMap) => {
+		add: (exchangeRates: ExchangeRateCombinedMap | undefined) => {
+			if (!exchangeRates) return
 			update(() => exchangeRates)
 		},
 	};
@@ -140,7 +149,7 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 	const cartResults = new Map<number, CartResults>()
 
 	$cartStore.forEach((value, key) => {
-		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as embTypekey)
+		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as EmbTypekey)
 		cartResults.set(value.id, results)
 	})
 

@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
-	import { calcPrice, dollars, format, type embTypekey } from '$lib/utility/calculateCart.util';
+	import {
+		calcPrice,
+		dollars,
+		format,
+		type EmbTypekey,
+		type GarmentPlacement
+	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -20,7 +26,20 @@
 
 	export let data: PageData;
 
-	const embType: embTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];
+	const embType: EmbTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];
+	const garmentPlacement: GarmentPlacement[] = [
+		'Front Left',
+		'Front Right',
+		'Upper Back',
+		'Lower Back',
+		'Right Sleeve',
+		'Left Sleeve',
+		'Cap Front',
+		'Cap Right Side',
+		'Cap Left Side',
+		'Name Tag',
+		'Marked Position'
+	];
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Products Details', selected: true },
@@ -57,7 +76,9 @@
 
 	const handleSubmit = () => {};
 
-	let date = new Date();
+	const days = 7;
+
+	let date = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -167,6 +188,9 @@
 								>Stitches</th
 							>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+								>Garment Placement</th
+							>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Emb Type</th
 							>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
@@ -199,6 +223,39 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{product.stitches || 'None'}
+								</td>
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
+								>
+									<div class="dropdown dropdown-bottom dropdown-end">
+										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+										<!-- svelte-ignore a11y-label-has-associated-control -->
+										<label
+											tabindex="0"
+											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500"
+										>
+											<span class="ml-2">{product.garment_placement}</span>
+											{@html svgDropdown}
+										</label>
+										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+										<ul
+											tabindex="0"
+											class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+										>
+											{#each garmentPlacement as type (type)}
+												{#if !(type === product.garment_placement)}
+													<li>
+														<button
+															on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
+															class="rounded-sm"
+														>
+															{type}
+														</button>
+													</li>
+												{/if}
+											{/each}
+										</ul>
+									</div>
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"

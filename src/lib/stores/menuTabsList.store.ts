@@ -35,26 +35,28 @@ const tabs = new Map([
     ]],
 ])
 
+export type TabElement = {
+    id: string; name: string; selected: boolean; hidden: boolean; url: string;
+}
+
+export type TabElementCombined = {
+    url: string, tabElement: TabElement
+}
+
+export type AllTabsMap = Map<string, { id: string; name: string; selected: boolean; hidden: boolean; url: string; }[]>
+
 function createTabs() {
     const { subscribe, set, update } = writable(tabs);
 
     return {
         subscribe,
-        changeSelected: (tab: {
-            url: string, tabElement: {
-                id: string; name: string; selected: boolean;
-            }
-        }) => {
+        changeSelected: (tab: TabElementCombined) => {
             update((allTabs) => allTabs.set(tab.url, getElements(tab, allTabs)));
         }
     };
 }
 
-const getElements = (tab: {
-    url: string, tabElement: {
-        id: string; name: string; selected: boolean;
-    }
-}, allTabs: Map<string, { id: string; name: string; selected: boolean; }[]>) => {
+const getElements = (tab: TabElementCombined, allTabs: AllTabsMap) => {
     const tabElements = allTabs.get(tab.url)
     if (tabElements) {
         return tabElements.map((tabElement) => {
