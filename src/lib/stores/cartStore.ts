@@ -1,6 +1,6 @@
 import type { Contacts, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type EmbTypekey, type GarmentPlacement, type PricelistCombinedMap } from '$lib/utility/calculateCart.util';
-import type { ExchangeRateCombinedMap } from '$lib/utility/monetary.util';
+import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement} from '$lib/utility/calculateCart.util';
+import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
@@ -82,11 +82,11 @@ function customerSelected() {
 export const customerSelectedStore = customerSelected();
 
 function pricelist() {
-	const { subscribe, set, update } = writable<PricelistCombinedMap>();
+	const { subscribe, set, update } = writable<PricelistToMap>();
 
 	return {
 		subscribe,
-		add: (pricelist: PricelistCombinedMap | undefined) => {
+		add: (pricelist: PricelistToMap | undefined) => {
 			if (!pricelist) return
 			update(() => pricelist)
 		},
@@ -109,11 +109,11 @@ function vat() {
 export const vatStore = vat();
 
 function exchangeRates() {
-	const { subscribe, set, update } = writable<ExchangeRateCombinedMap>();
+	const { subscribe, set, update } = writable<ExchangeRateToMap>();
 
 	return {
 		subscribe,
-		add: (exchangeRates: ExchangeRateCombinedMap | undefined) => {
+		add: (exchangeRates: ExchangeRateToMap | undefined) => {
 			if (!exchangeRates) return
 			update(() => exchangeRates)
 		},
@@ -136,17 +136,9 @@ function selectedRate() {
 
 export const selectedRateStore = selectedRate();
 
-type CartResults = {
-	total_price: Dinero<number>;
-	unit_price: Dinero<number>;
-	quantity: number;
-	stitches: number;
-	pricelist_id: number;
-	product_id: number;
-}
 
 export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore, $pricelistStore]) => {
-	const cartResults = new Map<number, CartResults>()
+	const cartResults = new Map<number, CalcPriceReturn>()
 
 	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as EmbTypekey)

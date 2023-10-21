@@ -1,10 +1,7 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
-import { exchangeRateToMapObj, pricelistToMapObj, type ExchangeRateCombinedMap } from '$lib/utility/monetary.util';
-import type { DineroSnapshot } from 'dinero.js';
+import { exchangeRateToMapObj, pricelistToMapObj, type ExchangeRateToMap, type PricelistToMap } from '$lib/utility/monetary.util';
 import type { PageServerLoad } from './$types';
-import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } from '$lib/server/drizzle/schema';
-import type { PricelistCombinedMap } from '$lib/utility/calculateCart.util';
 
 export const load = (async (event) => {
     let query = {}
@@ -27,7 +24,7 @@ export const load = (async (event) => {
 
         if (!pricelistArray) throw new Error("Pricelists not found");
 
-        const pricelistMap: PricelistCombinedMap[] = []
+        const pricelistMap: PricelistToMap[] = []
 
         pricelistArray.forEach((pricelist) => pricelistMap.push(pricelistToMapObj(pricelist)))
 
@@ -39,7 +36,7 @@ export const load = (async (event) => {
 
         if (!exchangeRateArray) throw new Error("Exchange Rate not found");
 
-        const eRateMap: ExchangeRateCombinedMap[] = []
+        const eRateMap: ExchangeRateToMap[] = []
 
         exchangeRateArray.forEach((eRate) => {
             eRateMap.push(exchangeRateToMapObj(eRate))

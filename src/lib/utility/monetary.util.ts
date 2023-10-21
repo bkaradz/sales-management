@@ -2,9 +2,7 @@ import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } f
 import sortBy from "lodash-es/sortBy"
 import type { EmbTypekey } from "./calculateCart.util"
 
-export type ExchangeRateCombinedMap = { exchange_rates: ExchangeRate, exchange_rate_details: Map<string, ExchangeRateDetails> }
 export type ExchangeRateCombinedArray = { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }
-
 
 export const exchangeRateToMapObj = (list: ExchangeRateCombinedArray) => {
   const exchange_rate_details = new Map<string, ExchangeRateDetails>()
@@ -23,6 +21,8 @@ export const exchangeRateToMapObj = (list: ExchangeRateCombinedArray) => {
     exchange_rate_details: exchange_rate_details
   }
 }
+
+export type ExchangeRateToMap = ReturnType<typeof exchangeRateToMapObj>
 
 export const pricelistToMapObj = (list: { pricelist: Pricelist, pricelist_details: PricelistDetails[] }) => {
 
@@ -49,3 +49,4 @@ export const pricelistToMapObj = (list: { pricelist: Pricelist, pricelist_detail
   }
 }
 
+export type PricelistToMap = ReturnType<typeof pricelistToMapObj>

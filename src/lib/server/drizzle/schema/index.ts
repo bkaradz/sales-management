@@ -202,12 +202,11 @@ export const selectExchangeRateDetailsSchema = createSelectSchema(exchange_rate_
 export const orders = pgTable('orders', {
   id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
-  customer: integer('customer').notNull().references(() => contacts.id),
-  pricelist: integer('pricelist').notNull().references(() => pricelist.id),
-  exchange_rates: integer('exchange_rates').notNull().references(() => exchange_rates.id),
+  customer_id: integer('customer_id').notNull().references(() => contacts.id),
+  pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
+  exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
   description: text('description'),
   active: boolean('active').notNull().default(true),
-  default: boolean('default').notNull().default(true),
   delivery_date: timestamp('delivery_date').notNull().default(sql`now() + INTERVAL '7 days'`),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()

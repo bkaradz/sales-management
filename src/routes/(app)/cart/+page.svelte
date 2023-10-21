@@ -5,7 +5,8 @@
 		dollars,
 		format,
 		type EmbTypekey,
-		type GarmentPlacement
+		type GarmentPlacement,
+		type CalcPriceReturn
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
@@ -23,6 +24,8 @@
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
+	import { trpc } from '$lib/trpc/client';
+	import { toasts } from '$lib/stores/toasts.store';
 
 	export let data: PageData;
 
@@ -74,11 +77,61 @@
 		activitiesTabs = activitiesTabs;
 	};
 
-	const handleSubmit = () => {};
+	const handleSubmit = async () => {
+		console.log("Entered");
+		if ($cartStore.size === 0) {
+			toasts.add({
+				message: 'Add products to cart',
+				type: 'error'
+			});
+			return;
+		}
+		if (!$customerSelectedStore) {
+			toasts.add({
+				message: 'Customer is required',
+				type: 'error'
+			});
+			return;
+		}
+		const orderSubmitObj = {
+			order: {
+				customer_id: $customerSelectedStore?.id,
+				pricelist_id: $pricelistStore.pricelist.id,
+				exchange_rates_id: $exchangeRatesStore.exchange_rates.id,
+				description: $customerSelectedStore?.notes,
+				delivery_date: deliveryDate
+			},
+			orders_details: [...$cartPricesStore.values()]
+		};
+		console.log("🚀 ~ file: +page.svelte:107 ~ handleSubmit ~ orderSubmitObj:", JSON.stringify(orderSubmitObj) )
+
+		try {
+			const resOrders = await trpc().orders.getById.query();
+			console.log("🚀 ~ file: +page.svelte:110 ~ handleSubmit ~ resOrders:", resOrders)
+
+			return
+
+			if (resOrders?.success) {
+				toasts.add({
+					message: 'Order Created',
+					type: 'success'
+				});
+			} else {
+				toasts.add({
+					message: 'Order was not created',
+					type: 'error'
+				});
+			}
+		} catch (err: any) {
+			console.error('Error', err);
+		}
+	};
 
 	const days = 7;
 
-	let date = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+	const dynamicPositioning = true;
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -143,7 +196,7 @@
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<button
-						on:click|preventDefault={() => handleSubmit}
+						on:click|preventDefault={() => handleSubmit()}
 						class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
 					>
 						Submit
@@ -352,11 +405,9 @@
 							</tr>
 						{/each}
 						<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{#each [1, 2, 3, 4, 5, 6] as item (item)}
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{/each}
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								<span>Sub Total</span>
 							</td>
@@ -365,34 +416,28 @@
 									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore)
 								)}
 							</td>
-
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{#each [1, 2] as item (item)}
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{/each}
 						</tr>
 						<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{#each [1, 2, 3, 4, 5, 6] as item (item)}
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{/each}
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								<span>Vat</span>
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore))}
 							</td>
-
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{#each [1, 2] as item (item)}
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{/each}
 						</tr>
 						<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{#each [1, 2, 3, 4, 5, 6] as item (item)}
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{/each}
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								<span>Total</span>
 							</td>
@@ -401,10 +446,9 @@
 									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore)
 								)}
 							</td>
-
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
-
-							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{#each [1, 2] as item (item)}
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
+							{/each}
 						</tr>
 					</tbody>
 				</table>
@@ -501,7 +545,11 @@
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											<DateInput bind:value={date} class="z-50" />
+											<DateInput
+												bind:value={deliveryDate}
+												format="dd-MM-yyyy HH:mm:ss"
+												class="z-50"
+											/>
 										</div>
 										<div class="ml-auto text-xs text-gray-500">Delivery Date</div>
 									</div>
