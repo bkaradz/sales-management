@@ -138,7 +138,6 @@ export const deleteById = async (input: number) => {
 
 
 export const createOrder = async (input: { orders: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'>, orders_details: CalcPriceReturn[] }, ctx: Context) => {
-  console.log("🚀 ~ file: orders.drizzle.ts:141 ~ createOrder ~ input:", input)
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');

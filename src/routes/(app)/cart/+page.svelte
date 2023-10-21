@@ -103,11 +103,9 @@
 			},
 			orders_details: [...$cartPricesStore.values()]
 		};
-		console.log("🚀 ~ file: +page.svelte:107 ~ handleSubmit ~ orderSubmitObj:", JSON.stringify(orderSubmitObj) )
 
 		try {
-			const resOrders = await trpc().orders.getById.query();
-			console.log("🚀 ~ file: +page.svelte:110 ~ handleSubmit ~ resOrders:", resOrders)
+			const resOrders = await trpc().orders.createOrder.mutate(orderSubmitObj)
 
 			return
 

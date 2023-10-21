@@ -8,8 +8,7 @@ export const orders = router({
     getOrders: protectedProcedure.input(z.any()).query(async ({ input }) => {
         return await getOrders(input);
     }),
-    getById: protectedProcedure.query(async () => {
-        return "Hello World"
+    getById: protectedProcedure.input(z.number()).query(async ({ input }) => {
         return await getById(input);
     }),
     deleteById: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
