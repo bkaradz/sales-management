@@ -24,8 +24,7 @@
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
-	import { trpc } from '$lib/trpc/client';
-	import { toasts } from '$lib/stores/toasts.store';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 
@@ -77,59 +76,10 @@
 		activitiesTabs = activitiesTabs;
 	};
 
-	const handleSubmit = async () => {
-		console.log("Entered");
-		if ($cartStore.size === 0) {
-			toasts.add({
-				message: 'Add products to cart',
-				type: 'error'
-			});
-			return;
-		}
-		if (!$customerSelectedStore) {
-			toasts.add({
-				message: 'Customer is required',
-				type: 'error'
-			});
-			return;
-		}
-		const orderSubmitObj = {
-			order: {
-				customer_id: $customerSelectedStore?.id,
-				pricelist_id: $pricelistStore.pricelist.id,
-				exchange_rates_id: $exchangeRatesStore.exchange_rates.id,
-				description: $customerSelectedStore?.notes,
-				delivery_date: deliveryDate
-			},
-			orders_details: [...$cartPricesStore.values()]
-		};
-
-		try {
-			const resOrders = await trpc().orders.createOrder.mutate(orderSubmitObj)
-
-			return
-
-			if (resOrders?.success) {
-				toasts.add({
-					message: 'Order Created',
-					type: 'success'
-				});
-			} else {
-				toasts.add({
-					message: 'Order was not created',
-					type: 'error'
-				});
-			}
-		} catch (err: any) {
-			console.error('Error', err);
-		}
-	};
-
 	const days = 7;
 
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
-	const dynamicPositioning = true;
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -193,12 +143,33 @@
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
-					<button
-						on:click|preventDefault={() => handleSubmit()}
-						class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
-					>
-						Submit
-					</button>
+					<form action="?/submit" method="post" use:enhance>
+						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
+						<input hidden name="pricelist_id" type="number" value={$pricelistStore.pricelist.id} />
+						<input
+							hidden
+							name="exchange_rates_id"
+							type="number"
+							value={$exchangeRatesStore.exchange_rates.id}
+						/>
+						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
+						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
+						<input
+							hidden
+							name="orders_details"
+							type="text"
+							value={JSON.stringify([...$cartPricesStore.values()])}
+						/>
+						{#if !($cartStore.size === 0) && $customerSelectedStore}
+							 
+						<button
+							type="submit"
+							class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
+						>
+							Submit
+						</button>
+						{/if}
+					</form>
 					<div class="text-right">
 						<div class="text-xs text-gray-400 dark:text-gray-400">Cart Total:</div>
 						<div class="text-gray-900 text-lg dark:text-white">

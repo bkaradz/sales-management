@@ -8,7 +8,7 @@ import { address, orders, emails, phones, type Orders, type Phones, type Emails,
 import trim from 'lodash-es/trim';
 import normalizePhone from '$lib/utility/normalizePhone.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
-import { toSnapshot } from 'dinero.js';
+import type {  DineroSnapshot } from 'dinero.js';
 
 export const getOrders = async (input: SearchParams) => {
 
@@ -136,8 +136,10 @@ export const deleteById = async (input: number) => {
   }
 };
 
+export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'unit_price'> & {total_price: DineroSnapshot<number>, unit_price: DineroSnapshot<number>}
 
-export const createOrder = async (input: { orders: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'>, orders_details: CalcPriceReturn[] }, ctx: Context) => {
+
+export const createOrder = async (input: { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'>, orders_details: CalcPriceReturnSnapshot[] }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
@@ -145,11 +147,11 @@ export const createOrder = async (input: { orders: Pick<Orders, 'customer_id' | 
 
   try {
 
-    const orderResult = await db.insert(orders).values({ user_id: ctx.session.user.userId, ...input.orders }).returning({ id: orders.id });
+    const orderResult = await db.insert(orders).values({ user_id: ctx.session.user.userId, ...input.order }).returning({ id: orders.id });
 
     if (input.orders_details) {
       input.orders_details.forEach(async (item) => {
-        await db.insert(orders_details).values({ ...item, order_id: orderResult[0].id, total_price: toSnapshot(item.total_price), unit_price: toSnapshot(item.unit_price) })
+        await db.insert(orders_details).values({ ...item, order_id: orderResult[0].id, total_price: item.total_price, unit_price: item.unit_price })
       })
     }
     return { success: true }

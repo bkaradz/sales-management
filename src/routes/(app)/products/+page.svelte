@@ -24,6 +24,7 @@
 	import { converter } from '$lib/utility/currencyConvertor.util';
 
 	export let data: PageData;
+
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">

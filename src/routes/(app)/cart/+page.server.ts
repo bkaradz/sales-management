@@ -1,7 +1,10 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { exchangeRateToMapObj, pricelistToMapObj, type ExchangeRateToMap, type PricelistToMap } from '$lib/utility/monetary.util';
+import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
+import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
 
 export const load = (async (event) => {
     let query = {}
@@ -51,3 +54,42 @@ export const load = (async (event) => {
         exchangeRateAll: exchangeRate()
     };
 }) satisfies PageServerLoad;
+
+type dataType = {
+    customer_id: string;
+    pricelist_id: string;
+    exchange_rates_id: string;
+    description: string;
+    delivery_date: string;
+    orders_details: string
+}
+
+export const actions: Actions = {
+	submit: async (event) => {
+
+        
+
+			const session = await event.locals.auth.validate()
+
+			if (!session) {
+					throw redirect(303, "/auth/login")
+			}
+
+			const data = await event.request.formData();
+			const formData = Object.fromEntries(data) as dataType
+
+            const orderSubmitObj = {
+                order: {
+                    customer_id: +formData.customer_id,
+                    pricelist_id: +formData.pricelist_id,
+                    exchange_rates_id: +formData.exchange_rates_id,
+                    description: formData.description,
+                    delivery_date: new Date(formData.delivery_date)
+                },
+                orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
+            };
+			
+			return await router.createCaller(await createContext(event)).orders.createOrder(orderSubmitObj)
+
+	}
+}
