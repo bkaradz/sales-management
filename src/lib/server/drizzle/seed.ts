@@ -16,6 +16,12 @@ const currencyMap = new Map([
   ["ZWB", { code: 'ZWB', base: 10, exponent: 2 }],
 ])
 
+const contactArray: any[] = []
+const phonesArray: any[] = []
+const emailsArray: any[] = []
+const addressArray: any[] = []
+const productsArray: any[] = []
+
 
 async function main() {
   console.info("seeding started.....");
@@ -54,11 +60,7 @@ async function main() {
     const admin = await Promise.all([newUser]);
     const adminId = admin[0].userId;
 
-    const contactArray: any[] = []
-    const phonesArray: any[] = []
-    const emailsArray: any[] = []
-    const addressArray: any[] = []
-    const productsArray: any[] = []
+   
 
     contactsList.forEach(async (contact) => {
       const contactResult = await db.insert(contacts).values({ user_id: adminId, full_name: contact.full_name, active: true, is_corporate: false, }).returning({ id: contacts.id });
@@ -120,19 +122,10 @@ async function main() {
       })
     });
 
-    await Promise.all(contactArray);
-    await Promise.all(phonesArray);
-    await Promise.all(emailsArray);
-    await Promise.all(addressArray);
-
     productsList.forEach(async (product) => {
       const productsResults = await db.insert(products).values({ user_id: adminId, ...product }).returning()
       productsArray.push(productsResults)
     });
-
-
-
-    await Promise.all(productsArray);
 
     console.info("seeding finished.....");
     // process.exit(0);
@@ -142,7 +135,12 @@ async function main() {
 main().catch((e) => {
   console.error(`Error: ${e}`)
   process.exit(0);
-}).finally(() => {
+}).finally(async () => {
+  await Promise.all(contactArray);
+  await Promise.all(phonesArray);
+  await Promise.all(emailsArray);
+  await Promise.all(addressArray);
+  await Promise.all(productsArray);
   console.info("Done seeding.....");
-  // process.exit(0);
+  process.exit(0);
 });

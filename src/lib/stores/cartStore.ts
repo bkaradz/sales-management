@@ -76,6 +76,7 @@ function customerSelected() {
 		add: (customer: Contacts) => {
 			update(() => customer)
 		},
+		reset: () => set(null)
 	};
 }
 

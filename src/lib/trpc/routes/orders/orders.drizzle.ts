@@ -3,7 +3,7 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { and, asc, eq, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import { address, orders, emails, phones, type Orders, type Phones, type Emails, type Address, orders_details } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
 import normalizePhone from '$lib/utility/normalizePhone.util';
@@ -26,7 +26,7 @@ export const getOrders = async (input: SearchParams) => {
         .where(eq(orders.active, true))
 
       ordersQuery = await db.select().from(orders)
-        .orderBy(asc(orders.full_name))
+        .orderBy(desc(orders.id))
         .where(eq(orders.active, true))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
@@ -36,13 +36,9 @@ export const getOrders = async (input: SearchParams) => {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` })
         .from(orders)
-        // .where(and((sql`${orders.full_name} % ${data}`), (eq(orders.active, true))));
-        .where(and((sql`to_tsvector('simple', ${orders.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(orders.active, true))));
 
       ordersQuery = await db.select().from(orders)
-        .orderBy(asc(orders.full_name))
-        // .where(and((sql`${orders.full_name} % ${data}`), (eq(orders.active, true))))
-        .where(and((sql`to_tsvector('simple', ${orders.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(orders.active, true))))
+        .orderBy(asc(orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
     }

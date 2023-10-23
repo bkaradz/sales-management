@@ -9,7 +9,7 @@
 		type CalcPriceReturn
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
@@ -25,8 +25,27 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { toasts } from '$lib/stores/toasts.store';
 
 	export let data: PageData;
+	export let form: ActionData;
+
+	$: if (form?.success) {
+		invalidateAll();
+		cartStore.reset();
+		customerSelectedStore.reset();
+		toasts.add({
+			message: "Order successfully added",
+			type: 'success'
+		});
+	} else {
+		// TODO: highlight were errors occurred
+		toasts.add({
+			message: "Error occurred, order not added",
+			type: 'error'
+		});
+	}
 
 	const embType: EmbTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -79,7 +98,6 @@
 	const days = 7;
 
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
-
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -161,13 +179,9 @@
 							value={JSON.stringify([...$cartPricesStore.values()])}
 						/>
 						{#if !($cartStore.size === 0) && $customerSelectedStore}
-							 
-						<button
-							type="submit"
-							class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
-						>
-							Submit
-						</button>
+							<button type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8">
+								Submit
+							</button>
 						{/if}
 					</form>
 					<div class="text-right">

@@ -15,7 +15,6 @@ export const orders = router({
         return await deleteById(input);
     }),
     createOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
-        console.log("🚀 ~ file: orders.ts:20 ~ createOrder:protectedProcedure.input ~ input:", input)
         return await createOrder(input, ctx);
     }),
     updateOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {

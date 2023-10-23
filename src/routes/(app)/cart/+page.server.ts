@@ -3,7 +3,6 @@ import { router } from '$lib/trpc/router';
 import { exchangeRateToMapObj, pricelistToMapObj, type ExchangeRateToMap, type PricelistToMap } from '$lib/utility/monetary.util';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
 
 export const load = (async (event) => {
@@ -66,8 +65,6 @@ type dataType = {
 
 export const actions: Actions = {
 	submit: async (event) => {
-
-        
 
 			const session = await event.locals.auth.validate()
 
