@@ -30,17 +30,19 @@ export const getContacts = async (input: SearchParams) => {
 
 		} else {
 
-			const data = `${input.search}:*`
+			const data = `%${input.search}%`
 
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
 				// .where(and((sql`${contacts.full_name} % ${data}`), (eq(contacts.active, true))));
-				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(contacts.active, true))));
+				// .where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(contacts.active, true))));
+				// .where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(contacts.active, true))));
+				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))));
 
 			contactsQuery = await db.select().from(contacts)
 				.orderBy(asc(contacts.full_name))
 				// .where(and((sql`${contacts.full_name} % ${data}`), (eq(contacts.active, true))))
-				.where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(contacts.active, true))))
+				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		}

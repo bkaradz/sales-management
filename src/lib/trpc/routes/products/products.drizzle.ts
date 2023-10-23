@@ -29,13 +29,16 @@ export const getProducts = async (input: SearchParams) => {
 
 		} else {
 
+			const data = `%${input.search}%`
+
 			totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(products)
-				.where(and((sql`to_tsvector('simple', ${products.name}) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))));
+				// .where(and((sql`to_tsvector('simple', ${products.name}) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))));
+				.where(and((sql`(name ||' '|| CAST(id AS text) ||' '|| CAST(stitches AS text)) ILIKE(${data})`), (eq(products.active, true))));
 
 			productsQuery = await db.select().from(products)
 				.orderBy(asc(products.name))
-				.where(and((sql`to_tsvector('simple', ${products.name}) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))))
+				.where(and((sql`(name ||' '|| CAST(id AS text) ||' '|| CAST(stitches AS text)) ILIKE(${data})`), (eq(products.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		}

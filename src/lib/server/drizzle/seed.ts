@@ -142,5 +142,5 @@ main().catch((e) => {
   await Promise.all(addressArray);
   await Promise.all(productsArray);
   console.info("Done seeding.....");
-  process.exit(0);
+  // process.exit(0);
 });

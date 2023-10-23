@@ -41,10 +41,7 @@
 		});
 	} else {
 		// TODO: highlight were errors occurred
-		toasts.add({
-			message: "Error occurred, order not added",
-			type: 'error'
-		});
+		
 	}
 
 	const embType: EmbTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];

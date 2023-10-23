@@ -189,8 +189,6 @@ export const exchange_rate_details = pgTable('exchange_rate_details', {
   currency: text('currency').notNull(),
   currency_object: json('currency_object').$type<Currency<number>>().notNull(),
   rate: json('rate').$type<Rates<number>>().notNull(),
-  created_at: timestamp('created_at').defaultNow().notNull(),
-  updated_at: timestamp('updated_at').defaultNow().notNull()
 })
 
 export type ExchangeRateDetails = InferSelectModel<typeof exchange_rate_details>;
