@@ -1,22 +1,25 @@
+import { createContext } from '$lib/trpc/context';
+import { router } from '$lib/trpc/router';
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ url }) => {
-    const library = ['cherry', 'lime', 'berry', 'salad']
+export const load = (async (event) => {
 
-	// your search logic goes here
-	const query = url.searchParams.get('search')
+	let query = {}
 
-	let flavours: string[] = []
-	if (query) {
-		flavours = library.filter(el => el.includes(query))
-	}
+	const limit = event.url.searchParams.get('limit')
+	if (limit) query = { ...query, limit: +limit }
 
-	// artificial delay
-	await new Promise((res, rej) => {
-		setTimeout(res, 1000)
-	})
+	const page = event.url.searchParams.get('page')
+	if (page) query = { ...query, page: +page }
+
+	const search = event.url.searchParams.get('search')
+	if (search) query = { ...query, search }
+	
+	const orders = async (query: any) => {
+			return await router.createCaller(await createContext(event)).orders.getOrders(query);
+	};
 
 	return {
-		flavours
+		results: orders(query)
 	};
 }) satisfies PageServerLoad;

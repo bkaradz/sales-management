@@ -4,11 +4,11 @@ import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, asc, desc, eq, sql } from 'drizzle-orm';
-import { address, orders, emails, phones, type Orders, type Phones, type Emails, type Address, orders_details } from '$lib/server/drizzle/schema';
+import { address, orders, emails, phones, type Orders, type Phones, type Emails, type Address, orders_details, contacts } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
 import normalizePhone from '$lib/utility/normalizePhone.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
-import type {  DineroSnapshot } from 'dinero.js';
+import type { DineroSnapshot } from 'dinero.js';
 
 export const getOrders = async (input: SearchParams) => {
 
@@ -23,24 +23,29 @@ export const getOrders = async (input: SearchParams) => {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` })
         .from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .where(eq(orders.active, true))
 
-      ordersQuery = await db.select().from(orders)
+      ordersQuery = await db.select({ orders, contacts }).from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .orderBy(desc(orders.id))
         .where(eq(orders.active, true))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
     } else {
 
-      const data = `${input.search}:*`
+      const data = `%${input.search}%`
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` })
         .from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(orders.active, true))))
 
       ordersQuery = await db.select().from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(orders.active, true))))
         .orderBy(asc(orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
-
     }
 
     pagination.totalRecords = +totalOrdersRecords[0].count
@@ -132,7 +137,7 @@ export const deleteById = async (input: number) => {
   }
 };
 
-export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'unit_price'> & {total_price: DineroSnapshot<number>, unit_price: DineroSnapshot<number>}
+export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'unit_price'> & { total_price: DineroSnapshot<number>, unit_price: DineroSnapshot<number> }
 
 
 export const createOrder = async (input: { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'>, orders_details: CalcPriceReturnSnapshot[] }, ctx: Context) => {
