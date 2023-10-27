@@ -5,6 +5,7 @@
 		"plpgsql",
 		"superjson",
 		"tailwindcss",
-		"TIMESTAMPTZ"
+		"TIMESTAMPTZ",
+		"TRPC"
 	]
 }
