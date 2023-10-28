@@ -261,15 +261,13 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
 									<div class="dropdown dropdown-bottom dropdown-end">
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<!-- svelte-ignore a11y-label-has-associated-control -->
-										<label
+										<button
 											tabindex="0"
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500"
+											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 										>
 											<span class="ml-2">{product.garment_placement}</span>
 											{@html svgDropdown}
-										</label>
+										</button>
 										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 										<ul
 											tabindex="0"
@@ -294,15 +292,13 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
 									<div class="dropdown dropdown-bottom dropdown-end">
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<!-- svelte-ignore a11y-label-has-associated-control -->
-										<label
+										<button
 											tabindex="0"
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500"
+											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 										>
 											<span class="ml-2">{product.embroidery_type}</span>
 											{@html svgDropdown}
-										</label>
+									</button>
 										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 										<ul
 											tabindex="0"
@@ -566,15 +562,13 @@
 							<div class="space-y-4 mt-3">
 								<!--  -->
 								<div class="dropdown dropdown-bottom w-full z-50">
-									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-									<!-- svelte-ignore a11y-label-has-associated-control -->
-									<label
+									<button
 										tabindex="0"
-										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500"
+										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 									>
 										<span class="ml-2">{$pricelistStore.pricelist.id}</span>
 										{@html svgDropdown}
-									</label>
+								</button>
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"
@@ -692,15 +686,13 @@
 						{#if data.exchangeRateAll}
 							<div class="space-y-4 mt-3">
 								<div class="dropdown dropdown-bottom w-full z-50">
-									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-									<!-- svelte-ignore a11y-label-has-associated-control -->
-									<label
+									<button
 										tabindex="0"
-										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500"
+										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 									>
 										<span class="ml-2">{$exchangeRatesStore.exchange_rates.id}</span>
 										{@html svgDropdown}
-									</label>
+								</button>
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"

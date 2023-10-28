@@ -1,4 +1,4 @@
-import type { Contacts, Products } from '$lib/server/drizzle/schema';
+import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
 import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement} from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
@@ -25,6 +25,35 @@ function cart() {
 					return productMap
 				}
 			})
+		},
+		addProductsArray: (productArray: Products[] | undefined, order_details: OrdersDetails[] | undefined) => {
+			const orderDetailsMap = new Map<number, OrdersDetails>()
+			if (order_details) {
+				order_details.forEach((item) => orderDetailsMap.set(item.product_id, item))
+			}
+			if (productArray) {
+				update((productMap) => {
+					productArray.forEach((product) => {
+						if (productMap.has(product.id)) {
+							const productGet = productMap.get(product.id) as Products
+							if (productGet.quantity) {
+								productGet.quantity = productGet.quantity + 1
+							} else {
+								productGet.quantity = 1
+							}
+						} else {
+							const quantity = orderDetailsMap.get(product.id)?.quantity
+							product.quantity = quantity || 1
+							const embroidery_type = orderDetailsMap.get(product.id)?.embroidery_type
+							product.embroidery_type = embroidery_type || 'flat'
+							const garment_placement = orderDetailsMap.get(product.id)?.garment_placement
+							product.garment_placement = garment_placement || 'Front Left'
+							productMap.set(product.id, product)
+						}
+					})
+					return productMap
+				})
+			}
 		},
 		subtract: (product: Products) => {
 			update((productMap) => {
@@ -73,8 +102,10 @@ function customerSelected() {
 
 	return {
 		subscribe,
-		add: (customer: Contacts) => {
-			update(() => customer)
+		add: (customer: Contacts | undefined) => {
+			if (customer) {
+				update(() => customer)
+			}
 		},
 		reset: () => set(null)
 	};

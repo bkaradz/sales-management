@@ -4,17 +4,16 @@
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
 
-	
-	type	User = {
-			id: string;
-			username: string;
-			full_name: string;
-			active: boolean;
-			created_at: Date;
-			updated_at: Date;
-		};
+	type User = {
+		id: string;
+		username: string;
+		full_name: string;
+		active: boolean;
+		created_at: Date;
+		updated_at: Date;
+	};
 
-	export let data: Partial<{ user: User}>;
+	export let data: Partial<{ user: User }>;
 
 	const changeTab = (tabElement: TabElement, url: string) => {
 		menuTabsList.changeSelected({ url, tabElement });
@@ -41,17 +40,15 @@
 	</div>
 	<div class="ml-auto flex items-center space-x-4">
 		<div class="dropdown dropdown-bottom dropdown-end">
-			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label
+			<button
 				tabindex="0"
-				class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500"
+				class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 			>
-				<span class="ml-2"
-					>{$exchangeRatesStore.exchange_rate_details.get($selectedRateStore)?.name}</span
-				>
+				<span class="ml-2">
+					{$exchangeRatesStore.exchange_rate_details.get($selectedRateStore)?.name}
+				</span>
 				{@html svgDropdown}
-			</label>
+			</button>
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul
 				tabindex="0"
@@ -72,9 +69,7 @@
 		<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500">Deposit</button>
 
 		<div class="dropdown dropdown-bottom dropdown-end">
-			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label tabindex="0" class="flex items-center">
+			<button tabindex="0" class="flex items-center">
 				<span class="relative flex-shrink-0">
 					<img
 						class="w-7 h-7 rounded-full"
@@ -87,7 +82,7 @@
 				</span>
 				<span class="ml-2">{data?.user?.full_name}</span>
 				{@html svgDropdown}
-			</label>
+			</button>
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul
 				tabindex="0"
