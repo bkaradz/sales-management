@@ -6,17 +6,17 @@ import { createProduct, deleteById, getById, getProducts, updateProduct, uploadP
 
 
 export const products = router({
-	getProducts: protectedProcedure.input(searchParamsSchema.passthrough()).query(async ({ input }) => {
-		return await getProducts(input);
+	getProducts: protectedProcedure.input(searchParamsSchema.passthrough()).query(async ({ input, ctx }) => {
+		return await getProducts(input, ctx);
 	}),
-	getById: protectedProcedure.input(z.number()).query(async ({ input }) => {
-		return await getById(input);
+	getById: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
+		return await getById(input, ctx);
 	}),
 	uploadProducts: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
 		return await uploadProducts(input, ctx);
 	}),
-	deleteById: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
-		return await deleteById(input);
+	deleteById: protectedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
+		return await deleteById(input, ctx);
 	}),
 	createProduct: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
 		return await createProduct(input, ctx);

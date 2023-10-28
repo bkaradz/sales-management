@@ -4,8 +4,8 @@
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
 
-	type data = {
-		user: {
+	
+	type	User = {
 			id: string;
 			username: string;
 			full_name: string;
@@ -13,9 +13,8 @@
 			created_at: Date;
 			updated_at: Date;
 		};
-	};
 
-	export let data: data;
+	export let data: Partial<{ user: User}>;
 
 	const changeTab = (tabElement: TabElement, url: string) => {
 		menuTabsList.changeSelected({ url, tabElement });
@@ -41,7 +40,6 @@
 		</div>
 	</div>
 	<div class="ml-auto flex items-center space-x-4">
-
 		<div class="dropdown dropdown-bottom dropdown-end">
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -87,7 +85,7 @@
 						class="absolute right-0 -mb-0.5 bottom-0 w-2 h-2 rounded-full bg-green-500 border border-white dark:border-gray-900"
 					/>
 				</span>
-				<span class="ml-2">{data.user.full_name}</span>
+				<span class="ml-2">{data?.user?.full_name}</span>
 				{@html svgDropdown}
 			</label>
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->

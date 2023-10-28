@@ -8,14 +8,14 @@ export const rates = router({
     getDefaultRates: publicProcedure.query(async () => {
         return await getDefaultRates();
     }),
-    getAllRates: protectedProcedure.query(async () => {
-        return await getAllRates();
+    getAllRates: protectedProcedure.query(async ({ ctx}) => {
+        return await getAllRates(ctx);
     }),
-    getById: protectedProcedure.input(z.number()).query(async ({ input }) => {
-        return await getById(input);
+    getById: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
+        return await getById(input, ctx);
     }),
-    deleteById: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
-        return await deleteById(input);
+    deleteById: protectedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
+        return await deleteById(input, ctx);
     }),
     createRate: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
         return await createRate(input, ctx);

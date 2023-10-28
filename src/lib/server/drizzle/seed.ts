@@ -60,7 +60,7 @@ async function main() {
     const admin = await Promise.all([newUser]);
     const adminId = admin[0].userId;
 
-   
+
 
     contactsList.forEach(async (contact) => {
       const contactResult = await db.insert(contacts).values({ user_id: adminId, full_name: contact.full_name, active: true, is_corporate: false, }).returning({ id: contacts.id });
@@ -127,20 +127,29 @@ async function main() {
       productsArray.push(productsResults)
     });
 
-    console.info("seeding finished.....");
-    // process.exit(0);
   });
+  return await Promise.all([
+    await Promise.all(contactArray),
+    await Promise.all(phonesArray),
+    await Promise.all(emailsArray),
+    await Promise.all(addressArray),
+    await Promise.all(productsArray),
+  ])
 }
 
-main().catch((e) => {
+main().then(async(data) => {
+  console.info("Data", data);
+  // process.exit(0);
+}).catch((e) => {
   console.error(`Error: ${e}`)
   process.exit(0);
-}).finally(async () => {
-  await Promise.all(contactArray);
-  await Promise.all(phonesArray);
-  await Promise.all(emailsArray);
-  await Promise.all(addressArray);
-  await Promise.all(productsArray);
-  console.info("Done seeding.....");
-  // process.exit(0);
-});
+})
+// .finally(async () => {
+//   await Promise.all(contactArray);
+//   await Promise.all(phonesArray);
+//   await Promise.all(emailsArray);
+//   await Promise.all(addressArray);
+//   await Promise.all(productsArray);
+//   console.info("Done seeding.....");
+//   // process.exit(0);
+// });

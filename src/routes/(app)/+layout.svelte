@@ -3,8 +3,8 @@
 	import Aside from '$lib/components/Aside.svelte';
 	import Header from '$lib/components/Header.svelte';
 	
-
 	export let data: LayoutData;
+	
 </script>
 
 <div

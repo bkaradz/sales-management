@@ -1,11 +1,18 @@
 import { router } from '$lib/trpc/t';
 import { loginCredentialsSchema, userRegisterSchema } from '$lib/trpc/routes/authentication/authentication.validate';
 import { protectedProcedure, publicProcedure } from '$lib/trpc/middleware/auth';
-import { getAllUsers, loginUser, logoutUser, registerUser } from './authentication.drizzle';
+import { getUsers, loginUser, logoutUser, registerUser, getById, deleteById } from './authentication.drizzle';
+import { z } from 'zod';
 
 export const authentication = router({
-	getAllUsers: protectedProcedure.query(async () => {
-		return await getAllUsers();
+	getUsers: protectedProcedure.query(async ({ ctx }) => {
+		return await getUsers(ctx);
+	}),
+	getById: protectedProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+		return await getById(input, ctx);
+	}),
+	deleteById: protectedProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+		return await deleteById(input, ctx);
 	}),
 	registerUser: publicProcedure.input(userRegisterSchema).mutation(async ({ input }) => {
 		return await registerUser(input);

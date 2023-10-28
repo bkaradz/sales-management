@@ -1,16 +1,25 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { svgBackArrow, svgBin, svgCalender, svgDropdownArrow, svgEye, svgForwardArrow, svgPen, svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
+	import {
+		svgBackArrow,
+		svgBin,
+		svgCalender,
+		svgDropdownArrow,
+		svgEye,
+		svgForwardArrow,
+		svgPen,
+		svgSearch,
+		svgThreeDots
+	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { format } from '$lib/utility/calculateCart.util';
+	import { addMany, format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 
 	export let data: PageData;
-
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -79,7 +88,7 @@
 										: ''} inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 									disabled={!data?.results.pagination.previous}
 								>
-								{@html svgBackArrow}
+									{@html svgBackArrow}
 								</button>
 							</form>
 							<form class="inline-block" method="get">
@@ -92,7 +101,7 @@
 										: ''} inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
 									disabled={!data?.results.pagination.next}
 								>
-								{@html svgForwardArrow}
+									{@html svgForwardArrow}
 								</button>
 							</form>
 						</div>
@@ -117,57 +126,83 @@
 				<table class="table table-sm">
 					<thead>
 						<tr class="text-gray-400">
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Order Id</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Full Name/Id</th
-							>
-
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Balance</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Pricelist Id</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Exchange Rate Id</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Actions</th
-							>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Order Id
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Full Name/Id
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Balance
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Pricelist Id
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Exchange Rate Id
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Total Products
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Total
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Actions
+							</th>
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
 						{#each data.results?.orders as order (order.orders.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{order.orders.id}</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"									>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">										
+										{order.orders.id}
+									</span>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{order.contacts?.full_name}
 									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
 										{order.contacts?.id}
 									</span>
-									</td
-								>
-
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{format(converter(dinero(order.contacts?.balance_due), $selectedRateStore, $exchangeRatesStore))}</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{order.orders.pricelist_id}</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800"
-									>{order.orders.exchange_rates_id}</td
-								>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{format(
+										converter(
+											dinero(order.contacts?.balance_due),
+											$selectedRateStore,
+											$exchangeRatesStore
+										)
+									)}
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										{order.orders.pricelist_id}
+									</span>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										{order.orders.exchange_rates_id}
+									</span>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{order.orders_details.reduce((accumulator, currentValue) => accumulator + currentValue.quantity, 0)}
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{format(
+										converter(
+											addMany(order.orders_details.map((item) => dinero(item.total_price))),
+											$selectedRateStore,
+											$exchangeRatesStore
+										)
+									)}
+								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/orders/view/${order.orders.id}`}>
+										<a href={`/sales/view/${order.orders.id}`}>
 											{@html svgEye}
 										</a>
-										<a href={`/orders/edit/${order.orders.id}`}
-										class="px-2">
+										<a href={`/cart/${order.orders.id}`} class="px-2">
 											{@html svgPen}
 										</a>
 										<form action="?/delete" method="post" use:enhance>

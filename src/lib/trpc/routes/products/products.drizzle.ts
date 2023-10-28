@@ -7,7 +7,11 @@ import { products } from '$lib/server/drizzle/schema';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 
-export const getProducts = async (input: SearchParams) => {
+export const getProducts = async (input: SearchParams, ctx: Context) => {
+
+	if (!ctx.session) {
+		throw error(404, 'User not found');
+	}
 
 	const pagination = getPagination(input);
 
@@ -60,7 +64,12 @@ export const getProducts = async (input: SearchParams) => {
 	}
 };
 
-export const getById = async (input: number) => {
+export const getById = async (input: number, ctx: Context) => {
+
+	if (!ctx.session) {
+		throw error(404, 'User not found');
+	}
+
 	try {
 
 		const productsQuery = await db.select().from(products).where(eq(products.id, input))
@@ -74,7 +83,12 @@ export const getById = async (input: number) => {
 	}
 };
 
-export const deleteById = async (input: number) => {
+export const deleteById = async (input: number, ctx: Context) => {
+
+	if (!ctx.session) {
+		throw error(404, 'User not found');
+	}
+
 	try {
 
 		await db.update(products).set({ active: false }).where(eq(products.id, input));

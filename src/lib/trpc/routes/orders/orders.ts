@@ -5,14 +5,14 @@ import { createOrder, updateOrder, deleteById, getById, getOrders } from "./orde
 
 
 export const orders = router({
-    getOrders: protectedProcedure.input(z.any()).query(async ({ input }) => {
-        return await getOrders(input);
+    getOrders: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
+        return await getOrders(input, ctx);
     }),
-    getById: protectedProcedure.input(z.number()).query(async ({ input }) => {
-        return await getById(input);
+    getById: protectedProcedure.input(z.number()).query(async ({ input, ctx  }) => {
+        return await getById(input, ctx);
     }),
-    deleteById: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
-        return await deleteById(input);
+    deleteById: protectedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
+        return await deleteById(input, ctx);
     }),
     createOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
         return await createOrder(input, ctx);

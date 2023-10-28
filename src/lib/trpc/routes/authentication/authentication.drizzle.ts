@@ -1,9 +1,9 @@
 import { auth } from "$lib/server/lucia/client"
 import type { LoginCredentials, UserRegister } from "$lib/trpc/routes/authentication/authentication.validate"
-import { redirect } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 import type { Context } from "$lib/trpc/context"
 import { db } from "$lib/server/drizzle/client"
-import { sql } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { users } from "$lib/server/drizzle/schema"
 
 
@@ -54,8 +54,58 @@ export const logoutUser = async (ctx: Context) => {
 
 }
 
-export const getAllUsers = async () => {
+export const getUsers = async (ctx: Context) => {
 
-  return await db.query.users.findMany({})
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+ 
+  try {
 
+		const userQuery = await db.select().from(users)
+
+		return {
+			users: userQuery,
+		}
+
+	} catch (error) {
+		console.error("🚀 ~ file: authentication.drizzle.ts:74 ~ getById ~ error:", error)
+	}
+
+}
+
+export const getById = async (input: string, ctx: Context ) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  try {
+
+		const userQuery = await db.select().from(users).where(eq(users.id, input))
+
+		return userQuery[0]
+		
+	} catch (error) {
+		console.error("🚀 ~ file: authentication.drizzle.ts:74 ~ getById ~ error:", error)
+	}
+}
+
+export const deleteById = async (input: string, ctx: Context) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+  
+  try {
+
+		await db.update(users).set({ active: false }).where(eq(users.id, input));
+
+		return {
+			message: "success",
+		}
+
+	} catch (error) {
+		console.error("🚀 ~ file: authentication.drizzle.ts:89 ~ deleteById ~ error:", error)
+	}
 }

@@ -8,7 +8,11 @@ import { address, contacts, emails, phones, type Contacts, type Phones, type Ema
 import trim from 'lodash-es/trim';
 import normalizePhone from '$lib/utility/normalizePhone.util';
 
-export const getContacts = async (input: SearchParams) => {
+export const getContacts = async (input: SearchParams,  ctx: Context) => {
+
+	if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
 
 	const pagination = getPagination(input);
 
@@ -34,14 +38,10 @@ export const getContacts = async (input: SearchParams) => {
 
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
-				// .where(and((sql`${contacts.full_name} % ${data}`), (eq(contacts.active, true))));
-				// .where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(contacts.active, true))));
-				// .where(and((sql`to_tsvector('simple', ${contacts.full_name}) @@ plainto_tsquery('simple', ${data})`), (eq(contacts.active, true))));
 				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))));
 
 			contactsQuery = await db.select().from(contacts)
 				.orderBy(asc(contacts.full_name))
-				// .where(and((sql`${contacts.full_name} % ${data}`), (eq(contacts.active, true))))
 				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
@@ -64,7 +64,12 @@ export const getContacts = async (input: SearchParams) => {
 	}
 };
 
-export const getById = async (input: number) => {
+export const getById = async (input: number,  ctx: Context) => {
+
+	if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
 
 	try {
 
@@ -118,8 +123,11 @@ export const getById = async (input: number) => {
 	}
 };
 
+export const deleteById = async (input: number,  ctx: Context) => {
 
-export const deleteById = async (input: number) => {
+	if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
 
 	try {
 
@@ -135,7 +143,6 @@ export const deleteById = async (input: number) => {
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
 	}
 };
-
 
 export const createContact = async (input: any, ctx: Context) => {
 

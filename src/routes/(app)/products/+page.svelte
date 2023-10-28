@@ -24,7 +24,6 @@
 	import { converter } from '$lib/utility/currencyConvertor.util';
 
 	export let data: PageData;
-
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -161,18 +160,20 @@
 						{#each data.results.products as product (product.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
-									{product.id}
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										{product.id}
+									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.name}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
-									>{product.stitches || 'None'}</td
-								>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
-									{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity: 0}
+								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+									{product.stitches || 'None'}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+									{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
+								</td>
+								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{format(
 										converter(
 											calcPrice(product, $pricelistStore, 1, 'flat').unit_price,
@@ -181,24 +182,30 @@
 										)
 									)}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
+								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
 									{product.product_category}
 								</td>
-
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<button on:click={() => cartStore.subtract(product)} class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500">
+										<button
+											on:click={() => cartStore.subtract(product)}
+											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
+										>
 											<span>-</span>
 										</button>
-										<div  class="px-3">
-											<span>{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}</span>
+										<div class="px-3">
+											<span>
+												{$cartStore.has(product.id)	? $cartStore.get(product.id)?.quantity : 0}
+											</span>
 										</div>
-										<button on:click={() => cartStore.add(product)} class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500">
+										<button
+											on:click={() => cartStore.add(product)}
+											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
+										>
 											<span>+</span>
 										</button>
 									</div>
 								</td>
-
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
 										<a href={`/products/view/${product.id}`}>
