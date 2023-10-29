@@ -98,6 +98,7 @@
 					<div class="relative ml-3">
 						<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
 							<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+							<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
 							<input
 								use:selectTextOnFocus
 								type="text"
@@ -116,8 +117,9 @@
 								>Page {data?.results.pagination.page} of {data?.results.pagination.totalPages}</span
 							>
 							<form class="inline-block" method="get">
-								<input type="hidden" name="page" value={data?.results.pagination.previous?.page} />
+								<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+								<input type="hidden" name="search" value={data?.results.pagination.search || ''} />
 								<button
 									type="submit"
 									class="{!data?.results.pagination.previous
@@ -129,8 +131,9 @@
 								</button>
 							</form>
 							<form class="inline-block" method="get">
-								<input type="hidden" name="page" value={data?.results.pagination.next?.page} />
+								<input type="hidden" name="page" value={data?.results.pagination.next?.page || 1} />
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+								<input type="hidden" name="search" value={data?.results.pagination.search || ''} />
 								<button
 									type="submit"
 									class="{!data?.results.pagination.next

@@ -20,6 +20,7 @@
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 
 	export let data: PageData;
+
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -79,8 +80,9 @@
 								>Page {data?.results.pagination.page} of {data?.results.pagination.totalPages}</span
 							>
 							<form class="inline-block" method="get">
-								<input type="hidden" name="page" value={data?.results.pagination.previous?.page} />
+								<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+								<input type="hidden" name="search" value={data?.results.pagination.search || ''} />
 								<button
 									type="submit"
 									class="{!data?.results.pagination.previous
@@ -92,8 +94,9 @@
 								</button>
 							</form>
 							<form class="inline-block" method="get">
-								<input type="hidden" name="page" value={data?.results.pagination.next?.page} />
+								<input type="hidden" name="page" value={data?.results.pagination.next?.page || 1} />
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
+								<input type="hidden" name="search" value={data?.results.pagination.search || ''} />
 								<button
 									type="submit"
 									class="{!data?.results.pagination.next
