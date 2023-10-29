@@ -6,7 +6,10 @@
 		format,
 		type EmbTypekey,
 		type GarmentPlacement,
-		type CalcPriceReturn
+		type CalcPriceReturn,
+
+		type OrderTypekey
+
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
@@ -20,7 +23,10 @@
 		cartTotalsStore,
 		selectedRateStore,
 		pricelistStore,
-		customerSelectedStore
+		customerSelectedStore,
+
+		orderTypeSelectedStore
+
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
@@ -32,6 +38,9 @@
   $: exchangeRatesStore.add(data.results?.exchange_rate)
   $: customerSelectedStore.add(data.results?.customer)
   $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
+  $: orderTypeSelectedStore.add(data.results?.order.order_type)
+
+	export const orderTypekey: OrderTypekey[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
 
 	const embType: EmbTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -96,6 +105,34 @@
 		>
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
+
+
+				<div class="dropdown dropdown-bottom dropdown-end ml-8">
+					<button
+						tabindex="0"
+						disabled
+						class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+					>
+						<span class="ml-2">{$orderTypeSelectedStore}</span>
+						{@html svgDropdown}
+					</button>
+					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+					<ul
+						tabindex="0"
+						class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+					>
+						{#each orderTypekey as type (type)}
+							{#if !(type === $orderTypeSelectedStore)}
+								<li>
+									<button on:click={() => orderTypeSelectedStore.add(type)} class="rounded-sm">
+										{type}
+									</button>
+								</li>
+							{/if}
+						{/each}
+					</ul>
+				</div>
+
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<form action="?/submit" method="post" use:enhance>
 						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
@@ -115,7 +152,7 @@
 							value={JSON.stringify([...$cartPricesStore.values()])}
 						/>
 						{#if !($cartStore.size === 0) && $customerSelectedStore}
-							<button type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8">
+							<button disabled type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8 cursor-not-allowed">
 								Submit
 							</button>
 						{/if}
@@ -177,9 +214,7 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Cart</th
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Actions</th
-							>
+						
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
@@ -308,16 +343,6 @@
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500 cursor-not-allowed"
 										>
 											<span>+</span>
-										</button>
-									</div>
-								</td>
-
-								<td
-									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
-								>
-									<div class="flex items-center">
-										<button on:click={() => cartStore.removeProduct(product.id)}>
-											{@html svgBin}
 										</button>
 									</div>
 								</td>

@@ -1,5 +1,5 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement} from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement, type OrderTypekey} from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
@@ -113,6 +113,24 @@ function customerSelected() {
 
 export const customerSelectedStore = customerSelected();
 
+function orderTypeSelected() {
+	const { subscribe, set, update } = writable<OrderTypekey>('Quotation');
+
+	return {
+		subscribe,
+		add: (orderType: OrderTypekey | undefined) => {
+			if (orderType) {
+				if (orderType) {
+					update(() => orderType)
+				}
+			}
+		},
+		reset: () => set('Quotation')
+	};
+}
+
+export const orderTypeSelectedStore = orderTypeSelected();
+
 function pricelist() {
 	const { subscribe, set, update } = writable<PricelistToMap>();
 
@@ -183,16 +201,20 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 export const cartTotalsStore = derived([cartPricesStore, vatStore], ([$cartPricesStore, $vatStore]) => {
 
 	let totalArray: Dinero<number>[] = [dollars(0)]
+	let totalProductsArray: number[] = []
 
 	$cartPricesStore.forEach((value, key) => {
 		totalArray.push(value.total_price)
+		totalProductsArray.push(value.quantity)
 	})
 
 	const total = addMany(totalArray)
+	const totalProduct = totalProductsArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 	const vatTotal = multiply(total, { amount: ($vatStore * 1000), scale: 3 })
 
 	return {
 		sub_total: total,
+		totalProduct,
 		vat: vatTotal,
 		grand_total: addMany([total, vatTotal])
 	}

@@ -61,32 +61,34 @@ type dataType = {
     description: string;
     delivery_date: string;
     orders_details: string
+    order_type: string
 }
 
 export const actions: Actions = {
-	submit: async (event) => {
+    submit: async (event) => {
 
-			const session = await event.locals.auth.validate()
+        const session = await event.locals.auth.validate()
 
-			if (!session) {
-					throw redirect(303, "/auth/login")
-			}
+        if (!session) {
+            throw redirect(303, "/auth/login")
+        }
 
-			const data = await event.request.formData();
-			const formData = Object.fromEntries(data) as dataType
+        const data = await event.request.formData();
+        const formData = Object.fromEntries(data) as dataType
 
-            const orderSubmitObj = {
-                order: {
-                    customer_id: +formData.customer_id,
-                    pricelist_id: +formData.pricelist_id,
-                    exchange_rates_id: +formData.exchange_rates_id,
-                    description: formData.description,
-                    delivery_date: new Date(formData.delivery_date)
-                },
-                orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
-            };
-			
-			return await router.createCaller(await createContext(event)).orders.createOrder(orderSubmitObj)
+        const orderSubmitObj = {
+            order: {
+                customer_id: +formData.customer_id,
+                pricelist_id: +formData.pricelist_id,
+                exchange_rates_id: +formData.exchange_rates_id,
+                order_type: formData.order_type,
+                description: formData.description,
+                delivery_date: new Date(formData.delivery_date)
+            },
+            orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
+        };
 
-	}
+        return await router.createCaller(await createContext(event)).orders.createOrder(orderSubmitObj)
+
+    }
 }

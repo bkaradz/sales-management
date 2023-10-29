@@ -91,7 +91,7 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
 
 export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'unit_price'> & { total_price: DineroSnapshot<number>, unit_price: DineroSnapshot<number> }
 
-type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'>, orders_details: CalcPriceReturnSnapshot[] }
+type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'| 'order_type'>, orders_details: CalcPriceReturnSnapshot[] }
 
 export const createOrder = async (input: OrderInput, ctx: Context) => {
 

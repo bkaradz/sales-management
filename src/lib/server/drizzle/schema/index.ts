@@ -1,4 +1,4 @@
-import type { GarmentPlacement, EmbTypekey } from "$lib/utility/calculateCart.util";
+import type { GarmentPlacement, EmbTypekey, OrderTypekey } from "$lib/utility/calculateCart.util";
 import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
 import { sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
@@ -203,6 +203,7 @@ export const orders = pgTable('orders', {
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
+  order_type: text('order_type').$type<OrderTypekey>().notNull().default('Quotation'),
   description: text('description'),
   active: boolean('active').notNull().default(true),
   delivery_date: timestamp('delivery_date').notNull().default(sql`now() + INTERVAL '7 days'`),

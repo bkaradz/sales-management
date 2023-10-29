@@ -13,9 +13,11 @@
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
-	import { calcPrice, format } from '$lib/utility/calculateCart.util';
+	import { calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
 	import {
+	cartPricesStore,
 		cartStore,
+		cartTotalsStore,
 		exchangeRatesStore,
 		pricelistStore,
 		selectedRateStore
@@ -35,15 +37,46 @@
 				<div class="flex w-full items-center">
 					<div class="flex items-center text-3xl text-gray-900 dark:text-white">Products</div>
 					<div class="ml-auto sm:flex hidden items-center justify-end">
-						<div class="text-right">
-							<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
-							<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
+						<div class="text-right mr-8">
+							<div class="text-xs text-gray-400 dark:text-gray-400">Total Products:</div>
+							<div class="text-gray-900 text-lg dark:text-white">{$cartTotalsStore.totalProduct}</div>
 						</div>
-						<button
-							class="w-8 h-8 ml-4 text-gray-400 shadow dark:text-gray-400 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700"
-						>
-							{@html svgThreeDots}
-						</button>
+						<div class="text-right mr-8">
+							<div class="text-xs text-gray-400 dark:text-gray-400">Sub Total:</div>
+							<div class="text-gray-900 text-lg dark:text-white">
+								{format(
+									converter(
+										$cartTotalsStore.sub_total,
+										$selectedRateStore,
+										$exchangeRatesStore
+									)
+								)}
+							</div>
+						</div>
+						<div class="text-right mr-8">
+							<div class="text-xs text-gray-400 dark:text-gray-400">Tax:</div>
+							<div class="text-gray-900 text-lg dark:text-white">
+								{format(
+									converter(
+										$cartTotalsStore.vat,
+										$selectedRateStore,
+										$exchangeRatesStore
+									)
+								)}
+							</div>
+						</div>
+						<div class="text-right mr-8">
+							<div class="text-xs text-gray-400 dark:text-gray-400">Net Total:</div>
+							<div class="text-gray-900 text-lg dark:text-white">
+								{format(
+									converter(
+										$cartTotalsStore.grand_total,
+										$selectedRateStore,
+										$exchangeRatesStore
+									)
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -136,16 +169,19 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Name</th
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
 								>Stitches</th
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
 								>Units</th
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
 								>Unit Price</th
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
+								>Total Price</th
+							>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-center"
 								>Product Categories</th
 							>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
@@ -176,7 +212,16 @@
 								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{format(
 										converter(
-											calcPrice(product, $pricelistStore, 1, 'flat').unit_price,
+											($cartPricesStore.get(product.id)?.unit_price || dollars(0)),
+											$selectedRateStore,
+											$exchangeRatesStore
+										)
+									)}
+								</td>
+								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+									{format(
+										converter(
+											($cartPricesStore.get(product.id)?.total_price || dollars(0)),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)

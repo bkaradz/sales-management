@@ -1,6 +1,7 @@
 {
 	"cSpell.language": "en-GB",
 	"cSpell.words": [
+		"applique",
 		"Dinero",
 		"ILIKE",
 		"keepfocus",
@@ -11,6 +12,7 @@
 		"superjson",
 		"tailwindcss",
 		"TIMESTAMPTZ",
-		"TRPC"
+		"TRPC",
+		"uuidv"
 	]
 }
