@@ -1,7 +1,7 @@
 import type { GarmentPlacement, EmbTypekey, OrderTypekey } from "$lib/utility/calculateCart.util";
 import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
-import { sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
-import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { sql, type InferInsertModel, type InferSelectModel, eq } from "drizzle-orm";
+import { bigint, boolean, integer, json, pgMaterializedView, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 
@@ -24,7 +24,7 @@ export type NewUser = InferInsertModel<typeof users>;
 export const insertUserSchema = createInsertSchema(users);
 // Schema for selecting a user - can be used to validate API responses
 export const selectUserSchema = createSelectSchema(users);
- 
+
 
 export const key = pgTable('user_key', {
   id: text('id').primaryKey(),
@@ -237,4 +237,8 @@ export type NewOrdersDetails = InferInsertModel<typeof orders_details>;
 export const insertOrdersDetailsSchema = createInsertSchema(orders_details);
 export const selectOrdersDetailsSchema = createSelectSchema(orders_details);
 
-
+export const sales_orders_view = pgMaterializedView('sales_orders_view').as((qb) =>
+  qb.select({ orders, contacts, orders_details }).from(orders)
+    .where(eq(orders.active, true))
+    .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+    .innerJoin(orders_details, eq(orders_details.order_id, orders.id)));

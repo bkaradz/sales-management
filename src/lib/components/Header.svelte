@@ -71,11 +71,9 @@
 		<div class="dropdown dropdown-bottom dropdown-end">
 			<button tabindex="0" class="flex items-center">
 				<span class="relative flex-shrink-0">
-					<img
-						class="w-7 h-7 rounded-full"
-						src="https://images.unsplash.com/photo-1521587765099-8835e7201186?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
-						alt="profile"
-					/>
+					<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+						<svg class="absolute w-9 h-9 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+					</div>
 					<span
 						class="absolute right-0 -mb-0.5 bottom-0 w-2 h-2 rounded-full bg-green-500 border border-white dark:border-gray-900"
 					/>
