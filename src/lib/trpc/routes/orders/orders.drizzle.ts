@@ -54,7 +54,7 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
         .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(orders.active, true))))
         .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
-        .orderBy(asc(orders.id))
+        .orderBy(desc(orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
 
@@ -168,19 +168,13 @@ export const getById = async (input: number, ctx: Context) => {
 
     if (productsQuery.length === 0) throw new Error("Products not found");
 
-    // const productMap = new Map<number, Products>()
-
-    // productsQuery.forEach((item) => productMap.set(item.id, item))
-
-    // if(productMap.size === 0) throw new Error("Products not found");
-
     return {
-      order: ordersQuery,
-      customer: customerQuery.contact,
       pricelist: pricelistMap,
       exchange_rate: exchangeRateMap,
+      customer: customerQuery.contact,
+      products: productsQuery,
       orders_details: ordersDetailsQuery,
-      products: productsQuery
+      order: ordersQuery,
     }
 
   } catch (error) {

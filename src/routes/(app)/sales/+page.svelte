@@ -4,6 +4,7 @@
 		svgBackArrow,
 		svgBin,
 		svgCalender,
+		svgCard,
 		svgDropdownArrow,
 		svgEye,
 		svgForwardArrow,
@@ -142,6 +143,9 @@
 								Exchange Rate Id
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Order Type
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Total Products
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
@@ -150,13 +154,16 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Actions
 							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Payments
+							</th>
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
 						{#each data.results?.orders as order (order.orders.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">										
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
 										{order.orders.id}
 									</span>
 								</td>
@@ -186,7 +193,15 @@
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.orders_details.reduce((accumulator, currentValue) => accumulator + currentValue.quantity, 0)}
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										{order.orders.order_type}
+									</span>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{order.orders_details.reduce(
+										(accumulator, currentValue) => accumulator + currentValue.quantity,
+										0
+									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
@@ -202,7 +217,7 @@
 										<a href={`/sales/view/${order.orders.id}`}>
 											{@html svgEye}
 										</a>
-										<a href={`/cart/${order.orders.id}`} class="px-2">
+										<a href={`/sales/edit/${order.orders.id}`} class="px-2">
 											{@html svgPen}
 										</a>
 										<form action="?/delete" method="post" use:enhance>
@@ -211,6 +226,13 @@
 												{@html svgBin}
 											</button>
 										</form>
+									</div>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<div class="flex items-center">
+										<a href={`/sales/payment/${order.orders.id}`} class="pr-2">
+											{@html svgCard}
+										</a>
 									</div>
 								</td>
 							</tr>

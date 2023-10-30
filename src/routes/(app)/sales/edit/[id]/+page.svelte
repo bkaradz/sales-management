@@ -6,12 +6,9 @@
 		format,
 		type EmbTypekey,
 		type GarmentPlacement,
-		type CalcPriceReturn,
-
 		type OrderTypekey
-
 	} from '$lib/utility/calculateCart.util';
-	import { dinero } from 'dinero.js';
+	import { dinero, toSnapshot } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -24,23 +21,36 @@
 		selectedRateStore,
 		pricelistStore,
 		customerSelectedStore,
-
 		orderTypeSelectedStore
-
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { toasts } from '$lib/stores/toasts.store';
 
 	export let data: PageData;
+	export let form: ActionData;
 
-  $: pricelistStore.add(data.results?.pricelist)
+	$: pricelistStore.add(data.results?.pricelist)
   $: exchangeRatesStore.add(data.results?.exchange_rate)
   $: customerSelectedStore.add(data.results?.customer)
   $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
   $: orderTypeSelectedStore.add(data.results?.order.order_type)
 
-	export const orderTypekey: OrderTypekey[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
+	$: if (form?.success) {
+		invalidateAll();
+		cartStore.reset();
+		customerSelectedStore.reset();
+		toasts.add({
+			message: 'Order successfully added',
+			type: 'success'
+		});
+	} else {
+		// TODO: highlight were errors occurred
+	}
+
+	export const orderTypekey: OrderTypekey[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
 
 	const embType: EmbTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -96,7 +106,60 @@
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
+	<!-- Users Cards -->
 
+	<div
+		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
+	>
+		<div class="text-xs text-gray-400 tracking-wider">Customer</div>
+		<div class="mt-2 relative">
+			<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
+				<input
+					use:selectTextOnFocus
+					type="text"
+					name="search"
+					class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+					placeholder="Search"
+					on:input={debounceSearch}
+					on:change={debounceSearch}
+				/>
+				{@html svgSearch}
+			</form>
+		</div>
+		<div class="space-y-4 mt-3">
+			
+				{#each [$customerSelectedStore] as user (user?.id)}
+					<button
+					disabled
+						class={`${
+							$customerSelectedStore?.id === user?.id
+								? 'shadow-lg ring-2 ring-blue-500 focus:outline-none'
+								: 'shadow'
+						} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
+					>
+						<div
+							class="flex xl:flex-row flex-col justify-between items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+						>
+							{user?.full_name}
+							<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md ml-3">										
+								{user?.id}
+							</span>
+						</div>
+						<div class="flex items-center w-full">
+							<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
+								<p>Balance</p>
+							</div>
+							<div class="ml-auto text-xs text-gray-500">
+								{format(
+									converter(dinero((user?.balance_due || toSnapshot(dollars(0)))) , $selectedRateStore, $exchangeRatesStore)
+								)}
+							</div>
+						</div>
+					</button>
+				{/each}
+			
+		</div>
+	</div>
 	<!-- User Table -->
 
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
@@ -106,12 +169,10 @@
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 
-
 				<div class="dropdown dropdown-bottom dropdown-end ml-8">
 					<button
 						tabindex="0"
-						disabled
-						class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+						class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 					>
 						<span class="ml-2">{$orderTypeSelectedStore}</span>
 						{@html svgDropdown}
@@ -132,7 +193,7 @@
 						{/each}
 					</ul>
 				</div>
-
+				
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<form action="?/submit" method="post" use:enhance>
 						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
@@ -143,6 +204,7 @@
 							type="number"
 							value={$exchangeRatesStore.exchange_rates.id}
 						/>
+						<input hidden name="order_type" type="text" value={$orderTypeSelectedStore} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
 						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
 						<input
@@ -152,7 +214,7 @@
 							value={JSON.stringify([...$cartPricesStore.values()])}
 						/>
 						{#if !($cartStore.size === 0) && $customerSelectedStore}
-							<button disabled type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8 cursor-not-allowed">
+							<button type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8">
 								Submit
 							</button>
 						{/if}
@@ -184,7 +246,7 @@
 		</div>
 		{#if selectedActivitiesTab.name === 'Products Details'}
 			<div class="sm:p-7 p-4">
-				<table class="table table-sm">
+				<table class="table table-sm static">
 					<thead>
 						<tr class="text-gray-400">
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
@@ -214,7 +276,9 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Cart</th
 							>
-						
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
+								>Actions</th
+							>
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
@@ -237,16 +301,15 @@
 									<div class="dropdown dropdown-bottom dropdown-end">
 										<button
 											tabindex="0"
-                      disabled
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 										>
 											<span class="ml-2">{product.garment_placement}</span>
 											{@html svgDropdown}
-                  </button>
+										</button>
 										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 										<ul
 											tabindex="0"
-											class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 										>
 											{#each garmentPlacement as type (type)}
 												{#if !(type === product.garment_placement)}
@@ -269,16 +332,15 @@
 									<div class="dropdown dropdown-bottom dropdown-end">
 										<button
 											tabindex="0"
-                      disabled
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 										>
 											<span class="ml-2">{product.embroidery_type}</span>
 											{@html svgDropdown}
-                  </button>
+										</button>
 										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 										<ul
 											tabindex="0"
-											class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 										>
 											{#each embType as type (type)}
 												{#if !(type === product.embroidery_type)}
@@ -326,9 +388,8 @@
 								>
 									<div class="flex items-center">
 										<button
-                      disabled
 											on:click={() => cartStore.subtract(product)}
-											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500 cursor-not-allowed"
+											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
 											<span>-</span>
 										</button>
@@ -338,11 +399,20 @@
 											</span>
 										</div>
 										<button
-                      disabled
 											on:click={() => cartStore.add(product)}
-											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500 cursor-not-allowed"
+											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
 											<span>+</span>
+										</button>
+									</div>
+								</td>
+
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
+								>
+									<div class="flex items-center">
+										<button on:click={() => cartStore.removeProduct(product.id)}>
+											{@html svgBin}
 										</button>
 									</div>
 								</td>
@@ -408,7 +478,7 @@
 						{#if $customerSelectedStore}
 							<div class="space-y-4 mt-3">
 								<button
-									class={`bg-white relative p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
+									class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
 								>
 									<div
 										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -490,10 +560,9 @@
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 											<DateInput
-                        disabled
 												bind:value={deliveryDate}
 												format="dd-MM-yyyy HH:mm:ss"
-												class="z-50"
+												class=""
 											/>
 										</div>
 										<div class="ml-auto text-xs text-gray-500">Delivery Date</div>
@@ -501,7 +570,7 @@
 									<div
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
-										<div class="relative w-full mb-4">
+										<div class="w-full mb-4 relative">
 											<textarea
 												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 												id="notes"
@@ -522,19 +591,18 @@
 						{/if}
 					</div>
 				</div>
-				<div class="w-full relative">
+				<div class="w-full">
 					<div
 						class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 					>
 						<div class="pl-3 text-xl text-gray-900 dark:text-white">Pricelist</div>
 						{#if data.pricelistAll}
 							<div class="space-y-4 mt-3">
-								<!--  -->
-								<div class="dropdown dropdown-bottom w-full z-50">
+								
+								<div class="dropdown dropdown-bottom w-full">
 									<button
 										tabindex="0"
-                    disabled
-										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 									>
 										<span class="ml-2">{$pricelistStore.pricelist.id}</span>
 										{@html svgDropdown}
@@ -542,7 +610,7 @@
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"
-										class="dropdown-content menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+										class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 									>
 										{#each data.pricelistAll as pricelist (pricelist.pricelist.id)}
 											{#if !($pricelistStore.pricelist.id === pricelist.pricelist.id)}
@@ -648,18 +716,17 @@
 						{/if}
 					</div>
 				</div>
-				<div class="w-full relative">
+				<div class="w-full">
 					<div
 						class="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 					>
 						<div class="pl-3 text-xl text-gray-900 dark:text-white">Exchange Rate</div>
 						{#if data.exchangeRateAll}
 							<div class="space-y-4 mt-3">
-								<div class="dropdown dropdown-bottom w-full z-50">
+								<div class="dropdown dropdown-bottom w-full">
 									<button
 										tabindex="0"
-                    disabled
-										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 									>
 										<span class="ml-2">{$exchangeRatesStore.exchange_rates.id}</span>
 										{@html svgDropdown}
@@ -667,7 +734,7 @@
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"
-										class="dropdown-content menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+										class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 									>
 										{#each data.exchangeRateAll as exchange (exchange.exchange_rates.id)}
 											{#if !($exchangeRatesStore.exchange_rates.id === exchange.exchange_rates.id)}

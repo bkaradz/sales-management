@@ -16,7 +16,7 @@ export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
  * Function to get pricelist for a given Quantity and Embroidery Type
  */
 
-export type OrderTypekey = 'Quotation' | 'Sales Order' | 'Invoice' | 'Recipe'
+export type OrderTypekey = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
 
 export type GarmentPlacement = 'Front Left' | 'Front Right' | 'Upper Back' | 'Lower Back' | 'Right Sleeve' | 'Left Sleeve' | 'Cap Front' | 'Cap Right Side' | 'Cap Left Side' | 'Name Tag' | 'Marked Position'
 

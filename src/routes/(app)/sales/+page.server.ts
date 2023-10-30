@@ -1,5 +1,6 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
+import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
@@ -23,3 +24,20 @@ export const load = (async (event) => {
 		results: orders(query)
 	};
 }) satisfies PageServerLoad;
+
+export const actions: Actions = {
+	delete: async (event) => {
+
+			const session = await event.locals.auth.validate()
+
+			if (!session) {
+					throw redirect(303, "/auth/login")
+			}
+
+			const data = await event.request.formData();
+			const formData = Object.fromEntries(data)
+
+			return await router.createCaller(await createContext(event)).orders.deleteById(+formData.delete)
+
+	}
+}

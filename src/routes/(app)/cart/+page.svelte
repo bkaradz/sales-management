@@ -106,7 +106,7 @@
 		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 	>
 		<div class="text-xs text-gray-400 tracking-wider">Customer</div>
-		<div class="mt-2">
+		<div class="mt-2 relative">
 			<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
 				<input
 					use:selectTextOnFocus
@@ -132,9 +132,12 @@
 						} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
 					>
 						<div
-							class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+							class="flex xl:flex-row flex-col justify-between items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 						>
 							{user.full_name}
+							<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md ml-3">
+								{user.id}
+							</span>
 						</div>
 						<div class="flex items-center w-full">
 							<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
@@ -184,7 +187,7 @@
 						{/each}
 					</ul>
 				</div>
-				
+
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<form action="?/submit" method="post" use:enhance>
 						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
@@ -468,9 +471,7 @@
 						<div class="pl-3 text-xl text-gray-900 dark:text-white">Contact</div>
 						{#if $customerSelectedStore}
 							<div class="space-y-4 mt-3">
-								<button
-									class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
-								>
+								<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
 									<div
 										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
@@ -535,7 +536,8 @@
 										</div>
 									</div>
 									{#if $customerSelectedStore.notes}
-										<div
+										<div class="">
+											<!-- <div
 											class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 										>
 											<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
@@ -544,24 +546,35 @@
 											<div class="ml-auto text-xs text-gray-500">
 												{$customerSelectedStore.notes}
 											</div>
+										</div> -->
+											<textarea
+												class="peer block w-full rounded border-0 bg-transparent placeholder-transparent"
+												id="notes"
+												rows="4"
+												name="notes"
+												placeholder="Notes"
+												value={$customerSelectedStore.notes}
+											/>
+											<label
+												for="notes"
+												class="pointer-events-none text-neutral-500 dark:text-neutral-200"
+											>
+												Notes
+											</label>
 										</div>
 									{/if}
 									<div
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											<DateInput
-												bind:value={deliveryDate}
-												format="dd-MM-yyyy HH:mm:ss"
-												class=""
-											/>
+											<DateInput bind:value={deliveryDate} format="dd-MM-yyyy HH:mm:ss" class="" />
 										</div>
 										<div class="ml-auto text-xs text-gray-500">Delivery Date</div>
 									</div>
 									<div
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
-										<div class="w-full mb-4">
+										<div class="w-full mb-4 relative">
 											<textarea
 												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 												id="notes"
@@ -589,7 +602,6 @@
 						<div class="pl-3 text-xl text-gray-900 dark:text-white">Pricelist</div>
 						{#if data.pricelistAll}
 							<div class="space-y-4 mt-3">
-								
 								<div class="dropdown dropdown-bottom w-full">
 									<button
 										tabindex="0"
