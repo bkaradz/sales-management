@@ -55,7 +55,7 @@
 <div
 	transition:fade={{ duration: 2000 }}
 	style="--progress: {progress}"
-	class="{style} progress relative m-1 flex h-16 w-[700px] items-center justify-between overflow-hidden text-white"
+	class="{style} progress relative m-1 flex h-16 w-[700px] items-center justify-between overflow-hidden text-slate-900 rounded-none"
 >
 	<span class="mx-2 flex-none">
 		{@html icon}
@@ -63,7 +63,7 @@
 
 	<!-- success, warning, error, info -->
 	<span class="flex h-12 grow items-center overflow-hidden text-ellipsis">
-		<p class="text-xs">{@html message}</p>
+		<p class="text-sm">{@html message}</p>
 	</span>
 
 	<span class="mr-2 flex-none">

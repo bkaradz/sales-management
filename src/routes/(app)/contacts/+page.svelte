@@ -29,9 +29,9 @@
 			<div
 				class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
 			>
-				<div class="flex w-full items-center">
+				<div class="flex w-full items-center border-b border-gray-200 dark:border-gray-800">
 					<div class="flex items-center text-3xl text-gray-900 dark:text-white">Contacts</div>
-					<div class="ml-auto sm:flex hidden items-center justify-end">
+					<!-- <div class="ml-auto sm:flex items-center justify-end">
 						<div class="text-right">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
 							<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
@@ -41,11 +41,10 @@
 						>
 							{@html svgThreeDots}
 						</button>
-					</div>
+					</div> -->
 				</div>
-			</div>
-			<div class="sm:p-7 p-4">
-				<div class="flex w-full items-center mb-7">
+
+				<div class="flex w-full items-center my-3">
 					<button
 						class="inline-flex mr-3 items-center h-8 pl-2.5 pr-2 rounded-md shadow text-gray-700 dark:text-gray-400 dark:border-gray-800 border border-gray-200 leading-none py-0"
 					>
@@ -125,6 +124,8 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="sm:p-7 p-4">
 
 				<table class="table table-sm">
 					<thead>

@@ -158,37 +158,39 @@
 
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 		<div
-			class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
+			class="z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
 		>
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 
-				<div class="dropdown dropdown-bottom dropdown-end ml-8">
-					<button
-						tabindex="0"
-						class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
-					>
-						<span class="ml-2">{$orderTypeSelectedStore}</span>
-						{@html svgDropdown}
-					</button>
-					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<ul
-						tabindex="0"
-						class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-					>
-						{#each orderTypekey as type (type)}
-							{#if !(type === $orderTypeSelectedStore)}
-								<li>
-									<button on:click={() => orderTypeSelectedStore.add(type)} class="rounded-sm">
-										{type}
-									</button>
-								</li>
-							{/if}
-						{/each}
-					</ul>
-				</div>
-
+				
 				<div class="ml-auto sm:flex hidden items-center justify-end">
+
+					<div class="dropdown dropdown-bottom dropdown-end mr-8">
+						<button
+							tabindex="0"
+							class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+						>
+							<span class="ml-2">{$orderTypeSelectedStore}</span>
+							{@html svgDropdown}
+						</button>
+						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+						<ul
+							tabindex="0"
+							class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+						>
+							{#each orderTypekey as type (type)}
+								{#if !(type === $orderTypeSelectedStore)}
+									<li>
+										<button on:click={() => orderTypeSelectedStore.add(type)} class="rounded-sm">
+											{type}
+										</button>
+									</li>
+								{/if}
+							{/each}
+						</ul>
+					</div>
+
 					<form action="?/submit" method="post" use:enhance>
 						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
 						<input hidden name="pricelist_id" type="number" value={$pricelistStore.pricelist.id} />

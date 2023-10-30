@@ -21,7 +21,7 @@
 </script>
 
 <div
-	class="h-11 lg:flex w-full border-b border-gray-200 dark:border-gray-800 hidden px-10 flex-shrink-0"
+	class="relative z-20 h-11 lg:flex w-full border-b border-gray-200 dark:border-gray-800 hidden px-10 flex-shrink-0"
 >
 	<div class="flex h-full text-gray-600 dark:text-gray-400">
 		<div class="tabs tabs-boxed bg-transparent">
