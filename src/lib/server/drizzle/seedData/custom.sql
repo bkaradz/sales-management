@@ -5,7 +5,7 @@ CREATE INDEX products_index ON products (name, CAST(id AS text), CAST(stitches A
 -- Contacts search index
 CREATE INDEX contacts_index ON contacts (full_name, CAST(id AS text) text_pattern_ops);
 
--- Create upates_at function
+-- Create updates_at function
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

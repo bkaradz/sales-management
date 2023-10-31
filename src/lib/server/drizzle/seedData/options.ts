@@ -11,7 +11,7 @@ export const options = [
 		isActive: true,
 		isDefault: false,
 		label: 'Applique',
-		value: 'applique'
+		value: 'Applique'
 	},
 	{
 		group: 'currency',
@@ -25,7 +25,7 @@ export const options = [
 		isActive: true,
 		isDefault: false,
 		label: 'Cap',
-		value: 'cap'
+		value: 'Cap'
 	},
 	{
 		group: 'embroideryPositions',
@@ -67,7 +67,7 @@ export const options = [
 		isActive: true,
 		isDefault: true,
 		label: 'Flat',
-		value: 'flat'
+		value: 'Flat'
 	},
 	{
 		group: 'embroideryPositions',
@@ -116,7 +116,7 @@ export const options = [
 		isActive: true,
 		isDefault: false,
 		label: 'Name Tag',
-		value: 'nameTag'
+		value: 'Name Tag'
 	},
 	{
 		group: 'productCategories',

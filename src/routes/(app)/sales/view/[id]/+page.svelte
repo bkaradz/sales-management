@@ -8,7 +8,7 @@
 		type GarmentPlacement,
 		type CalcPriceReturn,
 
-		type OrderTypekey
+		type OrderStatus
 
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
@@ -38,11 +38,11 @@
   $: exchangeRatesStore.add(data.results?.exchange_rate)
   $: customerSelectedStore.add(data.results?.customer)
   $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
-  $: orderTypeSelectedStore.add(data.results?.order.order_type)
+  $: orderTypeSelectedStore.add(data.results?.order.order_status)
 
-	export const orderTypekey: OrderTypekey[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
+	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
 
-	const embType: EmbTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];
+	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
 	const garmentPlacement: GarmentPlacement[] = [
 		'Front Left',
 		'Front Right',
@@ -625,7 +625,7 @@
 																	unit_price: null,
 																	stitches: 1537,
 																	quantity: null,
-																	embroidery_type: 'flat',
+																	embroidery_type: 'Flat',
 																	garment_placement: 'Front Left',
 																	active: true,
 																	created_at: new Date(),

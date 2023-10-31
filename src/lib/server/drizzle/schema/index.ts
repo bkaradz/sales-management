@@ -1,4 +1,4 @@
-import type { GarmentPlacement, EmbTypekey, OrderTypekey } from "$lib/utility/calculateCart.util";
+import type { GarmentPlacement, EmbTypekey, OrderStatus, PaymentStatus, PaymentMethod } from "$lib/utility/calculateCart.util";
 import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
 import { sql, type InferInsertModel, type InferSelectModel, eq } from "drizzle-orm";
 import { bigint, boolean, integer, json, pgMaterializedView, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
@@ -21,9 +21,9 @@ export type User = InferSelectModel<typeof users>;
 export type NewUser = InferInsertModel<typeof users>;
 
 // Schema for inserting a user - can be used to validate API requests
-export const insertUserSchema = createInsertSchema(users);
+export const InsertUserSchema = createInsertSchema(users);
 // Schema for selecting a user - can be used to validate API responses
-export const selectUserSchema = createSelectSchema(users);
+export const SelectUserSchema = createSelectSchema(users);
 
 
 export const key = pgTable('user_key', {
@@ -37,8 +37,8 @@ export const key = pgTable('user_key', {
 export type Key = InferSelectModel<typeof key>;
 export type NewKey = InferInsertModel<typeof key>;
 
-export const insertKeySchema = createInsertSchema(key);
-export const selectKeySchema = createSelectSchema(key);
+export const InsertKeySchema = createInsertSchema(key);
+export const SelectKeySchema = createSelectSchema(key);
 
 export const session = pgTable('user_session', {
   id: text('id').primaryKey(),
@@ -52,8 +52,8 @@ export const session = pgTable('user_session', {
 export type Session = InferSelectModel<typeof session>;
 export type NewSession = InferInsertModel<typeof session>;
 
-export const insertSessionSchema = createInsertSchema(session);
-export const selectSessionSchema = createSelectSchema(session);
+export const InsertSessionSchema = createInsertSchema(session);
+export const SelectSessionSchema = createSelectSchema(session);
 
 export const contacts = pgTable('contacts', {
   id: serial('id').primaryKey(),
@@ -72,8 +72,8 @@ export const contacts = pgTable('contacts', {
 export type Contacts = InferSelectModel<typeof contacts>;
 export type NewContacts = InferInsertModel<typeof contacts>;
 
-export const insertContactSchema = createInsertSchema(contacts);
-export const selectContactSchema = createSelectSchema(contacts);
+export const InsertContactSchema = createInsertSchema(contacts);
+export const SelectContactSchema = createSelectSchema(contacts);
 
 export const phones = pgTable('phones', {
   id: serial('id').primaryKey(),
@@ -84,8 +84,8 @@ export const phones = pgTable('phones', {
 export type Phones = InferSelectModel<typeof phones>;
 export type NewPhones = InferInsertModel<typeof phones>;
 
-export const insertPhoneSchema = createInsertSchema(phones);
-export const selectPhoneSchema = createSelectSchema(phones);
+export const InsertPhoneSchema = createInsertSchema(phones);
+export const SelectPhoneSchema = createSelectSchema(phones);
 
 export const emails = pgTable('emails', {
   id: serial('id').primaryKey(),
@@ -96,8 +96,8 @@ export const emails = pgTable('emails', {
 export type Emails = InferSelectModel<typeof emails>;
 export type NewEmails = InferInsertModel<typeof emails>;
 
-export const insertEmailSchema = createInsertSchema(emails);
-export const selectEmailSchema = createSelectSchema(emails);
+export const InsertEmailSchema = createInsertSchema(emails);
+export const SelectEmailSchema = createSelectSchema(emails);
 
 export const address = pgTable('address', {
   id: serial('id').primaryKey(),
@@ -108,8 +108,8 @@ export const address = pgTable('address', {
 export type Address = InferSelectModel<typeof address>;
 export type NewAddress = InferInsertModel<typeof address>;
 
-export const insertAddressSchema = createInsertSchema(address);
-export const selectAddressSchema = createSelectSchema(address);
+export const InsertAddressSchema = createInsertSchema(address);
+export const SelectAddressSchema = createSelectSchema(address);
 
 export const products = pgTable('products', {
   id: serial('id').primaryKey(),
@@ -120,7 +120,7 @@ export const products = pgTable('products', {
   unit_price: json('minimum_price').$type<DineroSnapshot<number>>(),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
-  embroidery_type: text('embroidery_type').$type<EmbTypekey>().notNull().default('flat'),
+  embroidery_type: text('embroidery_type').$type<EmbTypekey>().notNull().default('Flat'),
   garment_placement: text('garment_placement').$type<GarmentPlacement>().notNull().default('Front Left'),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
@@ -130,8 +130,8 @@ export const products = pgTable('products', {
 export type Products = InferSelectModel<typeof products>;
 export type NewProducts = InferInsertModel<typeof products>;
 
-export const insertProductSchema = createInsertSchema(products);
-export const selectProductSchema = createSelectSchema(products);
+export const InsertProductSchema = createInsertSchema(products);
+export const SelectProductSchema = createSelectSchema(products);
 
 
 export const pricelist = pgTable('pricelist', {
@@ -148,8 +148,8 @@ export const pricelist = pgTable('pricelist', {
 export type Pricelist = InferSelectModel<typeof pricelist>;
 export type NewPricelist = InferInsertModel<typeof pricelist>;
 
-export const insertPricelistSchema = createInsertSchema(pricelist);
-export const selectPricelistSchema = createSelectSchema(pricelist);
+export const InsertPricelistSchema = createInsertSchema(pricelist);
+export const SelectPricelistSchema = createSelectSchema(pricelist);
 
 export const pricelist_details = pgTable('pricelist_details', {
   id: serial('id').primaryKey(),
@@ -163,8 +163,8 @@ export const pricelist_details = pgTable('pricelist_details', {
 export type PricelistDetails = InferSelectModel<typeof pricelist_details>;
 export type NewPricelistDetails = InferInsertModel<typeof pricelist_details>;
 
-export const insertPricelistDetailsSchema = createInsertSchema(pricelist_details);
-export const selectPricelistDetailsSchema = createSelectSchema(pricelist_details);
+export const InsertPricelistDetailsSchema = createInsertSchema(pricelist_details);
+export const SelectPricelistDetailsSchema = createSelectSchema(pricelist_details);
 
 export const exchange_rates = pgTable('exchange_rates', {
   id: serial('id').primaryKey(),
@@ -179,8 +179,8 @@ export const exchange_rates = pgTable('exchange_rates', {
 export type ExchangeRate = InferSelectModel<typeof exchange_rates>;
 export type NewExchangeRate = InferInsertModel<typeof exchange_rates>;
 
-export const insertExchangeRateSchema = createInsertSchema(exchange_rates);
-export const selectExchangeRateSchema = createSelectSchema(exchange_rates);
+export const InsertExchangeRateSchema = createInsertSchema(exchange_rates);
+export const SelectExchangeRateSchema = createSelectSchema(exchange_rates);
 
 export const exchange_rate_details = pgTable('exchange_rate_details', {
   id: serial('id').primaryKey(),
@@ -194,8 +194,8 @@ export const exchange_rate_details = pgTable('exchange_rate_details', {
 export type ExchangeRateDetails = InferSelectModel<typeof exchange_rate_details>;
 export type NewExchangeRateDetails = InferInsertModel<typeof exchange_rate_details>;
 
-export const insertExchangeRateDetailsSchema = createInsertSchema(exchange_rate_details);
-export const selectExchangeRateDetailsSchema = createSelectSchema(exchange_rate_details);
+export const InsertExchangeRateDetailsSchema = createInsertSchema(exchange_rate_details);
+export const SelectExchangeRateDetailsSchema = createSelectSchema(exchange_rate_details);
 
 export const orders = pgTable('orders', {
   id: serial('id').primaryKey(),
@@ -203,7 +203,10 @@ export const orders = pgTable('orders', {
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
-  order_type: text('order_type').$type<OrderTypekey>().notNull().default('Quotation'),
+  order_status: text('order_status').$type<OrderStatus>().notNull().default('Quotation'),
+  payment_status: text('payment_status').$type<PaymentStatus>().notNull().default('Awaiting Sales Order'),
+  order_total: json('order_total').notNull().$type<DineroSnapshot<number>>(),
+  total_products: integer('total_products').notNull(),
   description: text('description'),
   active: boolean('active').notNull().default(true),
   delivery_date: timestamp('delivery_date').notNull().default(sql`now() + INTERVAL '7 days'`),
@@ -214,8 +217,8 @@ export const orders = pgTable('orders', {
 export type Orders = InferSelectModel<typeof orders>;
 export type NewOrders = InferInsertModel<typeof orders>;
 
-export const insertOrdersSchema = createInsertSchema(orders);
-export const selectOrdersSchema = createSelectSchema(orders);
+export const InsertOrdersSchema = createInsertSchema(orders);
+export const SelectOrdersSchema = createSelectSchema(orders);
 
 export const orders_details = pgTable('orders_details', {
   id: serial('id').primaryKey(),
@@ -225,7 +228,7 @@ export const orders_details = pgTable('orders_details', {
   total_price: json('total_price').notNull().$type<DineroSnapshot<number>>(),
   stitches: integer('stitches').notNull(),
   quantity: integer('quantity').notNull(),
-  embroidery_type: text('embroidery_type').$type<EmbTypekey>().notNull().default('flat'),
+  embroidery_type: text('embroidery_type').$type<EmbTypekey>().notNull().default('Flat'),
   garment_placement: text('garment_placement').$type<GarmentPlacement>().notNull().default('Front Left'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
@@ -234,11 +237,32 @@ export const orders_details = pgTable('orders_details', {
 export type OrdersDetails = InferSelectModel<typeof orders_details>;
 export type NewOrdersDetails = InferInsertModel<typeof orders_details>;
 
-export const insertOrdersDetailsSchema = createInsertSchema(orders_details);
-export const selectOrdersDetailsSchema = createSelectSchema(orders_details);
+export const InsertOrdersDetailsSchema = createInsertSchema(orders_details);
+export const SelectOrdersDetailsSchema = createSelectSchema(orders_details);
 
-export const sales_orders_view = pgMaterializedView('sales_orders_view').as((qb) =>
-  qb.select({ orders, contacts, orders_details }).from(orders)
-    .where(eq(orders.active, true))
-    .innerJoin(contacts, eq(contacts.id, orders.customer_id))
-    .innerJoin(orders_details, eq(orders_details.order_id, orders.id)));
+export const transaction = pgTable('transaction', {
+  id: serial('id').primaryKey(),
+  customer_id: integer('customer_id').notNull().references(() => contacts.id),
+  payment_method: text('payment_method').$type<PaymentMethod>().notNull(),
+  payment_total: json('payment_total').notNull().$type<DineroSnapshot<number>>(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type TransactionDetails = InferSelectModel<typeof transaction>;
+export type NewTransactionDetails = InferInsertModel<typeof transaction>;
+
+export const InsertTransactionSchema = createInsertSchema(transaction);
+export const SelectTransactionSchema = createSelectSchema(transaction);
+
+export const transaction_order_details = pgTable('transaction_order_details', {
+  id: serial('id').primaryKey(),
+  orders_id: integer('orders_id').notNull().references(() => orders.id),
+  transaction_id: integer('transaction_id').notNull().references(() => transaction.id),
+})
+
+export type TransactionOrderDetailsDetails = InferSelectModel<typeof transaction_order_details>;
+export type NewTransactionOrderDetailsDetails = InferInsertModel<typeof transaction_order_details>;
+
+export const InsertTransactionOrderDetailsSchema = createInsertSchema(transaction_order_details);
+export const SelectTransactionOrderDetailsSchema = createSelectSchema(transaction_order_details);

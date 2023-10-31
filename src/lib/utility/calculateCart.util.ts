@@ -16,11 +16,13 @@ export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
  * Function to get pricelist for a given Quantity and Embroidery Type
  */
 
-export type OrderTypekey = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
+export type PaymentMethod = 'Cash' | 'Swipe' | 'Bank Banc ABC' | 'Bank Stewart'
+export type OrderStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
+export type PaymentStatus = 'Awaiting Payment' | 'Paid' | ' Cancelled' | 'Refunded' | 'Awaiting Sales Order'
 
 export type GarmentPlacement = 'Front Left' | 'Front Right' | 'Upper Back' | 'Lower Back' | 'Right Sleeve' | 'Left Sleeve' | 'Cap Front' | 'Cap Right Side' | 'Cap Left Side' | 'Name Tag' | 'Marked Position'
 
-export type EmbTypekey = 'flat' | 'cap' | 'applique' | 'nameTag'
+export type EmbTypekey = 'Flat' | 'Cap' | 'Applique' | 'Name Tag'
 
 export const getPricelist = (pricelist: PricelistToMap, quantity: number, embType: EmbTypekey) => {
   if (!pricelist) throw new Error("Pricelist is required");
@@ -45,7 +47,7 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embTyp
 // check that the product_category is embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
-export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embType: EmbTypekey = 'flat') => {
+export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embType: EmbTypekey = 'Flat') => {
 
   // TODO: Call a function that calculate non embroidery products
   if (!(product.product_category === "embroidery")) throw new Error("Embroidery product needed");

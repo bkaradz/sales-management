@@ -1,5 +1,5 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement, type OrderTypekey} from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement, type OrderStatus} from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
@@ -45,7 +45,7 @@ function cart() {
 							const quantity = orderDetailsMap.get(product.id)?.quantity
 							product.quantity = quantity || 1
 							const embroidery_type = orderDetailsMap.get(product.id)?.embroidery_type
-							product.embroidery_type = embroidery_type || 'flat'
+							product.embroidery_type = embroidery_type || 'Flat'
 							const garment_placement = orderDetailsMap.get(product.id)?.garment_placement
 							product.garment_placement = garment_placement || 'Front Left'
 							productMap.set(product.id, product)
@@ -114,11 +114,11 @@ function customerSelected() {
 export const customerSelectedStore = customerSelected();
 
 function orderTypeSelected() {
-	const { subscribe, set, update } = writable<OrderTypekey>('Quotation');
+	const { subscribe, set, update } = writable<OrderStatus>('Quotation');
 
 	return {
 		subscribe,
-		add: (orderType: OrderTypekey | undefined) => {
+		add: (orderType: OrderStatus | undefined) => {
 			if (orderType) {
 				if (orderType) {
 					update(() => orderType)

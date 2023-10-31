@@ -6,7 +6,7 @@
 		format,
 		type EmbTypekey,
 		type GarmentPlacement,
-		type OrderTypekey
+		type OrderStatus
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
@@ -44,9 +44,9 @@
 		// TODO: highlight were errors occurred
 	}
 
-	export const orderTypekey: OrderTypekey[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
+	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
 
-	const embType: EmbTypekey[] = ['flat', 'cap', 'applique', 'nameTag'];
+	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
 	const garmentPlacement: GarmentPlacement[] = [
 		'Front Left',
 		'Front Right',
@@ -200,7 +200,7 @@
 							type="number"
 							value={$exchangeRatesStore.exchange_rates.id}
 						/>
-						<input hidden name="order_type" type="text" value={$orderTypeSelectedStore} />
+						<input hidden name="order_status" type="text" value={$orderTypeSelectedStore} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
 						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
 						<input
@@ -698,7 +698,7 @@
 																	unit_price: null,
 																	stitches: 1537,
 																	quantity: null,
-																	embroidery_type: 'flat',
+																	embroidery_type: 'Flat',
 																	garment_placement: 'Front Left',
 																	active: true,
 																	created_at: new Date(),
