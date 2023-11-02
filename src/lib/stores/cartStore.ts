@@ -1,5 +1,7 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement, type SalesStatus} from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
+import type { CalcPriceReturn, EmbTypekey, GarmentPlacement, SalesStatus, ProductCategories } from '$lib/utility/calculateCart.util';
+import { converter } from '$lib/utility/currencyConvertor.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
@@ -218,6 +220,56 @@ export const cartTotalsStore = derived([cartPricesStore, vatStore], ([$cartPrice
 		vat: vatTotal,
 		grand_total: addMany([total, vatTotal])
 	}
+
+})
+
+function selectedProductCategory() {
+	const { subscribe, set, update } = writable<ProductCategories>('Embroidery');
+
+	return {
+		subscribe,
+		add: (productCategory: ProductCategories) => {
+			if (productCategory) {
+				if (productCategory) {
+					update(() => productCategory)
+				}
+			}
+		},
+		reset: () => set('Embroidery')
+	};
+}
+
+export const selectedProductCategoryStore = selectedProductCategory();
+
+function enteredAmount() {
+	const { subscribe, set, update } = writable<number>(0);
+
+	return {
+		subscribe,
+		add: (amount: number) => {
+			if (amount) {
+				if (amount) {
+					update(() => amount)
+				}
+			} else {
+				update(() => 0)
+			}
+		},
+		reset: () => set(0)
+	};
+}
+
+export const enteredAmountStore = enteredAmount();
+
+export const enteredAmountValue = derived([enteredAmountStore, selectedRateStore, exchangeRatesStore], ([$enteredAmountStore, $selectedRateStore, $exchangeRatesStore]) => {
+
+	return format(
+		converter(
+			dollars($enteredAmountStore * 1000),
+			$selectedRateStore,
+			$exchangeRatesStore
+		)
+	)
 
 })
 

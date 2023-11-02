@@ -63,7 +63,7 @@
 		"lodash-es": "^4.17.21",
 		"lucia": "^2.7.2",
 		"pg": "^8.11.3",
-		"postgres": "^3.4.2",
+		"postgres": "^3.4.3",
 		"superjson": "^1.13.3",
 		"trpc-sveltekit": "^3.5.22",
 		"uuid": "^9.0.1",
