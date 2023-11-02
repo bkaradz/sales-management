@@ -38,7 +38,7 @@
   $: exchangeRatesStore.add(data.results?.exchange_rate)
   $: customerSelectedStore.add(data.results?.customer)
   $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
-  $: orderTypeSelectedStore.add(data.results?.order.order_status)
+  $: orderTypeSelectedStore.add(data.results?.order.sales_status)
 
 	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
 

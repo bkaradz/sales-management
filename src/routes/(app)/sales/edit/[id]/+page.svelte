@@ -36,7 +36,7 @@
   $: exchangeRatesStore.add(data.results?.exchange_rate)
   $: customerSelectedStore.add(data.results?.customer)
   $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
-  $: orderTypeSelectedStore.add(data.results?.order.order_status)
+  $: orderTypeSelectedStore.add(data.results?.order.sales_status)
 
 	$: if (form?.success) {
 		invalidateAll();
@@ -204,7 +204,7 @@
 							type="number"
 							value={$exchangeRatesStore.exchange_rates.id}
 						/>
-						<input hidden name="order_status" type="text" value={$orderTypeSelectedStore} />
+						<input hidden name="sales_status" type="text" value={$orderTypeSelectedStore} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
 						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
 						<input

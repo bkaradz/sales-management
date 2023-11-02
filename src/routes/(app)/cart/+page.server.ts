@@ -4,6 +4,7 @@ import { exchangeRateToMapObj, pricelistToMapObj, type ExchangeRateToMap, type P
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
+import type { DineroSnapshot } from 'dinero.js';
 
 export const load = (async (event) => {
     let query = {}
@@ -61,7 +62,9 @@ type dataType = {
     description: string;
     delivery_date: string;
     orders_details: string
-    order_status: string
+    sales_status: string
+    sale_amount: string
+    total_products: string
 }
 
 export const actions: Actions = {
@@ -81,9 +84,11 @@ export const actions: Actions = {
                 customer_id: +formData.customer_id,
                 pricelist_id: +formData.pricelist_id,
                 exchange_rates_id: +formData.exchange_rates_id,
-                order_status: formData.order_status,
+                sales_status: formData.sales_status,
                 description: formData.description,
-                delivery_date: new Date(formData.delivery_date)
+                delivery_date: new Date(formData.delivery_date),
+                sale_amount: formData.sale_amount as unknown as DineroSnapshot<number>,
+                total_products: +formData.total_products
             },
             orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
         };

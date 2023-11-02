@@ -66,7 +66,7 @@ type dataType = {
     description: string;
     delivery_date: string;
     orders_details: string
-    order_status: string
+    sales_status: string
 }
 
 export const actions: Actions = {
@@ -86,7 +86,7 @@ export const actions: Actions = {
                 customer_id: +formData.customer_id,
                 pricelist_id: +formData.pricelist_id,
                 exchange_rates_id: +formData.exchange_rates_id,
-                order_status: formData.order_status,
+                sales_status: formData.sales_status,
                 description: formData.description,
                 delivery_date: new Date(formData.delivery_date)
             },

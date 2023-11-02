@@ -8,7 +8,7 @@
 		type GarmentPlacement,
 		type OrderStatus
 	} from '$lib/utility/calculateCart.util';
-	import { dinero } from 'dinero.js';
+	import { dinero, toSnapshot } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -28,6 +28,7 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
+	import { stringify } from 'superjson';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -44,7 +45,7 @@
 		// TODO: highlight were errors occurred
 	}
 
-	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
+	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
 
 	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -97,6 +98,8 @@
 	const days = 7;
 
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+	$: console.log("object", ($cartTotalsStore.sub_total).toJSON());
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -200,7 +203,9 @@
 							type="number"
 							value={$exchangeRatesStore.exchange_rates.id}
 						/>
-						<input hidden name="order_status" type="text" value={$orderTypeSelectedStore} />
+						<input hidden name="sales_status" type="text" value={$orderTypeSelectedStore} />
+						<input hidden name="sale_amount" type="text" value={JSON.stringify($cartTotalsStore.sub_total)} />
+						<input hidden name="total_products" type="text" value={$cartTotalsStore.totalProduct} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
 						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
 						<input

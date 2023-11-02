@@ -78,6 +78,8 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
         return acc;
       }, {},
     );
+    console.log("🚀 ~ file: orders.drizzle.ts:69 ~ getOrders ~ result:", (Object.values(result))[0].orders.sale_amount)
+
 
     return {
       orders: Object.values(result),
@@ -91,7 +93,7 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
 
 export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'unit_price'> & { total_price: DineroSnapshot<number>, unit_price: DineroSnapshot<number> }
 
-type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'| 'order_status'>, orders_details: CalcPriceReturnSnapshot[] }
+type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'| 'sales_status' | 'total_products' | 'sale_amount'>, orders_details: CalcPriceReturnSnapshot[] }
 
 export const createOrder = async (input: OrderInput, ctx: Context) => {
 

@@ -15,12 +15,13 @@
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { addMany, format } from '$lib/utility/calculateCart.util';
+	import { addMany, dollars, format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 
 	export let data: PageData;
+	// $: console.log("🚀 ~ file: +page.svelte:24 ~ data:", data.results?.orders[0].orders.sale_amount)
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -122,10 +123,8 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<div class="sm:p-7 p-4">
-
 				<table class="table table-sm">
 					<thead>
 						<tr class="text-gray-400">
@@ -196,14 +195,15 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
-										{order.orders.order_status}
+										{order.orders.sales_status}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.orders_details.reduce(
+									{order.orders.total_products}
+									<!-- {order.orders_details.reduce(
 										(accumulator, currentValue) => accumulator + currentValue.quantity,
 										0
-									)}
+									)} -->
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
@@ -213,6 +213,16 @@
 											$exchangeRatesStore
 										)
 									)}
+									<!-- {order.orders.sale_amount.currency}
+									{#if order.orders.sale_amount.currency?.code}
+										{format(
+											converter(
+												dinero(order.orders.sale_amount),
+												$selectedRateStore,
+												$exchangeRatesStore
+											)
+										)}
+									{/if} -->
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
