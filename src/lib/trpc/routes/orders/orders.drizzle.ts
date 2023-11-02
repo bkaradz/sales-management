@@ -7,7 +7,7 @@ import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { orders, orders_details, contacts, products } from '$lib/server/drizzle/schema';
 import type { Contacts, Orders, OrdersDetails, Products, } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
-import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
+import type { CalcPriceReturn, SalesStatus } from '$lib/utility/calculateCart.util';
 import type { DineroSnapshot } from 'dinero.js';
 import { getById as getPricelistById } from "../pricelist/pricelists.drizzle";
 import { getById as getContactById } from "../contacts/contacts.drizzle";
@@ -78,8 +78,6 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
         return acc;
       }, {},
     );
-    console.log("🚀 ~ file: orders.drizzle.ts:69 ~ getOrders ~ result:", (Object.values(result))[0].orders.sale_amount)
-
 
     return {
       orders: Object.values(result),
@@ -140,6 +138,30 @@ export const deleteById = async (input: number, ctx: Context) => {
 
   } catch (error) {
     console.error("🚀 ~ file: orders.drizzle.ts:124 ~ deleteById ~ error:", error)
+  }
+};
+
+export const changeSalesStatusById = async (input: {id: number, sales_status: string}, ctx: Context) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  try {
+
+    const salesStatus = input.sales_status as SalesStatus
+
+    const contactResult = await db.update(orders)
+			.set({ user_id: ctx.session.user.userId, sales_status: salesStatus })
+			.where(eq(orders.id, input.id))
+			.returning({ id: orders.id });
+
+    return {
+      message: "success",
+    }
+
+  } catch (error) {
+    console.error("🚀 ~ file: orders.drizzle.ts:162 ~ changeSalesStatusById ~ error:", error)
   }
 };
 

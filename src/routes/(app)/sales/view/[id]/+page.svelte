@@ -8,7 +8,7 @@
 		type GarmentPlacement,
 		type CalcPriceReturn,
 
-		type OrderStatus
+		type SalesStatus
 
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
@@ -25,7 +25,7 @@
 		pricelistStore,
 		customerSelectedStore,
 
-		orderTypeSelectedStore
+		salesStatusSelectedStore
 
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
@@ -38,9 +38,9 @@
   $: exchangeRatesStore.add(data.results?.exchange_rate)
   $: customerSelectedStore.add(data.results?.customer)
   $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
-  $: orderTypeSelectedStore.add(data.results?.order.sales_status)
+  $: salesStatusSelectedStore.add(data.results?.order.sales_status)
 
-	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
+	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
 
 	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -113,7 +113,7 @@
 						disabled
 						class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
 					>
-						<span class="ml-2">{$orderTypeSelectedStore}</span>
+						<span class="ml-2">{$salesStatusSelectedStore}</span>
 						{@html svgDropdown}
 					</button>
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -121,10 +121,10 @@
 						tabindex="0"
 						class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 					>
-						{#each orderTypekey as type (type)}
-							{#if !(type === $orderTypeSelectedStore)}
+						{#each SalesStatusKey as type (type)}
+							{#if !(type === $salesStatusSelectedStore)}
 								<li>
-									<button on:click={() => orderTypeSelectedStore.add(type)} class="rounded-sm">
+									<button on:click={() => salesStatusSelectedStore.add(type)} class="rounded-sm">
 										{type}
 									</button>
 								</li>

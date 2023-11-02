@@ -6,7 +6,7 @@
 		format,
 		type EmbTypekey,
 		type GarmentPlacement,
-		type OrderStatus
+		type SalesStatus
 	} from '$lib/utility/calculateCart.util';
 	import { dinero, toSnapshot } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
@@ -21,7 +21,7 @@
 		selectedRateStore,
 		pricelistStore,
 		customerSelectedStore,
-		orderTypeSelectedStore
+		salesStatusSelectedStore
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
@@ -36,7 +36,7 @@
   $: exchangeRatesStore.add(data.results?.exchange_rate)
   $: customerSelectedStore.add(data.results?.customer)
   $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
-  $: orderTypeSelectedStore.add(data.results?.order.sales_status)
+  $: salesStatusSelectedStore.add(data.results?.order.sales_status)
 
 	$: if (form?.success) {
 		invalidateAll();
@@ -50,7 +50,7 @@
 		// TODO: highlight were errors occurred
 	}
 
-	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
+	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
 
 	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -174,7 +174,7 @@
 						tabindex="0"
 						class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 					>
-						<span class="ml-2">{$orderTypeSelectedStore}</span>
+						<span class="ml-2">{$salesStatusSelectedStore}</span>
 						{@html svgDropdown}
 					</button>
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -182,10 +182,10 @@
 						tabindex="0"
 						class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 					>
-						{#each orderTypekey as type (type)}
-							{#if !(type === $orderTypeSelectedStore)}
+						{#each SalesStatusKey as type (type)}
+							{#if !(type === $salesStatusSelectedStore)}
 								<li>
-									<button on:click={() => orderTypeSelectedStore.add(type)} class="rounded-sm">
+									<button on:click={() => salesStatusSelectedStore.add(type)} class="rounded-sm">
 										{type}
 									</button>
 								</li>
@@ -204,7 +204,7 @@
 							type="number"
 							value={$exchangeRatesStore.exchange_rates.id}
 						/>
-						<input hidden name="sales_status" type="text" value={$orderTypeSelectedStore} />
+						<input hidden name="sales_status" type="text" value={$salesStatusSelectedStore} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
 						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
 						<input

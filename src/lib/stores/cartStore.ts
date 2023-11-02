@@ -1,5 +1,5 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement, type OrderStatus} from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, dollars, type CalcPriceReturn, type EmbTypekey, type GarmentPlacement, type SalesStatus} from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
@@ -113,12 +113,12 @@ function customerSelected() {
 
 export const customerSelectedStore = customerSelected();
 
-function orderTypeSelected() {
-	const { subscribe, set, update } = writable<OrderStatus>('Quotation');
+function salesStatusSelected() {
+	const { subscribe, set, update } = writable<SalesStatus>('Quotation');
 
 	return {
 		subscribe,
-		add: (orderType: OrderStatus | undefined) => {
+		add: (orderType: SalesStatus | undefined) => {
 			if (orderType) {
 				if (orderType) {
 					update(() => orderType)
@@ -129,7 +129,7 @@ function orderTypeSelected() {
 	};
 }
 
-export const orderTypeSelectedStore = orderTypeSelected();
+export const salesStatusSelectedStore = salesStatusSelected();
 
 function pricelist() {
 	const { subscribe, set, update } = writable<PricelistToMap>();

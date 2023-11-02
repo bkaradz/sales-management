@@ -200,7 +200,7 @@ export const updateContact = async (input: any, ctx: Context) => {
 
 		const contactResult = await db.update(contacts)
 			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), vat_or_bp_number: input.vat_or_bp_number, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), })
-			.where(eq(input.id, contacts.id))
+			.where(eq(contacts.id, input.id))
 			.returning({ id: contacts.id });
 
 		if (input?.phone) {

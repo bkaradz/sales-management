@@ -1,4 +1,4 @@
-import type { GarmentPlacement, EmbTypekey, OrderStatus, PaymentStatus, PaymentMethod } from "$lib/utility/calculateCart.util";
+import type { GarmentPlacement, EmbTypekey, SalesStatus, PaymentStatus, PaymentMethod } from "$lib/utility/calculateCart.util";
 import { toSnapshot, type DineroSnapshot, dinero, type Rates, type Currency } from "dinero.js";
 import { sql, type InferInsertModel, type InferSelectModel, eq } from "drizzle-orm";
 import { bigint, boolean, integer, json, pgMaterializedView, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
@@ -203,7 +203,7 @@ export const orders = pgTable('orders', {
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
-  sales_status: text('sales_status').$type<OrderStatus>().notNull().default('Quotation'),
+  sales_status: text('sales_status').$type<SalesStatus>().notNull().default('Quotation'),
   payment_status: text('payment_status').$type<PaymentStatus>().notNull().default('Awaiting Sales Order'),
   sale_amount: json('sale_amount').notNull().$type<DineroSnapshot<number>>(),
   total_products: integer('total_products').notNull(),

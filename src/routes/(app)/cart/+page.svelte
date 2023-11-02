@@ -6,7 +6,7 @@
 		format,
 		type EmbTypekey,
 		type GarmentPlacement,
-		type OrderStatus
+		type SalesStatus
 	} from '$lib/utility/calculateCart.util';
 	import { dinero, toSnapshot } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
@@ -21,7 +21,7 @@
 		selectedRateStore,
 		pricelistStore,
 		customerSelectedStore,
-		orderTypeSelectedStore
+		salesStatusSelectedStore
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
@@ -45,7 +45,7 @@
 		// TODO: highlight were errors occurred
 	}
 
-	export const orderTypekey: OrderStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
+	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
 
 	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -99,7 +99,6 @@
 
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
-	$: console.log("object", ($cartTotalsStore.sub_total).toJSON());
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -174,7 +173,7 @@
 							tabindex="0"
 							class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
 						>
-							<span class="ml-2">{$orderTypeSelectedStore}</span>
+							<span class="ml-2">{$salesStatusSelectedStore}</span>
 							{@html svgDropdown}
 						</button>
 						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -182,10 +181,10 @@
 							tabindex="0"
 							class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
 						>
-							{#each orderTypekey as type (type)}
-								{#if !(type === $orderTypeSelectedStore)}
+							{#each SalesStatusKey as type (type)}
+								{#if !(type === $salesStatusSelectedStore)}
 									<li>
-										<button on:click={() => orderTypeSelectedStore.add(type)} class="rounded-sm">
+										<button on:click={() => salesStatusSelectedStore.add(type)} class="rounded-sm">
 											{type}
 										</button>
 									</li>
@@ -203,7 +202,7 @@
 							type="number"
 							value={$exchangeRatesStore.exchange_rates.id}
 						/>
-						<input hidden name="sales_status" type="text" value={$orderTypeSelectedStore} />
+						<input hidden name="sales_status" type="text" value={$salesStatusSelectedStore} />
 						<input hidden name="sale_amount" type="text" value={JSON.stringify($cartTotalsStore.sub_total)} />
 						<input hidden name="total_products" type="text" value={$cartTotalsStore.totalProduct} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />

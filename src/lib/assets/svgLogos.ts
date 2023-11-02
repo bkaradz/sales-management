@@ -92,3 +92,6 @@ export const svgCart = `<svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 
 export const svgCard = `<svg viewBox="0 0 24 24" class="w-4 text-gray-400" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"> <rect x="1" y="4" width="22" height="16" rx="2" ry="2" /> <line x1="1" y1="10" x2="23" y2="10" />
 </svg>`;
+
+export const svgDoubleArrows = `<svg class="w-3 h-3 ml-2 sm:ml-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10"><path	stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"	stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+</svg>`;

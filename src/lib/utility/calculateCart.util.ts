@@ -17,7 +17,7 @@ export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
  */
 
 export type PaymentMethod = 'Cash' | 'Swipe' | 'Bank Banc ABC' | 'Bank Stewart'
-export type OrderStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
+export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
 export type PaymentStatus = 'Awaiting Payment' | 'Paid' | ' Cancelled' | 'Refunded' | 'Awaiting Sales Order'
 
 export type GarmentPlacement = 'Front Left' | 'Front Right' | 'Upper Back' | 'Lower Back' | 'Right Sleeve' | 'Left Sleeve' | 'Cap Front' | 'Cap Right Side' | 'Cap Left Side' | 'Name Tag' | 'Marked Position'

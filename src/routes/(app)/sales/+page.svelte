@@ -5,23 +5,45 @@
 		svgBin,
 		svgCalender,
 		svgCard,
+		svgDoubleArrows,
 		svgDropdownArrow,
 		svgEye,
 		svgForwardArrow,
 		svgPen,
-		svgSearch,
-		svgThreeDots
+		svgSearch
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { addMany, dollars, format } from '$lib/utility/calculateCart.util';
+	import { format, type SalesStatus } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
-	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
+	import {
+		exchangeRatesStore,
+		salesStatusSelectedStore,
+		selectedRateStore
+	} from '$lib/stores/cartStore';
 
 	export let data: PageData;
-	// $: console.log("🚀 ~ file: +page.svelte:24 ~ data:", data.results?.orders[0].orders.sale_amount)
+	
+	let checkedMap = new Map<number, boolean>();
+
+	const changeSelection = (event: any, id: number, status: SalesStatus) => {
+		checkedMap = new Map();
+		checkedMap.set(id, true);
+		checkedMap = checkedMap;
+		salesStatusSelectedStore.add(status);
+		if (!event.target.checked) {
+			checkedMap = new Map();
+		}
+	};
+
+	export const SalesStatusKey: { number: number; status: SalesStatus }[] = [
+		{ number: 1, status: 'Quotation' },
+		{ number: 2, status: 'Sales Order' },
+		{ number: 3, status: 'Invoice' },
+		{ number: 4, status: 'Receipt' }
+	];
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -32,17 +54,6 @@
 			>
 				<div class="flex w-full items-center border-b border-gray-200 dark:border-gray-800">
 					<div class="flex items-center text-3xl text-gray-900 dark:text-white">Orders</div>
-					<!-- <div class="ml-auto sm:flex hidden items-center justify-end">
-						<div class="text-right">
-							<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
-							<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
-						</div>
-						<button
-							class="w-8 h-8 ml-4 text-gray-400 shadow dark:text-gray-400 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700"
-						>
-							{@html svgThreeDots}
-						</button>
-					</div> -->
 				</div>
 
 				<div class="flex w-full items-center my-3">
@@ -73,6 +84,35 @@
 							/>
 							{@html svgSearch}
 						</form>
+					</div>
+					<div class="ml-3">
+						{#if checkedMap.size !== 0}
+							<ol
+								class="flex items-center w-full py-1 px-2 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:space-x-4"
+							>
+								{#each SalesStatusKey as status (status.number)}
+									<li
+										class={`flex items-center ${
+											status.status === $salesStatusSelectedStore
+												? 'text-blue-600 dark:text-blue-500'
+												: ''
+										}`}
+									>
+										<span
+											class="flex items-center justify-center w-5 h-5 mr-2 text-xs border border-blue-600 rounded-full shrink-0 dark:border-blue-500"
+										>
+											{status.number}
+										</span>
+										<form action="?/salesStatus" method="post">
+											<input type="hidden" name="sales_status" value={status.status} />
+											<input type="hidden" name="id" value={Array.from(checkedMap.keys())[0] || 0} />
+											<button type="submit" class="hidden sm:inline-flex sm:ml-2 text-sm">{status.status}</button>
+										</form>
+									{@html svgDoubleArrows}
+									</li>
+								{/each}
+							</ol>
+						{/if}
 					</div>
 					<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 						<div>
@@ -129,6 +169,9 @@
 					<thead>
 						<tr class="text-gray-400">
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Selected
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Order Id
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
@@ -144,7 +187,10 @@
 								Exchange Rate Id
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
-								Order Type
+								Sales Status
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Payments Status
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Total Products
@@ -163,6 +209,14 @@
 					<tbody class="text-gray-600 dark:text-gray-100">
 						{#each data.results?.orders as order (order.orders.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<input
+										type="checkbox"
+										checked={checkedMap.has(order.orders.id)}
+										on:click={(event) =>
+											changeSelection(event, order.orders.id, order.orders.sales_status)}
+									/>
+								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
 										{order.orders.id}
@@ -199,30 +253,21 @@
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										{order.orders.payment_status}
+									</span>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{order.orders.total_products}
-									<!-- {order.orders_details.reduce(
-										(accumulator, currentValue) => accumulator + currentValue.quantity,
-										0
-									)} -->
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(
-											addMany(order.orders_details.map((item) => dinero(item.total_price))),
+											dinero(JSON.parse(order.orders.sale_amount)),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)
 									)}
-									<!-- {order.orders.sale_amount.currency}
-									{#if order.orders.sale_amount.currency?.code}
-										{format(
-											converter(
-												dinero(order.orders.sale_amount),
-												$selectedRateStore,
-												$exchangeRatesStore
-											)
-										)}
-									{/if} -->
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
