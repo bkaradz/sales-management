@@ -98,7 +98,6 @@
 	const days = 7;
 
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
-
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -165,9 +164,7 @@
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 
-				
 				<div class="ml-auto sm:flex hidden items-center justify-end">
-
 					<div class="dropdown dropdown-bottom dropdown-end mr-8">
 						<button
 							tabindex="0"
@@ -203,7 +200,12 @@
 							value={$exchangeRatesStore.exchange_rates.id}
 						/>
 						<input hidden name="sales_status" type="text" value={$salesStatusSelectedStore} />
-						<input hidden name="sale_amount" type="text" value={JSON.stringify($cartTotalsStore.sub_total)} />
+						<input
+							hidden
+							name="sale_amount"
+							type="text"
+							value={JSON.stringify($cartTotalsStore.sub_total)}
+						/>
 						<input hidden name="total_products" type="text" value={$cartTotalsStore.totalProduct} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
 						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
@@ -298,64 +300,69 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									<div class="dropdown dropdown-bottom dropdown-end">
-										<button
-											tabindex="0"
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
-										>
-											<span class="ml-2">{product.garment_placement}</span>
-											{@html svgDropdown}
-										</button>
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<ul
-											tabindex="0"
-											class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-										>
-											{#each garmentPlacement as type (type)}
-												{#if !(type === product.garment_placement)}
-													<li>
-														<button
-															on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
-															class="rounded-sm"
-														>
-															{type}
-														</button>
-													</li>
-												{/if}
-											{/each}
-										</ul>
-									</div>
+									{#if (product.product_category.toLowerCase() === 'embroidery')}
+										<div class="dropdown dropdown-bottom dropdown-end">
+											<button
+												tabindex="0"
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+											>
+												<span class="ml-2">{product.garment_placement}</span>
+												{@html svgDropdown}
+											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											>
+												{#each garmentPlacement as type (type)}
+													{#if !(type === product.garment_placement)}
+														<li>
+															<button
+																on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
+																class="rounded-sm"
+															>
+																{type}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									{/if}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									<div class="dropdown dropdown-bottom dropdown-end">
-										<button
-											tabindex="0"
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
-										>
-											<span class="ml-2">{product.embroidery_type}</span>
-											{@html svgDropdown}
-										</button>
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<ul
-											tabindex="0"
-											class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-										>
-											{#each embType as type (type)}
-												{#if !(type === product.embroidery_type)}
-													<li>
-														<button
-															on:click={() => cartStore.changeEmbType({ id: key, type })}
-															class="rounded-sm"
-														>
-															{type}
-														</button>
-													</li>
-												{/if}
-											{/each}
-										</ul>
-									</div>
+								{#if (product.product_category.toLowerCase() === 'embroidery')}
+									
+								<div class="dropdown dropdown-bottom dropdown-end">
+									<button
+										tabindex="0"
+										class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+									>
+										<span class="ml-2">{product.embroidery_type}</span>
+										{@html svgDropdown}
+									</button>
+									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+									<ul
+										tabindex="0"
+										class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+									>
+										{#each embType as type (type)}
+											{#if !(type === product.embroidery_type)}
+												<li>
+													<button
+														on:click={() => cartStore.changeEmbType({ id: key, type })}
+														class="rounded-sm"
+													>
+														{type}
+													</button>
+												</li>
+											{/if}
+										{/each}
+									</ul>
+								</div>
+								{/if}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{$cartPricesStore.get(key)?.quantity}

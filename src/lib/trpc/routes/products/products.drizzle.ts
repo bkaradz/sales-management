@@ -6,6 +6,7 @@ import { db } from '$lib/server/drizzle/client';
 import { products } from '$lib/server/drizzle/schema';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
+import { dollars } from '$lib/utility/calculateCart.util';
 
 export const getProducts = async (input: SearchParams, ctx: Context) => {
 
@@ -108,9 +109,17 @@ export const createProduct = async (input: any, ctx: Context) => {
 		throw error(404, 'User not found');
 	}
 
+	if (input.quantity) {
+		input.quantity = +input.quantity
+	}
+
+	if (input.unit_price) {
+		input.unit_price = dollars(+input.unit_price * 1000)
+	}
+
 	try {
 
-		await db.insert(products).values({ user_id: ctx.session.user.userId, product_category: 'embroidery', ...input });
+		await db.insert(products).values({ user_id: ctx.session.user.userId, ...input });
 
 		return { success: true }
 

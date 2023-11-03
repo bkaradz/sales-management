@@ -17,7 +17,7 @@ export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
  */
 
 export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit'
-export type PaymentMethod = 'Rand' | 'USD' | 'Zim RTGS' | 'Zim Bond' |'Swipe' | 'Banc ABC' | 'Stewart Bank'
+export type PaymentMethod = 'Rand' | 'USD' | 'Zim RTGS' | 'Zim Bond' | 'Swipe' | 'Banc ABC' | 'Stewart Bank'
 export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
 export type PaymentStatus = 'Awaiting Payment' | 'Paid' | ' Cancelled' | 'Refunded' | 'Awaiting Sales Order'
 
@@ -51,7 +51,9 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embTyp
 export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embType: EmbTypekey = 'Flat') => {
 
   // TODO: Call a function that calculate non embroidery products
-  if (!(product.product_category === "embroidery")) throw new Error("Embroidery product needed");
+  if (!((product.product_category).toLowerCase() === 'embroidery')) {
+    return calcNonEmbroidery(product, quantity)
+  }
 
   // Get pricelist
   const pricelistCalc = getPricelist(pricelist, quantity, embType)
@@ -63,14 +65,14 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
 
   const unit_price = maximum([unitPricePerThousand, dinero(pricelistCalc.minimum_price)])
 
-  const total_price = multiply(unit_price, quantity)
+  const total_price = multiply(unit_price, { amount: quantity * 1000, scale: 3 } )
 
   return {
     total_price,
     unit_price,
     quantity,
-    embroidery_type:product.embroidery_type,
-    garment_placement:product.garment_placement,
+    embroidery_type: product.embroidery_type,
+    garment_placement: product.garment_placement,
     stitches: product.stitches,
     pricelist_id: pricelist.pricelist.id,
     product_id: product.id
@@ -86,6 +88,24 @@ function createFormatter(transformer: any) {
   }
 }
 
-export const format = createFormatter(({value, currency}: {value: string, currency: Currency<number>}) =>
+export const format = createFormatter(({ value, currency }: { value: string, currency: Currency<number> }) =>
   `${currency.code} ${Number(value).toFixed(2)}`
 )
+
+const calcNonEmbroidery = (product: Products, quantity: number) => {
+
+  const unitPrice = product.unit_price
+
+  if (!unitPrice) throw new Error("Unit price not found");
+  
+  const unit_price = dinero(unitPrice)
+
+  const total_price = multiply(unit_price, { amount: (quantity * 1000), scale: 3 })
+
+  return {
+    total_price,
+    unit_price,
+    quantity,
+    product_id: product.id
+  }
+}

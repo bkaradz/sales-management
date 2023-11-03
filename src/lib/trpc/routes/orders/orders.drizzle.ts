@@ -188,7 +188,8 @@ export const getById = async (input: number, ctx: Context) => {
     exchangeRateMap = exchangeRateToMapObj(exchangeRateQuery)
     const ordersDetailsQuery = await db.select().from(orders_details).where(eq(orders_details.order_id, input))
     const productsArray = ordersDetailsQuery.map((item) => item.product_id)
-    const productsQuery = await db.select().from(products).where(inArray(products.id, productsArray))
+    // const productsQuery = await db.select().from(products).where(inArray(products.id, productsArray))
+    const productsQuery = await db.select().from(products).where(sql`${products.id} IN ${productsArray}`)
 
     if (productsQuery.length === 0) throw new Error("Products not found");
 

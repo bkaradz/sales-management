@@ -4,7 +4,7 @@
 	import {
 		enteredAmountStore,
 		enteredAmountValue,
-		selectedProductCategoryStore,
+		selectedProductCategoryStore
 	} from '$lib/stores/cartStore';
 	import type { ProductCategories } from '$lib/utility/calculateCart.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -21,6 +21,11 @@
 		'Round Neck',
 		'Work Suit'
 	];
+
+	const changeEnteredAmountStore = (e: Event) => {
+		const target = e.target as HTMLInputElement
+		enteredAmountStore.add(+target.value);
+	};
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -71,15 +76,18 @@
 						</label>
 					</div>
 
-					<div class="relative mb-4">
-						<div class="dropdown dropdown-bottom dropdown-end">
-							<button
+					<div class="mb-4">
+						<input hidden name="product_category" type="text" value={$selectedProductCategoryStore} />
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+						<div class="dropdown w-64">
+							<label
 								tabindex="0"
 								class="flex items-center h-8 px-3 rounded shadow text-white bg-blue-500 w-full justify-between"
 							>
 								<span class="ml-2">{$selectedProductCategoryStore}</span>
 								{@html svgDropdown}
-							</button>
+							</label>
 							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 							<ul
 								tabindex="0"
@@ -132,8 +140,8 @@
 										placeholder="Unit Price"
 										value={$enteredAmountStore}
 										use:selectTextOnFocus
-										on:change={(e) => enteredAmountStore.add(+e?.target?.value)}
-										on:input={(e) => enteredAmountStore.add(+e?.target?.value)}
+										on:change|preventDefault={(e) => changeEnteredAmountStore(e)}
+										on:input|preventDefault={(e) => changeEnteredAmountStore(e)}
 									/>
 									<label
 										for="unit_price"
@@ -143,7 +151,7 @@
 								</div>
 								<div class="relative">
 									<input
-									disabled
+										disabled
 										type="text"
 										class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 										id="unit_price_label"
