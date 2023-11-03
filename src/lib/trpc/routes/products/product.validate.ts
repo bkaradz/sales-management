@@ -18,7 +18,7 @@ export const saveProductsSchema = z
 		units: z.number().optional().or(z.null())
 	})
 	.superRefine((data, ctx) => {
-		if (data.productCategories === 'embroidery' && !data.stitches) {
+		if (data.productCategories === 'Embroidery' && !data.stitches) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Stitches are required`,
@@ -26,7 +26,7 @@ export const saveProductsSchema = z
 			});
 			z.NEVER;
 		}
-		if (data.productCategories !== 'embroidery' && !(data.unitPrice && data.units)) {
+		if (data.productCategories !== 'Embroidery' && !(data.unitPrice && data.units)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Unit Price and Units are required`,

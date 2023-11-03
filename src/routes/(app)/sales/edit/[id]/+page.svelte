@@ -32,11 +32,11 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	$: pricelistStore.add(data.results?.pricelist)
-  $: exchangeRatesStore.add(data.results?.exchange_rate)
-  $: customerSelectedStore.add(data.results?.customer)
-  $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
-  $: salesStatusSelectedStore.add(data.results?.order.sales_status)
+	$: pricelistStore.add(data.results?.pricelist);
+	$: exchangeRatesStore.add(data.results?.exchange_rate);
+	$: customerSelectedStore.add(data.results?.customer);
+	$: cartStore.addProductsArray(data.results?.products, data.results?.orders_details);
+	$: salesStatusSelectedStore.add(data.results?.order.sales_status);
 
 	$: if (form?.success) {
 		invalidateAll();
@@ -50,7 +50,7 @@
 		// TODO: highlight were errors occurred
 	}
 
-	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Recipe'];
+	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
 
 	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
 	const garmentPlacement: GarmentPlacement[] = [
@@ -127,37 +127,39 @@
 			</form>
 		</div>
 		<div class="space-y-4 mt-3">
-			
-				{#each [$customerSelectedStore] as user (user?.id)}
-					<button
+			{#each [$customerSelectedStore] as user (user?.id)}
+				<button
 					disabled
-						class={`${
-							$customerSelectedStore?.id === user?.id
-								? 'shadow-lg ring-2 ring-blue-500 focus:outline-none'
-								: 'shadow'
-						} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
+					class={`${
+						$customerSelectedStore?.id === user?.id
+							? 'shadow-lg ring-2 ring-blue-500 focus:outline-none'
+							: 'shadow'
+					} bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
+				>
+					<div
+						class="flex xl:flex-row flex-col justify-between items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						<div
-							class="flex xl:flex-row flex-col justify-between items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-						>
-							{user?.full_name}
-							<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md ml-3">										
-								{user?.id}
-							</span>
+						{user?.full_name}
+						<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md ml-3">
+							{user?.id}
+						</span>
+					</div>
+					<div class="flex items-center w-full">
+						<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
+							<p>Balance</p>
 						</div>
-						<div class="flex items-center w-full">
-							<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
-								<p>Balance</p>
-							</div>
-							<div class="ml-auto text-xs text-gray-500">
-								{format(
-									converter(dinero((user?.balance_due || toSnapshot(dollars(0)))) , $selectedRateStore, $exchangeRatesStore)
-								)}
-							</div>
+						<div class="ml-auto text-xs text-gray-500">
+							{format(
+								converter(
+									dinero(user?.balance_due || toSnapshot(dollars(0))),
+									$selectedRateStore,
+									$exchangeRatesStore
+								)
+							)}
 						</div>
-					</button>
-				{/each}
-			
+					</div>
+				</button>
+			{/each}
 		</div>
 	</div>
 	<!-- User Table -->
@@ -193,7 +195,7 @@
 						{/each}
 					</ul>
 				</div>
-				
+
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<form action="?/submit" method="post" use:enhance>
 						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
@@ -298,64 +300,68 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									<div class="dropdown dropdown-bottom dropdown-end">
-										<button
-											tabindex="0"
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
-										>
-											<span class="ml-2">{product.garment_placement}</span>
-											{@html svgDropdown}
-										</button>
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<ul
-											tabindex="0"
-											class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-										>
-											{#each garmentPlacement as type (type)}
-												{#if !(type === product.garment_placement)}
-													<li>
-														<button
-															on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
-															class="rounded-sm"
-														>
-															{type}
-														</button>
-													</li>
-												{/if}
-											{/each}
-										</ul>
-									</div>
+									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+										<div class="dropdown dropdown-bottom dropdown-end">
+											<button
+												tabindex="0"
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+											>
+												<span class="ml-2">{product.garment_placement}</span>
+												{@html svgDropdown}
+											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											>
+												{#each garmentPlacement as type (type)}
+													{#if !(type === product.garment_placement)}
+														<li>
+															<button
+																on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
+																class="rounded-sm"
+															>
+																{type}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									{/if}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									<div class="dropdown dropdown-bottom dropdown-end">
-										<button
-											tabindex="0"
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
-										>
-											<span class="ml-2">{product.embroidery_type}</span>
-											{@html svgDropdown}
-										</button>
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<ul
-											tabindex="0"
-											class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-										>
-											{#each embType as type (type)}
-												{#if !(type === product.embroidery_type)}
-													<li>
-														<button
-															on:click={() => cartStore.changeEmbType({ id: key, type })}
-															class="rounded-sm"
-														>
-															{type}
-														</button>
-													</li>
-												{/if}
-											{/each}
-										</ul>
-									</div>
+									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+										<div class="dropdown dropdown-bottom dropdown-end">
+											<button
+												tabindex="0"
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+											>
+												<span class="ml-2">{product.embroidery_type}</span>
+												{@html svgDropdown}
+											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											>
+												{#each embType as type (type)}
+													{#if !(type === product.embroidery_type)}
+														<li>
+															<button
+																on:click={() => cartStore.changeEmbType({ id: key, type })}
+																class="rounded-sm"
+															>
+																{type}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									{/if}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{$cartPricesStore.get(key)?.quantity}
@@ -477,9 +483,7 @@
 						<div class="pl-3 text-xl text-gray-900 dark:text-white">Contact</div>
 						{#if $customerSelectedStore}
 							<div class="space-y-4 mt-3">
-								<button
-									class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}
-								>
+								<button class={`bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800`}>
 									<div
 										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
@@ -559,11 +563,7 @@
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											<DateInput
-												bind:value={deliveryDate}
-												format="dd-MM-yyyy HH:mm:ss"
-												class=""
-											/>
+											<DateInput bind:value={deliveryDate} format="dd-MM-yyyy HH:mm:ss" class="" />
 										</div>
 										<div class="ml-auto text-xs text-gray-500">Delivery Date</div>
 									</div>
@@ -598,7 +598,6 @@
 						<div class="pl-3 text-xl text-gray-900 dark:text-white">Pricelist</div>
 						{#if data.pricelistAll}
 							<div class="space-y-4 mt-3">
-								
 								<div class="dropdown dropdown-bottom w-full">
 									<button
 										tabindex="0"
@@ -689,7 +688,7 @@
 																	user_id: 'ivk4l3dy6enbyjb',
 																	name: 'ADMIRABLE.EMB',
 																	description: null,
-																	product_category: 'embroidery',
+																	product_category: 'Embroidery',
 																	unit_price: null,
 																	stitches: 1537,
 																	quantity: null,

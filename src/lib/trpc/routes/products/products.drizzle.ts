@@ -138,7 +138,7 @@ export const updateProduct = async (input: any, ctx: Context) => {
 	try {
 
 		await db.update(products)
-			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), product_category: 'embroidery', ...input })
+			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), product_category: 'Embroidery', ...input })
 			.where(eq(input.id, products.id))
 			.returning({ id: products.id });
 
@@ -162,7 +162,7 @@ export const uploadProducts = async (input: any[], ctx: Context) => {
 
 			try {
 
-				await db.insert(products).values({ user_id: ctx.session.user.userId, name: product.name, stitches: product.stitches, product_category: 'embroidery'})
+				await db.insert(products).values({ user_id: ctx.session.user.userId, name: product.name, stitches: product.stitches, product_category: 'Embroidery'})
 
 			} catch (err: unknown) {
 

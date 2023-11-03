@@ -87,7 +87,7 @@ export const actions: Actions = {
                 sales_status: formData.sales_status,
                 description: formData.description,
                 delivery_date: new Date(formData.delivery_date),
-                sale_amount: formData.sale_amount as unknown as DineroSnapshot<number>,
+                sale_amount: JSON.parse(formData.sale_amount),
                 total_products: +formData.total_products
             },
             orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]

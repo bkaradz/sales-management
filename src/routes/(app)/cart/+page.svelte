@@ -300,7 +300,7 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if (product.product_category.toLowerCase() === 'embroidery')}
+									{#if (product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase())}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
@@ -333,7 +333,7 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-								{#if (product.product_category.toLowerCase() === 'embroidery')}
+								{#if (product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase())}
 									
 								<div class="dropdown dropdown-bottom dropdown-end">
 									<button
@@ -705,7 +705,7 @@
 																	user_id: 'ivk4l3dy6enbyjb',
 																	name: 'ADMIRABLE.EMB',
 																	description: null,
-																	product_category: 'embroidery',
+																	product_category: 'Embroidery',
 																	unit_price: null,
 																	stitches: 1537,
 																	quantity: null,

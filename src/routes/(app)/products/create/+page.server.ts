@@ -46,6 +46,10 @@ export const actions: Actions = {
 		const data = await event.request.formData()
 		const formData = Object.fromEntries(data)
 
+		if (!formData.description) {
+			delete formData.description
+		}
+
 		return await router.createCaller(await createContext(event)).products.createProduct(formData)
 
 	}

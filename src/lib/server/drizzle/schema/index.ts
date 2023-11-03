@@ -226,10 +226,10 @@ export const orders_details = pgTable('orders_details', {
   product_id: integer('product_id').notNull().references(() => products.id),
   unit_price: json('minimum_price').notNull().$type<DineroSnapshot<number>>(),
   total_price: json('total_price').notNull().$type<DineroSnapshot<number>>(),
-  stitches: integer('stitches').notNull(),
+  stitches: integer('stitches'),
   quantity: integer('quantity').notNull(),
-  embroidery_type: text('embroidery_type').$type<EmbTypekey>().notNull().default('Flat'),
-  garment_placement: text('garment_placement').$type<GarmentPlacement>().notNull().default('Front Left'),
+  embroidery_type: text('embroidery_type').$type<EmbTypekey>(),
+  garment_placement: text('garment_placement').$type<GarmentPlacement>(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })

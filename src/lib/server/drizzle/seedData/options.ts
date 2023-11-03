@@ -60,7 +60,7 @@ export const options = [
 		isActive: true,
 		isDefault: true,
 		label: 'Embroidery',
-		value: 'embroidery'
+		value: 'Embroidery'
 	},
 	{
 		group: 'embroideryTypes',

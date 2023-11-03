@@ -7,9 +7,7 @@
 		type EmbTypekey,
 		type GarmentPlacement,
 		type CalcPriceReturn,
-
 		type SalesStatus
-
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
@@ -24,9 +22,7 @@
 		selectedRateStore,
 		pricelistStore,
 		customerSelectedStore,
-
 		salesStatusSelectedStore
-
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
@@ -34,11 +30,11 @@
 
 	export let data: PageData;
 
-  $: pricelistStore.add(data.results?.pricelist)
-  $: exchangeRatesStore.add(data.results?.exchange_rate)
-  $: customerSelectedStore.add(data.results?.customer)
-  $: cartStore.addProductsArray(data.results?.products, data.results?.orders_details)
-  $: salesStatusSelectedStore.add(data.results?.order.sales_status)
+	$: pricelistStore.add(data.results?.pricelist);
+	$: exchangeRatesStore.add(data.results?.exchange_rate);
+	$: customerSelectedStore.add(data.results?.customer);
+	$: cartStore.addProductsArray(data.results?.products, data.results?.orders_details);
+	$: salesStatusSelectedStore.add(data.results?.order.sales_status);
 
 	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
 
@@ -96,7 +92,6 @@
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
-
 	<!-- User Table -->
 
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
@@ -105,7 +100,6 @@
 		>
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
-
 
 				<div class="dropdown dropdown-bottom dropdown-end ml-8">
 					<button
@@ -152,7 +146,11 @@
 							value={JSON.stringify([...$cartPricesStore.values()])}
 						/>
 						{#if !($cartStore.size === 0) && $customerSelectedStore}
-							<button disabled type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8 cursor-not-allowed">
+							<button
+								disabled
+								type="submit"
+								class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8 cursor-not-allowed"
+							>
 								Submit
 							</button>
 						{/if}
@@ -214,7 +212,6 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>Cart</th
 							>
-						
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
@@ -234,68 +231,72 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									<div class="dropdown dropdown-bottom dropdown-end">
-										<button
-											tabindex="0"
-                      disabled
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
-										>
-											<span class="ml-2">{product.garment_placement}</span>
-											{@html svgDropdown}
-                  </button>
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<ul
-											tabindex="0"
-											class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-										>
-											{#each garmentPlacement as type (type)}
-												{#if !(type === product.garment_placement)}
-													<li>
-														<button
-															on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
-															class="rounded-sm"
-														>
-															{type}
-														</button>
-													</li>
-												{/if}
-											{/each}
-										</ul>
-									</div>
+									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+										<div class="dropdown dropdown-bottom dropdown-end">
+											<button
+												tabindex="0"
+												disabled
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+											>
+												<span class="ml-2">{product.garment_placement}</span>
+												{@html svgDropdown}
+											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											>
+												{#each garmentPlacement as type (type)}
+													{#if !(type === product.garment_placement)}
+														<li>
+															<button
+																on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
+																class="rounded-sm"
+															>
+																{type}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									{/if}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									<div class="dropdown dropdown-bottom dropdown-end">
-										<button
-											tabindex="0"
-                      disabled
-											class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
-										>
-											<span class="ml-2">{product.embroidery_type}</span>
-											{@html svgDropdown}
-                  </button>
-										<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-										<ul
-											tabindex="0"
-											class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-										>
-											{#each embType as type (type)}
-												{#if !(type === product.embroidery_type)}
-													<li>
-														<button
-															on:click={() => cartStore.changeEmbType({ id: key, type })}
-															class="rounded-sm"
-														>
-															{type}
-														</button>
-													</li>
-												{/if}
-											{/each}
-										</ul>
-									</div>
+									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+										<div class="dropdown dropdown-bottom dropdown-end">
+											<button
+												tabindex="0"
+												disabled
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
+											>
+												<span class="ml-2">{product.embroidery_type}</span>
+												{@html svgDropdown}
+											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											>
+												{#each embType as type (type)}
+													{#if !(type === product.embroidery_type)}
+														<li>
+															<button
+																on:click={() => cartStore.changeEmbType({ id: key, type })}
+																class="rounded-sm"
+															>
+																{type}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									{/if}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 									{$cartPricesStore.get(key)?.quantity}
 								</td>
 								<td
@@ -326,7 +327,7 @@
 								>
 									<div class="flex items-center">
 										<button
-                      disabled
+											disabled
 											on:click={() => cartStore.subtract(product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500 cursor-not-allowed"
 										>
@@ -338,7 +339,7 @@
 											</span>
 										</div>
 										<button
-                      disabled
+											disabled
 											on:click={() => cartStore.add(product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500 cursor-not-allowed"
 										>
@@ -490,7 +491,7 @@
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 											<DateInput
-                        disabled
+												disabled
 												bind:value={deliveryDate}
 												format="dd-MM-yyyy HH:mm:ss"
 												class="z-50"
@@ -533,7 +534,7 @@
 								<div class="dropdown dropdown-bottom w-full z-50">
 									<button
 										tabindex="0"
-                    disabled
+										disabled
 										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
 									>
 										<span class="ml-2">{$pricelistStore.pricelist.id}</span>
@@ -621,7 +622,7 @@
 																	user_id: 'ivk4l3dy6enbyjb',
 																	name: 'ADMIRABLE.EMB',
 																	description: null,
-																	product_category: 'embroidery',
+																	product_category: 'Embroidery',
 																	unit_price: null,
 																	stitches: 1537,
 																	quantity: null,
@@ -658,7 +659,7 @@
 								<div class="dropdown dropdown-bottom w-full z-50">
 									<button
 										tabindex="0"
-                    disabled
+										disabled
 										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between cursor-not-allowed"
 									>
 										<span class="ml-2">{$exchangeRatesStore.exchange_rates.id}</span>

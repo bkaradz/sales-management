@@ -28,10 +28,11 @@ export type EmbTypekey = 'Flat' | 'Cap' | 'Applique' | 'Name Tag'
 export const getPricelist = (pricelist: PricelistToMap, quantity: number, embType: EmbTypekey) => {
   if (!pricelist) throw new Error("Pricelist is required");
   if (!quantity) throw new Error("Quantity is required");
-  if (!embType) throw new Error("Embroidery Type is required");
+  // if (!embType) throw new Error("Embroidery Type is required");
   if (!pricelist.pricelist_details) throw new Error("Pricelist Details is required");
 
   // Get all major emb type
+  console.log("🚀 ~ file: calculateCart.util.ts:36 ~ getPricelist ~ embType:", embType)
   const majorPricelist = pricelist.pricelist_details.get(embType)
 
   if (!majorPricelist) throw new Error("Embroidery Type not found");
@@ -45,13 +46,18 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embTyp
 }
 
 
-// check that the product_category is embroidery first
+// check that the product_category is Embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
 export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embType: EmbTypekey = 'Flat') => {
 
-  // TODO: Call a function that calculate non embroidery products
-  if (!((product.product_category).toLowerCase() === 'embroidery')) {
+  if (!embType) {
+    embType = 'Flat'
+  }
+
+
+  // TODO: Call a function that calculate non Embroidery products
+  if (!((product.product_category).toLowerCase() === 'Embroidery'.toLowerCase())) {
     return calcNonEmbroidery(product, quantity)
   }
 

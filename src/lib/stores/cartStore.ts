@@ -23,6 +23,8 @@ function cart() {
 					return productMap
 				} else {
 					product.quantity = 1
+					product.garment_placement = 'Front Left'
+					product.embroidery_type = 'Flat'
 					productMap.set(product.id, product)
 					return productMap
 				}
