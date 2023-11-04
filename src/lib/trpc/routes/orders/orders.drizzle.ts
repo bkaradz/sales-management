@@ -88,10 +88,168 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
     console.error("🚀 ~ file: orders.drizzle.ts:72 ~ getOrders ~ error:", error)
   }
 };
+export const getOrdersByUserId = async (input: {
+  limit?: number | undefined;
+  page?: number | undefined;
+  search?: string | undefined;
+  id: number
+}, ctx: Context) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  const pagination = getPagination(input);
+
+  try {
+
+    let totalOrdersRecords
+    let ordersQuery
+
+    if (!trim(input.search)) {
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders)
+        .where(and(eq(orders.active, true), eq(orders.customer_id, input.id)))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+
+      ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
+        .where(and(eq(orders.active, true), eq(orders.customer_id, input.id)))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .orderBy(desc(orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+
+    } else {
+
+      const data = `%${input.search}%`
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders)
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), and(eq(orders.active, true), eq(orders.customer_id, input.id))))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+
+      ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), and(eq(orders.active, true), eq(orders.customer_id, input.id))))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .orderBy(desc(orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+    }
+
+    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
+
+    if (pagination.endIndex >= pagination.totalRecords) {
+      pagination.next = undefined;
+    }
+
+    const result = ordersQuery.reduce<Record<number, { orders: Orders; contacts: Contacts; orders_details: OrdersDetails[] }>>(
+      (acc, row) => {
+        const orders = row.orders;
+        const contacts = row.contacts;
+        const orders_details = row.orders_details;
+
+        if (!acc[orders.id]) acc[orders.id] = { orders, contacts, orders_details: [] };
+
+        if (orders_details) acc[orders.id].orders_details.push(orders_details);
+
+        return acc;
+      }, {},
+    );
+
+    return {
+      orders: Object.values(result),
+      pagination
+    }
+
+  } catch (error) {
+    console.error("🚀 ~ file: orders.drizzle.ts:72 ~ getOrders ~ error:", error)
+  }
+};
+export const getOrdersByProductId = async (input: {
+  limit?: number | undefined;
+  page?: number | undefined;
+  search?: string | undefined;
+  product_id: number
+}, ctx: Context) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  const pagination = getPagination(input);
+
+  try {
+
+    let totalOrdersRecords
+    let ordersQuery
+
+    if (!trim(input.search)) {
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .where(and(eq(orders.active, true), eq(orders_details.product_id, input.product_id)))
+
+      ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .where(and(eq(orders.active, true), eq(orders_details.product_id, input.product_id)))
+        .orderBy(desc(orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+
+    } else {
+
+      const data = `%${input.search}%`
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), and(eq(orders.active, true), eq(orders_details.product_id, input.product_id))))
+
+      ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), and(eq(orders.active, true), eq(orders_details.product_id, input.product_id))))
+        .orderBy(desc(orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+    }
+
+    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
+
+    if (pagination.endIndex >= pagination.totalRecords) {
+      pagination.next = undefined;
+    }
+
+    const result = ordersQuery.reduce<Record<number, { orders: Orders; contacts: Contacts; orders_details: OrdersDetails[] }>>(
+      (acc, row) => {
+        const orders = row.orders;
+        const contacts = row.contacts;
+        const orders_details = row.orders_details;
+
+        if (!acc[orders.id]) acc[orders.id] = { orders, contacts, orders_details: [] };
+
+        if (orders_details) acc[orders.id].orders_details.push(orders_details);
+
+        return acc;
+      }, {},
+    );
+
+    return {
+      orders: Object.values(result),
+      pagination
+    }
+
+  } catch (error) {
+    console.error("🚀 ~ file: orders.drizzle.ts:72 ~ getOrders ~ error:", error)
+  }
+};
 
 export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'unit_price'> & { total_price: DineroSnapshot<number>, unit_price: DineroSnapshot<number> }
 
-type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date'| 'sales_status' | 'total_products' | 'sale_amount'>, orders_details: CalcPriceReturnSnapshot[] }
+type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date' | 'sales_status' | 'total_products' | 'sales_amount'>, orders_details: CalcPriceReturnSnapshot[] }
 
 export const createOrder = async (input: OrderInput, ctx: Context) => {
 
@@ -141,7 +299,7 @@ export const deleteById = async (input: number, ctx: Context) => {
   }
 };
 
-export const changeSalesStatusById = async (input: {id: number, sales_status: string}, ctx: Context) => {
+export const changeSalesStatusById = async (input: { id: number, sales_status: string }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
@@ -152,9 +310,9 @@ export const changeSalesStatusById = async (input: {id: number, sales_status: st
     const salesStatus = input.sales_status as SalesStatus
 
     const contactResult = await db.update(orders)
-			.set({ user_id: ctx.session.user.userId, sales_status: salesStatus })
-			.where(eq(orders.id, input.id))
-			.returning({ id: orders.id });
+      .set({ user_id: ctx.session.user.userId, sales_status: salesStatus })
+      .where(eq(orders.id, input.id))
+      .returning({ id: orders.id });
 
     return {
       message: "success",

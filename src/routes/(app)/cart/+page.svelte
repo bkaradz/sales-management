@@ -202,7 +202,7 @@
 						<input hidden name="sales_status" type="text" value={$salesStatusSelectedStore} />
 						<input
 							hidden
-							name="sale_amount"
+							name="sales_amount"
 							type="text"
 							value={JSON.stringify($cartTotalsStore.sub_total)}
 						/>

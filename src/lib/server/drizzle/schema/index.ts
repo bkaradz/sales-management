@@ -205,7 +205,7 @@ export const orders = pgTable('orders', {
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
   sales_status: text('sales_status').$type<SalesStatus>().notNull().default('Quotation'),
   payment_status: text('payment_status').$type<PaymentStatus>().notNull().default('Awaiting Sales Order'),
-  sale_amount: json('sale_amount').notNull().$type<DineroSnapshot<number>>(),
+  sales_amount: json('sales_amount').notNull().$type<DineroSnapshot<number>>(),
   total_products: integer('total_products').notNull(),
   description: text('description'),
   active: boolean('active').notNull().default(true),
@@ -244,7 +244,7 @@ export const transaction = pgTable('transaction', {
   id: serial('id').primaryKey(),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   payment_method: text('payment_method').$type<PaymentMethod>().notNull(),
-  sale_amount: json('sale_amount').notNull().$type<DineroSnapshot<number>>(),
+  sales_amount: json('sales_amount').notNull().$type<DineroSnapshot<number>>(),
   sale_amount_paid: json('sale_amount_paid').notNull().$type<DineroSnapshot<number>>(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()

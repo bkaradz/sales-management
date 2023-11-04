@@ -63,7 +63,7 @@ type dataType = {
     delivery_date: string;
     orders_details: string
     sales_status: string
-    sale_amount: string
+    sales_amount: string
     total_products: string
 }
 
@@ -87,7 +87,7 @@ export const actions: Actions = {
                 sales_status: formData.sales_status,
                 description: formData.description,
                 delivery_date: new Date(formData.delivery_date),
-                sale_amount: JSON.parse(formData.sale_amount),
+                sales_amount: JSON.parse(formData.sales_amount),
                 total_products: +formData.total_products
             },
             orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
