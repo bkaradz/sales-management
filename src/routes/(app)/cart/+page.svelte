@@ -251,36 +251,36 @@
 				<table class="table table-sm static">
 					<thead>
 						<tr class="text-gray-400">
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Id</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Name</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Stitches</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Garment Placement</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Emb Type</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Units</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Unit Price</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Total Price</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Cart</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Actions</th
-							>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Id
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Name
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Stitches
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Garment Placement
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Emb Type
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Units
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Unit Price
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Total Price
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Cart
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Actions
+							</th>
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
@@ -300,7 +300,7 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if (product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase())}
+									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
@@ -333,36 +333,35 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-								{#if (product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase())}
-									
-								<div class="dropdown dropdown-bottom dropdown-end">
-									<button
-										tabindex="0"
-										class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
-									>
-										<span class="ml-2">{product.embroidery_type}</span>
-										{@html svgDropdown}
-									</button>
-									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-									<ul
-										tabindex="0"
-										class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-									>
-										{#each embType as type (type)}
-											{#if !(type === product.embroidery_type)}
-												<li>
-													<button
-														on:click={() => cartStore.changeEmbType({ id: key, type })}
-														class="rounded-sm"
-													>
-														{type}
-													</button>
-												</li>
-											{/if}
-										{/each}
-									</ul>
-								</div>
-								{/if}
+									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+										<div class="dropdown dropdown-bottom dropdown-end">
+											<button
+												tabindex="0"
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+											>
+												<span class="ml-2">{product.embroidery_type}</span>
+												{@html svgDropdown}
+											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+											>
+												{#each embType as type (type)}
+													{#if !(type === product.embroidery_type)}
+														<li>
+															<button
+																on:click={() => cartStore.changeEmbType({ id: key, type })}
+																class="rounded-sm"
+															>
+																{type}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									{/if}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{$cartPricesStore.get(key)?.quantity}

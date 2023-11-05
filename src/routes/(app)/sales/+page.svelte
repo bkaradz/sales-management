@@ -287,7 +287,7 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/sales/payment/${order.orders.id}`} class="pr-2">
+										<a href={`/sales/payment/${order.contacts.id}`} class="pr-2">
 											{@html svgCard}
 										</a>
 									</div>

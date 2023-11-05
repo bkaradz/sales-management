@@ -14,7 +14,7 @@
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
-	import { cartTotalsStore, exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
+	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 	import { enhance } from '$app/forms';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -236,40 +236,44 @@
 							<tr class="text-gray-400">
 								<th
 									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-									>Order Id</th
 								>
+									Order Id
+								</th>
 								<th
 									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-									>Pricelist Id</th
 								>
+									Pricelist Id
+								</th>
 								<th
 									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-									>Exchange Rate Id</th
 								>
+									Exchange Rate Id
+								</th>
 								<th
 									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-center"
-									>Sales Status</th
 								>
+									Sales Status
+								</th>
 								<th
 									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-center"
-									>Payment Status</th
 								>
+									Payment Status
+								</th>
 								<th
 									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-									>Total Products</th
 								>
+									Total Products
+								</th>
 								<th
 									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-									>Sales Amount</th
 								>
+									Sales Amount
+								</th>
 								<th
-									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-center"
-									>Actions</th
+									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 								>
-								<th
-									class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-center"
-									>Payments</th
-								>
+									Actions
+								</th>
 							</tr>
 						</thead>
 						<tbody class="text-gray-600 dark:text-gray-100">
@@ -342,13 +346,6 @@
 											</form>
 										</div>
 									</td>
-									<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-										<div class="flex items-center">
-											<a href={`/sales/payment/${ordersArray.orders.id}`} class="pr-2">
-												{@html svgCard}
-											</a>
-										</div>
-									</td>
 								</tr>
 							{/each}
 						</tbody>
@@ -357,5 +354,4 @@
 			</div>
 		{/if}
 	</div>
-
 </div>

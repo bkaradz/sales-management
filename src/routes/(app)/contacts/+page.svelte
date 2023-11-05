@@ -4,6 +4,7 @@
 		svgBackArrow,
 		svgBin,
 		svgCalender,
+		svgCard,
 		svgDropdownArrow,
 		svgEye,
 		svgForwardArrow,
@@ -31,17 +32,6 @@
 			>
 				<div class="flex w-full items-center border-b border-gray-200 dark:border-gray-800">
 					<div class="flex items-center text-3xl text-gray-900 dark:text-white">Contacts</div>
-					<!-- <div class="ml-auto sm:flex items-center justify-end">
-						<div class="text-right">
-							<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
-							<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
-						</div>
-						<button
-							class="w-8 h-8 ml-4 text-gray-400 shadow dark:text-gray-400 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700"
-						>
-							{@html svgThreeDots}
-						</button>
-					</div> -->
 				</div>
 
 				<div class="flex w-full items-center my-3">
@@ -136,7 +126,6 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Full Name
 							</th>
-
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Balance
 							</th>
@@ -145,6 +134,9 @@
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Actions
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Payment
 							</th>
 						</tr>
 					</thead>
@@ -187,6 +179,13 @@
 												{@html svgBin}
 											</button>
 										</form>
+									</div>
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									<div class="flex items-center">
+										<a href={`/sales/payment/${contact.id}`} class="pr-2">
+											{@html svgCard}
+										</a>
 									</div>
 								</td>
 							</tr>

@@ -166,37 +166,37 @@
 
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 		<div
-			class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
+			class="z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
 		>
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Cart Products</div>
 
-				<div class="dropdown dropdown-bottom dropdown-end ml-8">
-					<button
-						tabindex="0"
-						class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
-					>
-						<span class="ml-2">{$salesStatusSelectedStore}</span>
-						{@html svgDropdown}
-					</button>
-					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<ul
-						tabindex="0"
-						class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
-					>
-						{#each SalesStatusKey as type (type)}
-							{#if !(type === $salesStatusSelectedStore)}
-								<li>
-									<button on:click={() => salesStatusSelectedStore.add(type)} class="rounded-sm">
-										{type}
-									</button>
-								</li>
-							{/if}
-						{/each}
-					</ul>
-				</div>
-
 				<div class="ml-auto sm:flex hidden items-center justify-end">
+					<div class="dropdown dropdown-bottom dropdown-end mr-8">
+						<button
+							tabindex="0"
+							class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+						>
+							<span class="ml-2">{$salesStatusSelectedStore}</span>
+							{@html svgDropdown}
+						</button>
+						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+						<ul
+							tabindex="0"
+							class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+						>
+							{#each SalesStatusKey as type (type)}
+								{#if !(type === $salesStatusSelectedStore)}
+									<li>
+										<button on:click={() => salesStatusSelectedStore.add(type)} class="rounded-sm">
+											{type}
+										</button>
+									</li>
+								{/if}
+							{/each}
+						</ul>
+					</div>
+
 					<form action="?/submit" method="post" use:enhance>
 						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
 						<input hidden name="pricelist_id" type="number" value={$pricelistStore.pricelist.id} />
@@ -251,36 +251,36 @@
 				<table class="table table-sm static">
 					<thead>
 						<tr class="text-gray-400">
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Id</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Name</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Stitches</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Garment Placement</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Emb Type</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Units</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Unit Price</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Total Price</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Cart</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Actions</th
-							>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Id
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Name
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Stitches
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Garment Placement
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Emb Type
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Units
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Unit Price
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Total Price
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Cart
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Actions
+							</th>
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">

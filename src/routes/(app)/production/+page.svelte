@@ -15,7 +15,6 @@
 	import { productionStatusSelectedStore, salesStatusSelectedStore } from '$lib/stores/cartStore';
 
 	export let data: PageData;
-	$: console.log("🚀 ~ file: +page.svelte:18 ~ data:", data.results?.orders)
 
 	let checkedMap = new Map<number, boolean>();
 

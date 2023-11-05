@@ -23,7 +23,7 @@
 							<div class="md:mx-6 md:p-12">
 								<!--Logo-->
 								<div class="text-center">
-									<img class="mx-auto w-48" src={logo} alt="logo" />
+									<img class="image-full mx-auto w-48" src={logo} alt="logo" />
 									<h4 class="mb-12 mt-1 pb-1 text-xl font-semibold">We are The Lotus Team</h4>
 								</div>
 

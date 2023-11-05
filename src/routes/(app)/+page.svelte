@@ -2,7 +2,6 @@
 	import { svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
 	import { deptColor, users } from '$lib/data/users';
-	
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -180,23 +179,25 @@
 			<table class="w-full text-left">
 				<thead>
 					<tr class="text-gray-400">
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-							>Type</th
-						>
-						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-							>Where</th
-						>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+							Type
+						</th>
+						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+							Where
+						</th>
 						<th
 							class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 hidden md:table-cell"
-							>Description</th
 						>
+							Description
+						</th>
 						<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
 							>Amount</th
 						>
 						<th
 							class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 sm:text-gray-400 text-white"
-							>Date</th
 						>
+							Date
+						</th>
 					</tr>
 				</thead>
 				<tbody class="text-gray-600 dark:text-gray-100">

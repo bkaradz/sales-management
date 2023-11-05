@@ -15,7 +15,7 @@
 	import type { PageData } from './$types';
 	import { calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
 	import {
-	cartPricesStore,
+		cartPricesStore,
 		cartStore,
 		cartTotalsStore,
 		exchangeRatesStore,
@@ -32,55 +32,43 @@
 	{#if data.results?.products}
 		<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 			<div
-				class=" z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white  sticky top-0"
+				class=" z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
 			>
 				<div class="flex w-full items-center border-b border-gray-200 dark:border-gray-800">
 					<div class="flex items-center text-3xl text-gray-900 dark:text-white">Products</div>
 					<div class="ml-auto sm:flex hidden items-center justify-end">
 						<div class="text-right mr-8">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Total Products:</div>
-							<div class="text-gray-900 text-lg dark:text-white">{$cartTotalsStore.totalProduct}</div>
+							<div class="text-gray-900 text-lg dark:text-white">
+								{$cartTotalsStore.totalProduct}
+							</div>
 						</div>
 						<div class="text-right mr-8">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Sub Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter(
-										$cartTotalsStore.sub_total,
-										$selectedRateStore,
-										$exchangeRatesStore
-									)
+									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore)
 								)}
 							</div>
 						</div>
 						<div class="text-right mr-8">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Tax:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
-								{format(
-									converter(
-										$cartTotalsStore.vat,
-										$selectedRateStore,
-										$exchangeRatesStore
-									)
-								)}
+								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore))}
 							</div>
 						</div>
 						<div class="text-right mr-8">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Net Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter(
-										$cartTotalsStore.grand_total,
-										$selectedRateStore,
-										$exchangeRatesStore
-									)
+									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore)
 								)}
 							</div>
 						</div>
 					</div>
 				</div>
 				<!-- pagination -->
-				<div class="flex w-full items-center my-3 ">
+				<div class="flex w-full items-center my-3">
 					<button
 						class="inline-flex mr-3 items-center h-8 pl-2.5 pr-2 rounded-md shadow text-gray-700 dark:text-gray-400 dark:border-gray-800 border border-gray-200 leading-none py-0"
 					>
@@ -97,7 +85,11 @@
 					<div class="relative ml-3">
 						<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
 							<input type="hidden" name="limit" value={data?.results.pagination.limit} />
-							<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
+							<input
+								type="hidden"
+								name="page"
+								value={data?.results.pagination.previous?.page || 1}
+							/>
 							<input
 								use:selectTextOnFocus
 								type="text"
@@ -116,7 +108,11 @@
 								>Page {data?.results.pagination.page} of {data?.results.pagination.totalPages}</span
 							>
 							<form class="inline-block" method="get">
-								<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
+								<input
+									type="hidden"
+									name="page"
+									value={data?.results.pagination.previous?.page || 1}
+								/>
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
 								<input type="hidden" name="search" value={data?.results.pagination.search || ''} />
 								<button
@@ -168,39 +164,51 @@
 				<table class="table table-sm">
 					<thead>
 						<tr class="text-gray-400">
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Id</th
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Id
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Name
+							</th>
+							<th
+								class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Name</th
+								Stitches
+							</th>
+							<th
+								class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-								>Stitches</th
+								Units
+							</th>
+							<th
+								class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-								>Units</th
+								Unit Price
+							</th>
+							<th
+								class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-								>Unit Price</th
+								Total Price
+							</th>
+							<th
+								class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-center"
 							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
-								>Total Price</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-center"
-								>Product Categories</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Cart</th
-							>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800"
-								>Actions</th
-							>
+								Product Categories
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Cart
+							</th>
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Actions
+							</th>
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
 						{#each data.results.products as product (product.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
 										{product.id}
 									</span>
@@ -208,31 +216,41 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.name}
 								</td>
-								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{product.stitches || 'None'}
 								</td>
-								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
 								</td>
-								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{format(
 										converter(
-											($cartPricesStore.get(product.id)?.unit_price || dollars(0)),
+											$cartPricesStore.get(product.id)?.unit_price || dollars(0),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)
 									)}
 								</td>
-								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{format(
 										converter(
-											($cartPricesStore.get(product.id)?.total_price || dollars(0)),
+											$cartPricesStore.get(product.id)?.total_price || dollars(0),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)
 									)}
 								</td>
-								<td	class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
+								>
 									{product.product_category}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -245,7 +263,7 @@
 										</button>
 										<div class="px-3">
 											<span>
-												{$cartStore.has(product.id)	? $cartStore.get(product.id)?.quantity : 0}
+												{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
 											</span>
 										</div>
 										<button
