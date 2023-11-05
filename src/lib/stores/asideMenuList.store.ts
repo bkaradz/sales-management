@@ -35,6 +35,12 @@ const anchorTags = [
 	},
 	{
 		id: uuidv4(),
+		url: '/production',
+		name: 'Production',
+		icon: svgSales
+	},
+	{
+		id: uuidv4(),
 		url: '/settings',
 		name: 'Settings',
 		icon: svgGear

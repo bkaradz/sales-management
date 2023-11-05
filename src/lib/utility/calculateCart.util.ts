@@ -18,6 +18,7 @@ export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
 
 export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit'
 export type PaymentMethod = 'Rand' | 'USD' | 'Zim RTGS' | 'Zim Bond' | 'Swipe' | 'Banc ABC' | 'Stewart Bank'
+export type ProductionStatus = 'Origination' | 'Awaiting Logo Approval' | 'Received' | 'Awaiting Embroidery' | 'Embroidery' | 'Awaiting Trimming'| 'Trimming' | 'Awaiting Collection' | 'Collected'
 export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
 export type PaymentStatus = 'Awaiting Payment' | 'Paid' | ' Cancelled' | 'Refunded' | 'Awaiting Sales Order'
 

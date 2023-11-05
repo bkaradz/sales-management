@@ -1,6 +1,6 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
 import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
-import type { CalcPriceReturn, EmbTypekey, GarmentPlacement, SalesStatus, ProductCategories } from '$lib/utility/calculateCart.util';
+import type { CalcPriceReturn, EmbTypekey, GarmentPlacement, SalesStatus, ProductCategories, ProductionStatus } from '$lib/utility/calculateCart.util';
 import { converter } from '$lib/utility/currencyConvertor.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { multiply, type Dinero } from 'dinero.js';
@@ -134,6 +134,24 @@ function salesStatusSelected() {
 }
 
 export const salesStatusSelectedStore = salesStatusSelected();
+
+function productionStatusSelected() {
+	const { subscribe, set, update } = writable<ProductionStatus>('Received');
+
+	return {
+		subscribe,
+		add: (orderType: ProductionStatus | undefined) => {
+			if (orderType) {
+				if (orderType) {
+					update(() => orderType)
+				}
+			}
+		},
+		reset: () => set('Received')
+	};
+}
+
+export const productionStatusSelectedStore = productionStatusSelected();
 
 function pricelist() {
 	const { subscribe, set, update } = writable<PricelistToMap>();

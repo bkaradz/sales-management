@@ -88,6 +88,72 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
     console.error("🚀 ~ file: orders.drizzle.ts:72 ~ getOrders ~ error:", error)
   }
 };
+
+export const getProductionOrders = async (input: SearchParams, ctx: Context) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  const pagination = getPagination(input);
+
+  try {
+
+    let totalOrdersRecords
+    let ordersQuery
+
+    if (!trim(input.search)) {
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders)
+        .where(eq(orders.active, true))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(products, eq(products.id, orders_details.product_id))
+
+      ordersQuery = await db.select({ orders, contacts, orders_details, products }).from(orders)
+        .where(and(eq(orders.active, true), eq(products.product_category, 'Embroidery')))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(products, eq(products.id, orders_details.product_id))
+        .orderBy(desc(orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+
+    } else {
+
+      const data = `%${input.search}%`
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders)
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), and(eq(orders.active, true), eq(products.product_category, 'Embroidery'))))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(products, eq(products.id, orders_details.product_id))
+
+      ordersQuery = await db.select({ orders, contacts, orders_details, products }).from(orders)
+        .where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), and(eq(orders.active, true), eq(products.product_category, 'Embroidery'))))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(products, eq(products.id, orders_details.product_id))
+        .orderBy(desc(orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+    }
+
+    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
+
+    if (pagination.endIndex >= pagination.totalRecords) {
+      pagination.next = undefined;
+    }
+
+    return {
+      orders: ordersQuery,
+      pagination
+    }
+
+  } catch (error) {
+    console.error("🚀 ~ file: orders.drizzle.ts:72 ~ getOrders ~ error:", error)
+  }
+};
+
 export const getOrdersByUserId = async (input: {
   limit?: number | undefined;
   page?: number | undefined;
@@ -167,6 +233,7 @@ export const getOrdersByUserId = async (input: {
     console.error("🚀 ~ file: orders.drizzle.ts:72 ~ getOrders ~ error:", error)
   }
 };
+
 export const getOrdersByProductId = async (input: {
   limit?: number | undefined;
   page?: number | undefined;

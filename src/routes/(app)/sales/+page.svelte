@@ -248,12 +248,12 @@
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-full">
 										{order.orders.sales_status}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-full">
 										{order.orders.payment_status}
 									</span>
 								</td>
