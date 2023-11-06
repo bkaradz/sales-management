@@ -7,7 +7,7 @@ import { and, asc, desc, eq, inArray, ne, sql } from 'drizzle-orm';
 import { orders, orders_details, contacts, products } from '$lib/server/drizzle/schema';
 import type { Contacts, Orders, OrdersDetails, Products, } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
-import { addMany, subtractMany, type CalcPriceReturn, type PaymentStatus, type SalesStatus } from '$lib/utility/calculateCart.util';
+import { addMany, subtractMany, type CalcPriceReturn, type PaymentStatus, type SalesStatus, type ProductionStatus } from '$lib/utility/calculateCart.util';
 import { dinero, toSnapshot, type DineroSnapshot } from 'dinero.js';
 import { getById as getPricelistById } from "../pricelist/pricelists.drizzle";
 import { getById as getContactById } from "../contacts/contacts.drizzle";
@@ -424,6 +424,43 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
 };
 
 export const changeSalesStatusById = async (input: { id: number, sales_status: string }, ctx: Context) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  try {
+
+    const salesStatus = input.sales_status as SalesStatus
+
+    let paymentStatus: PaymentStatus = 'Awaiting Sales Order'
+
+    if (!(input.sales_status === 'Quotation')) {
+      paymentStatus = 'Awaiting Payment'
+    }
+
+    const orderResult = await db.update(orders)
+      .set({ user_id: ctx.session.user.userId, sales_status: salesStatus, payment_status: paymentStatus })
+      .where(eq(orders.id, input.id))
+      .returning({ id: orders.id, sales_amount: orders.sales_amount, customer_id: orders.customer_id });
+
+    if (!(input.sales_status === 'Quotation')) {
+      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
+      const totalBalance = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].balance_due)])
+      const totalReceipt = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].total_receipts)])
+      await db.update(contacts).set({ balance_due: toSnapshot(totalBalance), total_receipts: toSnapshot(totalReceipt) }).where(eq(contacts.id, orderResult[0].customer_id))
+    }
+
+    return {
+      message: "success",
+    }
+
+  } catch (error) {
+    console.error("🚀 ~ file: orders.drizzle.ts:162 ~ changeSalesStatusById ~ error:", error)
+  }
+};
+
+export const changeProductionStatusById = async (input: { id: number, sales_status: string, payment_status: PaymentStatus, production_status: ProductionStatus }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
