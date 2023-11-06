@@ -1,11 +1,13 @@
 import type { Pricelist, PricelistDetails, Products } from "$lib/server/drizzle/schema"
-import { dinero, multiply, maximum, add, toDecimal } from "dinero.js";
+import { dinero, multiply, maximum, add, toDecimal, subtract } from "dinero.js";
 import type { DineroSnapshot, Dinero, Currency, Transformer } from "dinero.js";
 import { USD } from '@dinero.js/currencies';
 import type { PricelistToMap } from "./monetary.util";
+import type { z } from "zod";
 
 export const dollars = (amount: number) => dinero({ amount, currency: USD, scale: 3 });
 export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
+export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduce(subtract);
 /**
  * input products
  * calculate using pricelist(Function)
@@ -19,8 +21,8 @@ export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
 export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit'
 export type PaymentMethod = 'Rand' | 'USD' | 'Zim RTGS' | 'Zim Bond' | 'Swipe' | 'Banc ABC' | 'Stewart Bank'
 export type ProductionStatus = 'Origination' | 'Awaiting Logo Approval' | 'Received' | 'Awaiting Embroidery' | 'Embroidery' | 'Awaiting Trimming'| 'Trimming' | 'Awaiting Collection' | 'Collected'
-export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt'
-export type PaymentStatus = 'Awaiting Payment' | 'Paid' | ' Cancelled' | 'Refunded' | 'Awaiting Sales Order'
+export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt' | 'Cancelled'
+export type PaymentStatus = 'Awaiting Payment' | 'Paid' | 'Cancelled' | 'Refunded' | 'Awaiting Sales Order'
 
 export type GarmentPlacement = 'Front Left' | 'Front Right' | 'Upper Back' | 'Lower Back' | 'Right Sleeve' | 'Left Sleeve' | 'Cap Front' | 'Cap Right Side' | 'Cap Left Side' | 'Name Tag' | 'Marked Position'
 

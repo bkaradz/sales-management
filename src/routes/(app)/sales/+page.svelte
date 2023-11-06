@@ -15,11 +15,12 @@
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { format, type SalesStatus } from '$lib/utility/calculateCart.util';
+	import { format, type PaymentStatus, type SalesStatus } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import {
 		exchangeRatesStore,
+		paymentStatusSelectedStore,
 		salesStatusSelectedStore,
 		selectedRateStore
 	} from '$lib/stores/cartStore';
@@ -28,11 +29,12 @@
 	
 	let checkedMap = new Map<number, boolean>();
 
-	const changeSelection = (event: any, id: number, status: SalesStatus) => {
+	const changeSelection = (event: any, id: number, salesStatus: SalesStatus, paymentStatus: PaymentStatus) => {
 		checkedMap = new Map();
 		checkedMap.set(id, true);
 		checkedMap = checkedMap;
-		salesStatusSelectedStore.add(status);
+		salesStatusSelectedStore.add(salesStatus);
+		paymentStatusSelectedStore.add(paymentStatus)
 		if (!event.target.checked) {
 			checkedMap = new Map();
 		}
@@ -105,6 +107,7 @@
 										</span>
 										<form action="?/salesStatus" method="post">
 											<input type="hidden" name="sales_status" value={status.status} />
+											<input type="hidden" name="payment_status" value={$paymentStatusSelectedStore} />
 											<input type="hidden" name="id" value={Array.from(checkedMap.keys())[0] || 0} />
 											<button type="submit" class="hidden sm:inline-flex sm:ml-2 text-sm">{status.status}</button>
 										</form>
@@ -214,7 +217,7 @@
 										type="checkbox"
 										checked={checkedMap.has(order.orders.id)}
 										on:click={(event) =>
-											changeSelection(event, order.orders.id, order.orders.sales_status)}
+											changeSelection(event, order.orders.id, order.orders.sales_status, order.orders.payment_status)}
 									/>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -278,7 +281,9 @@
 											{@html svgPen}
 										</a>
 										<form action="?/delete" method="post" use:enhance>
-											<input type="hidden" name="delete" value={order.orders.id} />
+											<input type="hidden" name="id" value={order.orders.id} />
+											<input type="hidden" name="sales_status" value={order.orders.sales_status} />
+											<input type="hidden" name="payment_status" value={order.orders.payment_status} />
 											<button type="submit">
 												{@html svgBin}
 											</button>

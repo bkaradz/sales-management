@@ -2,7 +2,7 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { SalesStatus } from '$lib/utility/calculateCart.util';
+import type { PaymentStatus, SalesStatus } from '$lib/utility/calculateCart.util';
 
 export const load = (async (event) => {
 
@@ -36,9 +36,9 @@ export const actions: Actions = {
 			}
 
 			const data = await event.request.formData();
-			const formData = Object.fromEntries(data)
+			const formData = Object.fromEntries(data) as {id: string, payment_status: PaymentStatus, sales_status: SalesStatus}
 
-			return await router.createCaller(await createContext(event)).orders.deleteById(+formData.delete)
+			return await router.createCaller(await createContext(event)).orders.deleteById({...formData, id: +formData.id})
 	},
 	salesStatus: async (event) => {
 
@@ -49,12 +49,8 @@ export const actions: Actions = {
 			}
 
 			const data = await event.request.formData();
-			const formData = Object.fromEntries(data)
-			const sendData = {
-				id: +formData.id,
-				sales_status: formData.sales_status
-			} as {id: number, sales_status: SalesStatus}
+			const formData = Object.fromEntries(data) as {id: string, sales_status: SalesStatus, payment_status: PaymentStatus}
 
-			return await router.createCaller(await createContext(event)).orders.changeSalesStatusById(sendData)
+			return await router.createCaller(await createContext(event)).orders.changeSalesStatusById({...formData, id: +formData.id})
 	}
 }

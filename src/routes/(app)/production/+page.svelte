@@ -10,25 +10,41 @@
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
-	import type { ProductionStatus, SalesStatus } from '$lib/utility/calculateCart.util';
+	import type {
+		PaymentStatus,
+		ProductionStatus,
+		SalesStatus
+	} from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
-	import { productionStatusSelectedStore, salesStatusSelectedStore } from '$lib/stores/cartStore';
+	import {
+		paymentStatusSelectedStore,
+		productionStatusSelectedStore,
+		salesStatusSelectedStore
+	} from '$lib/stores/cartStore';
 
 	export let data: PageData;
 
 	let checkedMap = new Map<number, boolean>();
 
-	const changeSelection = (event: any, id: number, status: ProductionStatus) => {
+	const changeSelection = (
+		event: any,
+		id: number,
+		status: ProductionStatus,
+		salesStatus: SalesStatus,
+		paymentStatus: PaymentStatus
+	) => {
 		checkedMap = new Map();
 		checkedMap.set(id, true);
 		checkedMap = checkedMap;
 		productionStatusSelectedStore.add(status);
+		salesStatusSelectedStore.add(salesStatus);
+		paymentStatusSelectedStore.add(paymentStatus);
 		if (!event.target.checked) {
 			checkedMap = new Map();
 		}
 	};
 
-	export const SalesStatusKey: { number: number; status: ProductionStatus }[] = [
+	export const productionStatusKey: { number: number; status: ProductionStatus }[] = [
 		{ number: 1, status: 'Origination' },
 		{ number: 2, status: 'Received' },
 		{ number: 3, status: 'Embroidery' },
@@ -81,7 +97,7 @@
 							<ol
 								class="flex items-center w-full py-1 px-2 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:space-x-4"
 							>
-								{#each SalesStatusKey as status (status.number)}
+								{#each productionStatusKey as status (status.number)}
 									<li
 										class={`flex items-center ${
 											status.status === $productionStatusSelectedStore
@@ -94,8 +110,14 @@
 										>
 											{status.number}
 										</span>
-										<form action="?/salesStatus" method="post">
-											<input type="hidden" name="sales_status" value={status.status} />
+										<form action="?/productionStatus" method="post">
+											<input type="hidden" name="sales_status" value={$salesStatusSelectedStore} />
+											<input
+												type="hidden"
+												name="payment_status"
+												value={$paymentStatusSelectedStore}
+											/>
+											<input type="hidden" name="production_status" value={status.status} />
 											<input
 												type="hidden"
 												name="id"
@@ -199,7 +221,13 @@
 										type="checkbox"
 										checked={checkedMap.has(order.orders_details.id)}
 										on:click={(event) =>
-											changeSelection(event, order.orders_details.id, order.orders_details.production_status)}
+											changeSelection(
+												event,
+												order.orders_details.id,
+												order.orders_details.production_status,
+												order.orders.sales_status,
+												order.orders.payment_status
+											)}
 									/>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -219,10 +247,14 @@
 										{order.products.id}
 									</span>
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{order.orders_details.stitches}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
+								>
 									{order.orders_details.quantity}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

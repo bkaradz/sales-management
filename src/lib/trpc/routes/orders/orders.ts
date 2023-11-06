@@ -20,12 +20,22 @@ export const orders = router({
     getById: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
         return await getById(input, ctx);
     }),
-    changeSalesStatusById: protectedProcedure.input(z.object({ id: z.number(), sales_status: z.string() })).query(async ({ input, ctx }) => {
-        return await changeSalesStatusById(input, ctx);
-    }),
-    deleteById: protectedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
-        return await deleteById(input, ctx);
-    }),
+    changeSalesStatusById: protectedProcedure.input(z.object({
+        id: z.number(),
+        sales_status: z.enum(['Quotation', 'Sales Order', 'Invoice', 'Receipt', 'Cancelled']),
+        payment_status: z.enum(['Awaiting Payment', 'Paid', 'Cancelled', 'Refunded', 'Awaiting Sales Order'])
+    }))
+        .query(async ({ input, ctx }) => {
+            return await changeSalesStatusById(input, ctx);
+        }),
+    deleteById: protectedProcedure.input(z.object({
+        id: z.number(),
+        sales_status: z.enum(['Quotation', 'Sales Order', 'Invoice', 'Receipt', 'Cancelled']),
+        payment_status: z.enum(['Awaiting Payment', 'Paid', 'Cancelled', 'Refunded', 'Awaiting Sales Order'])
+    }))
+        .mutation(async ({ input, ctx }) => {
+            return await deleteById(input, ctx);
+        }),
     createOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
         return await createOrder(input, ctx);
     }),
