@@ -16,7 +16,7 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const orders = async (query: any) => {
-        return await router.createCaller(await createContext(event)).orders.getOrdersByUserId({...query, id: parseInt(event.params.id, 10)});
+        return await router.createCaller(await createContext(event)).orders.getOrdersAwaitingPaymentByUserId({...query, id: parseInt(event.params.id, 10)});
     }
 
     const contact = async () => {
