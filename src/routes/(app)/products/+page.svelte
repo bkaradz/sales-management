@@ -24,6 +24,7 @@
 	} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { dinero, toSnapshot } from 'dinero.js';
 
 	export let data: PageData;
 </script>
@@ -231,7 +232,7 @@
 								>
 									{format(
 										converter(
-											$cartPricesStore.get(product.id)?.unit_price || dollars(0),
+											dinero(product.unit_price || toSnapshot( dollars(0))),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)

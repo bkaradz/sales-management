@@ -17,7 +17,7 @@ export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduc
  * Function to get pricelist for a given Quantity and Embroidery Type
  */
 
-export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit'
+export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit' | 'Cap' | 'Other'
 export type PaymentMethod = 'Rand' | 'USD' | 'Zim RTGS' | 'Zim Bond' | 'Swipe' | 'Banc ABC' | 'Stewart Bank'
 export type ProductionStatus = 'Origination' | 'Awaiting Logo Approval' | 'Received' | 'Awaiting Embroidery' | 'Embroidery' | 'Awaiting Trimming'| 'Trimming' | 'Awaiting Collection' | 'Collected'
 export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt' | 'Cancelled'

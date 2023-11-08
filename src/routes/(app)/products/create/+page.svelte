@@ -19,7 +19,9 @@
 		'Bobbin Case',
 		'Golf Shirts',
 		'Round Neck',
-		'Work Suit'
+		'Work Suit',
+		'Cap',
+		'Other'
 	];
 
 	const changeEnteredAmountStore = (e: Event) => {
