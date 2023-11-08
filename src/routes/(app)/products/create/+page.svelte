@@ -138,6 +138,8 @@
 										type="number"
 										class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 										id="unit_price"
+										min="1"
+										step=".01"
 										name="unit_price"
 										placeholder="Unit Price"
 										value={$enteredAmountStore}

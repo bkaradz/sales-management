@@ -9,6 +9,7 @@
 		"imagetools",
 		"keepfocus",
 		"onnotice",
+		"plainto",
 		"plpgsql",
 		"Prewound",
 		"Pricelist",
@@ -21,6 +22,8 @@
 		"tailwindcss",
 		"TIMESTAMPTZ",
 		"TRPC",
+		"tsquery",
+		"tsvector",
 		"uuidv"
 	]
 }
