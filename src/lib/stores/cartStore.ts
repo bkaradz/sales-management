@@ -3,7 +3,7 @@ import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.
 import type { CalcPriceReturn, EmbTypekey, GarmentPlacement, SalesStatus, ProductCategories, ProductionStatus, PaymentStatus } from '$lib/utility/calculateCart.util';
 import { converter } from '$lib/utility/currencyConvertor.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
-import { multiply, type Dinero } from 'dinero.js';
+import { multiply, type Dinero, toSnapshot } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
 function cart() {
@@ -92,6 +92,13 @@ function cart() {
 			update((productMap) => {
 				const productGet = productMap.get(id) as Products
 				productGet.garment_placement = type
+				return productMap
+			})
+		},
+		changeUnitPrice: ({ id, unitPrice }: { id: number, unitPrice: number }) => {
+			update((productMap) => {
+				const productGet = productMap.get(id) as Products
+				productGet.unit_price = toSnapshot(dollars(unitPrice * 1000))
 				return productMap
 			})
 		},

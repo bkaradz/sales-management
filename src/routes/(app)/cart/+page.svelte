@@ -98,6 +98,14 @@
 	const days = 7;
 
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+	let doubleClicked = false;
+
+	const changeEnteredAmountStore = (e: Event, id: number) => {
+		const target = e.target as HTMLInputElement;
+		console.log("🚀 ~ file: +page.svelte:106 ~ changeEnteredAmountStore ~ target:", target.value)
+		cartStore.changeUnitPrice({ id, unitPrice: +target.value });
+	};
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -369,13 +377,36 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{format(
-										converter(
-											$cartPricesStore.get(key)?.unit_price,
-											$selectedRateStore,
-											$exchangeRatesStore
-										)
-									)}
+									{#if doubleClicked}
+										<input
+											on:blur={() => (doubleClicked = false)}
+											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline outline-blue-700 outline-1 m-0"
+											type="number"
+											min="1"
+											step=".01"
+											name="unit_price_input"
+											id="unit_price_input"
+											use:selectTextOnFocus
+											on:change|preventDefault={(e) => changeEnteredAmountStore(e, product.id)}
+											on:input|preventDefault={(e) => changeEnteredAmountStore(e, product.id)}
+										/>
+									{:else}
+										<input
+											disabled
+											on:dblclick={() => (doubleClicked = true)}
+											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline-none m-0"
+											type="text"
+											name="unit_price_label"
+											id="unit_price_label"
+											value={format(
+												converter(
+													$cartPricesStore.get(key)?.unit_price,
+													$selectedRateStore,
+													$exchangeRatesStore
+												)
+											)}
+										/>
+									{/if}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"

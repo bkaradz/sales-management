@@ -1,6 +1,6 @@
 import type { Products } from "$lib/server/drizzle/schema"
 import { dinero, multiply, maximum, add, toDecimal, subtract } from "dinero.js";
-import type {  Dinero, Currency } from "dinero.js";
+import type { Dinero, Currency } from "dinero.js";
 import { USD } from '@dinero.js/currencies';
 import type { PricelistToMap } from "./monetary.util";
 
@@ -19,7 +19,7 @@ export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduc
 
 export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit' | 'Cap' | 'Other'
 export type PaymentMethod = 'Rand' | 'USD' | 'Zim RTGS' | 'Zim Bond' | 'Swipe' | 'Banc ABC' | 'Stewart Bank'
-export type ProductionStatus = 'Origination' | 'Awaiting Logo Approval' | 'Received' | 'Awaiting Embroidery' | 'Embroidery' | 'Awaiting Trimming'| 'Trimming' | 'Awaiting Collection' | 'Collected'
+export type ProductionStatus = 'Origination' | 'Awaiting Logo Approval' | 'Received' | 'Awaiting Embroidery' | 'Embroidery' | 'Awaiting Trimming' | 'Trimming' | 'Awaiting Collection' | 'Collected'
 export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt' | 'Cancelled'
 export type PaymentStatus = 'Awaiting Payment' | 'Paid' | 'Cancelled' | 'Refunded' | 'Awaiting Sales Order'
 
@@ -51,12 +51,17 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embTyp
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
 export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embType: EmbTypekey = 'Flat') => {
+  console.log("🚀 ~ file: calculateCart.util.ts:54 ~ calcPrice ~ product:", product)
 
   if (!embType) {
     embType = 'Flat'
   }
 
   if (!((product.product_category).toLowerCase() === 'Embroidery'.toLowerCase())) {
+    return calcNonEmbroidery(product, quantity)
+  }
+
+  if (product.unit_price) {
     return calcNonEmbroidery(product, quantity)
   }
 
@@ -70,7 +75,7 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
 
   const unit_price = maximum([unitPricePerThousand, dinero(pricelistCalc.minimum_price)])
 
-  const total_price = multiply(unit_price, { amount: quantity * 1000, scale: 3 } )
+  const total_price = multiply(unit_price, { amount: quantity * 1000, scale: 3 })
 
   return {
     total_price,
@@ -87,22 +92,13 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
 
 export type CalcPriceReturn = ReturnType<typeof calcPrice>
 
-function createFormatter(transformer: any) {
-  return function formatter(dineroObject: Dinero<number>) {
-    return toDecimal(dineroObject, transformer)
-  }
-}
-
-export const format = createFormatter(({ value, currency }: { value: string, currency: Currency<number> }) =>
-  `${currency.code} ${Number(value).toFixed(2)}`
-)
-
 const calcNonEmbroidery = (product: Products, quantity: number) => {
+console.log("🚀 ~ file: calculateCart.util.ts:96 ~ calcNonEmbroidery ~ product:", product)
 
   const unitPrice = product.unit_price
 
   if (!unitPrice) throw new Error("Unit price not found");
-  
+
   const unit_price = dinero(unitPrice)
 
   const total_price = multiply(unit_price, { amount: (quantity * 1000), scale: 3 })
@@ -114,3 +110,13 @@ const calcNonEmbroidery = (product: Products, quantity: number) => {
     product_id: product.id
   }
 }
+
+function createFormatter(transformer: any) {
+  return function formatter(dineroObject: Dinero<number>) {
+    return toDecimal(dineroObject, transformer)
+  }
+}
+
+export const format = createFormatter(({ value, currency }: { value: string, currency: Currency<number> }) =>
+  `${currency.code} ${Number(value).toFixed(2)}`
+)

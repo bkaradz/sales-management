@@ -25,9 +25,11 @@
 	];
 
 	const changeEnteredAmountStore = (e: Event) => {
-		const target = e.target as HTMLInputElement
+		const target = e.target as HTMLInputElement;
 		enteredAmountStore.add(+target.value);
 	};
+
+	let doubleClicked = false;
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -79,7 +81,12 @@
 					</div>
 
 					<div class="mb-4">
-						<input hidden name="product_category" type="text" value={$selectedProductCategoryStore} />
+						<input
+							hidden
+							name="product_category"
+							type="text"
+							value={$selectedProductCategoryStore}
+						/>
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 						<div class="dropdown w-64">
@@ -132,16 +139,18 @@
 					{#if $selectedProductCategoryStore !== 'Embroidery'}
 						<!--Stitches input-->
 						<div class="mb-4">
-							<div class="grid grid-cols-2">
+							<!-- <div class="grid grid-cols-2"> -->
+							{#if doubleClicked}
 								<div class="relative">
 									<input
-										type="number"
+										on:blur={() => (doubleClicked = false)}
 										class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 										id="unit_price"
+										name="unit_price"
+										type="number"
 										min="1"
 										step=".01"
-										name="unit_price"
-										placeholder="Unit Price"
+										placeholder="Enter Unit Price"
 										value={$enteredAmountStore}
 										use:selectTextOnFocus
 										on:change|preventDefault={(e) => changeEnteredAmountStore(e)}
@@ -150,26 +159,29 @@
 									<label
 										for="unit_price"
 										class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-										>Unit Price
+										>Enter Unit Price
 									</label>
 								</div>
+							{:else}
 								<div class="relative">
 									<input
 										disabled
+										on:dblclick={() => (doubleClicked = true)}
 										type="text"
 										class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 										id="unit_price_label"
 										name="unit_price_label"
 										value={$enteredAmountValue}
-										placeholder="Unit Price Currency"
+										placeholder="Unit Price"
 									/>
 									<label
 										for="unit_price_label"
 										class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-										>Unit Price Currency
+										>Unit Price
 									</label>
 								</div>
-							</div>
+							{/if}
+							<!-- </div> -->
 						</div>
 
 						<div class="relative mb-4">
