@@ -7,7 +7,7 @@ import { multiply, type Dinero, toSnapshot } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
 function cart() {
-	const { subscribe, set, update } = writable<Map<number, Products>>(new Map);
+	const { subscribe, set, update } = writable<Map<number, Products>>(new Map());
 
 	return {
 		subscribe,
@@ -123,6 +123,18 @@ function customerSelected() {
 }
 
 export const customerSelectedStore = customerSelected();
+
+function doubleClickSelect() {
+	const { subscribe, set, update } = writable<Map<number, boolean>>(new Map());
+
+	return {
+		subscribe,
+		add: (id: number) => update((doubleClickMap) => doubleClickMap.set(id, true)),
+		reset: () => set(new Map())
+	};
+}
+
+export const doubleClickSelectStore = doubleClickSelect();
 
 function salesStatusSelected() {
 	const { subscribe, set, update } = writable<SalesStatus>('Quotation');

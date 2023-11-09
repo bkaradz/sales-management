@@ -242,12 +242,29 @@ export type NewOrdersDetails = InferInsertModel<typeof orders_details>;
 export const InsertOrdersDetailsSchema = createInsertSchema(orders_details);
 export const SelectOrdersDetailsSchema = createSelectSchema(orders_details);
 
-export const transaction = pgTable('transaction', {
+export const transaction_order_details = pgTable('transaction_order_details', {
   id: serial('id').primaryKey(),
-  customer_id: integer('customer_id').notNull().references(() => contacts.id),
+  orders_id: integer('orders_id').notNull().references(() => orders.id),
+  transaction_id: integer('transaction_id').notNull().references(() => transaction.id),
   payment_method: text('payment_method').$type<PaymentMethod>().notNull(),
   sales_amount: json('sales_amount').notNull().$type<DineroSnapshot<number>>(),
   sale_amount_paid: json('sale_amount_paid').notNull().$type<DineroSnapshot<number>>(),
+  deposit: json('deposit').notNull().$type<DineroSnapshot<number>>(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type TransactionOrderDetailsDetails = InferSelectModel<typeof transaction_order_details>;
+export type NewTransactionOrderDetailsDetails = InferInsertModel<typeof transaction_order_details>;
+
+export const InsertTransactionOrderDetailsSchema = createInsertSchema(transaction_order_details);
+export const SelectTransactionOrderDetailsSchema = createSelectSchema(transaction_order_details);
+
+
+export const transaction = pgTable('transaction', {
+  id: serial('id').primaryKey(),
+  customer_id: integer('customer_id').notNull().references(() => contacts.id),
+  amount_tendered: json('amount_tendered').notNull().$type<DineroSnapshot<number>>(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
@@ -257,15 +274,3 @@ export type NewTransactionDetails = InferInsertModel<typeof transaction>;
 
 export const InsertTransactionSchema = createInsertSchema(transaction);
 export const SelectTransactionSchema = createSelectSchema(transaction);
-
-export const transaction_order_details = pgTable('transaction_order_details', {
-  id: serial('id').primaryKey(),
-  orders_id: integer('orders_id').notNull().references(() => orders.id),
-  transaction_id: integer('transaction_id').notNull().references(() => transaction.id),
-})
-
-export type TransactionOrderDetailsDetails = InferSelectModel<typeof transaction_order_details>;
-export type NewTransactionOrderDetailsDetails = InferInsertModel<typeof transaction_order_details>;
-
-export const InsertTransactionOrderDetailsSchema = createInsertSchema(transaction_order_details);
-export const SelectTransactionOrderDetailsSchema = createSelectSchema(transaction_order_details);

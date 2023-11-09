@@ -51,7 +51,6 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embTyp
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
 export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embType: EmbTypekey = 'Flat') => {
-  console.log("🚀 ~ file: calculateCart.util.ts:54 ~ calcPrice ~ product:", product)
 
   if (!embType) {
     embType = 'Flat'
@@ -93,7 +92,6 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
 export type CalcPriceReturn = ReturnType<typeof calcPrice>
 
 const calcNonEmbroidery = (product: Products, quantity: number) => {
-console.log("🚀 ~ file: calculateCart.util.ts:96 ~ calcNonEmbroidery ~ product:", product)
 
   const unitPrice = product.unit_price
 

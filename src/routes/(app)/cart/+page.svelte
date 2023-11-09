@@ -21,14 +21,14 @@
 		selectedRateStore,
 		pricelistStore,
 		customerSelectedStore,
-		salesStatusSelectedStore
+		salesStatusSelectedStore,
+		doubleClickSelectStore
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
-	import { stringify } from 'superjson';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -99,11 +99,8 @@
 
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
-	let doubleClicked = false;
-
 	const changeEnteredAmountStore = (e: Event, id: number) => {
 		const target = e.target as HTMLInputElement;
-		console.log("🚀 ~ file: +page.svelte:106 ~ changeEnteredAmountStore ~ target:", target.value)
 		cartStore.changeUnitPrice({ id, unitPrice: +target.value });
 	};
 </script>
@@ -377,9 +374,8 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{#if doubleClicked}
+									{#if $doubleClickSelectStore.has(product.id)}
 										<input
-											on:blur={() => (doubleClicked = false)}
 											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline outline-blue-700 outline-1 m-0"
 											type="number"
 											min="1"
@@ -387,13 +383,14 @@
 											name="unit_price_input"
 											id="unit_price_input"
 											use:selectTextOnFocus
+											on:blur={() => doubleClickSelectStore.reset()}
 											on:change|preventDefault={(e) => changeEnteredAmountStore(e, product.id)}
 											on:input|preventDefault={(e) => changeEnteredAmountStore(e, product.id)}
 										/>
 									{:else}
 										<input
 											disabled
-											on:dblclick={() => (doubleClicked = true)}
+											on:dblclick={() => doubleClickSelectStore.add(product.id)}
 											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline-none m-0"
 											type="text"
 											name="unit_price_label"

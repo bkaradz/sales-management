@@ -495,6 +495,8 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
       .where(eq(orders.id, input.id))
       .returning({ id: orders.id, sales_amount: orders.sales_amount, customer_id: orders.customer_id });
 
+    await db.update(orders_details).set({ active: false }).where(eq(orders_details.order_id, input.id)).returning({ id: orders.id });
+
     if (input.sales_status === 'Quotation') return { message: "success", }
 
     if (input.payment_status === 'Paid') {
@@ -634,23 +636,4 @@ export const getById = async (input: number, ctx: Context) => {
   } catch (error) {
     console.error("🚀 ~ file: orders.drizzle.ts:165 ~ getById ~ error:", error)
   }
-};
-
-export const updateOrder = async (input: any, ctx: Context) => {
-
-  if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
-  }
-
-
-  return { success: true }
-
-  try {
-
-
-
-  } catch (error) {
-    console.error("🚀 ~ file: orders.drizzle.ts:216 ~ updateOrder ~ error:", error)
-  }
-
 };

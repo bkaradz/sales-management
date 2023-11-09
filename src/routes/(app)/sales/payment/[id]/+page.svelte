@@ -15,11 +15,13 @@
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { v4 as uuidv4 } from 'uuid';
 	import {
+		amountTenderedStore,
 		selectedOrdersPaymentStore,
 		selectedOrdersPaymentTotals
 	} from '$lib/stores/paymentsStore';
 	import type { Orders } from '$lib/server/drizzle/schema';
 	import { enhance } from '$app/forms';
+	import { stringify } from 'superjson';
 
 	export let data: PageData;
 
@@ -62,6 +64,11 @@
 		} else {
 			selectedOrdersPaymentStore.add(order);
 		}
+	};
+
+	const changeAmountTenderedStore = (e: Event) => {
+		const target = e.target as HTMLInputElement;
+		amountTenderedStore.add(+target.value);
 	};
 </script>
 
@@ -179,7 +186,44 @@
 				>
 					<div class="flex w-full items-center justify-between">
 						<div class="flex items-center text-3xl text-gray-900 dark:text-white">Orders</div>
+
 						<div class="flex">
+							<form action="?/submit" method="post" use:enhance>
+								<input
+									hidden
+									name="amount_tendered"
+									type="text"
+									value={JSON.stringify($selectedOrdersPaymentTotals.amountTendered)}
+								/>
+								<input
+									hidden
+									name="selected_orders_total"
+									type="text"
+									value={JSON.stringify($selectedOrdersPaymentTotals.selectedOrdersTotal)}
+								/>
+								<input
+									hidden
+									name="selected_orders_ids"
+									type="text"
+									value={JSON.stringify([...$selectedOrdersPaymentStore.values()].map((item) => item.id))}
+								/>
+								<input
+									hidden
+									name="customer_id"
+									type="number"
+									value={data?.contact?.contact?.id}
+								/>
+
+								{#if $amountTenderedStore && $selectedOrdersPaymentStore.size >= 1}
+									<button
+										type="submit"
+										class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
+									>
+										Submit
+									</button>
+								{/if}
+							</form>
+
 							<div class="text-right mr-8">
 								<div class="text-xs text-gray-400 dark:text-gray-400">Total Products:</div>
 								<div class="text-gray-900 text-lg dark:text-white">
@@ -448,154 +492,74 @@
 						>
 							<div class="md:mx-6 md:p-12">
 								<div class="text-center">
-									<h4 class="mb-6 pb-1 text-xl font-semibold">Payments</h4>
+									<h4 class="mb-6 pb-1 text-xl font-semibold">Payment</h4>
 								</div>
 
-								<!--USD-->
-								<div class="mb-4">
+								<!--Grand Total-->
+								<div class="mb-8">
 									<div class="grid grid-cols-2">
 										<div class="relative">
-											<input
-												type="number"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price"
-												name="unit_price"
-												placeholder="US Dollars"
-												value={100}
-												use:selectTextOnFocus
-											/>
-											<label
-												for="unit_price"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>US Dollars
-											</label>
+											<span class="pointer-events-none">Grand Total </span>
+										</div>
+										<div class="relative">
+											<span>
+												{format(
+													converter(
+														$selectedOrdersPaymentTotals.selectedOrdersTotal,
+														$selectedRateStore,
+														$exchangeRatesStore
+													)
+												)}
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<!--Amount Tendered-->
+								<div class="mb-8">
+									<div class="grid grid-cols-2">
+										<div class="relative">
+											<span class="pointer-events-none">Amount Tender </span>
 										</div>
 										<div class="relative">
 											<input
-												disabled
-												type="text"
+												type="number"
+												min="1"
+												step=".01"
 												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 												id="unit_price_label"
 												name="unit_price_label"
-												value={400}
-												placeholder="To US Dollars"
+												value={$amountTenderedStore}
+												placeholder="Amount"
+												use:selectTextOnFocus
+												on:change|preventDefault={(e) => changeAmountTenderedStore(e)}
+												on:input|preventDefault={(e) => changeAmountTenderedStore(e)}
 											/>
 											<label
 												for="unit_price_label"
 												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>To US Dollars
+												>Amount
 											</label>
 										</div>
 									</div>
 								</div>
-								<!--Rands-->
-								<div class="mb-4">
+
+								<!--Total Due-->
+								<div class="mb-8">
 									<div class="grid grid-cols-2">
 										<div class="relative">
-											<input
-												type="number"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price"
-												name="unit_price"
-												placeholder="SA Rands"
-												value={100}
-												use:selectTextOnFocus
-											/>
-											<label
-												for="unit_price"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>SA Rands
-											</label>
+											<span class="pointer-events-none">Total Due </span>
 										</div>
 										<div class="relative">
-											<input
-												disabled
-												type="text"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price_label"
-												name="unit_price_label"
-												value={400}
-												placeholder="To US Dollars"
-											/>
-											<label
-												for="unit_price_label"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>To US Dollars
-											</label>
-										</div>
-									</div>
-								</div>
-								<!--Pula-->
-								<div class="mb-4">
-									<div class="grid grid-cols-2">
-										<div class="relative">
-											<input
-												type="number"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price"
-												name="unit_price"
-												placeholder="Botswana Pula"
-												value={100}
-												use:selectTextOnFocus
-											/>
-											<label
-												for="unit_price"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>Botswana Pula
-											</label>
-										</div>
-										<div class="relative">
-											<input
-												disabled
-												type="text"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price_label"
-												name="unit_price_label"
-												value={400}
-												placeholder="To US Dollars"
-											/>
-											<label
-												for="unit_price_label"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>To US Dollars
-											</label>
-										</div>
-									</div>
-								</div>
-								<!--Total-->
-								<div class="mb-4">
-									<div class="grid grid-cols-2">
-										<div class="relative">
-											<input
-												disabled
-												type="number"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price"
-												name="unit_price"
-												placeholder="Total"
-												
-											/>
-											<label
-												for="unit_price"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>Total
-											</label>
-										</div>
-										<div class="relative">
-											<input
-												disabled
-												type="text"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price_label"
-												name="unit_price_label"
-												value={400}
-												placeholder="To US Dollars Total"
-											/>
-											<label
-												for="unit_price_label"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>To US Dollars Total
-											</label>
+											<span>
+												{format(
+													converter(
+														$selectedOrdersPaymentTotals.totalDue,
+														$selectedRateStore,
+														$exchangeRatesStore
+													)
+												)}
+											</span>
 										</div>
 									</div>
 								</div>
