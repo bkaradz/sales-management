@@ -2,13 +2,14 @@
 	import {
 		svgBackArrow,
 		svgCalender,
+		svgDropdown,
 		svgDropdownArrow,
 		svgForwardArrow,
 		svgSearch
 	} from '$lib/assets/svgLogos';
-	import { dinero } from 'dinero.js';
+	import { dinero, lessThanOrEqual } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { format } from '$lib/utility/calculateCart.util';
+	import { dollars, format, type PaymentMethod } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -16,14 +17,25 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import {
 		amountTenderedStore,
+		paymentMethodSelectedStore,
 		selectedOrdersPaymentStore,
 		selectedOrdersPaymentTotals
 	} from '$lib/stores/paymentsStore';
 	import type { Orders } from '$lib/server/drizzle/schema';
 	import { enhance } from '$app/forms';
-	import { stringify } from 'superjson';
 
 	export let data: PageData;
+
+	export const paymentMethodKey: PaymentMethod[] = [
+		'Cash USD',
+		'Cash Rand',
+		'Cash Pula',
+		'Cash Bonds',
+		'Ecocash',
+		'Swipe',
+		'Banc ABC',
+		'Stewart Bank'
+	];
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Orders', selected: true },
@@ -114,7 +126,7 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								converter(
-									dinero(data.contact.contact.balance_due),
+									dinero(data.contact.contact.balance),
 									$selectedRateStore,
 									$exchangeRatesStore
 								)
@@ -188,6 +200,34 @@
 						<div class="flex items-center text-3xl text-gray-900 dark:text-white">Orders</div>
 
 						<div class="flex">
+							<div class="dropdown dropdown-bottom dropdown-end mr-8">
+								<button
+									tabindex="0"
+									class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+								>
+									<span class="ml-2">{$paymentMethodSelectedStore}</span>
+									{@html svgDropdown}
+								</button>
+								<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+								<ul
+									tabindex="0"
+									class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+								>
+									{#each paymentMethodKey as type (type)}
+										{#if !(type === $paymentMethodSelectedStore)}
+											<li>
+												<button
+													on:click={() => paymentMethodSelectedStore.add(type)}
+													class="rounded-sm"
+												>
+													{type}
+												</button>
+											</li>
+										{/if}
+									{/each}
+								</ul>
+							</div>
+
 							<form action="?/submit" method="post" use:enhance>
 								<input
 									hidden
@@ -205,16 +245,19 @@
 									hidden
 									name="selected_orders_ids"
 									type="text"
-									value={JSON.stringify([...$selectedOrdersPaymentStore.values()].map((item) => item.id))}
+									value={JSON.stringify(
+										[...$selectedOrdersPaymentStore.values()].map((item) => item.id)
+									)}
 								/>
+								<input hidden name="customer_id" type="number" value={data?.contact?.contact?.id} />
 								<input
 									hidden
-									name="customer_id"
+									name="payment_method"
 									type="number"
-									value={data?.contact?.contact?.id}
+									value={$paymentMethodSelectedStore}
 								/>
 
-								{#if $amountTenderedStore && $selectedOrdersPaymentStore.size >= 1}
+								{#if $amountTenderedStore && $selectedOrdersPaymentStore.size >= 1 && lessThanOrEqual($selectedOrdersPaymentTotals.totalDue, dollars(0))}
 									<button
 										type="submit"
 										class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
@@ -263,7 +306,7 @@
 				{#if selectedActivitiesTab.name === 'Orders'}
 					<!-- pagination -->
 					<div
-						class="z-10 sm:px-7 px-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
+						class="z-5 sm:px-7 px-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
 					>
 						<div class="flex w-full items-center my-3">
 							<button

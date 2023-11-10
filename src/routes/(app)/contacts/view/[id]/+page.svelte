@@ -64,7 +64,7 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								converter(
-									dinero(data.contact.contact.balance_due),
+									dinero(data.contact.contact.balance),
 									$selectedRateStore,
 									$exchangeRatesStore
 								)

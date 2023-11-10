@@ -63,7 +63,7 @@ export const contacts = pgTable('contacts', {
   is_corporate: boolean('is_corporate').notNull().default(false),
   notes: text('notes'),
   vat_or_bp_number: text('vat_or_bp_number'),
-  balance_due: json('balance_due').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
+  balance: json('balance').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   total_receipts: json('total_receipts').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
@@ -230,8 +230,8 @@ export const orders_details = pgTable('orders_details', {
   active: boolean('active').notNull().default(true),
   quantity: integer('quantity').notNull(),
   embroidery_type: text('embroidery_type').$type<EmbTypekey>(),
-  production_status: text('production_status').$type<ProductionStatus>().notNull().default('Received'),
   garment_placement: text('garment_placement').$type<GarmentPlacement>(),
+  production_status: text('production_status').$type<ProductionStatus>().notNull().default('Received'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
@@ -242,35 +242,36 @@ export type NewOrdersDetails = InferInsertModel<typeof orders_details>;
 export const InsertOrdersDetailsSchema = createInsertSchema(orders_details);
 export const SelectOrdersDetailsSchema = createSelectSchema(orders_details);
 
-export const transaction_order_details = pgTable('transaction_order_details', {
+export const transactions_details = pgTable('transactions_details', {
   id: serial('id').primaryKey(),
+  user_id: text('user_id').notNull().references(() => users.id),
   orders_id: integer('orders_id').notNull().references(() => orders.id),
-  transaction_id: integer('transaction_id').notNull().references(() => transaction.id),
-  payment_method: text('payment_method').$type<PaymentMethod>().notNull(),
-  sales_amount: json('sales_amount').notNull().$type<DineroSnapshot<number>>(),
-  sale_amount_paid: json('sale_amount_paid').notNull().$type<DineroSnapshot<number>>(),
-  deposit: json('deposit').notNull().$type<DineroSnapshot<number>>(),
+  transaction_id: integer('transaction_id').notNull().references(() => transactions.id),
+  active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
 
-export type TransactionOrderDetailsDetails = InferSelectModel<typeof transaction_order_details>;
-export type NewTransactionOrderDetailsDetails = InferInsertModel<typeof transaction_order_details>;
+export type TransactionsDetailsDetails = InferSelectModel<typeof transactions_details>;
+export type NewTransactionsDetailsDetails = InferInsertModel<typeof transactions_details>;
 
-export const InsertTransactionOrderDetailsSchema = createInsertSchema(transaction_order_details);
-export const SelectTransactionOrderDetailsSchema = createSelectSchema(transaction_order_details);
+export const InsertTransactionsDetailsSchema = createInsertSchema(transactions_details);
+export const SelectTransactionsDetailsSchema = createSelectSchema(transactions_details);
 
 
-export const transaction = pgTable('transaction', {
+export const transactions = pgTable('transactions', {
   id: serial('id').primaryKey(),
+  user_id: text('user_id').notNull().references(() => users.id),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   amount_tendered: json('amount_tendered').notNull().$type<DineroSnapshot<number>>(),
+  payment_method: text('payment_method').$type<PaymentMethod>().notNull(),
+  active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
 
-export type TransactionDetails = InferSelectModel<typeof transaction>;
-export type NewTransactionDetails = InferInsertModel<typeof transaction>;
+export type TransactionDetails = InferSelectModel<typeof transactions>;
+export type NewTransactionDetails = InferInsertModel<typeof transactions>;
 
-export const InsertTransactionSchema = createInsertSchema(transaction);
-export const SelectTransactionSchema = createSelectSchema(transaction);
+export const InsertTransactionSchema = createInsertSchema(transactions);
+export const SelectTransactionSchema = createSelectSchema(transactions);

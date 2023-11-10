@@ -461,9 +461,8 @@ export const createOrder = async (input: OrderInput, ctx: Context) => {
 
     if (!(input.order.sales_status === 'Quotation')) {
       const contact = await db.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
-      const totalBalance = addMany([dinero(input.order.sales_amount), dinero(contact[0].balance_due)])
-      const totalReceipt = addMany([dinero(input.order.sales_amount), dinero(contact[0].total_receipts)])
-      await db.update(contacts).set({ balance_due: toSnapshot(totalBalance), total_receipts: toSnapshot(totalReceipt) }).where(eq(contacts.id, input.order.customer_id))
+      const totalBalance = addMany([dinero(input.order.sales_amount), dinero(contact[0].balance)])
+      await db.update(contacts).set({ balance: toSnapshot(totalBalance) }).where(eq(contacts.id, input.order.customer_id))
     }
 
 
@@ -501,15 +500,14 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
 
     if (input.payment_status === 'Paid') {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const totalBalance = dinero(contact[0].balance_due)
+      const totalBalance = dinero(contact[0].balance)
       const totalReceipt = subtractMany([dinero(contact[0].total_receipts), dinero(orderResult[0].sales_amount)])
-      await db.update(contacts).set({ balance_due: toSnapshot(totalBalance), total_receipts: toSnapshot(totalReceipt) })
+      await db.update(contacts).set({ balance: toSnapshot(totalBalance), total_receipts: toSnapshot(totalReceipt) })
         .where(eq(contacts.id, orderResult[0].customer_id))
     } else {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const totalBalance = subtractMany([dinero(contact[0].balance_due), dinero(orderResult[0].sales_amount)])
-      const totalReceipt = subtractMany([dinero(contact[0].total_receipts), dinero(orderResult[0].sales_amount)])
-      await db.update(contacts).set({ balance_due: toSnapshot(totalBalance), total_receipts: toSnapshot(totalReceipt) })
+      const totalBalance = subtractMany([dinero(contact[0].balance), dinero(orderResult[0].sales_amount)])
+      await db.update(contacts).set({ balance: toSnapshot(totalBalance)})
         .where(eq(contacts.id, orderResult[0].customer_id))
     }
 
@@ -545,9 +543,8 @@ export const changeSalesStatusById = async (input: { id: number, sales_status: s
 
     if (!(input.sales_status === 'Quotation')) {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const totalBalance = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].balance_due)])
-      const totalReceipt = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].total_receipts)])
-      await db.update(contacts).set({ balance_due: toSnapshot(totalBalance), total_receipts: toSnapshot(totalReceipt) }).where(eq(contacts.id, orderResult[0].customer_id))
+      const totalBalance = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].balance)])
+      await db.update(contacts).set({ balance: toSnapshot(totalBalance)}).where(eq(contacts.id, orderResult[0].customer_id))
     }
 
     return {
@@ -582,9 +579,8 @@ export const changeProductionStatusById = async (input: { id: number, sales_stat
 
     if (!(input.sales_status === 'Quotation')) {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const totalBalance = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].balance_due)])
-      const totalReceipt = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].total_receipts)])
-      await db.update(contacts).set({ balance_due: toSnapshot(totalBalance), total_receipts: toSnapshot(totalReceipt) }).where(eq(contacts.id, orderResult[0].customer_id))
+      const totalBalance = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].balance)])
+      await db.update(contacts).set({ balance: toSnapshot(totalBalance) }).where(eq(contacts.id, orderResult[0].customer_id))
     }
 
     return {

@@ -18,7 +18,7 @@ export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduc
  */
 
 export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit' | 'Cap' | 'Other'
-export type PaymentMethod = 'Rand' | 'USD' | 'Zim RTGS' | 'Zim Bond' | 'Swipe' | 'Banc ABC' | 'Stewart Bank'
+export type PaymentMethod = 'Cash USD' | 'Cash Rand' | 'Cash Pula' | 'Cash Bonds' |'Ecocash'  | 'Swipe' | 'Banc ABC' | 'Stewart Bank' 
 export type ProductionStatus = 'Origination' | 'Awaiting Logo Approval' | 'Received' | 'Awaiting Embroidery' | 'Embroidery' | 'Awaiting Trimming' | 'Trimming' | 'Awaiting Collection' | 'Collected'
 export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt' | 'Cancelled'
 export type PaymentStatus = 'Awaiting Payment' | 'Paid' | 'Cancelled' | 'Refunded' | 'Awaiting Sales Order'
@@ -80,11 +80,12 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
     total_price,
     unit_price,
     quantity,
+    product_id: product.id,
+    
     embroidery_type: product.embroidery_type,
     garment_placement: product.garment_placement,
     stitches: product.stitches,
     pricelist_id: pricelist.pricelist.id,
-    product_id: product.id
   }
 
 }

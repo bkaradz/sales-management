@@ -153,7 +153,7 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										converter(dinero(contact.balance_due), $selectedRateStore, $exchangeRatesStore)
+										converter(dinero(contact.balance), $selectedRateStore, $exchangeRatesStore)
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

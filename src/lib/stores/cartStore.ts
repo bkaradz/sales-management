@@ -320,13 +320,7 @@ export const enteredAmountStore = enteredAmount();
 
 export const enteredAmountValue = derived([enteredAmountStore, selectedRateStore, exchangeRatesStore], ([$enteredAmountStore, $selectedRateStore, $exchangeRatesStore]) => {
 
-	return format(
-		converter(
-			dollars($enteredAmountStore * 1000),
-			$selectedRateStore,
-			$exchangeRatesStore
-		)
-	)
+	return dollars($enteredAmountStore * 1000)
 
 })
 

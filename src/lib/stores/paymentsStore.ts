@@ -1,5 +1,5 @@
 import type { Orders } from '$lib/server/drizzle/schema';
-import { addMany, dollars, subtractMany } from '$lib/utility/calculateCart.util';
+import { addMany, dollars, subtractMany, type SalesStatus, type PaymentMethod } from '$lib/utility/calculateCart.util';
 import { converter } from '$lib/utility/currencyConvertor.util';
 import { dinero, type Dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
@@ -58,6 +58,24 @@ export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, 
 		totalProducts
 	}
 })
+
+function paymentMethodSelected() {
+	const { subscribe, set, update } = writable<PaymentMethod>('Cash USD');
+
+	return {
+		subscribe,
+		add: (paymentMethod: PaymentMethod | undefined) => {
+			if (paymentMethod) {
+				if (paymentMethod) {
+					update(() => paymentMethod)
+				}
+			}
+		},
+		reset: () => set('Cash USD')
+	};
+}
+
+export const paymentMethodSelectedStore = paymentMethodSelected();
 
 
 

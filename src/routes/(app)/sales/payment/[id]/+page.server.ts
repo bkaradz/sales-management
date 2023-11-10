@@ -2,6 +2,8 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import type { DineroSnapshot } from 'dinero.js';
+import type { PaymentMethod } from '$lib/utility/calculateCart.util';
 
 export const load = (async (event) => {
 
@@ -17,32 +19,55 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const orders = async (query: any) => {
-        return await router.createCaller(await createContext(event)).orders.getOrdersAwaitingPaymentByUserId({...query, id: parseInt(event.params.id, 10)});
+        return await router.createCaller(await createContext(event)).orders.getOrdersAwaitingPaymentByUserId({ ...query, id: parseInt(event.params.id, 10) });
     }
 
     const contact = async () => {
         return await router.createCaller(await createContext(event)).contacts.getById(parseInt(event.params.id, 10));
     };
-    
+
     return {
         contact: contact(),
         orders: orders(query)
     };
 }) satisfies PageServerLoad;
 
+export type transactionInput = {
+    amount_tendered: DineroSnapshot<number>,
+    selected_orders_total: DineroSnapshot<number>,
+    selected_orders_ids: number[],
+    payment_method: PaymentMethod,
+    customer_id: number
+}
+
+type data = {
+    amount_tendered: string,
+    selected_orders_total: string,
+    selected_orders_ids: string,
+    payment_method: string,
+    customer_id: string
+}
+
 export const actions: Actions = {
-	submit: async (event) => {
+    submit: async (event) => {
 
-			const session = await event.locals.auth.validate()
+        const session = await event.locals.auth.validate()
 
-			if (!session) {
-					throw redirect(303, "/auth/login")
-			}
+        if (!session) {
+            throw redirect(303, "/auth/login")
+        }
 
-			const data = await event.request.formData();
-			const formData = Object.fromEntries(data)
-			console.log("🚀 ~ file: +page.server.ts:44 ~ submit: ~ formData:", formData)
+        const data = await event.request.formData();
+        const formData = Object.fromEntries(data) as unknown as data
 
-			// return await router.createCaller(await createContext(event)).orders.deleteById({...formData, id: +formData.id})
-	}
+        const dataResults: transactionInput = {
+            amount_tendered: JSON.parse(formData.amount_tendered),
+            selected_orders_total: JSON.parse(formData.selected_orders_total),
+            selected_orders_ids: JSON.parse(formData.selected_orders_ids),
+            payment_method: formData.payment_method as PaymentMethod,
+            customer_id: +formData.customer_id
+        }
+
+        return await router.createCaller(await createContext(event)).transactions.createTransaction(dataResults)
+    }
 }

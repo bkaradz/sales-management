@@ -453,7 +453,7 @@
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
 												converter(
-													dinero($customerSelectedStore.balance_due),
+													dinero($customerSelectedStore.balance),
 													$selectedRateStore,
 													$exchangeRatesStore
 												)
