@@ -11,8 +11,6 @@
 	import { format, type ProductCategories } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import { stringify } from 'superjson';
-	// export let data: PageData;
 
 	const productCategories: ProductCategories[] = [
 		'Embroidery',

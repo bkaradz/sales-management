@@ -1,7 +1,7 @@
 import { router } from "$lib/trpc/t";
 import { z } from "zod";
 import { protectedProcedure } from '$lib/trpc/middleware/auth';
-import { createOrder, updateOrder, deleteById, getById, getOrders, changeSalesStatusById, getOrdersByUserId, getOrdersByProductId, getProductionOrders, changeProductionStatusById, getOrdersAwaitingPaymentByUserId } from "./orders.drizzle";
+import { createOrder, deleteById, getById, getOrders, changeSalesStatusById, getOrdersByUserId, getOrdersByProductId, getProductionOrders, changeProductionStatusById, getOrdersAwaitingPaymentByUserId } from "./orders.drizzle";
 
 
 export const orders = router({
@@ -50,8 +50,5 @@ export const orders = router({
         }),
     createOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
         return await createOrder(input, ctx);
-    }),
-    updateOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
-        return await updateOrder(input, ctx);
-    }),
+    })
 });
