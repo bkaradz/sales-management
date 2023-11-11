@@ -1,7 +1,7 @@
 import type { Orders } from '$lib/server/drizzle/schema';
-import { addMany, dollars, subtractMany, type SalesStatus, type PaymentMethod } from '$lib/utility/calculateCart.util';
-import { converter } from '$lib/utility/currencyConvertor.util';
-import { dinero, type Dinero } from 'dinero.js';
+import { addMany, dollars, subtractMany } from '$lib/utility/calculateCart.util';
+import type { PaymentMethod } from '$lib/validation/types.zod.typescript';
+import { dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
 function selectedOrdersPayment() {

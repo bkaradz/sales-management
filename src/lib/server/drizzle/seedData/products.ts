@@ -1,4 +1,4 @@
-import type { ProductCategories } from "$lib/utility/calculateCart.util";
+import type { ProductCategories } from "$lib/validation/types.zod.typescript";
 
 export const productsList: {name: string, active: boolean, stitches: number, product_category: ProductCategories}[] = [
 	{

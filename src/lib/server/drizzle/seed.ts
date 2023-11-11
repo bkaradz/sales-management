@@ -4,7 +4,7 @@ import { auth } from '../lucia/clientSeed';
 import { db } from './client';
 import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema';
 import { dinero, toSnapshot } from 'dinero.js';
-import type { EmbTypekey } from '$lib/utility/calculateCart.util';
+import type { EmbTypekey } from '$lib/validation/types.zod.typescript';
 
 const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
 

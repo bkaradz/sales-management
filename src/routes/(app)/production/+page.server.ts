@@ -2,7 +2,7 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { PaymentStatus, ProductionStatus, SalesStatus } from '$lib/utility/calculateCart.util';
+import type { PaymentStatus, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
 
 export const load = (async (event) => {
 

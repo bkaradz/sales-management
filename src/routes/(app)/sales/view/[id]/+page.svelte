@@ -1,18 +1,12 @@
 <script lang="ts">
-	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
+	import { svgDropdown } from '$lib/assets/svgLogos';
 	import {
 		calcPrice,
 		dollars,
 		format,
-		type EmbTypekey,
-		type GarmentPlacement,
-		type CalcPriceReturn,
-		type SalesStatus
 	} from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
-	import type { ActionData, PageData } from './$types';
-	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import { debounceSearch } from '$lib/utility/debounceSearch.util';
+	import type { PageData } from './$types';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import {
 		cartPricesStore,
@@ -27,6 +21,7 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
+	import type { EmbTypekey, GarmentPlacement, SalesStatus } from '$lib/validation/types.zod.typescript';
 
 	export let data: PageData;
 

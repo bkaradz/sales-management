@@ -2,9 +2,11 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.util';
 import type {  ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
-import { redirect, type Actions } from '@sveltejs/kit';
+import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
+import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
+import { saveCartSchema } from '$lib/validation/cart.zod';
 
 export const load = (async (event) => {
     let query = {}
@@ -92,6 +94,26 @@ export const actions: Actions = {
             },
             orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
         };
+
+        try {
+
+            const parsedProduct = saveCartSchema.safeParse(orderSubmitObj);
+
+			if (!parsedProduct.success) {
+
+				const errorMap = zodErrorMessagesMap(parsedProduct);
+				return fail(400, {
+					message: 'Validation error',
+					errors: errorMap
+				})
+			}
+            
+        } catch (error) {
+            return fail(400, {
+				message: 'Could not register user',
+				errors: { error }
+			})
+        }
 
         return await router.createCaller(await createContext(event)).orders.createOrder(orderSubmitObj)
 

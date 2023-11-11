@@ -152,10 +152,16 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
     })
 
     // Update customer balance and total_receipts
-    const ordersArray = transactionOrders.map((item) => dinero(item.sales_amount))
-    const balance = toSnapshot(subtractMany([dinero(customer[0].balance), addMany(ordersArray)]))
-    const total_receipts = toSnapshot(addMany([dinero(customer[0].balance), addMany(ordersArray)]))
-    await db.update(contacts).set({balance , total_receipts })
+		const amountTendered = input.amount_tendered
+		
+    const salesAmountArray = transactionOrders.map((item) => dinero(item.sales_amount))
+		const salesAmountTotal = addMany(salesAmountArray)
+
+    const total_receipts = toSnapshot(addMany([dinero(customer[0].total_receipts), salesAmountTotal]))
+
+    const balance = toSnapshot(subtractMany([dinero(customer[0].balance), dinero(amountTendered)]))
+    
+    await db.update(contacts).set({balance , total_receipts }).where(eq(contacts.id, input.customer_id))
 
 		return { success: true }
 

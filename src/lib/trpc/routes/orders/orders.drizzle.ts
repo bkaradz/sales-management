@@ -3,16 +3,17 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { and, asc, desc, eq, inArray, ne, sql } from 'drizzle-orm';
+import { and, desc, eq, ne, sql } from 'drizzle-orm';
 import { orders, orders_details, contacts, products } from '$lib/server/drizzle/schema';
-import type { Contacts, Orders, OrdersDetails, Products, } from '$lib/server/drizzle/schema';
+import type { Contacts, Orders, OrdersDetails } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
-import { addMany, subtractMany, type CalcPriceReturn, type PaymentStatus, type SalesStatus, type ProductionStatus } from '$lib/utility/calculateCart.util';
+import { addMany, subtractMany, type CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import { dinero, toSnapshot, type DineroSnapshot } from 'dinero.js';
 import { getById as getPricelistById } from "../pricelist/pricelists.drizzle";
 import { getById as getContactById } from "../contacts/contacts.drizzle";
 import { getById as getExchangeRateById } from "../exchangeRates/rates.drizzle";
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';
+import type { PaymentStatus, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
 
 export const getOrders = async (input: SearchParams, ctx: Context) => {
 

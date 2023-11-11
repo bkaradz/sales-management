@@ -9,17 +9,15 @@
 		svgForwardArrow,
 		svgPen,
 		svgSearch,
-		svgThreeDots
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
-	import { calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
+	import {  dollars, format } from '$lib/utility/calculateCart.util';
 	import {
 		cartPricesStore,
 		cartStore,
 		cartTotalsStore,
 		exchangeRatesStore,
-		pricelistStore,
 		selectedRateStore
 	} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';

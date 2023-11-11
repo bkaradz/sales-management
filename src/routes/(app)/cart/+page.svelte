@@ -1,14 +1,7 @@
 <script lang="ts">
 	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
-	import {
-		calcPrice,
-		dollars,
-		format,
-		type EmbTypekey,
-		type GarmentPlacement,
-		type SalesStatus
-	} from '$lib/utility/calculateCart.util';
-	import { dinero, toSnapshot } from 'dinero.js';
+	import { calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
+	import { dinero } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -29,6 +22,7 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
+	import type { EmbTypekey, GarmentPlacement, SalesStatus } from '$lib/validation/types.zod.typescript';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -42,7 +36,14 @@
 			type: 'success'
 		});
 	} else {
-		// TODO: highlight were errors occurred
+		if (form?.errors instanceof Map) {
+			for (const [key, value] of form.errors.entries()) {
+				toasts.add({
+					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+					type: 'error'
+				});
+			}
+		}
 	}
 
 	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
@@ -150,9 +151,7 @@
 								<p>Balance</p>
 							</div>
 							<div class="ml-auto text-xs text-gray-500">
-								{format(
-									converter(dinero(user.balance), $selectedRateStore, $exchangeRatesStore)
-								)}
+								{format(converter(dinero(user.balance), $selectedRateStore, $exchangeRatesStore))}
 							</div>
 						</div>
 					</button>

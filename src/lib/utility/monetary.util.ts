@@ -1,6 +1,6 @@
 import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } from "$lib/server/drizzle/schema"
+import type { EmbTypekey } from "$lib/validation/types.zod.typescript"
 import sortBy from "lodash-es/sortBy"
-import type { EmbTypekey } from "./calculateCart.util"
 
 export type ExchangeRateCombinedArray = { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }
 

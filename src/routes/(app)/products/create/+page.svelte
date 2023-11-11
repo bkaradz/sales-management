@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { svgDropdown } from '$lib/assets/svgLogos';
 	import {
 		enteredAmountStore,
@@ -8,9 +9,11 @@
 		selectedProductCategoryStore,
 		selectedRateStore
 	} from '$lib/stores/cartStore';
-	import { format, type ProductCategories } from '$lib/utility/calculateCart.util';
+	import { toasts } from '$lib/stores/toasts.store.js';
+	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import type { ProductCategories } from '$lib/validation/types.zod.typescript.js';
 
 	const productCategories: ProductCategories[] = [
 		'Embroidery',
@@ -32,6 +35,27 @@
 	};
 
 	let doubleClicked = false;
+
+	export let form;
+	
+	$: if (form?.success) {
+		invalidateAll();
+		enteredAmountStore.reset()
+		selectedProductCategoryStore.reset()
+		toasts.add({
+			message: 'Payment successfully added',
+			type: 'success'
+		});
+	} else {
+		if (form?.errors instanceof Map) {
+			for (const [key, value] of form.errors.entries()) {
+				toasts.add({
+					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+					type: 'error'
+				});
+			}
+		}
+	}
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">

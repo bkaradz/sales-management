@@ -15,7 +15,7 @@
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { format, type PaymentStatus, type SalesStatus } from '$lib/utility/calculateCart.util';
+	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import {
@@ -24,6 +24,7 @@
 		salesStatusSelectedStore,
 		selectedRateStore
 	} from '$lib/stores/cartStore';
+	import type { PaymentStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
 
 	export let data: PageData;
 	

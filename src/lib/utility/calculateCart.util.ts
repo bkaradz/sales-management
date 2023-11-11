@@ -3,6 +3,7 @@ import { dinero, multiply, maximum, add, toDecimal, subtract } from "dinero.js";
 import type { Dinero, Currency } from "dinero.js";
 import { USD } from '@dinero.js/currencies';
 import type { PricelistToMap } from "./monetary.util";
+import type { EmbTypekey } from "$lib/validation/types.zod.typescript";
 
 export const dollars = (amount: number) => dinero({ amount, currency: USD, scale: 3 });
 export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
@@ -16,16 +17,6 @@ export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduc
 /**
  * Function to get pricelist for a given Quantity and Embroidery Type
  */
-
-export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit' | 'Cap' | 'Other'
-export type PaymentMethod = 'Cash USD' | 'Cash Rand' | 'Cash Pula' | 'Cash Bonds' |'Ecocash'  | 'Swipe' | 'Banc ABC' | 'Stewart Bank' 
-export type ProductionStatus = 'Origination' | 'Awaiting Logo Approval' | 'Received' | 'Awaiting Embroidery' | 'Embroidery' | 'Awaiting Trimming' | 'Trimming' | 'Awaiting Collection' | 'Collected'
-export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt' | 'Cancelled'
-export type PaymentStatus = 'Awaiting Payment' | 'Paid' | 'Cancelled' | 'Refunded' | 'Awaiting Sales Order'
-
-export type GarmentPlacement = 'Front Left' | 'Front Right' | 'Upper Back' | 'Lower Back' | 'Right Sleeve' | 'Left Sleeve' | 'Cap Front' | 'Cap Right Side' | 'Cap Left Side' | 'Name Tag' | 'Marked Position'
-
-export type EmbTypekey = 'Flat' | 'Cap' | 'Applique' | 'Name Tag'
 
 export const getPricelist = (pricelist: PricelistToMap, quantity: number, embType: EmbTypekey) => {
   if (!pricelist) throw new Error("Pricelist is required");

@@ -1,9 +1,11 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
-import { redirect, type Actions } from '@sveltejs/kit';
+import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { DineroSnapshot } from 'dinero.js';
-import type { PaymentMethod } from '$lib/utility/calculateCart.util';
+import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
+import { savePaymentSchema } from '$lib/validation/payment.zod';
+import type { PaymentMethod } from '$lib/validation/types.zod.typescript';
 
 export const load = (async (event) => {
 
@@ -68,6 +70,27 @@ export const actions: Actions = {
             customer_id: +formData.customer_id
         }
 
-        return await router.createCaller(await createContext(event)).transactions.createTransaction(dataResults)
+        try {
+            const parsedPayment = savePaymentSchema.safeParse(dataResults);
+
+            if (!parsedPayment.success) {
+
+                const errorMap = zodErrorMessagesMap(parsedPayment);
+                return fail(400, {
+                    message: 'Validation error',
+                    errors: errorMap
+                })
+            }
+
+            return await router.createCaller(await createContext(event)).transactions.createTransaction(parsedPayment.data)
+
+        } catch (error) {
+            return fail(400, {
+				message: 'Could not register user',
+				errors: { error }
+			})
+        }
+
+        
     }
 }

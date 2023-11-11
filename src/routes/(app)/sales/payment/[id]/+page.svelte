@@ -9,7 +9,7 @@
 	} from '$lib/assets/svgLogos';
 	import { dinero, lessThanOrEqual } from 'dinero.js';
 	import type { PageData } from './$types';
-	import { dollars, format, type PaymentMethod } from '$lib/utility/calculateCart.util';
+	import { dollars, format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -23,6 +23,9 @@
 	} from '$lib/stores/paymentsStore';
 	import type { Orders } from '$lib/server/drizzle/schema';
 	import { enhance } from '$app/forms';
+	import { toasts } from '$lib/stores/toasts.store';
+	import { invalidateAll } from '$app/navigation';
+	import type { PaymentMethod } from '$lib/validation/types.zod.typescript';
 
 	export let data: PageData;
 
@@ -82,6 +85,28 @@
 		const target = e.target as HTMLInputElement;
 		amountTenderedStore.add(+target.value);
 	};
+
+	export let form;
+	
+	$: if (form?.success) {
+		invalidateAll();
+		amountTenderedStore.reset()
+		paymentMethodSelectedStore.reset()
+		selectedOrdersPaymentStore.reset()
+		toasts.add({
+			message: 'Payment successfully added',
+			type: 'success'
+		});
+	} else {
+		if (form?.errors instanceof Map) {
+			for (const [key, value] of form.errors.entries()) {
+				toasts.add({
+					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+					type: 'error'
+				});
+			}
+		}
+	}
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">

@@ -1,8 +1,8 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
-import type { CalcPriceReturn, EmbTypekey, GarmentPlacement, SalesStatus, ProductCategories, ProductionStatus, PaymentStatus } from '$lib/utility/calculateCart.util';
-import { converter } from '$lib/utility/currencyConvertor.util';
+import { addMany, calcPrice, dollars } from '$lib/utility/calculateCart.util';
+import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
+import type { EmbTypekey, GarmentPlacement, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
 import { multiply, type Dinero, toSnapshot } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 

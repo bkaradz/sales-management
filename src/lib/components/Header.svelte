@@ -31,7 +31,7 @@
 				<a
 					href={tab.url || '#'}
 					class={`btn btn-sm ${tab.hidden ? 'hidden' : ''}
-					h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-2
+					h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-2 border-none
 					`}
 					on:click={() => changeTab(tab, $page.url.pathname)}
 				>
