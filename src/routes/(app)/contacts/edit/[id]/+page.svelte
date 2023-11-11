@@ -1,8 +1,29 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { PageData } from './$types';
+	import { invalidateAll } from '$app/navigation';
+	import { toasts } from '$lib/stores/toasts.store';
+	import type { ActionData, PageData } from './$types';
 
 	export let data: PageData;
+
+	export let form: ActionData;
+
+	$: if (form?.success) {
+		invalidateAll();
+		toasts.add({
+			message: 'Contact edited successfully',
+			type: 'success'
+		});
+	} else {
+		if (form?.errors instanceof Map) {
+			for (const [key, value] of form.errors.entries()) {
+				toasts.add({
+					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+					type: 'error'
+				});
+			}
+		}
+	}
 
 </script>
 
@@ -12,7 +33,7 @@
 			class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
 		>
 			<div class="flex w-full items-center">
-				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Update Contact</div>
+				<div class="flex items-center text-3xl text-gray-900 dark:text-white">Edit Contact</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<!--  -->
 				</div>

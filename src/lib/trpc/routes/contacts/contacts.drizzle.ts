@@ -7,12 +7,13 @@ import { and, asc, eq, sql } from 'drizzle-orm';
 import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
+import type { SaveContacts } from '$lib/validation/contacts.zod';
 
-export const getContacts = async (input: SearchParams,  ctx: Context) => {
+export const getContacts = async (input: SearchParams, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
-  }
+		throw error(404, 'User not found');
+	}
 
 	const pagination = getPagination(input);
 
@@ -64,11 +65,11 @@ export const getContacts = async (input: SearchParams,  ctx: Context) => {
 	}
 };
 
-export const getById = async (input: number,  ctx: Context) => {
+export const getById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
-  }
+		throw error(404, 'User not found');
+	}
 
 
 	try {
@@ -123,11 +124,11 @@ export const getById = async (input: number,  ctx: Context) => {
 	}
 };
 
-export const deleteById = async (input: number,  ctx: Context) => {
+export const deleteById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
-  }
+		throw error(404, 'User not found');
+	}
 
 	try {
 
@@ -144,7 +145,7 @@ export const deleteById = async (input: number,  ctx: Context) => {
 	}
 };
 
-export const createContact = async (input: any, ctx: Context) => {
+export const createContact = async (input: SaveContacts, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
@@ -155,20 +156,20 @@ export const createContact = async (input: any, ctx: Context) => {
 		const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, vat_or_bp_number: input.vat_or_bp_number, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), }).returning({ id: contacts.id });
 
 		if (input?.phone) {
-			normalizePhone(input.phone).forEach(async (item: string) => {
+			input.phone.forEach(async (item: string) => {
 				await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 			})
 
 		}
 
 		if (input?.email) {
-			normalizeEmail(input.email).forEach(async (item: string) => {
+			input.email.forEach(async (item: string) => {
 				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 			})
 		}
 
 		if (input?.address) {
-			normalizeAddress(input.address).forEach(async (item: string) => {
+			input.address.forEach(async (item: string) => {
 				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 			})
 		}
@@ -181,7 +182,7 @@ export const createContact = async (input: any, ctx: Context) => {
 
 };
 
-export const updateContact = async (input: any, ctx: Context) => {
+export const updateContact = async (input: SaveContacts & { id: number }, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
@@ -204,20 +205,20 @@ export const updateContact = async (input: any, ctx: Context) => {
 			.returning({ id: contacts.id });
 
 		if (input?.phone) {
-			normalizePhone(input.phone).forEach(async (item: string) => {
+			input.phone.forEach(async (item: string) => {
 				await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 			})
 
 		}
 
 		if (input?.email) {
-			normalizeEmail(input.email).forEach(async (item: string) => {
+			input.email.forEach(async (item: string) => {
 				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 			})
 		}
 
 		if (input?.address) {
-			normalizeAddress(input.address).forEach(async (item: string) => {
+			input.address.forEach(async (item: string) => {
 				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 			})
 		}
@@ -237,6 +238,10 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 	}
 
 	try {
+
+		/**
+		 * TODO: Validation
+		 */
 
 		input.forEach(async (contact) => {
 

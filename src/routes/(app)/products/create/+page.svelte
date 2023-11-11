@@ -13,26 +13,19 @@
 	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import type { ProductCategories } from '$lib/validation/types.zod.typescript.js';
-
-	const productCategories: ProductCategories[] = [
-		'Embroidery',
-		'Threads',
-		'Needles',
-		'Backing',
-		'Prewound Bobbin',
-		'Bobbin Case',
-		'Golf Shirts',
-		'Round Neck',
-		'Work Suit',
-		'Cap',
-		'Other'
-	];
+	import { productCategories } from '$lib/utility/lists.utility.js';
+	import { onMount } from 'svelte';
+	
 
 	const changeEnteredAmountStore = (e: Event) => {
 		const target = e.target as HTMLInputElement;
 		enteredAmountStore.add(+target.value);
 	};
+
+	onMount(() => {
+		enteredAmountStore.reset()
+		selectedProductCategoryStore.reset()
+	})
 
 	let doubleClicked = false;
 

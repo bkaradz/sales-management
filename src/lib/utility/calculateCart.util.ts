@@ -72,7 +72,7 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
     unit_price,
     quantity,
     product_id: product.id,
-    
+
     embroidery_type: product.embroidery_type,
     garment_placement: product.garment_placement,
     stitches: product.stitches,

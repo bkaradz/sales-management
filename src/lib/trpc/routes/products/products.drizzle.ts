@@ -123,7 +123,7 @@ export const createProduct = async (input: saveProduct, ctx: Context) => {
 
 };
 
-export const updateProduct = async (input: any, ctx: Context) => {
+export const updateProduct = async (input: saveProduct & { id: number }, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
@@ -132,8 +132,8 @@ export const updateProduct = async (input: any, ctx: Context) => {
 	try {
 
 		await db.update(products)
-			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), product_category: 'Embroidery', ...input })
-			.where(eq(input.id, products.id))
+			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), ...input })
+			.where(eq(products.id, input.id))
 			.returning({ id: products.id });
 
 		return { success: true }
@@ -155,6 +155,10 @@ export const uploadProducts = async (input: any[], ctx: Context) => {
 		input.forEach(async (product) => {
 
 			try {
+
+				/**
+				 * TODO: Validation
+				 */
 
 				await db.insert(products).values({ user_id: ctx.session.user.userId, name: product.name, stitches: product.stitches, product_category: 'Embroidery' })
 

@@ -1,9 +1,9 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
-import { addMany, calcPrice, dollars } from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import type { EmbTypekey, GarmentPlacement, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
-import { multiply, type Dinero, toSnapshot } from 'dinero.js';
+import { multiply, type Dinero, toSnapshot, type DineroSnapshot, dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
 function cart() {
@@ -305,9 +305,15 @@ function enteredAmount() {
 		subscribe,
 		add: (amount: number) => {
 			if (amount) {
-				if (amount) {
-					update(() => amount)
-				}
+				update(() => amount)
+			} else {
+				update(() => 0)
+			}
+		},
+		addDinero: (unitPrice: DineroSnapshot<number> | null | undefined) => {
+			if (unitPrice) {
+				const number = format(dinero(unitPrice)) as string
+				update(() => +number.split(" ")[1])
 			} else {
 				update(() => 0)
 			}
