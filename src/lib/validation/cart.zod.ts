@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import { currencyZodObject } from './product.zod';
-
-
+import { EmbroideryTypeZod, GarmentPlacementZod, currencyZodObject } from './types.zod.typescript';
 
 export const saveOrderSchema = z
   .object({
@@ -9,24 +7,34 @@ export const saveOrderSchema = z
     pricelist_id: z.number(),
     exchange_rates_id: z.number(),
     sales_status: z.number(),
-    amount_tendered: currencyZodObject.required(),
-    selected_orders_total: currencyZodObject.required(),
-    selected_orders_ids: z.array(z.number()),
-    payment_method: z.string({ required_error: 'Payment Method is required' }),
+    description: z.string().optional(),
+    delivery_date: z.string().datetime(),
+    sales_amount: currencyZodObject.required(),
+    total_products: z.number(),
   })
 
-export type saveOrder = z.infer<typeof saveOrderSchema>;
-export type saveOrderKeys = keyof saveOrder;
+export type SaveOrder = z.infer<typeof saveOrderSchema>;
+export type SaveOrderKeys = keyof SaveOrder;
 
-
-export const saveCartSchema = z
+export const saveOrderDetailsSchema = z
   .object({
-    amount_tendered: currencyZodObject.required(),
-    selected_orders_total: currencyZodObject.required(),
-    selected_orders_ids: z.array(z.number()),
-    payment_method: z.string({ required_error: 'Payment Method is required' }),
-    customer_id: z.number(),
+    total_price: currencyZodObject.required(),
+    unit_price: currencyZodObject.required(),
+    quantity: z.number(),
+    product_id: z.number(),
+
+    embroidery_type: EmbroideryTypeZod.optional(),
+    garment_placement: GarmentPlacementZod.optional(),
+    stitches: z.number().optional(),
+    pricelist_id: z.number().optional(),
   })
 
-export type saveCart = z.infer<typeof saveCartSchema>;
-export type saveCartKeys = keyof saveCart;
+export type SaveOrderDetails = z.infer<typeof saveOrderDetailsSchema>;
+export type SaveOrderDetailsKeys = keyof SaveOrderDetails;
+
+
+export const saveCartOrderSchema = z
+  .object({ order: saveOrderSchema, orders_details: saveOrderDetailsSchema })
+
+export type SaveCartOrder = z.infer<typeof saveCartOrderSchema>;
+export type SaveCartOrderKeys = keyof SaveCartOrder;

@@ -32,7 +32,7 @@
 		cartStore.reset();
 		customerSelectedStore.reset();
 		toasts.add({
-			message: 'Order successfully added',
+			message: 'Order created successfully',
 			type: 'success'
 		});
 	} else {

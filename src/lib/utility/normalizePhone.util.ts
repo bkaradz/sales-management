@@ -1,14 +1,13 @@
-const normalizePhone = (phone: string) => {
-	return phone.split(',').map((data: string) => {
-		let remNonNumeric = data.replace(/[^\d+]+/g, '');
-		remNonNumeric;
-		if (remNonNumeric[0] === '0') {
-			remNonNumeric = '00263' + remNonNumeric.slice(1);
-		}
-		remNonNumeric;
-		const zeros = remNonNumeric.replace(/\+/g, '00');
-		return zeros;
-	});
+export const normalizePhone = (phone: string) => {
+	return phone.split(',').map((data: string) => data.trim())
 };
 
-export default normalizePhone;
+export const normalizeEmail = (email: string) => {
+	return email.split(',').map((data: string) => data.trim());
+};
+
+export const normalizeAddress = (email: string) => {
+	return email.split(',').map((data: string) => data.trim());
+};
+
+

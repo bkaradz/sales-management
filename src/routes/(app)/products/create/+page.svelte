@@ -43,7 +43,7 @@
 		enteredAmountStore.reset()
 		selectedProductCategoryStore.reset()
 		toasts.add({
-			message: 'Payment successfully added',
+			message: 'Product created successfully',
 			type: 'success'
 		});
 	} else {

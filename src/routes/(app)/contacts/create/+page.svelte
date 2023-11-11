@@ -1,10 +1,30 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	// import type { PageData } from './$types';
-
-	// export let data: PageData;
+	import { invalidateAll } from '$app/navigation';
+	import { toasts } from '$lib/stores/toasts.store';
+	import type { ActionData } from './$types';
 
 	let corporate = false;
+	export let form: ActionData;
+
+	$: if (form?.success) {
+		invalidateAll();
+		corporate = false
+		toasts.add({
+			message: 'Contact created successfully',
+			type: 'success'
+		});
+	} else {
+		if (form?.errors instanceof Map) {
+			for (const [key, value] of form.errors.entries()) {
+				toasts.add({
+					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+					type: 'error'
+				});
+			}
+		}
+	}
+
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">

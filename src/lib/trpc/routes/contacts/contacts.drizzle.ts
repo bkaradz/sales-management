@@ -6,7 +6,7 @@ import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
-import normalizePhone from '$lib/utility/normalizePhone.util';
+import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 
 export const getContacts = async (input: SearchParams,  ctx: Context) => {
 
@@ -162,13 +162,13 @@ export const createContact = async (input: any, ctx: Context) => {
 		}
 
 		if (input?.email) {
-			input.email.split(',').forEach(async (item: string) => {
+			normalizeEmail(input.email).forEach(async (item: string) => {
 				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 			})
 		}
 
 		if (input?.address) {
-			input.address.split(',').forEach(async (item: string) => {
+			normalizeAddress(input.address).forEach(async (item: string) => {
 				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 			})
 		}
@@ -211,13 +211,13 @@ export const updateContact = async (input: any, ctx: Context) => {
 		}
 
 		if (input?.email) {
-			input.email.split(',').forEach(async (item: string) => {
+			normalizeEmail(input.email).forEach(async (item: string) => {
 				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 			})
 		}
 
 		if (input?.address) {
-			input.address.split(',').forEach(async (item: string) => {
+			normalizeAddress(input.address).forEach(async (item: string) => {
 				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 			})
 		}
@@ -252,13 +252,13 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 				}
 
 				if (contact?.email) {
-					contact.email.split(',').forEach(async (item: string) => {
+					normalizeEmail(contact.email).forEach(async (item: string) => {
 						await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 					})
 				}
 
 				if (contact?.address) {
-					contact.address.split(',').forEach(async (item: string) => {
+					normalizeAddress(contact.address).forEach(async (item: string) => {
 						await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 					})
 				}

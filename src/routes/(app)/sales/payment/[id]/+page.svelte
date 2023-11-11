@@ -94,7 +94,7 @@
 		paymentMethodSelectedStore.reset()
 		selectedOrdersPaymentStore.reset()
 		toasts.add({
-			message: 'Payment successfully added',
+			message: 'Payment record added successfully',
 			type: 'success'
 		});
 	} else {

@@ -1,15 +1,7 @@
 import { z } from 'zod';
-import { ProductCategoriesZod } from './types.zod.typescript';
+import { ProductCategoriesZod, currencyZodObject } from './types.zod.typescript';
 
-export const currencyZodObject = z.object({
-  amount: z.number(),
-  currency: z.object({
-    code: z.string(),
-    base: z.number(),
-    exponent: z.number()
-  }),
-  scale: z.number()
-})
+
 
 export const saveProductsSchema = z
 	.object({
@@ -18,7 +10,7 @@ export const saveProductsSchema = z
 				required_error: 'Name is required',
 				invalid_type_error: 'Name must be a string'
 			})
-			.min(1)
+			.min(3)
 			.trim(),
 		description: z.string().optional(),
 		product_category: ProductCategoriesZod,

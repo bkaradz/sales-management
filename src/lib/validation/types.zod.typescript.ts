@@ -26,6 +26,16 @@ export const PaymentStatusZod = z.enum([
 export const GarmentPlacementZod = z.enum([
   'Front Left', 'Front Right', 'Upper Back', 'Lower Back', 'Right Sleeve', 'Left Sleeve', 'Cap Front', 'Cap Right Side', 'Cap Left Side', 'Name Tag', 'Marked Position'
 ], { required_error: 'Garment Placement is required' })
-export const EmbTypeZod = z.enum([
+export const EmbroideryTypeZod = z.enum([
   'Flat', 'Cap', 'Applique', 'Name Tag'
 ], { required_error: 'Embroidery Type is required' })
+
+export const currencyZodObject = z.object({
+  amount: z.number(),
+  currency: z.object({
+    code: z.string(),
+    base: z.number(),
+    exponent: z.number()
+  }),
+  scale: z.number()
+})

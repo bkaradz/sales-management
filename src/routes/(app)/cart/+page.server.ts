@@ -1,12 +1,12 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.util';
-import type {  ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
+import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { saveCartSchema } from '$lib/validation/cart.zod';
+import { saveCartOrderSchema } from '$lib/validation/cart.zod';
 
 export const load = (async (event) => {
     let query = {}
@@ -81,7 +81,7 @@ export const actions: Actions = {
         const data = await event.request.formData();
         const formData = Object.fromEntries(data) as dataType
 
-        const orderSubmitObj = {
+        const cartOrderSubmit = {
             order: {
                 customer_id: +formData.customer_id,
                 pricelist_id: +formData.pricelist_id,
@@ -97,25 +97,24 @@ export const actions: Actions = {
 
         try {
 
-            const parsedProduct = saveCartSchema.safeParse(orderSubmitObj);
+            const parsedCartOrder = saveCartOrderSchema.safeParse(cartOrderSubmit);
 
-			if (!parsedProduct.success) {
+            if (!parsedCartOrder.success) {
 
-				const errorMap = zodErrorMessagesMap(parsedProduct);
-				return fail(400, {
-					message: 'Validation error',
-					errors: errorMap
-				})
-			}
-            
+                const errorMap = zodErrorMessagesMap(parsedCartOrder);
+                return fail(400, {
+                    message: 'Validation error',
+                    errors: errorMap
+                })
+            }
+
+            return await router.createCaller(await createContext(event)).orders.createOrder(parsedCartOrder.data)
+
         } catch (error) {
             return fail(400, {
-				message: 'Could not register user',
-				errors: { error }
-			})
+                message: 'Could not register user',
+                errors: { error }
+            })
         }
-
-        return await router.createCaller(await createContext(event)).orders.createOrder(orderSubmitObj)
-
     }
 }

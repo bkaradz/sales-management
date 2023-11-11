@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { currencyZodObject } from './product.zod';
+import { currencyZodObject } from './types.zod.typescript';
 
 export const savePaymentSchema = z
   .object({
