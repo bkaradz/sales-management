@@ -510,7 +510,7 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
     } else {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
       const ordersTotals = subtractMany([dinero(contact[0].orders_totals), dinero(orderResult[0].sales_amount)])
-      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals)})
+      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals) })
         .where(eq(contacts.id, orderResult[0].customer_id))
     }
 
@@ -547,7 +547,7 @@ export const changeSalesStatusById = async (input: { id: number, sales_status: s
     if (!(input.sales_status === 'Quotation')) {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
       const ordersTotals = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].orders_totals)])
-      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals)}).where(eq(contacts.id, orderResult[0].customer_id))
+      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals) }).where(eq(contacts.id, orderResult[0].customer_id))
     }
 
     return {
@@ -567,24 +567,7 @@ export const changeProductionStatusById = async (input: { id: number, sales_stat
 
   try {
 
-    const salesStatus = input.sales_status as SalesStatus
-
-    let paymentStatus: PaymentStatus = 'Awaiting Sales Order'
-
-    if (!(input.sales_status === 'Quotation')) {
-      paymentStatus = 'Awaiting Payment'
-    }
-
-    const orderResult = await db.update(orders)
-      .set({ user_id: ctx.session.user.userId, sales_status: salesStatus, payment_status: paymentStatus })
-      .where(eq(orders.id, input.id))
-      .returning({ id: orders.id, sales_amount: orders.sales_amount, customer_id: orders.customer_id });
-
-    if (!(input.sales_status === 'Quotation')) {
-      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const totalBalance = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].orders_totals)])
-      await db.update(contacts).set({ orders_totals: toSnapshot(totalBalance) }).where(eq(contacts.id, orderResult[0].customer_id))
-    }
+    await db.update(orders_details).set({ production_status: input.production_status }).where(eq(orders_details.id, input.id))
 
     return {
       message: "success",

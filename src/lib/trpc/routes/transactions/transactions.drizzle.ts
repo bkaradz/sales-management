@@ -1,13 +1,12 @@
 import { getPagination } from '$lib/utility/pagination.util';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from '$lib/trpc/context';
-import { error, fail } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { contacts, orders, orders_details, products, transactions, transactions_details, type Products } from '$lib/server/drizzle/schema';
 import { and, asc, eq, inArray, ne, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 import type { transactionInput } from '../../../../routes/(app)/sales/payment/[id]/proxy+page.server';
-import {getById as getOrdersById} from '../orders/orders.drizzle';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
 import { dinero, toSnapshot } from 'dinero.js';
 
@@ -115,7 +114,7 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
 
 	try {
 
-		const customer = await db.select().from(contacts).where(eq(contacts.id, input.customer_id));
+		const customer = (await db.select().from(contacts).where(eq(contacts.id, input.customer_id)))[0];
 
 		const transactionOrders = await db.select().from(orders).where(inArray(orders.id, input.selected_orders_ids));
 
@@ -133,7 +132,7 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
 		const transactionId = await db.insert(transactions).values({ user_id: ctx.session.user.userId, ...input }).returning({id: transactions.id});
 
     // Update Orders payment_status as paid and sales_status to Invoiced
-    const updateOrders = await db.update(orders).set({ payment_status: 'Paid', sales_status: 'Invoice' }).where(inArray(orders.id, input.selected_orders_ids))
+    await db.update(orders).set({ payment_status: 'Paid', sales_status: 'Invoice' }).where(inArray(orders.id, input.selected_orders_ids))
 
     // Insert transaction details
     input.selected_orders_ids.forEach(async (item) => {
@@ -159,11 +158,11 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
     const salesAmountArray = transactionOrders.map((item) => dinero(item.sales_amount)) // correct
 		const salesAmountTotal = addMany(salesAmountArray) // correct
 
-    const total_receipts = toSnapshot(addMany([dinero(customer[0].total_receipts), salesAmountTotal])) // correct
+    const total_receipts = toSnapshot(addMany([dinero(customer.total_receipts), salesAmountTotal])) // correct
 
-		const totalAmountTendered = addMany([dinero(amountTendered), dinero(customerDeposit)])
+		const totalCustomerAmountTendered = addMany([dinero(amountTendered), dinero(customerDeposit)])
 
-    const deposit = toSnapshot(subtractMany([totalAmountTendered, salesAmountTotal]))
+    const deposit = toSnapshot(subtractMany([totalCustomerAmountTendered, salesAmountTotal]))
 
     const orders_totals = toSnapshot(subtractMany([dinero(customer.orders_totals), salesAmountTotal]))
     

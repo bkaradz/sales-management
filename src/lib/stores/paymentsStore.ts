@@ -1,7 +1,7 @@
-import type { Orders } from '$lib/server/drizzle/schema';
+import type { Contacts, Orders } from '$lib/server/drizzle/schema';
 import { addMany, dollars, subtractMany } from '$lib/utility/calculateCart.util';
 import type { PaymentMethod } from '$lib/validation/types.zod.typescript';
-import { dinero } from 'dinero.js';
+import { dinero, toSnapshot } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
 function selectedOrdersPayment() {
@@ -45,16 +45,36 @@ function amountTendered() {
 
 export const amountTenderedStore = amountTendered();
 
-export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, amountTenderedStore], ([$selectedOrdersPaymentStore, $amountTenderedStore]) => {
+function customer() {
+	const { subscribe, set, update } = writable<Contacts| undefined>(undefined);
+
+	return {
+		subscribe,
+		add: (contact: Contacts | undefined) => {
+			update(() => contact)
+		},
+		reset: () => set(undefined)
+	};
+}
+
+export const customerStore = customer();
+
+export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, amountTenderedStore, customerStore], ([$selectedOrdersPaymentStore, $amountTenderedStore, $customerStore]) => {
 	const totalArray = [dollars(0)]
-	const salesAmountArray = [...$selectedOrdersPaymentStore.values()].map((item) => dinero(item.sales_amount))
-	const salesAmountTotal = addMany([...totalArray, ...salesAmountArray])
+	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => dinero(item.sales_amount))
+	const selectedOrdersTotal = addMany([...totalArray, ...ordersTotalsArray])
+	const amountTendered = dollars($amountTenderedStore * 1000)
+	const customerDeposit = dinero($customerStore?.deposit || toSnapshot(dollars(0)))
+	const customerTotalTendered = addMany([customerDeposit, amountTendered])
+	const totalDue = subtractMany([selectedOrdersTotal, customerTotalTendered ])
 	const totalProducts = [...$selectedOrdersPaymentStore.values()].reduce((accumulator, currentValue) => accumulator + currentValue.total_products, 0)
 
 	return {
-		selectedOrdersTotal: salesAmountTotal,
-		amountTendered: dollars($amountTenderedStore * 1000),
-		totalDue: subtractMany([salesAmountTotal, dollars($amountTenderedStore * 1000)]),
+		selectedOrdersTotal,
+		amountTendered,
+		customerDeposit,
+		customerTotalTendered,
+		totalDue,
 		totalProducts
 	}
 })

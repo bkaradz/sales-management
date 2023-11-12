@@ -17,6 +17,7 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import {
 		amountTenderedStore,
+		customerStore,
 		paymentMethodSelectedStore,
 		selectedOrdersPaymentStore,
 		selectedOrdersPaymentTotals
@@ -28,6 +29,8 @@
 	import { paymentMethod } from '$lib/utility/lists.utility';
 
 	export let data: PageData;
+
+	$: customerStore.add(data.contact?.contact)
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Orders', selected: true },
@@ -271,7 +274,7 @@
 									value={$paymentMethodSelectedStore}
 								/>
 
-								{#if $amountTenderedStore && $selectedOrdersPaymentStore.size >= 1 && lessThanOrEqual($selectedOrdersPaymentTotals.totalDue, dollars(0))}
+								{#if $selectedOrdersPaymentStore.size >= 1 && lessThanOrEqual($selectedOrdersPaymentTotals.totalDue, dollars(0))}
 									<button
 										type="submit"
 										class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
@@ -563,6 +566,25 @@
 												{format(
 													converter(
 														$selectedOrdersPaymentTotals.selectedOrdersTotal,
+														$selectedRateStore,
+														$exchangeRatesStore
+													)
+												)}
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="mb-8">
+									<div class="grid grid-cols-2">
+										<div class="relative">
+											<span class="pointer-events-none">Customer Deposit</span>
+										</div>
+										<div class="relative">
+											<span>
+												{format(
+													converter(
+														$selectedOrdersPaymentTotals.customerDeposit,
 														$selectedRateStore,
 														$exchangeRatesStore
 													)
