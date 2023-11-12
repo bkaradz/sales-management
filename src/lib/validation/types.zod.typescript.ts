@@ -17,7 +17,7 @@ export const PaymentMethodZod = z.enum([
   'Cash USD', 'Cash Rand', 'Cash Pula', 'Cash Bonds', 'Ecocash', 'Swipe', 'Banc ABC', 'Stewart Bank'
 ], { required_error: 'Payment Method is required' })
 export const ProductionStatusZod = z.enum([
-  'Origination', 'Awaiting Logo Approval', 'Received', 'Awaiting Embroidery', 'Embroidery', 'Awaiting Trimming', 'Trimming', 'Awaiting Collection', 'Collected'
+  'Origination', 'Received', 'Embroidery', 'Trimming', 'Collected'
 ], { required_error: 'Production Status is required' })
 export const SalesStatusZod = z.enum([
   'Quotation', 'Sales Order', 'Invoice', 'Receipt', 'Cancelled'

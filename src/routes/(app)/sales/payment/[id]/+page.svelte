@@ -140,7 +140,7 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								converter(
-									dinero(data.contact.contact.balance),
+									dinero(data.contact.contact.orders_totals),
 									$selectedRateStore,
 									$exchangeRatesStore
 								)
@@ -225,7 +225,7 @@
 								<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 								<ul
 									tabindex="0"
-									class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+									class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 								>
 									{#each paymentMethod as type (type)}
 										{#if !(type === $paymentMethodSelectedStore)}

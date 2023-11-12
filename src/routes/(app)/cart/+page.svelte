@@ -135,7 +135,7 @@
 								<p>Balance</p>
 							</div>
 							<div class="ml-auto text-xs text-gray-500">
-								{format(converter(dinero(user.balance), $selectedRateStore, $exchangeRatesStore))}
+								{format(converter(dinero(user.orders_totals), $selectedRateStore, $exchangeRatesStore))}
 							</div>
 						</div>
 					</button>
@@ -164,7 +164,7 @@
 						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 						<ul
 							tabindex="0"
-							class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+							class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 						>
 							{#each salesStatus as type (type)}
 								{#if !(type === $salesStatusSelectedStore)}
@@ -300,7 +300,7 @@
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 											<ul
 												tabindex="0"
-												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each garmentPlacement as type (type)}
 													{#if !(type === product.garment_placement)}
@@ -333,7 +333,7 @@
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 											<ul
 												tabindex="0"
-												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each embroideryType as type (type)}
 													{#if !(type === product.embroidery_type)}
@@ -535,7 +535,7 @@
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
 												converter(
-													dinero($customerSelectedStore.balance),
+													dinero($customerSelectedStore.orders_totals),
 													$selectedRateStore,
 													$exchangeRatesStore
 												)
@@ -636,7 +636,7 @@
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"
-										class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+										class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 									>
 										{#each data.pricelistAll as pricelist (pricelist.pricelist.id)}
 											{#if !($pricelistStore.pricelist.id === pricelist.pricelist.id)}
@@ -760,7 +760,7 @@
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"
-										class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+										class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 									>
 										{#each data.exchangeRateAll as exchange (exchange.exchange_rates.id)}
 											{#if !($exchangeRatesStore.exchange_rates.id === exchange.exchange_rates.id)}

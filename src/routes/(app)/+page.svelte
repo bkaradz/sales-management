@@ -62,7 +62,7 @@
 				</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
 					<div class="text-right">
-						<div class="text-xs text-gray-400 dark:text-gray-400">Account balance:</div>
+						<div class="text-xs text-gray-400 dark:text-gray-400">Account orders_totals:</div>
 						<div class="text-gray-900 text-lg dark:text-white">$2,794.00</div>
 					</div>
 					<button

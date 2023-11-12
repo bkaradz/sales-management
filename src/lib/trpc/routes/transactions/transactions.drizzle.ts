@@ -151,17 +151,23 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
       }
     })
 
-    // Update customer balance and total_receipts
+    // Update customer orders_totals and total_receipts
 		const amountTendered = input.amount_tendered
+
+		const customerDeposit = customer.deposit
 		
-    const salesAmountArray = transactionOrders.map((item) => dinero(item.sales_amount))
-		const salesAmountTotal = addMany(salesAmountArray)
+    const salesAmountArray = transactionOrders.map((item) => dinero(item.sales_amount)) // correct
+		const salesAmountTotal = addMany(salesAmountArray) // correct
 
-    const total_receipts = toSnapshot(addMany([dinero(customer[0].total_receipts), salesAmountTotal]))
+    const total_receipts = toSnapshot(addMany([dinero(customer[0].total_receipts), salesAmountTotal])) // correct
 
-    const balance = toSnapshot(subtractMany([dinero(customer[0].balance), dinero(amountTendered)]))
+		const totalAmountTendered = addMany([dinero(amountTendered), dinero(customerDeposit)])
+
+    const deposit = toSnapshot(subtractMany([totalAmountTendered, salesAmountTotal]))
+
+    const orders_totals = toSnapshot(subtractMany([dinero(customer.orders_totals), salesAmountTotal]))
     
-    await db.update(contacts).set({balance , total_receipts }).where(eq(contacts.id, input.customer_id))
+    await db.update(contacts).set({deposit, orders_totals , total_receipts }).where(eq(contacts.id, input.customer_id))
 
 		return { success: true }
 

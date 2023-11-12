@@ -54,7 +54,7 @@
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul
 				tabindex="0"
-				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 			>
 				{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
 					{#if !($selectedRateStore === key)}
@@ -86,7 +86,7 @@
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul
 				tabindex="0"
-				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 			>
 				<li><button class="rounded-sm">Account</button></li>
 			</ul>

@@ -113,7 +113,7 @@
 								<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 								<ul
 									tabindex="0"
-									class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
+									class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 								>
 									{#each productCategories as category (category)}
 										{#if !(category === $selectedProductCategoryStore)}
