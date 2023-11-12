@@ -111,7 +111,7 @@
 						<div class="dropdown w-64">
 							<label
 								tabindex="0"
-								class="flex items-center h-8 px-3 rounded shadow text-white bg-blue-500 w-full justify-between"
+								class="flex items-center h-8 px-3 rounded shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 							>
 								<span class="ml-2">{$selectedProductCategoryStore}</span>
 								{@html svgDropdown}
@@ -119,7 +119,7 @@
 							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 							<ul
 								tabindex="0"
-								class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+								class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 							>
 								{#each productCategories as category (category)}
 									{#if !(category === $selectedProductCategoryStore)}

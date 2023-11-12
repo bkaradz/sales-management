@@ -31,7 +31,7 @@
 				<a
 					href={tab.url || '#'}
 					class={`btn btn-sm ${tab.hidden ? 'hidden' : ''}
-					h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-2 border-none
+					h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 mr-2 border-none
 					`}
 					on:click={() => changeTab(tab, $page.url.pathname)}
 				>
@@ -44,7 +44,7 @@
 		<div class="dropdown dropdown-bottom dropdown-end">
 			<button
 				tabindex="0"
-				class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+				class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 			>
 				<span class="ml-2">
 					{$exchangeRatesStore.exchange_rate_details.get($selectedRateStore)?.name}
@@ -54,7 +54,7 @@
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul
 				tabindex="0"
-				class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 			>
 				{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
 					{#if !($selectedRateStore === key)}
@@ -68,7 +68,7 @@
 			</ul>
 		</div>
 
-		<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500">Deposit</button>
+		<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400">Deposit</button>
 
 		<div class="dropdown dropdown-bottom dropdown-end">
 			<button tabindex="0" class="flex items-center">
@@ -86,7 +86,7 @@
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul
 				tabindex="0"
-				class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 			>
 				<li><button class="rounded-sm">Account</button></li>
 			</ul>

@@ -25,6 +25,7 @@
 		selectedRateStore
 	} from '$lib/stores/cartStore';
 	import type { PaymentStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
+	import { salesStatus } from '$lib/utility/lists.utility';
 
 	export let data: PageData;
 	
@@ -41,12 +42,10 @@
 		}
 	};
 
-	export const SalesStatusKey: { number: number; status: SalesStatus }[] = [
-		{ number: 1, status: 'Quotation' },
-		{ number: 2, status: 'Sales Order' },
-		{ number: 3, status: 'Invoice' },
-		{ number: 4, status: 'Receipt' }
-	];
+	export const SalesStatusProgress: { number: number; status: SalesStatus }[] = salesStatus.map((status, index) => {
+		return { number: index + 1, status: status }
+	})
+	
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -93,7 +92,7 @@
 							<ol
 								class="flex items-center w-full py-1 px-2 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:space-x-4"
 							>
-								{#each SalesStatusKey as status (status.number)}
+								{#each SalesStatusProgress as status (status.number)}
 									<li
 										class={`flex items-center ${
 											status.status === $salesStatusSelectedStore

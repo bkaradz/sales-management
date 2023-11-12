@@ -3,7 +3,7 @@ import { dinero, multiply, maximum, add, toDecimal, subtract } from "dinero.js";
 import type { Dinero, Currency } from "dinero.js";
 import { USD } from '@dinero.js/currencies';
 import type { PricelistToMap } from "./monetary.util";
-import type { EmbTypekey } from "$lib/validation/types.zod.typescript";
+import type { EmbroideryType } from "$lib/validation/types.zod.typescript";
 
 export const dollars = (amount: number) => dinero({ amount, currency: USD, scale: 3 });
 export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
@@ -18,14 +18,14 @@ export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduc
  * Function to get pricelist for a given Quantity and Embroidery Type
  */
 
-export const getPricelist = (pricelist: PricelistToMap, quantity: number, embType: EmbTypekey) => {
+export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryType) => {
   if (!pricelist) throw new Error("Pricelist is required");
   if (!quantity) throw new Error("Quantity is required");
-  if (!embType) throw new Error("Embroidery Type is required");
+  if (!embroideryType) throw new Error("Embroidery Type is required");
   if (!pricelist.pricelist_details) throw new Error("Pricelist Details is required");
 
   // Get all major emb type
-  const majorPricelist = pricelist.pricelist_details.get(embType)
+  const majorPricelist = pricelist.pricelist_details.get(embroideryType)
 
   if (!majorPricelist) throw new Error("Embroidery Type not found");
 
@@ -41,10 +41,10 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embTyp
 // check that the product_category is Embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
-export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embType: EmbTypekey = 'Flat') => {
+export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryType = 'Flat') => {
 
-  if (!embType) {
-    embType = 'Flat'
+  if (!embroideryType) {
+    embroideryType = 'Flat'
   }
 
   if (!((product.product_category).toLowerCase() === 'Embroidery'.toLowerCase())) {
@@ -56,7 +56,7 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
   }
 
   // Get pricelist
-  const pricelistCalc = getPricelist(pricelist, quantity, embType)
+  const pricelistCalc = getPricelist(pricelist, quantity, embroideryType)
 
   if (!product.stitches) throw new Error("Stitches not found");
 

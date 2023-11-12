@@ -1,4 +1,4 @@
-import type { EmbTypekey, GarmentPlacement, PaymentMethod, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from "$lib/validation/types.zod.typescript";
+import type { EmbroideryType, GarmentPlacement, PaymentMethod, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from "$lib/validation/types.zod.typescript";
 import type { DineroSnapshot, Rates, Currency } from "dinero.js";
 import { toSnapshot, dinero, } from "dinero.js";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
@@ -122,7 +122,7 @@ export const products = pgTable('products', {
   unit_price: json('unit_price').$type<DineroSnapshot<number>>(),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
-  embroidery_type: text('embroidery_type').$type<EmbTypekey>(),
+  embroidery_type: text('embroidery_type').$type<EmbroideryType>(),
   garment_placement: text('garment_placement').$type<GarmentPlacement>(),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
@@ -158,7 +158,7 @@ export const pricelist_details = pgTable('pricelist_details', {
   minimum_price: json('minimum_price').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   price_per_thousand_stitches: json('price_per_thousand_stitches').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   minimum_quantity: integer("minimum_quantity").default(0).notNull(),
-  embroidery_types: text('embroidery_types').$type<EmbTypekey>().notNull(),
+  embroidery_types: text('embroidery_types').$type<EmbroideryType>().notNull(),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
 })
 
@@ -231,7 +231,7 @@ export const orders_details = pgTable('orders_details', {
   stitches: integer('stitches'),
   active: boolean('active').notNull().default(true),
   quantity: integer('quantity').notNull(),
-  embroidery_type: text('embroidery_type').$type<EmbTypekey>(),
+  embroidery_type: text('embroidery_type').$type<EmbroideryType>(),
   garment_placement: text('garment_placement').$type<GarmentPlacement>(),
   production_status: text('production_status').$type<ProductionStatus>().notNull().default('Received'),
   created_at: timestamp('created_at').defaultNow().notNull(),

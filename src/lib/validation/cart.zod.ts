@@ -34,7 +34,7 @@ export type SaveOrderDetailsKeys = keyof SaveOrderDetails;
 
 
 export const saveCartOrderSchema = z
-  .object({ order: saveOrderSchema, orders_details: saveOrderDetailsSchema })
+  .object({ order: z.any(), orders_details: z.array(saveOrderDetailsSchema) })
 
 export type SaveCartOrder = z.infer<typeof saveCartOrderSchema>;
 export type SaveCartOrderKeys = keyof SaveCartOrder;

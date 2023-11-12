@@ -25,20 +25,9 @@
 	import { enhance } from '$app/forms';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { invalidateAll } from '$app/navigation';
-	import type { PaymentMethod } from '$lib/validation/types.zod.typescript';
+	import { paymentMethod } from '$lib/utility/lists.utility';
 
 	export let data: PageData;
-
-	export const paymentMethodKey: PaymentMethod[] = [
-		'Cash USD',
-		'Cash Rand',
-		'Cash Pula',
-		'Cash Bonds',
-		'Ecocash',
-		'Swipe',
-		'Banc ABC',
-		'Stewart Bank'
-	];
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Orders', selected: true },
@@ -228,7 +217,7 @@
 							<div class="dropdown dropdown-bottom dropdown-end mr-8">
 								<button
 									tabindex="0"
-									class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+									class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 								>
 									<span class="ml-2">{$paymentMethodSelectedStore}</span>
 									{@html svgDropdown}
@@ -236,9 +225,9 @@
 								<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 								<ul
 									tabindex="0"
-									class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+									class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 								>
-									{#each paymentMethodKey as type (type)}
+									{#each paymentMethod as type (type)}
 										{#if !(type === $paymentMethodSelectedStore)}
 											<li>
 												<button

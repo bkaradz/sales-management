@@ -94,14 +94,17 @@ export const actions: Actions = {
             },
             orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
         };
+        console.log("🚀 ~ file: +page.server.ts:97 ~ submit: ~ cartOrderSubmit:", cartOrderSubmit)
 
         try {
 
             const parsedCartOrder = saveCartOrderSchema.safeParse(cartOrderSubmit);
+            console.log("🚀 ~ file: +page.server.ts:101 ~ submit: ~ parsedCartOrder:", parsedCartOrder)
 
             if (!parsedCartOrder.success) {
 
                 const errorMap = zodErrorMessagesMap(parsedCartOrder);
+                console.log("🚀 ~ file: +page.server.ts:105 ~ submit: ~ errorMap:", errorMap)
                 return fail(400, {
                     message: 'Validation error',
                     errors: errorMap

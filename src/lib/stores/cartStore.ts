@@ -2,7 +2,7 @@ import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/sche
 import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
-import type { EmbTypekey, GarmentPlacement, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
+import type { EmbroideryType, GarmentPlacement, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
 import { multiply, type Dinero, toSnapshot, type DineroSnapshot, dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
@@ -81,7 +81,7 @@ function cart() {
 				return productMap
 			})
 		},
-		changeEmbType: ({ id, type }: { id: number, type: EmbTypekey }) => {
+		changeEmbType: ({ id, type }: { id: number, type: EmbroideryType }) => {
 			update((productMap) => {
 				const productGet = productMap.get(id) as Products
 				productGet.embroidery_type = type
@@ -250,7 +250,7 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 	const cartResults = new Map<number, CalcPriceReturn>()
 
 	$cartStore.forEach((value, key) => {
-		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as EmbTypekey)
+		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as EmbroideryType)
 		cartResults.set(value.id, results)
 	})
 

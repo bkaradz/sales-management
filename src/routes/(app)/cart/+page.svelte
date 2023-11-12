@@ -22,7 +22,8 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
-	import type { EmbTypekey, GarmentPlacement, SalesStatus } from '$lib/validation/types.zod.typescript';
+	import type { EmbroideryType, GarmentPlacement, SalesStatus } from '$lib/validation/types.zod.typescript';
+	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -45,23 +46,6 @@
 			}
 		}
 	}
-
-	export const SalesStatusKey: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
-
-	const embType: EmbTypekey[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
-	const garmentPlacement: GarmentPlacement[] = [
-		'Front Left',
-		'Front Right',
-		'Upper Back',
-		'Lower Back',
-		'Right Sleeve',
-		'Left Sleeve',
-		'Cap Front',
-		'Cap Right Side',
-		'Cap Left Side',
-		'Name Tag',
-		'Marked Position'
-	];
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Products Details', selected: true },
@@ -172,7 +156,7 @@
 					<div class="dropdown dropdown-bottom dropdown-end mr-8">
 						<button
 							tabindex="0"
-							class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+							class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 						>
 							<span class="ml-2">{$salesStatusSelectedStore}</span>
 							{@html svgDropdown}
@@ -180,9 +164,9 @@
 						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 						<ul
 							tabindex="0"
-							class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+							class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 						>
-							{#each SalesStatusKey as type (type)}
+							{#each salesStatus as type (type)}
 								{#if !(type === $salesStatusSelectedStore)}
 									<li>
 										<button on:click={() => salesStatusSelectedStore.add(type)} class="rounded-sm">
@@ -308,7 +292,7 @@
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
-												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
 												<span class="ml-2">{product.garment_placement}</span>
 												{@html svgDropdown}
@@ -316,7 +300,7 @@
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 											<ul
 												tabindex="0"
-												class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 											>
 												{#each garmentPlacement as type (type)}
 													{#if !(type === product.garment_placement)}
@@ -341,7 +325,7 @@
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
-												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
 												<span class="ml-2">{product.embroidery_type}</span>
 												{@html svgDropdown}
@@ -349,9 +333,9 @@
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 											<ul
 												tabindex="0"
-												class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 											>
-												{#each embType as type (type)}
+												{#each embroideryType as type (type)}
 													{#if !(type === product.embroidery_type)}
 														<li>
 															<button
@@ -644,7 +628,7 @@
 								<div class="dropdown dropdown-bottom w-full">
 									<button
 										tabindex="0"
-										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 									>
 										<span class="ml-2">{$pricelistStore.pricelist.id}</span>
 										{@html svgDropdown}
@@ -652,7 +636,7 @@
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"
-										class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+										class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 									>
 										{#each data.pricelistAll as pricelist (pricelist.pricelist.id)}
 											{#if !($pricelistStore.pricelist.id === pricelist.pricelist.id)}
@@ -768,7 +752,7 @@
 								<div class="dropdown dropdown-bottom w-full">
 									<button
 										tabindex="0"
-										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 w-full justify-between"
+										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 									>
 										<span class="ml-2">{$exchangeRatesStore.exchange_rates.id}</span>
 										{@html svgDropdown}
@@ -776,7 +760,7 @@
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 									<ul
 										tabindex="0"
-										class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-sm w-52 mt-4"
+										class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 rounded-sm w-52 mt-4"
 									>
 										{#each data.exchangeRateAll as exchange (exchange.exchange_rates.id)}
 											{#if !($exchangeRatesStore.exchange_rates.id === exchange.exchange_rates.id)}
