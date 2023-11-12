@@ -5,7 +5,7 @@
 	
 </script>
 
-<button class="btn bg-success ml-11 mb-3 w-64"
+<button class="btn bg-success ml-11 mb-3 w-64 border-none"
   on:click={() =>	toasts.add({
     message: 'Toast Success',
     type: 'success'
@@ -13,7 +13,7 @@
 >
   Toast Success
 </button>
-<button class="btn bg-error ml-11 mb-3 w-64"
+<button class="btn bg-error ml-11 mb-3 w-64 border-none"
 on:click={() =>	toasts.add({
   message: 'Toast Error',
   type: 'error'
@@ -21,7 +21,7 @@ on:click={() =>	toasts.add({
 >
   Toast Error
 </button>
-<button class="btn bg-info ml-11 mb-3 w-64"
+<button class="btn bg-info ml-11 mb-3 w-64 border-none"
 on:click={() =>	toasts.add({
   message: 'Toast Info',
   type: 'info'
@@ -29,7 +29,7 @@ on:click={() =>	toasts.add({
 >
   Toast Info
 </button>
-<button class="btn bg-warning ml-11 mb-3 w-64"
+<button class="btn bg-warning ml-11 mb-3 w-64 border-none"
 on:click={() =>	toasts.add({
   message: 'Toast Warning',
   type: 'warning'

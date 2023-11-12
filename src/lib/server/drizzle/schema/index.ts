@@ -65,6 +65,7 @@ export const contacts = pgTable('contacts', {
   is_corporate: boolean('is_corporate').notNull().default(false),
   notes: text('notes'),
   vat_or_bp_number: text('vat_or_bp_number'),
+  deposit: json('deposit').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   balance: json('balance').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   total_receipts: json('total_receipts').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   created_at: timestamp('created_at').defaultNow().notNull(),
