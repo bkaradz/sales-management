@@ -4,14 +4,14 @@ import { router } from '$lib/trpc/router';
 import { createContext } from '$lib/trpc/context';
 import parseCsv from '$lib/utility/parseCsv';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { saveProductsSchema } from '$lib/validation/product.zod';
+import { saveProductsArraySchema, saveProductsSchema } from '$lib/validation/product.zod';
 import { greaterThan, type DineroSnapshot, dinero } from 'dinero.js';
 import { dollars } from '$lib/utility/calculateCart.util';
+import type { Products } from '$lib/server/drizzle/schema';
 
 export const load = (async () => {
 	return {};
 }) satisfies PageServerLoad;
-
 
 
 export const actions: Actions = {
@@ -37,7 +37,50 @@ export const actions: Actions = {
 
 		const productsArray = (await parseCsv(csvString)) as any[]
 
-		return await router.createCaller(await createContext(event)).products.uploadProducts(productsArray)
+		
+		let productsResultsArray: Products[]= []
+		
+
+		productsArray.forEach((product: any) => {
+			let formResults = {}
+
+			if (product?.stitches) formResults = { ...formResults, stitches: +product.stitches }
+			if (product?.description) formResults = { ...formResults, description: product.description }
+			if (product?.quantity) formResults = { ...formResults, quantity: +product.quantity }
+			if (product?.product_category) formResults = { ...formResults, product_category: product.product_category }
+			if (product?.name) formResults = { ...formResults, name: product.name }
+			if (product?.unit_price) {
+				const unitPrice = dollars(+product.unit_price * 1000)
+	
+				if (greaterThan(unitPrice, dollars(0))) {
+					formResults = { ...formResults, unit_price: unitPrice.toJSON() }
+				}
+			}
+			productsResultsArray.push(formResults as Products)
+		})
+
+		try {
+			const parsedProduct = saveProductsArraySchema.safeParse(productsResultsArray);
+			console.log("🚀 ~ file: +page.server.ts:64 ~ upload: ~ parsedProduct:", parsedProduct)
+
+			if (!parsedProduct.success) {
+
+				const errorMap = zodErrorMessagesMap(parsedProduct);
+				console.log("🚀 ~ file: +page.server.ts:68 ~ upload: ~ errorMap:", errorMap)
+				return fail(400, {
+					message: 'Validation error',
+					errors: errorMap
+				})
+			}
+
+			return await router.createCaller(await createContext(event)).products.uploadProducts(parsedProduct.data)
+
+		} catch (error) {
+			return fail(400, {
+				message: 'Could not register user',
+				errors: { error }
+			})
+		}
 
 	},
 

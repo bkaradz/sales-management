@@ -6,8 +6,7 @@ import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema';
 import trim from 'lodash-es/trim';
-import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
-import type { SaveContacts } from '$lib/validation/contacts.zod';
+import type { SaveContacts, saveContactsArray } from '$lib/validation/contacts.zod';
 
 export const getContacts = async (input: SearchParams, ctx: Context) => {
 
@@ -85,7 +84,7 @@ export const getById = async (input: number, ctx: Context) => {
 		)]
 		contactsQuery = [...contactsQuery, ...(
 			(await db.select({
-				contact: contacts, address
+				contact: contacts, address2: address
 			}).from(contacts)
 				.leftJoin(address, eq(contacts.id, address.contact_id))
 				.where(eq(contacts.id, input)))
@@ -183,6 +182,7 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 };
 
 export const updateContact = async (input: SaveContacts & { id: number }, ctx: Context) => {
+console.log("🚀 ~ file: contacts.drizzle.ts:185 ~ updateContact ~ input:", input)
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
@@ -199,23 +199,30 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 
 		const allDeleted = await Promise.all(deleteWait)
 
-		const contactResult = await db.update(contacts)
-			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), vat_or_bp_number: input.vat_or_bp_number, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), })
-			.where(eq(contacts.id, input.id))
-			.returning({ id: contacts.id });
+		let contactResult: {id: number}[]
 
-		if (input?.phone) {
-			input.phone.forEach(async (item: string) => {
-				await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
-			})
+		{
+			const { email, phone, address, ...rest } = input
 
+			contactResult = await db.update(contacts)
+				.set({ user_id: ctx.session.user.userId, active: true, ...rest })
+				.where(eq(contacts.id, input.id))
+				.returning({ id: contacts.id });
+	
+			if (phone) {
+				phone.forEach(async (item: string) => {
+					await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+				})
+	
+			}
+	
+			if (email) {
+				email.forEach(async (item: string) => {
+					await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+				})
+			}
 		}
 
-		if (input?.email) {
-			input.email.forEach(async (item: string) => {
-				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
-			})
-		}
 
 		if (input?.address) {
 			input.address.forEach(async (item: string) => {
@@ -231,7 +238,7 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 
 };
 
-export const uploadContacts = async (input: any[], ctx: Context) => {
+export const uploadContacts = async (input: saveContactsArray, ctx: Context) => {
 
 	if (!ctx.session) {
 		throw error(404, 'User not found');
@@ -239,34 +246,39 @@ export const uploadContacts = async (input: any[], ctx: Context) => {
 
 	try {
 
-		/**
-		 * TODO: Validation
-		 */
-
 		input.forEach(async (contact) => {
 
 			try {
 
-				const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, full_name: contact.full_name, active: true, is_corporate: contact?.is_corporate || false, }).returning({ id: contacts.id });
+				let contactResult: {id: number}[]
 
-				if (contact?.phone) {
-					normalizePhone(contact.phone).forEach(async (item: string) => {
-						await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
-					})
+				{
 
-				}
+					const { email, phone, address, ...rest } = contact
 
-				if (contact?.email) {
-					normalizeEmail(contact.email).forEach(async (item: string) => {
-						await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
-					})
+					contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, active: true, ...rest }).returning({ id: contacts.id });
+
+					if (phone) {
+						phone.forEach(async (item: string) => {
+							await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item }).onConflictDoNothing()
+						})
+
+					}
+
+					if (email) {
+						email.forEach(async (item: string) => {
+							await db.insert(emails).values({ contact_id: contactResult[0].id, email: item }).onConflictDoNothing()
+						})
+					}
+
 				}
 
 				if (contact?.address) {
-					normalizeAddress(contact.address).forEach(async (item: string) => {
-						await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+					contact.address.forEach(async (item: string) => {
+						await db.insert(address).values({ contact_id: contactResult[0].id, address: item }).onConflictDoNothing()
 					})
 				}
+
 
 			} catch (err: unknown) {
 

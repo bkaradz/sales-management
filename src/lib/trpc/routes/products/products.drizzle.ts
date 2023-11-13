@@ -6,8 +6,7 @@ import { db } from '$lib/server/drizzle/client';
 import { products } from '$lib/server/drizzle/schema';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
-import { dollars } from '$lib/utility/calculateCart.util';
-import type { saveProduct } from '$lib/validation/product.zod';
+import type { UpdateProducts, saveProduct, saveProductArray } from '$lib/validation/product.zod';
 
 export const getProducts = async (input: SearchParams, ctx: Context) => {
 
@@ -123,7 +122,7 @@ export const createProduct = async (input: saveProduct, ctx: Context) => {
 
 };
 
-export const updateProduct = async (input: saveProduct & { id: number }, ctx: Context) => {
+export const updateProduct = async (input: UpdateProducts, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
@@ -132,7 +131,7 @@ export const updateProduct = async (input: saveProduct & { id: number }, ctx: Co
 	try {
 
 		await db.update(products)
-			.set({ user_id: ctx.session.user.userId, updated_at: new Date(), ...input })
+			.set({ user_id: ctx.session.user.userId, ...input })
 			.where(eq(products.id, input.id))
 			.returning({ id: products.id });
 
@@ -144,7 +143,7 @@ export const updateProduct = async (input: saveProduct & { id: number }, ctx: Co
 
 };
 
-export const uploadProducts = async (input: any[], ctx: Context) => {
+export const uploadProducts = async (input: saveProductArray, ctx: Context) => {
 
 	if (!ctx.session) {
 		throw error(404, 'User not found');
@@ -156,11 +155,7 @@ export const uploadProducts = async (input: any[], ctx: Context) => {
 
 			try {
 
-				/**
-				 * TODO: Validation
-				 */
-
-				await db.insert(products).values({ user_id: ctx.session.user.userId, name: product.name, stitches: product.stitches, product_category: 'Embroidery' })
+				await db.insert(products).values({ user_id: ctx.session.user.userId, ...product })
 
 			} catch (err: unknown) {
 

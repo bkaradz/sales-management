@@ -5,6 +5,7 @@ import { ProductCategoriesZod, currencyZodObject } from './types.zod.typescript'
 
 export const saveProductsSchema = z
 	.object({
+		id: z.number().optional(),
 		name: z
 			.string({
 				required_error: 'Name is required',
@@ -45,3 +46,8 @@ export const saveProductsSchema = z
 
 export type saveProduct = z.infer<typeof saveProductsSchema>;
 export type saveProductKeys = keyof saveProduct;
+
+export const saveProductsArraySchema = z.array(saveProductsSchema)
+
+export type saveProductArray = z.infer<typeof saveProductsArraySchema>;
+export type saveProductArrayKeys = keyof saveProductArray;

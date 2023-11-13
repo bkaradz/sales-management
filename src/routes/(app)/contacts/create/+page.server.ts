@@ -4,8 +4,9 @@ import { createContext } from '$lib/trpc/context';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import parseCsv from '$lib/utility/parseCsv';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { saveContactsSchema } from '$lib/validation/contacts.zod';
+import { saveContactsArraySchema, saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
+import type { Contacts } from '$lib/server/drizzle/schema';
 
 export const load = (async (event) => {
 	return {};
@@ -34,7 +35,44 @@ export const actions: Actions = {
 
 		const contactsArray = (await parseCsv(csvString)) as any[]
 
-		return await router.createCaller(await createContext(event)).contacts.uploadContacts(contactsArray)
+		const contactsResultsArray: Contacts[] = []
+
+		contactsArray.forEach((customer) => {
+			let formResults = {}
+
+			if (customer?.full_name) formResults = { ...formResults, full_name: customer.full_name }
+			if (customer?.email) formResults = { ...formResults, email: normalizeEmail(customer.email as string) }
+			if (customer?.phone) formResults = { ...formResults, phone: normalizePhone(customer.phone as string) }
+			if (customer?.address) formResults = { ...formResults, address: normalizeAddress(customer.address as string) }
+			if (customer?.is_corporate) formResults = { ...formResults, is_corporate: customer.is_corporate }
+			if (customer?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: customer.vat_or_bp_number }
+
+			contactsResultsArray.push(formResults as Contacts)
+		})
+
+		try {
+
+			const parsedContact = saveContactsArraySchema.safeParse(contactsResultsArray);
+
+			if (!parsedContact.success) {
+
+				const errorMap = zodErrorMessagesMap(parsedContact);
+				return fail(400, {
+					message: 'Validation error',
+					errors: errorMap
+				})
+			}
+
+			return await router.createCaller(await createContext(event)).contacts.uploadContacts(parsedContact.data)
+
+		} catch (error) {
+			return fail(400, {
+				message: 'Could not register user',
+				errors: { error }
+			})
+		}
+
+
 
 	},
 
@@ -55,7 +93,7 @@ export const actions: Actions = {
 		if (formData?.email) formResults = { ...formResults, email: normalizeEmail(formData.email as string) }
 		if (formData?.phone) formResults = { ...formResults, phone: normalizePhone(formData.phone as string) }
 		if (formData?.address) formResults = { ...formResults, address: normalizeAddress(formData.address as string) }
-		if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate }
+		if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
 		if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
 
 		try {

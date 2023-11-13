@@ -32,6 +32,7 @@ export const actions: Actions = {
      
 		let formResults = {}
 
+		if (formData?.id) formResults = { ...formResults, id: +formData.id }
 		if (formData?.stitches) formResults = { ...formResults, stitches: +formData.stitches }
 		if (formData?.description) formResults = { ...formResults, description: formData.description }
 		if (formData?.quantity) formResults = { ...formResults, quantity: +formData.quantity }

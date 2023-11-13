@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Golf Shirts' | 'Round Neck' | 'Work Suit' | 'Cap' | 'Other'
+export type ProductCategories = 'Embroidery' | 'Threads' | 'Needles' | 'Backing' | 'Prewound Bobbin' | 'Bobbin Case' | 'Trimmers' | 'Golf Shirts' | 'Round Neck' | 'Work Suit' | 'Cap' | 'Other'
 export type PaymentMethod = 'Cash USD' | 'Cash Rand' | 'Cash Pula' | 'Cash Bonds' | 'Ecocash' | 'Swipe' | 'Banc ABC' | 'Stewart Bank'
 export type ProductionStatus = 'Origination'  | 'Received' | 'Embroidery' | 'Trimming' | 'Collected'
 export type SalesStatus = 'Quotation' | 'Sales Order' | 'Invoice' | 'Receipt' | 'Cancelled'

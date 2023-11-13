@@ -7,6 +7,7 @@ export const productCategories: ProductCategories[] = [
   'Needles',
   'Backing',
   'Prewound Bobbin',
+  'Trimmers',
   'Bobbin Case',
   'Golf Shirts',
   'Round Neck',

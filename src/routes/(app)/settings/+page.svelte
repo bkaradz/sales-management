@@ -38,12 +38,4 @@ on:click={() =>	toasts.add({
   Toast Warning
 </button>
 
-{#if doubleClicked}
- <input 
- on:blur={() => doubleClicked = false}
- type="text" name="" id="">
-{:else}
-  <input 
-  on:dblclick={() => doubleClicked = true}
-  disabled type="text" name="" id="" value="1000">
-{/if}
+

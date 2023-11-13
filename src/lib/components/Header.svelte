@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { svgDropdown, svgExclamation, svgInfo, svgLogOut } from '$lib/assets/svgLogos';
+	import { svgDark, svgDropdown, svgExclamation, svgInfo, svgLight, svgLogOut } from '$lib/assets/svgLogos';
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
-	import { themeModeSelectedStore } from '$lib/stores/darkMod.store';
+	import { theme } from '$lib/stores/darkMod.store';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
 
 
@@ -96,10 +96,10 @@
 				{@html svgLogOut}
 			</button>
 		</form>
-		{#if $themeModeSelectedStore === 'dark'}
-			<button on:click={() => themeModeSelectedStore.add('light')}>{@html svgInfo}</button>
+		{#if $theme === 'dark'}
+			<button on:click={() => theme.add('light')}>{@html svgLight}</button>
 			{:else}
-			<button on:click={() => themeModeSelectedStore.add('dark')}>{@html svgExclamation}</button>
+			<button on:click={() => theme.add('dark')}>{@html svgDark}</button>
 		{/if}
 	</div>
 </div>

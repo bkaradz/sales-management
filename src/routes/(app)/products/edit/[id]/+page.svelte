@@ -75,7 +75,8 @@
 						<h4 class="mb-6 pb-1 text-xl font-semibold">Please Edit the Product</h4>
 					</div>
 
-					<form method="POST" action="?/create" use:enhance>
+					<form method="POST" action="?/update" use:enhance>
+						<input hidden type="number" name="id" id="id" value={data.results.product.id}>
 						<!--Product Name input-->
 						<div class="relative mb-4">
 							<input
