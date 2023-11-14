@@ -136,7 +136,6 @@
 			{:else}
 				{@html svgDark}
 			{/if}
-			
 		</button>
 	</div>
 </div>
