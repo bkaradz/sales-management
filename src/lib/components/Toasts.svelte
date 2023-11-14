@@ -6,7 +6,7 @@
 {#if $toasts.length}
 	<div>
 		{#each $toasts as { id, message, type } (id)}
-			<Toast {message} {type} {id} removeToast={toasts.remove} />
+			<Toast {message} {type} {id} />
 		{/each}
 	</div>
 {/if}

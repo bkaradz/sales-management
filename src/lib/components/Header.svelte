@@ -126,10 +126,17 @@
 				{@html svgLogOut}
 			</button>
 		</form>
-		{#if $userManuallyChangedTheme === 'dark'}
-			<button on:click={() => userManuallyChangedTheme.add('light')}>{@html svgLight}</button>
-		{:else}
-			<button on:click={() => userManuallyChangedTheme.add('dark')}>{@html svgDark}</button>
-		{/if}
+
+		<button
+			on:click={() =>
+				userManuallyChangedTheme.add($userManuallyChangedTheme === 'light' ? 'dark' : 'light')}
+		>
+			{#if $userManuallyChangedTheme === 'dark'}
+				{@html svgLight}
+			{:else}
+				{@html svgDark}
+			{/if}
+			
+		</button>
 	</div>
 </div>

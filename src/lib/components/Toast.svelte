@@ -6,32 +6,23 @@
 		svgShieldExclamation,
 		svgXSmall
 	} from '$lib/assets/svgLogos';
+	import { timeout, toasts } from '$lib/stores/toasts.store';
+	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	export let type: string;
 	export let message: string;
 	export let id: string;
-	export let removeToast: (id: string) => void;
 
-	let progress = 0;
-	let autoClose = 5000;
-	let visibleSince = new Date().getTime();
+	let progressMotionStapes = 100
 
-	let intervalId: number | undefined = <any>setInterval(() => {
-		const timeVisible = new Date().getTime() - visibleSince;
-		progress = timeVisible / autoClose;
-	}, 10);
+	let progress = 0
 
-	$: if (progress > 1) {
-		clearInterval(intervalId);
-		intervalId = undefined;
-		removeToast(id);
-	}
+	function updateTimer() {
+    progress = progress + 1/progressMotionStapes
+  }
 
-	const handleDelete = () => {
-		clearInterval(intervalId);
-		intervalId = undefined;
-		removeToast(id);
-	};
+	let interval = setInterval(updateTimer, timeout/progressMotionStapes);
+  $: if (progress === 1) clearInterval(interval);
 
 	let icon = `${svgCheckCircle}`;
 	let style = 'bg-success';
@@ -48,6 +39,11 @@
 		icon = `${svgInfo}`;
 		style = 'bg-info';
 	}
+
+	onDestroy(() => {
+    clearInterval(interval);
+  });
+
 </script>
 
 <!-- Info -->
@@ -67,11 +63,11 @@
 	</span>
 
 	<span class="mr-2 flex-none">
-		<button on:click={handleDelete}>
+		<button on:click={() => toasts.remove(id)}>
 			{@html svgXSmall}
 		</button>
 	</span>
-</div>
+</div>0
 
 <!-- Warning -->
 <style lang="postcss">
