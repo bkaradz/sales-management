@@ -182,7 +182,6 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 };
 
 export const updateContact = async (input: SaveContacts & { id: number }, ctx: Context) => {
-console.log("🚀 ~ file: contacts.drizzle.ts:185 ~ updateContact ~ input:", input)
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');

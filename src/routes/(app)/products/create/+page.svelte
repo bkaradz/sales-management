@@ -32,7 +32,6 @@
 	export let form;
 	
 	$: if (form?.success) {
-		invalidateAll();
 		enteredAmountStore.reset()
 		selectedProductCategoryStore.reset()
 		toasts.add({

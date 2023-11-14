@@ -37,9 +37,9 @@ export const actions: Actions = {
 
 		const productsArray = (await parseCsv(csvString)) as any[]
 
-		
-		let productsResultsArray: Products[]= []
-		
+
+		let productsResultsArray: Products[] = []
+
 
 		productsArray.forEach((product: any) => {
 			let formResults = {}
@@ -51,7 +51,7 @@ export const actions: Actions = {
 			if (product?.name) formResults = { ...formResults, name: product.name }
 			if (product?.unit_price) {
 				const unitPrice = dollars(+product.unit_price * 1000)
-	
+
 				if (greaterThan(unitPrice, dollars(0))) {
 					formResults = { ...formResults, unit_price: unitPrice.toJSON() }
 				}
@@ -61,12 +61,10 @@ export const actions: Actions = {
 
 		try {
 			const parsedProduct = saveProductsArraySchema.safeParse(productsResultsArray);
-			console.log("🚀 ~ file: +page.server.ts:64 ~ upload: ~ parsedProduct:", parsedProduct)
 
 			if (!parsedProduct.success) {
 
 				const errorMap = zodErrorMessagesMap(parsedProduct);
-				console.log("🚀 ~ file: +page.server.ts:68 ~ upload: ~ errorMap:", errorMap)
 				return fail(400, {
 					message: 'Validation error',
 					errors: errorMap
@@ -103,10 +101,10 @@ export const actions: Actions = {
 		if (formData?.product_category) formResults = { ...formResults, product_category: formData.product_category }
 		if (formData?.name) formResults = { ...formResults, name: formData.name }
 		if (formData?.unit_price) {
-			const unitPrice = JSON.parse(formData.unit_price as string) as DineroSnapshot<number>
+			const unitPrice = dollars(+formData.unit_price * 1000)
 
-			if (greaterThan(dinero(unitPrice), dollars(0))) {
-				formResults = { ...formResults, unit_price: unitPrice }
+			if (greaterThan(unitPrice, dollars(0))) {
+				formResults = { ...formResults, unit_price: unitPrice.toJSON() }
 			}
 		}
 

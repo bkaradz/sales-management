@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { svgDark, svgDropdown, svgExclamation, svgInfo, svgLight, svgLogOut } from '$lib/assets/svgLogos';
+	import {
+		svgDark,
+		svgDropdown,
+		svgExclamation,
+		svgInfo,
+		svgLight,
+		svgLogOut
+	} from '$lib/assets/svgLogos';
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
-	import { theme } from '$lib/stores/darkMod.store';
+	import { userManuallyChangedTheme, type StoredTheme } from '$lib/stores/darkMod.store';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
-
+	import { onMount } from 'svelte';
 
 	type User = {
 		id: string;
@@ -19,6 +26,17 @@
 
 	const changeTab = (tabElement: TabElement, url: string) => {
 		menuTabsList.changeSelected({ url, tabElement });
+	};
+
+	onMount(() => {
+		let userPrefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+		setTheme(userPrefersDarkMode ? 'dark' : 'light');
+	});
+
+	const setTheme = (theme: StoredTheme) => {
+		document.documentElement.dataset.theme = theme;
+		document.cookie = `siteTheme=${theme};max-age=31536000;path="/"`;
 	};
 </script>
 
@@ -68,13 +86,25 @@
 			</ul>
 		</div>
 
-		<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400">Deposit</button>
+		<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400"
+			>Deposit</button
+		>
 
 		<div class="dropdown dropdown-bottom dropdown-end">
 			<button tabindex="0" class="flex items-center">
 				<span class="relative flex-shrink-0">
 					<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-						<svg class="absolute w-9 h-9 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+						<svg
+							class="absolute w-9 h-9 text-gray-400 -left-1"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg"
+							><path
+								fill-rule="evenodd"
+								d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+								clip-rule="evenodd"
+							/></svg
+						>
 					</div>
 					<span
 						class="absolute right-0 -mb-0.5 bottom-0 w-2 h-2 rounded-full bg-green-500 border border-white dark:border-gray-900"
@@ -96,10 +126,10 @@
 				{@html svgLogOut}
 			</button>
 		</form>
-		{#if $theme === 'dark'}
-			<button on:click={() => theme.add('light')}>{@html svgLight}</button>
-			{:else}
-			<button on:click={() => theme.add('dark')}>{@html svgDark}</button>
+		{#if $userManuallyChangedTheme === 'dark'}
+			<button on:click={() => userManuallyChangedTheme.add('light')}>{@html svgLight}</button>
+		{:else}
+			<button on:click={() => userManuallyChangedTheme.add('dark')}>{@html svgDark}</button>
 		{/if}
 	</div>
 </div>

@@ -58,12 +58,10 @@ export const actions: Actions = {
         try {
 
 			const parsedContact = updateContactsSchema.safeParse(formResults);
-			console.log("🚀 ~ file: +page.server.ts:60 ~ update: ~ parsedContact:", parsedContact)
 
 			if (!parsedContact.success) {
 
 				const errorMap = zodErrorMessagesMap(parsedContact);
-				console.log("🚀 ~ file: +page.server.ts:64 ~ update: ~ errorMap:", errorMap)
 				return fail(400, {
 					message: 'Validation error',
 					errors: errorMap
