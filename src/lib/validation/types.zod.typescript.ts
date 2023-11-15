@@ -11,7 +11,7 @@ export type GarmentPlacement = 'Front Left' | 'Front Right' | 'Upper Back' | 'Lo
 export type EmbroideryType = 'Flat' | 'Cap' | 'Applique' | 'Name Tag'
 
 export const ProductCategoriesZod = z.enum([
-  'Embroidery', 'Threads', 'Needles', 'Backing', 'Prewound Bobbin', 'Bobbin Case', 'Golf Shirts', 'Round Neck', 'Work Suit', 'Cap', 'Other'
+  'Embroidery', 'Threads', 'Needles', 'Backing', 'Prewound Bobbin', 'Bobbin Case', 'Trimmers', 'Golf Shirts', 'Round Neck', 'Work Suit', 'Cap', 'Other'
 ], { required_error: 'Product Category is required', invalid_type_error: 'Select front the list' })
 export const PaymentMethodZod = z.enum([
   'Cash USD', 'Cash Rand', 'Cash Pula', 'Cash Bonds', 'Ecocash', 'Swipe', 'Banc ABC', 'Stewart Bank'

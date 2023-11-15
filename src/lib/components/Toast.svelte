@@ -67,7 +67,7 @@
 			{@html svgXSmall}
 		</button>
 	</span>
-</div>0
+</div>
 
 <!-- Warning -->
 <style lang="postcss">

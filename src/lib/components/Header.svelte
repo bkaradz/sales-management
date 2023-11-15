@@ -1,17 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import {
-		svgDark,
-		svgDropdown,
-		svgExclamation,
-		svgInfo,
-		svgLight,
-		svgLogOut
-	} from '$lib/assets/svgLogos';
+	import { svgDark, svgDropdown, svgLight, svgLogOut } from '$lib/assets/svgLogos';
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
-	import { userManuallyChangedTheme, type StoredTheme } from '$lib/stores/darkMod.store';
+	import { userManuallyChangedTheme } from '$lib/stores/darkMod.store';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
-	import { onMount } from 'svelte';
 
 	type User = {
 		id: string;
@@ -28,16 +20,6 @@
 		menuTabsList.changeSelected({ url, tabElement });
 	};
 
-	onMount(() => {
-		let userPrefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-		setTheme(userPrefersDarkMode ? 'dark' : 'light');
-	});
-
-	const setTheme = (theme: StoredTheme) => {
-		document.documentElement.dataset.theme = theme;
-		document.cookie = `siteTheme=${theme};max-age=31536000;path="/"`;
-	};
 </script>
 
 <div
@@ -127,15 +109,14 @@
 			</button>
 		</form>
 
-		<button
-			on:click={() =>
-				userManuallyChangedTheme.add($userManuallyChangedTheme === 'light' ? 'dark' : 'light')}
-		>
-			{#if $userManuallyChangedTheme === 'dark'}
+		{#if $userManuallyChangedTheme === 'dark'}
+			<button on:click={() => userManuallyChangedTheme.add('light')}>
 				{@html svgLight}
+			</button>
 			{:else}
+			<button on:click={() => userManuallyChangedTheme.add('dark')}>
 				{@html svgDark}
-			{/if}
-		</button>
+			</button>
+		{/if}
 	</div>
 </div>
