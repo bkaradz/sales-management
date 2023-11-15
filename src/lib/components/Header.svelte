@@ -20,6 +20,16 @@
 		menuTabsList.changeSelected({ url, tabElement });
 	};
 
+	const changeTheme = (theme: 'dark' | 'light') => {
+		userManuallyChangedTheme.add('dark');
+		if (theme === 'dark') {
+			document.documentElement.classList.remove('light');
+			document.documentElement.classList.add('dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+			document.documentElement.classList.add('light');
+		}
+	};
 </script>
 
 <div
@@ -110,11 +120,11 @@
 		</form>
 
 		{#if $userManuallyChangedTheme === 'dark'}
-			<button on:click={() => userManuallyChangedTheme.add('light')}>
+			<button on:click={() => changeTheme('light')}>
 				{@html svgLight}
 			</button>
-			{:else}
-			<button on:click={() => userManuallyChangedTheme.add('dark')}>
+		{:else}
+			<button on:click={() => changeTheme('dark')}>
 				{@html svgDark}
 			</button>
 		{/if}
