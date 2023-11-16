@@ -1,11 +1,11 @@
-FROM node:16.19.0-alpine3.16 AS builder
+FROM node:lts-slime AS builder
 WORKDIR /app
 COPY package.json ./
 RUN pnpm install
 COPY . .
 RUN  pnpm run build --target=production
 
-FROM node:16.19.0-alpine3.16 AS production
+FROM node:lts-slime AS production
 USER node:node
 WORKDIR /app
 COPY --from=builder --chown=node:node /app/build ./build
