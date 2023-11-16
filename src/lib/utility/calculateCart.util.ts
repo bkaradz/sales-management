@@ -2,7 +2,7 @@ import type { Products } from "$lib/server/drizzle/schema"
 import { dinero, multiply, maximum, add, toDecimal, subtract } from "dinero.js";
 import type { Dinero, Currency } from "dinero.js";
 import type { PricelistToMap } from "./monetary.util";
-import type { EmbroideryType } from "$lib/validation/types.zod.typescript";
+import type { EmbroideryTypeUnion } from "./lists.utility";
 
 
 export const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
@@ -18,7 +18,7 @@ export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduc
  * Function to get pricelist for a given Quantity and Embroidery Type
  */
 
-export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryType) => {
+export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryTypeUnion) => {
   if (!pricelist) throw new Error("Pricelist is required");
   if (!quantity) throw new Error("Quantity is required");
   if (!embroideryType) throw new Error("Embroidery Type is required");
@@ -41,7 +41,7 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroi
 // check that the product_category is Embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
-export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryType = 'Flat') => {
+export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryTypeUnion = 'Flat') => {
 
   if (!embroideryType) {
     embroideryType = 'Flat'

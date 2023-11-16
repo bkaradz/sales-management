@@ -21,7 +21,6 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import { DateInput } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
-	import type { EmbroideryType, GarmentPlacement, SalesStatus } from '$lib/validation/types.zod.typescript';
 	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
 
 	export let data: PageData;

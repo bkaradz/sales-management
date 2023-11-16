@@ -2,7 +2,7 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { PaymentStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
+import type { PaymentStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 
 export const load = (async (event) => {
 
@@ -36,7 +36,7 @@ export const actions: Actions = {
 			}
 
 			const data = await event.request.formData();
-			const formData = Object.fromEntries(data) as {id: string, payment_status: PaymentStatus, sales_status: SalesStatus}
+			const formData = Object.fromEntries(data) as {id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion}
 
 			return await router.createCaller(await createContext(event)).orders.deleteById({...formData, id: +formData.id})
 	},
@@ -49,7 +49,7 @@ export const actions: Actions = {
 			}
 
 			const data = await event.request.formData();
-			const formData = Object.fromEntries(data) as {id: string, sales_status: SalesStatus, payment_status: PaymentStatus}
+			const formData = Object.fromEntries(data) as {id: string, sales_status: SalesStatusUnion, payment_status: PaymentStatusUnion}
 
 			return await router.createCaller(await createContext(event)).orders.changeSalesStatusById({...formData, id: +formData.id})
 	}

@@ -22,7 +22,6 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
-	import type { EmbroideryType, GarmentPlacement, SalesStatus } from '$lib/validation/types.zod.typescript';
 	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
 
 	export let data: PageData;

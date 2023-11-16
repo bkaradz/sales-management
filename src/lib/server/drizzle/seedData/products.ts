@@ -1,6 +1,6 @@
-import type { ProductCategories } from "$lib/validation/types.zod.typescript";
+import type { ProductCategoriesUnion } from '$lib/utility/lists.utility';
 
-export const productsList: {name: string, active: boolean, stitches: number, product_category: ProductCategories}[] = [
+export const productsList: {name: string, active: boolean, stitches: number, product_category: ProductCategoriesUnion}[] = [
 	{
 		name: 'IDENTITY & ACCESS STUDIO.dst',
 		product_category: 'Embroidery',

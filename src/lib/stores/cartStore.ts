@@ -2,7 +2,7 @@ import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/sche
 import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
-import type { EmbroideryType, GarmentPlacement, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
+import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 import { multiply, type Dinero, toSnapshot, type DineroSnapshot, dinero } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
@@ -81,14 +81,14 @@ function cart() {
 				return productMap
 			})
 		},
-		changeEmbType: ({ id, type }: { id: number, type: EmbroideryType }) => {
+		changeEmbType: ({ id, type }: { id: number, type: EmbroideryTypeUnion }) => {
 			update((productMap) => {
 				const productGet = productMap.get(id) as Products
 				productGet.embroidery_type = type
 				return productMap
 			})
 		},
-		changeGarmentPosition: ({ id, type }: { id: number, type: GarmentPlacement }) => {
+		changeGarmentPosition: ({ id, type }: { id: number, type: GarmentPlacementUnion }) => {
 			update((productMap) => {
 				const productGet = productMap.get(id) as Products
 				productGet.garment_placement = type
@@ -137,11 +137,11 @@ function doubleClickSelect() {
 export const doubleClickSelectStore = doubleClickSelect();
 
 function salesStatusSelected() {
-	const { subscribe, set, update } = writable<SalesStatus>('Quotation');
+	const { subscribe, set, update } = writable<SalesStatusUnion>('Quotation');
 
 	return {
 		subscribe,
-		add: (orderType: SalesStatus | undefined) => {
+		add: (orderType: SalesStatusUnion | undefined) => {
 			if (orderType) {
 				if (orderType) {
 					update(() => orderType)
@@ -155,11 +155,11 @@ function salesStatusSelected() {
 export const salesStatusSelectedStore = salesStatusSelected();
 
 function paymentStatusSelected() {
-	const { subscribe, set, update } = writable<PaymentStatus>('Awaiting Sales Order');
+	const { subscribe, set, update } = writable<PaymentStatusUnion>('Awaiting Sales Order');
 
 	return {
 		subscribe,
-		add: (paymentStatus: PaymentStatus | undefined) => {
+		add: (paymentStatus: PaymentStatusUnion | undefined) => {
 			if (paymentStatus) {
 				if (paymentStatus) {
 					update(() => paymentStatus)
@@ -173,11 +173,11 @@ function paymentStatusSelected() {
 export const paymentStatusSelectedStore = paymentStatusSelected();
 
 function productionStatusSelected() {
-	const { subscribe, set, update } = writable<ProductionStatus>('Received');
+	const { subscribe, set, update } = writable<ProductionStatusUnion>('Received');
 
 	return {
 		subscribe,
-		add: (orderType: ProductionStatus | undefined) => {
+		add: (orderType: ProductionStatusUnion | undefined) => {
 			if (orderType) {
 				if (orderType) {
 					update(() => orderType)
@@ -250,7 +250,7 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 	const cartResults = new Map<number, CalcPriceReturn>()
 
 	$cartStore.forEach((value, key) => {
-		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as EmbroideryType)
+		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as EmbroideryTypeUnion)
 		cartResults.set(value.id, results)
 	})
 
@@ -281,11 +281,11 @@ export const cartTotalsStore = derived([cartPricesStore, vatStore], ([$cartPrice
 })
 
 function selectedProductCategory() {
-	const { subscribe, set, update } = writable<ProductCategories>('Embroidery');
+	const { subscribe, set, update } = writable<ProductCategoriesUnion>('Embroidery');
 
 	return {
 		subscribe,
-		add: (productCategory: ProductCategories) => {
+		add: (productCategory: ProductCategoriesUnion) => {
 			if (productCategory) {
 				if (productCategory) {
 					update(() => productCategory)

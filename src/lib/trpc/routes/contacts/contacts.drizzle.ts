@@ -152,20 +152,27 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 
 	try {
 
-		const contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, vat_or_bp_number: input.vat_or_bp_number, full_name: input.full_name, active: true, is_corporate: (input?.is_corporate == 'on' ? true : false), }).returning({ id: contacts.id });
+		let contactResult: {id: number}[]
 
-		if (input?.phone) {
-			input.phone.forEach(async (item: string) => {
-				await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
-			})
+		{
+			const { email, phone, address, ...rest } = input
 
+			contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
+	
+			if (phone) {
+				phone.forEach(async (item: string) => {
+					await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+				})
+	
+			}
+	
+			if (email) {
+				email.forEach(async (item: string) => {
+					await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+				})
+			}
 		}
 
-		if (input?.email) {
-			input.email.forEach(async (item: string) => {
-				await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
-			})
-		}
 
 		if (input?.address) {
 			input.address.forEach(async (item: string) => {

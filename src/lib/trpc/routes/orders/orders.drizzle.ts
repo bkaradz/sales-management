@@ -13,7 +13,7 @@ import { getById as getPricelistById } from "../pricelist/pricelists.drizzle";
 import { getById as getContactById } from "../contacts/contacts.drizzle";
 import { getById as getExchangeRateById } from "../exchangeRates/rates.drizzle";
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';
-import type { PaymentStatus, ProductionStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
+import type { PaymentStatusUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 
 export const getOrders = async (input: SearchParams, ctx: Context) => {
 
@@ -447,7 +447,7 @@ export const createOrder = async (input: OrderInput, ctx: Context) => {
      * TODO: calculate first before saving
      */
 
-    let paymentStatus: PaymentStatus = 'Awaiting Sales Order'
+    let paymentStatus: PaymentStatusUnion = 'Awaiting Sales Order'
 
     if (!(input.order.sales_status === 'Quotation')) {
       paymentStatus = 'Awaiting Payment'
@@ -476,7 +476,7 @@ export const createOrder = async (input: OrderInput, ctx: Context) => {
 
 };
 
-export const deleteById = async (input: { id: number, payment_status: PaymentStatus, sales_status: SalesStatus }, ctx: Context) => {
+export const deleteById = async (input: { id: number, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
@@ -485,7 +485,7 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
   try {
     if (input.sales_status === 'Cancelled') throw new Error("The order was Cancelled");
 
-    let paymentStatus: PaymentStatus = 'Cancelled'
+    let paymentStatus: PaymentStatusUnion = 'Cancelled'
 
     if (input.payment_status === 'Paid') {
       paymentStatus = 'Refunded'
@@ -531,9 +531,9 @@ export const changeSalesStatusById = async (input: { id: number, sales_status: s
 
   try {
 
-    const salesStatus = input.sales_status as SalesStatus
+    const salesStatus = input.sales_status as SalesStatusUnion
 
-    let paymentStatus: PaymentStatus = 'Awaiting Sales Order'
+    let paymentStatus: PaymentStatusUnion = 'Awaiting Sales Order'
 
     if (!(input.sales_status === 'Quotation')) {
       paymentStatus = 'Awaiting Payment'
@@ -559,7 +559,7 @@ export const changeSalesStatusById = async (input: { id: number, sales_status: s
   }
 };
 
-export const changeProductionStatusById = async (input: { id: number, sales_status: string, payment_status: PaymentStatus, production_status: ProductionStatus }, ctx: Context) => {
+export const changeProductionStatusById = async (input: { id: number, sales_status: string, payment_status: PaymentStatusUnion, production_status: ProductionStatusUnion }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');

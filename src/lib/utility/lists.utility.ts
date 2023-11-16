@@ -1,7 +1,4 @@
-import type { EmbroideryType, GarmentPlacement, PaymentMethod, ProductCategories, ProductionStatus, SalesStatus } from "$lib/validation/types.zod.typescript";
-
-
-export const productCategories: ProductCategories[] = [
+export const productCategories = [
   'Embroidery',
   'Threads',
   'Needles',
@@ -14,9 +11,11 @@ export const productCategories: ProductCategories[] = [
   'Work Suit',
   'Cap',
   'Other'
-];
+] as const;
 
-export const garmentPlacement: GarmentPlacement[] = [
+export type ProductCategoriesUnion = typeof productCategories[number];
+
+export const garmentPlacement = [
   'Front Left',
   'Front Right',
   'Upper Back',
@@ -33,13 +32,19 @@ export const garmentPlacement: GarmentPlacement[] = [
   'Trouser Back Right',
   'Name Tag',
   'Marked Position'
-];
+] as const;
 
-export const embroideryType: EmbroideryType[] = ['Flat', 'Cap', 'Applique', 'Name Tag'];
+export type GarmentPlacementUnion = typeof garmentPlacement[number];
 
-export const salesStatus: SalesStatus[] = ['Quotation', 'Sales Order', 'Invoice', 'Receipt'];
+export const embroideryType = ['Flat', 'Cap', 'Applique', 'Name Tag'] as const;
 
-export const paymentMethod: PaymentMethod[] = [
+export type EmbroideryTypeUnion = typeof embroideryType[number];
+
+export const salesStatus = ['Quotation', 'Sales Order', 'Invoice', 'Receipt', 'Cancelled'] as const;
+
+export type SalesStatusUnion = typeof salesStatus[number];
+
+export const paymentMethod = [
   'Cash USD',
   'Cash Rand',
   'Cash Pula',
@@ -48,8 +53,19 @@ export const paymentMethod: PaymentMethod[] = [
   'Swipe',
   'Banc ABC',
   'Stewart Bank'
-];
+] as const;
 
-export const productionStatus: ProductionStatus[] = [
+export type PaymentMethodUnion = typeof paymentMethod[number]
+
+
+export const paymentStatus = [
+  'Awaiting Payment', 'Paid', 'Cancelled', 'Refunded', 'Awaiting Sales Order'
+] as const;
+
+export type PaymentStatusUnion = typeof paymentStatus[number]
+
+export const productionStatus = [
   'Origination', 'Received', 'Embroidery', 'Trimming', 'Collected'
-];
+] as const;
+
+export type ProductionStatusUnion = typeof productionStatus[number]

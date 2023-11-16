@@ -1,4 +1,4 @@
-import type { EmbroideryType, GarmentPlacement, PaymentMethod, PaymentStatus, ProductCategories, ProductionStatus, SalesStatus } from "$lib/validation/types.zod.typescript";
+import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentMethodUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 import type { DineroSnapshot, Rates, Currency } from "dinero.js";
 import { toSnapshot, dinero, } from "dinero.js";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
@@ -119,12 +119,12 @@ export const products = pgTable('products', {
   user_id: text('user_id').notNull().references(() => users.id),
   name: text('name').notNull().unique(),
   description: text('description'),
-  product_category: text('product_category').$type<ProductCategories>().notNull().default('Embroidery'),
+  product_category: text('product_category').$type<ProductCategoriesUnion>().notNull().default('Embroidery'),
   unit_price: json('unit_price').$type<DineroSnapshot<number>>(),
   stitches: integer('stitches'),
   quantity: integer('quantity'),
-  embroidery_type: text('embroidery_type').$type<EmbroideryType>(),
-  garment_placement: text('garment_placement').$type<GarmentPlacement>(),
+  embroidery_type: text('embroidery_type').$type<EmbroideryTypeUnion>(),
+  garment_placement: text('garment_placement').$type<GarmentPlacementUnion>(),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
@@ -159,7 +159,7 @@ export const pricelist_details = pgTable('pricelist_details', {
   minimum_price: json('minimum_price').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   price_per_thousand_stitches: json('price_per_thousand_stitches').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
   minimum_quantity: integer("minimum_quantity").default(0).notNull(),
-  embroidery_types: text('embroidery_types').$type<EmbroideryType>().notNull(),
+  embroidery_types: text('embroidery_types').$type<EmbroideryTypeUnion>().notNull(),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
 })
 
@@ -206,8 +206,8 @@ export const orders = pgTable('orders', {
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
-  sales_status: text('sales_status').$type<SalesStatus>().notNull().default('Quotation'),
-  payment_status: text('payment_status').$type<PaymentStatus>().notNull().default('Awaiting Sales Order'),
+  sales_status: text('sales_status').$type<SalesStatusUnion>().notNull().default('Quotation'),
+  payment_status: text('payment_status').$type<PaymentStatusUnion>().notNull().default('Awaiting Sales Order'),
   sales_amount: json('sales_amount').notNull().$type<DineroSnapshot<number>>(),
   total_products: integer('total_products').notNull(),
   description: text('description'),
@@ -232,9 +232,9 @@ export const orders_details = pgTable('orders_details', {
   stitches: integer('stitches'),
   active: boolean('active').notNull().default(true),
   quantity: integer('quantity').notNull(),
-  embroidery_type: text('embroidery_type').$type<EmbroideryType>(),
-  garment_placement: text('garment_placement').$type<GarmentPlacement>(),
-  production_status: text('production_status').$type<ProductionStatus>().notNull().default('Received'),
+  embroidery_type: text('embroidery_type').$type<EmbroideryTypeUnion>(),
+  garment_placement: text('garment_placement').$type<GarmentPlacementUnion>(),
+  production_status: text('production_status').$type<ProductionStatusUnion>().notNull().default('Received'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
@@ -267,7 +267,7 @@ export const transactions = pgTable('transactions', {
   user_id: text('user_id').notNull().references(() => users.id),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   amount_tendered: json('amount_tendered').notNull().$type<DineroSnapshot<number>>(),
-  payment_method: text('payment_method').$type<PaymentMethod>().notNull(),
+  payment_method: text('payment_method').$type<PaymentMethodUnion>().notNull(),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()

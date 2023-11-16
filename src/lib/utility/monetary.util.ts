@@ -1,6 +1,6 @@
 import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } from "$lib/server/drizzle/schema"
-import type { EmbroideryType } from "$lib/validation/types.zod.typescript"
 import sortBy from "lodash-es/sortBy"
+import type { EmbroideryTypeUnion } from "./lists.utility"
 
 export type ExchangeRateCombinedArray = { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }
 
@@ -26,7 +26,7 @@ export type ExchangeRateToMap = ReturnType<typeof exchangeRateToMapObj>
 
 export const pricelistToMapObj = (list: { pricelist: Pricelist, pricelist_details: PricelistDetails[] }) => {
 
-  const pricelist_details = new Map<EmbroideryType, PricelistDetails[]>()
+  const pricelist_details = new Map<EmbroideryTypeUnion, PricelistDetails[]>()
 
   list.pricelist_details.forEach((item) => {
 

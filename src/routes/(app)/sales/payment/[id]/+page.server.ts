@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 import type { DineroSnapshot } from 'dinero.js';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { savePaymentSchema } from '$lib/validation/payment.zod';
-import type { PaymentMethod } from '$lib/validation/types.zod.typescript';
+import type { PaymentMethodUnion } from '$lib/utility/lists.utility';
 
 export const load = (async (event) => {
 
@@ -38,7 +38,7 @@ export type transactionInput = {
     amount_tendered: DineroSnapshot<number>,
     selected_orders_total: DineroSnapshot<number>,
     selected_orders_ids: number[],
-    payment_method: PaymentMethod,
+    payment_method: PaymentMethodUnion,
     customer_id: number
 }
 
@@ -66,7 +66,7 @@ export const actions: Actions = {
             amount_tendered: JSON.parse(formData.amount_tendered),
             selected_orders_total: JSON.parse(formData.selected_orders_total),
             selected_orders_ids: JSON.parse(formData.selected_orders_ids),
-            payment_method: formData.payment_method as PaymentMethod,
+            payment_method: formData.payment_method as PaymentMethodUnion,
             customer_id: +formData.customer_id
         }
 

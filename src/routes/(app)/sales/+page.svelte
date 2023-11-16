@@ -24,14 +24,13 @@
 		salesStatusSelectedStore,
 		selectedRateStore
 	} from '$lib/stores/cartStore';
-	import type { PaymentStatus, SalesStatus } from '$lib/validation/types.zod.typescript';
-	import { salesStatus } from '$lib/utility/lists.utility';
+	import { salesStatus, type PaymentStatusUnion, type SalesStatusUnion } from '$lib/utility/lists.utility';
 
 	export let data: PageData;
 	
 	let checkedMap = new Map<number, boolean>();
 
-	const changeSelection = (event: any, id: number, salesStatus: SalesStatus, paymentStatus: PaymentStatus) => {
+	const changeSelection = (event: any, id: number, salesStatus: SalesStatusUnion, paymentStatus: PaymentStatusUnion) => {
 		checkedMap = new Map();
 		checkedMap.set(id, true);
 		checkedMap = checkedMap;
@@ -42,7 +41,7 @@
 		}
 	};
 
-	export const SalesStatusProgress: { number: number; status: SalesStatus }[] = salesStatus.map((status, index) => {
+	export const SalesStatusProgress: { number: number; status: SalesStatusUnion }[] = salesStatus.map((status, index) => {
 		return { number: index + 1, status: status }
 	})
 	

@@ -1,6 +1,6 @@
 import type { Contacts, Orders } from '$lib/server/drizzle/schema';
 import { addMany, dollars, subtractMany } from '$lib/utility/calculateCart.util';
-import type { PaymentMethod } from '$lib/validation/types.zod.typescript';
+import type { PaymentMethodUnion } from '$lib/utility/lists.utility';
 import { dinero, toSnapshot } from 'dinero.js';
 import { writable, derived } from 'svelte/store';
 
@@ -80,11 +80,11 @@ export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, 
 })
 
 function paymentMethodSelected() {
-	const { subscribe, set, update } = writable<PaymentMethod>('Cash USD');
+	const { subscribe, set, update } = writable<PaymentMethodUnion>('Cash USD');
 
 	return {
 		subscribe,
-		add: (paymentMethod: PaymentMethod | undefined) => {
+		add: (paymentMethod: PaymentMethodUnion | undefined) => {
 			if (paymentMethod) {
 				if (paymentMethod) {
 					update(() => paymentMethod)
