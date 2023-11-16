@@ -101,7 +101,7 @@ export const actions: Actions = {
 		if (formData?.product_category) formResults = { ...formResults, product_category: formData.product_category }
 		if (formData?.name) formResults = { ...formResults, name: formData.name }
 		if (formData?.unit_price) {
-			const unitPrice = dollars(+formData.unit_price * 1000)
+			const unitPrice = dinero(JSON.parse(formData.unit_price as string))
 
 			if (greaterThan(unitPrice, dollars(0))) {
 				formResults = { ...formResults, unit_price: unitPrice.toJSON() }

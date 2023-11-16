@@ -6,7 +6,7 @@ import { db } from '$lib/server/drizzle/client';
 import { products } from '$lib/server/drizzle/schema';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
-import type { UpdateProducts, saveProduct, saveProductArray } from '$lib/validation/product.zod';
+import type { saveProduct, saveProductArray } from '$lib/validation/product.zod';
 
 export const getProducts = async (input: SearchParams, ctx: Context) => {
 
@@ -122,7 +122,7 @@ export const createProduct = async (input: saveProduct, ctx: Context) => {
 
 };
 
-export const updateProduct = async (input: UpdateProducts, ctx: Context) => {
+export const updateProduct = async (input: any, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
