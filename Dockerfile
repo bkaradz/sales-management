@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # FROM node:20-slim AS builder
 # RUN npm i -g pnpm
 
@@ -68,6 +69,9 @@
 
 
 FROM node:16.19.0-alpine3.16 AS builder
+=======
+FROM node:lts-slime AS builder
+>>>>>>> 94dc273d80f94eb7441dc085744fcd2cd03fd632
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -75,7 +79,11 @@ COPY . .
 RUN npm run build
 RUN npm ci --prod
 
+<<<<<<< HEAD
 FROM node:16.19.0-alpine3.16
+=======
+FROM node:lts-slime AS production
+>>>>>>> 94dc273d80f94eb7441dc085744fcd2cd03fd632
 USER node:node
 WORKDIR /app
 COPY --from=builder --chown=node:node /app/build ./build
