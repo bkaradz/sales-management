@@ -35,8 +35,7 @@ export const svgFolder = `<svg viewBox="0 0 24 24" class="h-5" stroke="currentCo
 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="12" y1="11" x2="12" y2="17"></line><line x1="9" y1="14" x2="15" y2="14"></line>
 </svg>`;
 
-export const svgDashboard = `<svg viewBox="0 0 24 24" class="h-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
+export const svgDashboard = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 16V4H3v12h18m0-14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-7v2h2v2H8v-2h2v-2H3a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2h18M5 6h9v5H5V6m10 0h4v2h-4V6m4 3v5h-4V9h4M5 12h4v2H5v-2m5 0h4v2h-4v-2Z"/>
 </svg>`;
 
 export const svgDropdown = `<svg viewBox="0 0 24 24" class="w-4 ml-1 flex-shrink-0" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -109,4 +108,7 @@ export const svgLight = `<svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 </svg>`;
 
 export const svgDark = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26a5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+</svg>`;
+
+export const svgReports = `<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048"><path fill="currentColor" d="M512 896h384v1152H512V896zm128 1024h128v-896H640v896zm384-768h384v896h-384v-896zm128 768h128v-640h-128v640zM0 1408h384v640H0v-640zm128 512h128v-384H128v384zM1536 640h384v1408h-384V640zm128 1280h128V768h-128v1152zM1389 621q19 41 19 83q0 40-15 75t-41 61t-61 41t-75 15q-40 0-75-15t-61-41t-41-61t-15-75v-12q0-6 1-12l-188-94q-26 26-61 40t-72 14q-42 0-83-19L365 877q19 41 19 83q0 40-15 75t-41 61t-61 41t-75 15q-40 0-75-15t-61-41t-41-61t-15-75q0-40 15-75t41-61t61-41t75-15q42 0 83 19l256-256q-19-41-19-83q0-40 15-75t41-61t61-41t75-15q40 0 75 15t61 41t41 61t15 75v12q0 6-1 12l188 94q26-26 61-40t72-14q42 0 83 19l256-256q-19-41-19-83q0-40 15-75t41-61t61-41t75-15q40 0 75 15t61 41t41 61t15 75q0 40-15 75t-41 61t-61 41t-75 15q-42 0-83-19l-256 256zM192 1024q26 0 45-19t19-45q0-26-19-45t-45-19q-26 0-45 19t-19 45q0 26 19 45t45 19zm1536-896q-26 0-45 19t-19 45q0 26 19 45t45 19q26 0 45-19t19-45q0-26-19-45t-45-19zM704 512q26 0 45-19t19-45q0-26-19-45t-45-19q-26 0-45 19t-19 45q0 26 19 45t45 19zm512 256q26 0 45-19t19-45q0-26-19-45t-45-19q-26 0-45 19t-19 45q0 26 19 45t45 19z"/>
 </svg>`;
