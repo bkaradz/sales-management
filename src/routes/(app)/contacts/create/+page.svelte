@@ -4,12 +4,10 @@
 	import { toasts } from '$lib/stores/toasts.store';
 	import type { ActionData } from './$types';
 
-	let corporate = false;
 	export let form: ActionData;
 
 	$: if (form?.success) {
 		invalidateAll();
-		corporate = false
 		toasts.add({
 			message: 'Contact created successfully',
 			type: 'success'
@@ -24,7 +22,6 @@
 			}
 		}
 	}
-
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
@@ -78,16 +75,11 @@
 					<!-- Corporate  -->
 					<div class=" mb-4 ml-3">
 						<label class="">
-							<input name="is_corporate" type="checkbox" bind:checked={corporate} />
-							{#if corporate}
-								<span class="text-neutral-500 ml-2"> Corporate </span>
-							{:else}
-								<span class="text-neutral-500 ml-2"> Individual </span>
-							{/if}
+							<input name="is_corporate" type="checkbox" />
+							<span class="text-neutral-500 ml-2"> Corporate </span>
 						</label>
 					</div>
 
-					{#if corporate}
 					<!--Vat No or Bp Number-->
 					<div class="relative mb-4">
 						<input
@@ -103,7 +95,6 @@
 							>Vat No or Bp Number
 						</label>
 					</div>
-					{/if}
 
 					<!--Email input-->
 					<div class="relative mb-4">
