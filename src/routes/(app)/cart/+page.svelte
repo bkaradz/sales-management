@@ -89,6 +89,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Cart</title>
+</svelte:head>
+
 <div class="flex-grow flex overflow-x-hidden">
 	<!-- Users Cards -->
 
@@ -125,7 +129,7 @@
 							class="flex xl:flex-row flex-col justify-between items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 						>
 							{user.full_name}
-							<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md ml-3">
+							<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md ml-3">
 								{user.id}
 							</span>
 						</div>

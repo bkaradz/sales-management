@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { svgCompLogo } from '$lib/assets/svgLogos';
 	import { anchorTagsList } from '$lib/stores/asideMenuList.store';

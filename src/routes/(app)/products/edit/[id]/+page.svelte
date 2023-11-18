@@ -56,6 +56,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Edit Product</title>
+</svelte:head>
+
 {#if data.results?.product}
 	<div class="flex-grow flex overflow-x-hidden">
 		<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">

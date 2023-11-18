@@ -45,6 +45,10 @@
 	
 </script>
 
+<svelte:head>
+	<title>Production</title>
+</svelte:head>
+
 <div class="flex-grow flex overflow-x-hidden">
 	{#if data.results?.orders}
 		<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
@@ -223,19 +227,19 @@
 									/>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 										{order.orders.id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{order.contacts?.full_name}
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 										{order.contacts?.id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{order.products.name}
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 										{order.products.id}
 									</span>
 								</td>
@@ -253,7 +257,7 @@
 									{order.orders_details.garment_placement}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-full">
+									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
 										{order.orders_details.production_status}
 									</span>
 								</td>

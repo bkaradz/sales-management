@@ -173,6 +173,9 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
   }
 };
 
+export type GetProductionOrders = Awaited<ReturnType<typeof getProductionOrders>>
+
+
 export const getOrdersByUserId = async (input: {
   limit?: number | undefined;
   page?: number | undefined;

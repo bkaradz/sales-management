@@ -4,6 +4,10 @@
 	import { deptColor, users } from '$lib/data/users';
 </script>
 
+<svelte:head>
+	<title>Dashboard</title>
+</svelte:head>
+
 <div class="flex-grow flex overflow-x-hidden">
 	<!-- Users Cards -->
 

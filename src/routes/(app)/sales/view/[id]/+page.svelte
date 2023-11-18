@@ -71,6 +71,10 @@
 	let deliveryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 </script>
 
+<svelte:head>
+	<title>View Sales</title>
+</svelte:head>
+
 <div class="flex-grow flex overflow-x-hidden">
 	<!-- User Table -->
 

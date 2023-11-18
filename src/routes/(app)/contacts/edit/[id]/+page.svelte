@@ -27,6 +27,10 @@
 
 </script>
 
+<svelte:head>
+	<title>Edit Contact</title>
+</svelte:head>
+
 <div class="flex-grow flex overflow-x-hidden">
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 		<div

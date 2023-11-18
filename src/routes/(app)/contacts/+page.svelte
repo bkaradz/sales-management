@@ -24,6 +24,10 @@
 
 </script>
 
+<svelte:head>
+	<title>Contacts</title>
+</svelte:head>
+
 <div class="flex-grow flex overflow-x-hidden">
 	{#if data.results?.contacts}
 		<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
@@ -147,7 +151,7 @@
 						{#each data.results?.contacts as contact (contact.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white text-white rounded-md">
 										{contact.id}
 									</span>
 								</td>

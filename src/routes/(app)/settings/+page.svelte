@@ -5,6 +5,10 @@
 	
 </script>
 
+<svelte:head>
+	<title>Settings</title>
+</svelte:head>
+
 <button class="btn bg-success ml-11 mb-3 w-64 border-none"
   on:click={() =>	toasts.add({
     message: 'Toast Success',

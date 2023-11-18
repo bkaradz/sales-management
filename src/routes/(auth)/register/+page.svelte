@@ -17,6 +17,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Register User</title>
+</svelte:head>
+
 <section
 	class="gradient-form bg-neutral-200 dark:bg-neutral-700 flex justify-center items-center h-screen"
 >

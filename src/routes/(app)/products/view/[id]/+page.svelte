@@ -22,6 +22,10 @@
 	export let data: PageData;
 </script>
 
+<svelte:head>
+	<title>View Product</title>
+</svelte:head>
+
 <div class="flex-grow flex overflow-x-hidden">
 	<!-- Users Cards -->
 	<div
@@ -252,7 +256,7 @@
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 											{ordersArray.orders.id}
 										</span>
 									</td>
@@ -264,28 +268,28 @@
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 											{ordersArray.orders.pricelist_id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 											{ordersArray.orders.exchange_rates_id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
-										<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 											{ordersArray.orders.sales_status}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
-										<span class="text-xs py-1 px-2 leading-none dark:bg-blue-500 rounded-md">
+										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 											{ordersArray.orders.payment_status}
 										</span>
 									</td>
