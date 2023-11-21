@@ -1,17 +1,9 @@
 <script lang="ts">
 	import small_logo from '$lib/assets/small_logo.png';
-	import { format } from '$lib/services/monetary';
-	import type { SaveOrder } from '$lib/validation/saveOrder.validate';
-	import { dinero, multiply, type Dinero } from 'dinero.js';
 
-	export let order: SaveOrder;
-	export let subTotal: Dinero<number>;
-	export let calculatedVat: Dinero<number>;
-	export let calculatedTotal: Dinero<number>;
-	export let vat: number;
 </script>
 
-<div id="receipt" class="receipt">
+<!-- <div id="receipt" class="receipt">
 	<div class="header flex flex-col">
 		<div class="flex justify-between items-center">
 			<div class="w-1/3">
@@ -113,4 +105,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->

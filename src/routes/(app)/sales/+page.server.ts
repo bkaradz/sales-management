@@ -8,6 +8,8 @@ export const load = (async (event) => {
 
 	let query = {}
 
+	console.log("object",  event.url.searchParams);
+
 	const limit = event.url.searchParams.get('limit')
 	if (limit) query = { ...query, limit: +limit }
 
