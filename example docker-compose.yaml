@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+    environment:
+    # change these as needed
+      - POSTGRES_DB=sales
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=example
+
+  pg-admin:
+  # can be used to backup your database
+    image: dpage/pgadmin4:7.8
+    restart: always
+    user: root
+    volumes:
+      - postgres_data:/var/lib/pgadmin
+    environment:
+     # change these as needed
+      - PGADMIN_DEFAULT_EMAIL=admin@email.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_PORT=8080
+
+    ports:
+     # change these as needed but must match PGADMIN_LISTEN_PORT
+      - "8080:8080"
+
+  webapp:
+    build: .
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
