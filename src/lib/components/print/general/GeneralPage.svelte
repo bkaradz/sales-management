@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 	import type { GetProductionOrders } from '$lib/trpc/routes/orders/orders.drizzle';
+	import type { GetSalesReports } from '$lib/trpc/routes/reports/reports.drizzle';
 	import { dollars, format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { dinero, multiply, toSnapshot } from 'dinero.js';
 
 	export let heading: string;
-	export let data: { results: GetProductionOrders };
+	export let data: { results: GetSalesReports };
 </script>
 
 <div class="page text-black">
@@ -39,6 +40,7 @@
 						<thead class="">
 							<tr class="border border-gray-200 bg-gray-100 text-white">
 								<th class="px-4 py-2 text-xs text-black text-left"> # </th>
+								<th class="px-4 py-2 text-xs text-black text-left"> Id </th>
 								<th class="px-4 py-2 text-xs text-black text-left"> Customer Name </th>
 								<th class="px-4 py-2 text-xs text-black text-left"> Product Name </th>
 								<th class="px-4 py-2 text-xs text-black text-left"> Product Category </th>
@@ -49,10 +51,11 @@
 							</tr>
 						</thead>
 						<tbody class="bg-white">
-							{#each data.results.orders as item (item.orders_details.id)}
+							{#each data.results.orders as item, index (item.orders_details.id)}
 								<tr
 									class="whitespace-no-wrap w-full border border-t-0 border-pickled-bluewood-300 font-normal even:bg-gray-50 odd:text-pickled-bluewood-900 even:text-pickled-bluewood-900"
 								>
+									<td class="px-4 py-2 text-xs text-black text-left">{index + 1}</td>
 									<td class="px-4 py-2 text-xs text-black text-left">{item.orders_details.id}</td>
 									<td class="px-4 py-2 text-xs text-black text-left">{item.contacts.full_name}</td>
 									<td class="px-4 py-2 text-xs text-black text-left">{item.products.name}</td>

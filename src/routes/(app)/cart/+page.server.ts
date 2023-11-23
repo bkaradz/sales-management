@@ -89,7 +89,7 @@ export const actions: Actions = {
                 exchange_rates_id: +formData.exchange_rates_id,
                 sales_status: formData.sales_status,
                 description: formData.description,
-                delivery_date: (new Date(formData.delivery_date)).toISOString(),
+                delivery_date: new Date(formData.delivery_date).toISOString(),
                 sales_amount: JSON.parse(formData.sales_amount),
                 total_products: +formData.total_products
             },
@@ -101,7 +101,7 @@ export const actions: Actions = {
         }
 
         try {
-
+            
             const parsedCartOrder = saveCartOrderSchema.safeParse(cartOrderSubmit);
 
             if (!parsedCartOrder.success) {

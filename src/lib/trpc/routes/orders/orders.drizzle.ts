@@ -456,7 +456,7 @@ export const createOrder = async (input: OrderInput, ctx: Context) => {
       paymentStatus = 'Awaiting Payment'
     }
 
-    const orderResult = await db.insert(orders).values({ user_id: ctx.session.user.userId, ...input.order, payment_status: paymentStatus }).returning({ id: orders.id });
+    const orderResult = await db.insert(orders).values({ user_id: ctx.session.user.userId, ...input.order, delivery_date: new Date(input.order.delivery_date), payment_status: paymentStatus }).returning({ id: orders.id });
 
     if (input.orders_details) {
       input.orders_details.forEach(async (item) => {

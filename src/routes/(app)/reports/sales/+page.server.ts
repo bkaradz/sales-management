@@ -6,7 +6,7 @@ export const load = (async (event) => {
     let query = {}
 
     const limit = event.url.searchParams.get('limit')
-    if (limit) query = { ...query, limit: +limit }
+    if (limit) query = { ...query, limit: 25 }
 
     const page = event.url.searchParams.get('page')
     if (page) query = { ...query, page: +page }
@@ -15,7 +15,7 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const orders = async (query: any) => {
-        return await router.createCaller(await createContext(event)).orders.getProductionOrders(query);
+        return await router.createCaller(await createContext(event)).reports.getSalesReports(query);
     };
 
     return {

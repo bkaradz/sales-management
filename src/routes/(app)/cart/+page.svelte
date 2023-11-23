@@ -18,7 +18,6 @@
 		doubleClickSelectStore
 	} from '$lib/stores/cartStore';
 	import { v4 as uuidv4 } from 'uuid';
-	import { DateInput } from 'date-picker-svelte';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
