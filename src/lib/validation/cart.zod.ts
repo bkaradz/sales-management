@@ -1,12 +1,12 @@
 import { z } from 'zod';
-import { EmbroideryTypeZod, GarmentPlacementZod, currencyZodObject } from './types.zod.typescript';
+import { EmbroideryTypeZod, GarmentPlacementZod, ProductCategoriesZod, SalesStatusZod, currencyZodObject } from './types.zod.typescript';
 
 export const saveOrderSchema = z
   .object({
     customer_id: z.number(),
     pricelist_id: z.number(),
     exchange_rates_id: z.number(),
-    sales_status: z.number(),
+    sales_status: SalesStatusZod,
     description: z.string().optional(),
     delivery_date: z.string().datetime(),
     sales_amount: currencyZodObject.required(),
@@ -22,19 +22,50 @@ export const saveOrderDetailsSchema = z
     unit_price: currencyZodObject.required(),
     quantity: z.number(),
     product_id: z.number(),
+    product_category: ProductCategoriesZod,
 
+    stitches: z.number().optional(),
     embroidery_type: EmbroideryTypeZod.optional(),
     garment_placement: GarmentPlacementZod.optional(),
-    stitches: z.number().optional(),
     pricelist_id: z.number().optional(),
-  })
+  }).superRefine((data, ctx) => {
+		if (data.product_category === 'Embroidery' && !data.stitches) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: `Stitches are required`,
+				path: ['stitches']
+			});
+			z.NEVER;
+		}
+		if (data.product_category === 'Embroidery' && !(data.embroidery_type)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: `Embroidery Type is required`,
+				path: ['embroidery_type']
+			});
+		}
+		if (data.product_category === 'Embroidery' && !(data.garment_placement)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: `Garment Placement is required`,
+				path: ['garment_placement']
+			});
+		}
+		if (data.product_category === 'Embroidery' && !(data.pricelist_id)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: `Pricelist id is required`,
+				path: ['pricelist_id']
+			});
+		}
+	});
 
 export type SaveOrderDetails = z.infer<typeof saveOrderDetailsSchema>;
 export type SaveOrderDetailsKeys = keyof SaveOrderDetails;
 
 
 export const saveCartOrderSchema = z
-  .object({ order: z.any(), orders_details: z.array(saveOrderDetailsSchema) })
+  .object({ order: saveOrderSchema, orders_details: z.array(saveOrderDetailsSchema) })
 
 export type SaveCartOrder = z.infer<typeof saveCartOrderSchema>;
 export type SaveCartOrderKeys = keyof SaveCartOrder;

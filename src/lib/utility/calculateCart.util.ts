@@ -72,6 +72,7 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
     unit_price,
     quantity,
     product_id: product.id,
+    product_category: product.product_category,
 
     embroidery_type: product.embroidery_type,
     garment_placement: product.garment_placement,
@@ -97,7 +98,8 @@ const calcNonEmbroidery = (product: Products, quantity: number) => {
     total_price,
     unit_price,
     quantity,
-    product_id: product.id
+    product_id: product.id,
+    product_category: product?.product_category,
   }
 }
 

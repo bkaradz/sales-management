@@ -6,7 +6,8 @@ import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { saveCartOrderSchema } from '$lib/validation/cart.zod';
+import { saveCartOrderSchema, saveOrderDetailsSchema, saveOrderSchema } from '$lib/validation/cart.zod';
+import { z } from 'zod';
 
 export const load = (async (event) => {
     let query = {}
@@ -61,7 +62,7 @@ type dataType = {
     customer_id: string;
     pricelist_id: string;
     exchange_rates_id: string;
-    description: string;
+    description?: string;
     delivery_date: string;
     orders_details: string
     sales_status: string
@@ -88,12 +89,16 @@ export const actions: Actions = {
                 exchange_rates_id: +formData.exchange_rates_id,
                 sales_status: formData.sales_status,
                 description: formData.description,
-                delivery_date: new Date(formData.delivery_date),
+                delivery_date: (new Date(formData.delivery_date)).toISOString(),
                 sales_amount: JSON.parse(formData.sales_amount),
                 total_products: +formData.total_products
             },
             orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
         };
+
+        if (!cartOrderSubmit.order.description) {
+            delete cartOrderSubmit.order.description
+        }
 
         try {
 
@@ -102,6 +107,7 @@ export const actions: Actions = {
             if (!parsedCartOrder.success) {
 
                 const errorMap = zodErrorMessagesMap(parsedCartOrder);
+
                 return fail(400, {
                     message: 'Validation error',
                     errors: errorMap

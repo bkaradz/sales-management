@@ -35,7 +35,6 @@
 		"@typescript-eslint/parser": "^5.62.0",
 		"autoprefixer": "^10.4.16",
 		"daisyui": "^3.9.4",
-		"date-picker-svelte": "^2.9.0",
 		"dinero.js": "2.0.0-alpha.14",
 		"dotenv": "^16.3.1",
 		"drizzle-kit": "^0.19.13",
@@ -68,6 +67,7 @@
 		"zod": "^3.22.4"
 	},
 	"dependencies": {
-		"buffer": "^6.0.3"
+		"buffer": "^6.0.3",
+		"svelte-flatpickr-plus": "^1.0.5"
 	}
 }

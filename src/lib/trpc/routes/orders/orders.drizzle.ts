@@ -460,7 +460,7 @@ export const createOrder = async (input: OrderInput, ctx: Context) => {
 
     if (input.orders_details) {
       input.orders_details.forEach(async (item) => {
-        await db.insert(orders_details).values({ ...item, order_id: orderResult[0].id, total_price: item.total_price, unit_price: item.unit_price })
+        await db.insert(orders_details).values({ ...item, order_id: orderResult[0].id })
       })
     }
 

@@ -229,6 +229,7 @@ export const orders_details = pgTable('orders_details', {
   product_id: integer('product_id').notNull().references(() => products.id),
   unit_price: json('unit_price').notNull().$type<DineroSnapshot<number>>(),
   total_price: json('total_price').notNull().$type<DineroSnapshot<number>>(),
+  product_category: text('product_category').$type<ProductCategoriesUnion>().notNull().default('Embroidery'),
   stitches: integer('stitches'),
   active: boolean('active').notNull().default(true),
   quantity: integer('quantity').notNull(),

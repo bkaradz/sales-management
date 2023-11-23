@@ -23,6 +23,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
+	import { datePicker } from 'svelte-flatpickr-plus';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -87,6 +88,11 @@
 		const target = e.target as HTMLInputElement;
 		cartStore.changeUnitPrice({ id, unitPrice: +target.value });
 	};
+	const options = {
+		dateFormat: 'Z',
+		altFormat: 'd F Y',
+		altInput: true
+	};
 </script>
 
 <svelte:head>
@@ -138,7 +144,9 @@
 								<p>Balance</p>
 							</div>
 							<div class="ml-auto text-xs text-gray-500">
-								{format(converter(dinero(user.orders_totals), $selectedRateStore, $exchangeRatesStore))}
+								{format(
+									converter(dinero(user.orders_totals), $selectedRateStore, $exchangeRatesStore)
+								)}
 							</div>
 						</div>
 					</button>
@@ -593,9 +601,16 @@
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											<DateInput bind:value={deliveryDate} format="dd-MM-yyyy HH:mm:ss" class="" />
+											Delivery Date
+											
 										</div>
-										<div class="ml-auto text-xs text-gray-500">Delivery Date</div>
+										<div class="ml-auto text-xs text-gray-500">
+											<input 
+											class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+											use:datePicker={options} 
+											bind:value={deliveryDate} 
+											readonly />
+										</div>
 									</div>
 									<div
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
