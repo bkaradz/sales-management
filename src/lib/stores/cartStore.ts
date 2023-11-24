@@ -4,28 +4,57 @@ import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 import { multiply, type Dinero, toSnapshot, type DineroSnapshot, dinero } from 'dinero.js';
-import { writable, derived } from 'svelte/store';
+import { get, writable, derived } from 'svelte/store';
+
+export type NewOrderDetails = Omit<OrdersDetails, 'total_price' | 'unit_price' > & { total_price: Dinero<number>, unit_price: Dinero<number> }
+
+export type CartTypes = {product: Products, orders_details: Partial<NewOrderDetails>}
+
+const getOrderDetailObj = (product: Products) => {
+
+	if (product.product_category === 'Embroidery') {
+		return {
+			total_price: dollars(0),
+			unit_price: dollars(0),
+			quantity: 1,
+			product_id: product.id,
+			product_category: product.product_category,
+			embroidery_type: "Flat" as EmbroideryTypeUnion,
+			garment_placement: "Front Left" as GarmentPlacementUnion,
+			stitches: product.stitches,
+			pricelist_id: get(pricelistStore).pricelist.id,
+		}
+	}
+
+	return {
+		total_price: dollars(0),
+		unit_price: dollars(0),
+		quantity: 1,
+		product_id: product.id,
+		product_category: product.product_category,
+	}
+
+}
 
 function cart() {
-	const { subscribe, set, update } = writable<Map<number, Products>>(new Map());
+	const { subscribe, set, update } = writable<Map<number, CartTypes>>(new Map());
 
 	return {
 		subscribe,
 		add: (product: Products) => {
 			update((productMap) => {
 				if (productMap.has(product.id)) {
-					const productGet = productMap.get(product.id) as Products
-					if (productGet.quantity) {
-						productGet.quantity = productGet.quantity + 1
+					const getProductsOrderDetails = productMap.get(product.id) as CartTypes
+					if (getProductsOrderDetails.orders_details.quantity) {
+						getProductsOrderDetails.orders_details.quantity += 1
 					} else {
-						productGet.quantity = 1
+						getProductsOrderDetails.orders_details.quantity = 1
 					}
 					return productMap
 				} else {
-					product.quantity = 1
-					product.garment_placement = 'Front Left'
-					product.embroidery_type = 'Flat'
-					productMap.set(product.id, product)
+					const orders_details = getOrderDetailObj(product)
+					 
+					productMap.set(product.id, {product, orders_details})
 					return productMap
 				}
 			})
@@ -39,20 +68,22 @@ function cart() {
 				update((productMap) => {
 					productArray.forEach((product) => {
 						if (productMap.has(product.id)) {
-							const productGet = productMap.get(product.id) as Products
-							if (productGet.quantity) {
-								productGet.quantity = productGet.quantity + 1
+							const getProductsOrderDetails = productMap.get(product.id) as CartTypes
+							if (getProductsOrderDetails.orders_details.quantity) {
+								getProductsOrderDetails.orders_details.quantity += 1
 							} else {
-								productGet.quantity = 1
+								getProductsOrderDetails.orders_details.quantity = 1
 							}
 						} else {
-							const quantity = orderDetailsMap.get(product.id)?.quantity
-							product.quantity = quantity || 1
-							const embroidery_type = orderDetailsMap.get(product.id)?.embroidery_type
-							product.embroidery_type = embroidery_type || 'Flat'
-							const garment_placement = orderDetailsMap.get(product.id)?.garment_placement
-							product.garment_placement = garment_placement || 'Front Left'
-							productMap.set(product.id, product)
+							const get_orders_details = getOrderDetailObj(product)
+							const orders_details_input = getOrderDetailObj(product)
+							// const quantity = orderDetailsMap.get(product.id)?.quantity
+							// orders_details.quantity = quantity || 1
+							// const embroidery_type = orderDetailsMap.get(product.id)?.embroidery_type
+							// orders_details.embroidery_type = embroidery_type || 'Flat'
+							// const garment_placement = orderDetailsMap.get(product.id)?.garment_placement
+							// orders_details.garment_placement = garment_placement || 'Front Left'
+							productMap.set(product.id, {product, orders_details: {...get_orders_details, ...orders_details_input}})
 						}
 					})
 					return productMap
@@ -62,10 +93,10 @@ function cart() {
 		subtract: (product: Products) => {
 			update((productMap) => {
 				if (productMap.has(product.id)) {
-					const productGet = productMap.get(product.id) as Products
-					if (productGet.quantity) {
-						productGet.quantity = productGet.quantity - 1
-						if (productGet.quantity === 0) {
+					const getProductsOrderDetails = productMap.get(product.id) as CartTypes
+					if (getProductsOrderDetails.orders_details.quantity) {
+						getProductsOrderDetails.orders_details.quantity -= 1
+						if (getProductsOrderDetails.orders_details.quantity === 0) {
 							productMap.delete(product.id)
 						}
 					}
@@ -83,22 +114,22 @@ function cart() {
 		},
 		changeEmbType: ({ id, type }: { id: number, type: EmbroideryTypeUnion }) => {
 			update((productMap) => {
-				const productGet = productMap.get(id) as Products
-				productGet.embroidery_type = type
+				const getProductsOrderDetails = productMap.get(id) as CartTypes
+				getProductsOrderDetails.orders_details.embroidery_type = type
 				return productMap
 			})
 		},
 		changeGarmentPosition: ({ id, type }: { id: number, type: GarmentPlacementUnion }) => {
 			update((productMap) => {
-				const productGet = productMap.get(id) as Products
-				productGet.garment_placement = type
+				const getProductsOrderDetails = productMap.get(id) as CartTypes
+				getProductsOrderDetails.orders_details.garment_placement = type
 				return productMap
 			})
 		},
 		changeUnitPrice: ({ id, unitPrice }: { id: number, unitPrice: number }) => {
 			update((productMap) => {
-				const productGet = productMap.get(id) as Products
-				productGet.unit_price = toSnapshot(dollars(unitPrice * 1000))
+				const getProductsOrderDetails = productMap.get(id) as CartTypes
+				getProductsOrderDetails.orders_details.unit_price = dollars(unitPrice * 1000)
 				return productMap
 			})
 		},
@@ -250,8 +281,8 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 	const cartResults = new Map<number, CalcPriceReturn>()
 
 	$cartStore.forEach((value, key) => {
-		const results = calcPrice(value, $pricelistStore, value.quantity || 0, value.embroidery_type as EmbroideryTypeUnion)
-		cartResults.set(value.id, results)
+		const results = calcPrice(value, $pricelistStore)
+		cartResults.set(key, results)
 	})
 
 	return cartResults

@@ -3,6 +3,7 @@ import { dinero, multiply, maximum, add, toDecimal, subtract } from "dinero.js";
 import type { Dinero, Currency } from "dinero.js";
 import type { PricelistToMap } from "./monetary.util";
 import type { EmbroideryTypeUnion } from "./lists.utility";
+import type { CartTypes } from "$lib/stores/cartStore";
 
 
 export const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
@@ -41,22 +42,34 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroi
 // check that the product_category is Embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
-export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryTypeUnion = 'Flat') => {
+export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
 
+  let embroideryType = values.orders_details.embroidery_type
+  
   if (!embroideryType) {
     embroideryType = 'Flat'
   }
+  
+  let quantity = values.orders_details.quantity
+
+  if (!quantity) throw new Error("Quantity not found");
+
+  let product = values.product
+
+  if (!product) throw new Error("product not found");
+  
 
   if (!((product.product_category).toLowerCase() === 'Embroidery'.toLowerCase())) {
-    return calcNonEmbroidery(product, quantity)
+    return calcNonEmbroidery(values)
   }
 
-  if (product.unit_price) {
-    return calcNonEmbroidery(product, quantity)
+  if (values.orders_details.unit_price) {
+    return calcNonEmbroidery(values)
   }
 
   // Get pricelist
   const pricelistCalc = getPricelist(pricelist, quantity, embroideryType)
+  console.log("🚀 ~ file: calculateCart.util.ts:72 ~ calcPrice ~ pricelistCalc:", pricelistCalc)
 
   if (!product.stitches) throw new Error("Stitches not found");
 
@@ -74,8 +87,8 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
     product_id: product.id,
     product_category: product.product_category,
 
-    embroidery_type: product.embroidery_type,
-    garment_placement: product.garment_placement,
+    embroidery_type: values.orders_details.embroidery_type,
+    garment_placement: values.orders_details.garment_placement,
     stitches: product.stitches,
     pricelist_id: pricelist.pricelist.id,
   }
@@ -84,13 +97,17 @@ export const calcPrice = (product: Products, pricelist: PricelistToMap, quantity
 
 export type CalcPriceReturn = ReturnType<typeof calcPrice>
 
-const calcNonEmbroidery = (product: Products, quantity: number) => {
+const calcNonEmbroidery = (values: CartTypes) => {
 
-  const unitPrice = product.unit_price
+  const unitPrice = values.orders_details.unit_price
 
   if (!unitPrice) throw new Error("Unit price not found");
 
-  const unit_price = dinero(unitPrice)
+  const quantity = values.orders_details.quantity
+
+  if (!quantity) throw new Error("quantity not found");
+
+  const unit_price = unitPrice
 
   const total_price = multiply(unit_price, { amount: (quantity * 1000), scale: 3 })
 
@@ -98,8 +115,8 @@ const calcNonEmbroidery = (product: Products, quantity: number) => {
     total_price,
     unit_price,
     quantity,
-    product_id: product.id,
-    product_category: product?.product_category,
+    product_id: values.orders_details.product_id,
+    product_category: values.orders_details.product_category,
   }
 }
 

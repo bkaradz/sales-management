@@ -23,6 +23,7 @@
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { dinero, toSnapshot } from 'dinero.js';
+	// $: console.log("🚀 ~ file: +page.svelte:18 ~ cartPricesStore:", $cartPricesStore.entries())
 
 	export let data: PageData;
 </script>
@@ -227,14 +228,14 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
+									{$cartStore.has(product.id) ? $cartStore.get(product.id)?.orders_details.quantity: 0}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{format(
 										converter(
-											dinero(product.unit_price || toSnapshot( dollars(0))),
+											$cartStore.get(product.id)?.orders_details.unit_price || dollars(0),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)
@@ -266,7 +267,7 @@
 										</button>
 										<div class="px-3">
 											<span>
-												{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
+												{$cartStore.has(product.id) ? $cartStore.get(product.id)?.orders_details.quantity : 0}
 											</span>
 										</div>
 										<button
