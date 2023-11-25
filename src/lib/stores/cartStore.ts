@@ -3,12 +3,13 @@ import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
-import { multiply, type Dinero, toSnapshot, type DineroSnapshot, dinero } from 'dinero.js';
+import { multiply, dinero } from 'dinero.js';
+import type { Dinero, DineroSnapshot, } from 'dinero.js';
 import { get, writable, derived } from 'svelte/store';
 
-export type NewOrderDetails = Omit<OrdersDetails, 'total_price' | 'unit_price' > & { total_price: Dinero<number>, unit_price: Dinero<number> }
+export type NewOrderDetails = Omit<OrdersDetails, 'total_price' | 'unit_price'> & { total_price: Dinero<number>, unit_price: Dinero<number> }
 
-export type CartTypes = {product: Products, orders_details: Partial<NewOrderDetails>}
+export type CartTypes = { product: Products, orders_details: Partial<NewOrderDetails> }
 
 const getOrderDetailObj = (product: Products) => {
 
@@ -16,6 +17,7 @@ const getOrderDetailObj = (product: Products) => {
 		return {
 			total_price: dollars(0),
 			unit_price: dollars(0),
+			price_calculated: true,
 			quantity: 1,
 			product_id: product.id,
 			product_category: product.product_category,
@@ -26,9 +28,14 @@ const getOrderDetailObj = (product: Products) => {
 		}
 	}
 
+	const unit_price = product.unit_price
+
+	if(!unit_price) throw new Error("Unit Price not found");
+
 	return {
 		total_price: dollars(0),
-		unit_price: dollars(0),
+		unit_price: dinero(unit_price),
+		price_calculated: false,
 		quantity: 1,
 		product_id: product.id,
 		product_category: product.product_category,
@@ -53,8 +60,8 @@ function cart() {
 					return productMap
 				} else {
 					const orders_details = getOrderDetailObj(product)
-					 
-					productMap.set(product.id, {product, orders_details})
+
+					productMap.set(product.id, { product, orders_details })
 					return productMap
 				}
 			})
@@ -83,7 +90,7 @@ function cart() {
 							// orders_details.embroidery_type = embroidery_type || 'Flat'
 							// const garment_placement = orderDetailsMap.get(product.id)?.garment_placement
 							// orders_details.garment_placement = garment_placement || 'Front Left'
-							productMap.set(product.id, {product, orders_details: {...get_orders_details, ...orders_details_input}})
+							productMap.set(product.id, { product, orders_details: { ...get_orders_details, ...orders_details_input } })
 						}
 					})
 					return productMap
@@ -130,6 +137,7 @@ function cart() {
 			update((productMap) => {
 				const getProductsOrderDetails = productMap.get(id) as CartTypes
 				getProductsOrderDetails.orders_details.unit_price = dollars(unitPrice * 1000)
+				getProductsOrderDetails.orders_details.price_calculated = false
 				return productMap
 			})
 		},
@@ -283,6 +291,7 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore)
 		cartResults.set(key, results)
+		value.orders_details = {...value.orders_details, ...results}
 	})
 
 	return cartResults

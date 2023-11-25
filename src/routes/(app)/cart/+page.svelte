@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
-	import { calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
+	import { calcPrice, calcProductPrices, dollars, format } from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -267,7 +267,7 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Units
 							</th>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right">
 								Unit Price
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
@@ -282,29 +282,29 @@
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
-						{#each $cartStore.entries() as [key, product] (product.id)}
+						{#each $cartStore.entries() as [key, productsOrderDetails] (key)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{product.id}
+									{key}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{product.name}
+									{productsOrderDetails.product.name}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{product.stitches || 'None'}
+									{productsOrderDetails.product.stitches || 'None'}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+									{#if productsOrderDetails.product.product_category === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
-												<span class="ml-2">{product.garment_placement}</span>
+												<span class="ml-2">{productsOrderDetails.orders_details.garment_placement}</span>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -313,7 +313,7 @@
 												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each garmentPlacement as type (type)}
-													{#if !(type === product.garment_placement)}
+													{#if !(type === productsOrderDetails.orders_details.garment_placement)}
 														<li>
 															<button
 																on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
@@ -331,13 +331,13 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+									{#if productsOrderDetails.product.product_category === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
-												<span class="ml-2">{product.embroidery_type}</span>
+												<span class="ml-2">{productsOrderDetails.orders_details.embroidery_type}</span>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -346,7 +346,7 @@
 												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each embroideryType as type (type)}
-													{#if !(type === product.embroidery_type)}
+													{#if !(type === productsOrderDetails.orders_details.embroidery_type)}
 														<li>
 															<button
 																on:click={() => cartStore.changeEmbType({ id: key, type })}
@@ -367,9 +367,9 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{#if $doubleClickSelectStore.has(product.id)}
+									{#if $doubleClickSelectStore.has(key)}
 										<input
-											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline outline-blue-700 outline-1 m-0"
+											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline outline-blue-700 outline-1 m-0 text-right"
 											type="number"
 											min="1"
 											step=".01"
@@ -377,14 +377,14 @@
 											id="unit_price_input"
 											use:selectTextOnFocus
 											on:blur={() => doubleClickSelectStore.reset()}
-											on:change|preventDefault={(e) => changeEnteredAmountStore(e, product.id)}
-											on:input|preventDefault={(e) => changeEnteredAmountStore(e, product.id)}
+											on:change|preventDefault={(e) => changeEnteredAmountStore(e, key)}
+											on:input|preventDefault={(e) => changeEnteredAmountStore(e, key)}
 										/>
 									{:else}
 										<input
 											disabled
-											on:dblclick={() => doubleClickSelectStore.add(product.id)}
-											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline-none m-0"
+											on:dblclick={() => doubleClickSelectStore.add(key)}
+											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline-none m-0 text-right"
 											type="text"
 											name="unit_price_label"
 											id="unit_price_label"
@@ -415,18 +415,18 @@
 								>
 									<div class="flex items-center">
 										<button
-											on:click={() => cartStore.subtract(product)}
+											on:click={() => cartStore.subtract(productsOrderDetails.product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
 											<span>-</span>
 										</button>
 										<div class="px-3">
 											<span>
-												{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
+												{$cartStore.has(key) ? $cartStore.get(key)?.orders_details.quantity : 0}
 											</span>
 										</div>
 										<button
-											on:click={() => cartStore.add(product)}
+											on:click={() => cartStore.add(productsOrderDetails.product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
 											<span>+</span>
@@ -438,7 +438,7 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
 									<div class="flex items-center">
-										<button on:click={() => cartStore.removeProduct(product.id)}>
+										<button on:click={() => cartStore.removeProduct(key)}>
 											{@html svgBin}
 										</button>
 									</div>
@@ -570,16 +570,6 @@
 									</div>
 									{#if $customerSelectedStore.notes}
 										<div class="">
-											<!-- <div
-											class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-										>
-											<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-												Notes
-											</div>
-											<div class="ml-auto text-xs text-gray-500">
-												{$customerSelectedStore.notes}
-											</div>
-										</div> -->
 											<textarea
 												class="peer block w-full rounded border-0 bg-transparent placeholder-transparent"
 												id="notes"
@@ -726,7 +716,7 @@
 												<div class="ml-auto text-xs text-gray-500">
 													{format(
 														converter(
-															calcPrice(
+															calcProductPrices(
 																{
 																	id: 19,
 																	user_id: 'ivk4l3dy6enbyjb',
@@ -736,8 +726,6 @@
 																	unit_price: null,
 																	stitches: 1537,
 																	quantity: null,
-																	embroidery_type: 'Flat',
-																	garment_placement: 'Front Left',
 																	active: true,
 																	created_at: new Date(),
 																	updated_at: new Date()
@@ -745,7 +733,7 @@
 																$pricelistStore,
 																list.minimum_quantity,
 																key
-															).unit_price,
+															),
 															$selectedRateStore,
 															$exchangeRatesStore
 														)

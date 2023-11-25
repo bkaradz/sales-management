@@ -1,5 +1,5 @@
 import type { Products } from "$lib/server/drizzle/schema"
-import { dinero, multiply, maximum, add, toDecimal, subtract } from "dinero.js";
+import { dinero, multiply, maximum, add, toDecimal, subtract, toSnapshot } from "dinero.js";
 import type { Dinero, Currency } from "dinero.js";
 import type { PricelistToMap } from "./monetary.util";
 import type { EmbroideryTypeUnion } from "./lists.utility";
@@ -42,6 +42,41 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroi
 // check that the product_category is Embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
+export const calcProductPrices = (product: Products, pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryTypeUnion = 'Flat') => {
+  
+  if (!embroideryType) {
+    embroideryType = 'Flat'
+  }
+
+  if (!quantity) throw new Error("Quantity not found");
+
+
+  if (!product) throw new Error("product not found");
+  
+
+  if (product.product_category !== 'Embroidery') {
+    const unit_price = product.unit_price
+    if (!unit_price) throw new Error("Unit price not found");
+    return dinero(unit_price)
+  }
+
+  // Get pricelist
+  const pricelistCalc = getPricelist(pricelist, quantity, embroideryType)
+
+  if (!product.stitches) throw new Error("Stitches not found");
+
+  // Calculate price per 1000 stitches
+  const unitPricePerThousand = multiply(dinero(pricelistCalc.price_per_thousand_stitches), { amount: product.stitches, scale: 3 })
+
+  const unit_price = maximum([unitPricePerThousand, dinero(pricelistCalc.minimum_price)])
+  
+  return  unit_price
+
+}
+
+
+
+
 export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
 
   let embroideryType = values.orders_details.embroidery_type
@@ -59,17 +94,16 @@ export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
   if (!product) throw new Error("product not found");
   
 
-  if (!((product.product_category).toLowerCase() === 'Embroidery'.toLowerCase())) {
+  if (!values.orders_details.price_calculated) {
     return calcNonEmbroidery(values)
   }
 
-  if (values.orders_details.unit_price) {
-    return calcNonEmbroidery(values)
-  }
+  // if (values.orders_details.unit_price) {
+  //   return calcNonEmbroidery(values)
+  // }
 
   // Get pricelist
   const pricelistCalc = getPricelist(pricelist, quantity, embroideryType)
-  console.log("🚀 ~ file: calculateCart.util.ts:72 ~ calcPrice ~ pricelistCalc:", pricelistCalc)
 
   if (!product.stitches) throw new Error("Stitches not found");
 
@@ -99,15 +133,15 @@ export type CalcPriceReturn = ReturnType<typeof calcPrice>
 
 const calcNonEmbroidery = (values: CartTypes) => {
 
-  const unitPrice = values.orders_details.unit_price
-
-  if (!unitPrice) throw new Error("Unit price not found");
+  const unit_price = values.orders_details.unit_price
+  
+  if (!unit_price) throw new Error("Unit price not found");
 
   const quantity = values.orders_details.quantity
 
   if (!quantity) throw new Error("quantity not found");
 
-  const unit_price = unitPrice
+  // const unit_price = unitPrice
 
   const total_price = multiply(unit_price, { amount: (quantity * 1000), scale: 3 })
 
@@ -120,6 +154,8 @@ const calcNonEmbroidery = (values: CartTypes) => {
   }
 }
 
+
+
 function createFormatter(transformer: any) {
   return function formatter(dineroObject: Dinero<number>) {
     return toDecimal(dineroObject, transformer)
@@ -129,3 +165,7 @@ function createFormatter(transformer: any) {
 export const format = createFormatter(({ value, currency }: { value: string, currency: Currency<number> }) =>
   `${currency.code} ${Number(value).toFixed(2)}`
 )
+
+// function toSnapshot(unitPricePerThousand: Dinero<number>): any {
+//   throw new Error("Function not implemented.");
+// }

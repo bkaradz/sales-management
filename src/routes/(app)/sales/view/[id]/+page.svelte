@@ -2,6 +2,7 @@
 	import { svgDropdown } from '$lib/assets/svgLogos';
 	import {
 		calcPrice,
+		calcProductPrices,
 		dollars,
 		format,
 	} from '$lib/utility/calculateCart.util';
@@ -204,30 +205,30 @@
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
-						{#each $cartStore.entries() as [key, product] (product.id)}
+						{#each $cartStore.entries() as [key, productsOrderDetails] (key)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{product.id}
+									{key}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{product.name}
+									{productsOrderDetails.product.name}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{product.stitches || 'None'}
+									{productsOrderDetails.product.stitches || 'None'}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+									{#if productsOrderDetails.product.product_category === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
 												disabled
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between cursor-not-allowed"
 											>
-												<span class="ml-2">{product.garment_placement}</span>
+												<span class="ml-2">{productsOrderDetails.orders_details.garment_placement}</span>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -236,7 +237,7 @@
 												class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each garmentPlacement as type (type)}
-													{#if !(type === product.garment_placement)}
+													{#if !(type === productsOrderDetails.orders_details.garment_placement)}
 														<li>
 															<button
 																on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
@@ -254,14 +255,14 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if product.product_category.toLowerCase() === 'Embroidery'.toLocaleLowerCase()}
+									{#if productsOrderDetails.product.product_category === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
 												disabled
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between cursor-not-allowed"
 											>
-												<span class="ml-2">{product.embroidery_type}</span>
+												<span class="ml-2">{productsOrderDetails.orders_details.embroidery_type}</span>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -270,7 +271,7 @@
 												class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each embroideryType as type (type)}
-													{#if !(type === product.embroidery_type)}
+													{#if !(type === productsOrderDetails.orders_details.embroidery_type)}
 														<li>
 															<button
 																on:click={() => cartStore.changeEmbType({ id: key, type })}
@@ -319,19 +320,19 @@
 									<div class="flex items-center">
 										<button
 											disabled
-											on:click={() => cartStore.subtract(product)}
+											on:click={() => cartStore.subtract(productsOrderDetails.product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500 cursor-not-allowed"
 										>
 											<span>-</span>
 										</button>
 										<div class="px-3">
 											<span>
-												{$cartStore.has(product.id) ? $cartStore.get(product.id)?.quantity : 0}
+												{$cartStore.has(key) ? $cartStore.get(key)?.orders_details.quantity : 0}
 											</span>
 										</div>
 										<button
 											disabled
-											on:click={() => cartStore.add(product)}
+											on:click={() => cartStore.add(productsOrderDetails.product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500 cursor-not-allowed"
 										>
 											<span>+</span>
@@ -609,7 +610,7 @@
 												<div class="ml-auto text-xs text-gray-500">
 													{format(
 														converter(
-															calcPrice(
+															calcProductPrices(
 																{
 																	id: 19,
 																	user_id: 'ivk4l3dy6enbyjb',
@@ -619,8 +620,6 @@
 																	unit_price: null,
 																	stitches: 1537,
 																	quantity: null,
-																	embroidery_type: 'Flat',
-																	garment_placement: 'Front Left',
 																	active: true,
 																	created_at: new Date(),
 																	updated_at: new Date()
@@ -628,7 +627,7 @@
 																$pricelistStore,
 																list.minimum_quantity,
 																key
-															).unit_price,
+															),
 															$selectedRateStore,
 															$exchangeRatesStore
 														)

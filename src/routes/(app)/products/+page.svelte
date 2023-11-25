@@ -22,8 +22,6 @@
 	} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
-	import { dinero, toSnapshot } from 'dinero.js';
-	// $: console.log("🚀 ~ file: +page.svelte:18 ~ cartPricesStore:", $cartPricesStore.entries())
 
 	export let data: PageData;
 </script>
@@ -235,7 +233,7 @@
 								>
 									{format(
 										converter(
-											$cartStore.get(product.id)?.orders_details.unit_price || dollars(0),
+											$cartStore.get(product.id)?.orders_details?.unit_price || dollars(0),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)
@@ -246,7 +244,7 @@
 								>
 									{format(
 										converter(
-											$cartPricesStore.get(product.id)?.total_price || dollars(0),
+											$cartStore.get(product.id)?.orders_details?.total_price || dollars(0),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)

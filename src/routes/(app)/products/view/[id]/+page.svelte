@@ -12,12 +12,11 @@
 	} from '$lib/assets/svgLogos';
 	import { exchangeRatesStore, pricelistStore, selectedRateStore } from '$lib/stores/cartStore';
 	import type { PageData } from './$types';
-	import { calcPrice, format } from '$lib/utility/calculateCart.util';
+	import { calcPrice, calcProductPrices, format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { dinero } from 'dinero.js';
-	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 </script>
@@ -83,8 +82,7 @@
 								<div class="ml-auto text-xs text-gray-500">
 									{format(
 										converter(
-											calcPrice(data.product.product, $pricelistStore, list.minimum_quantity, key)
-												.unit_price,
+											calcProductPrices(data.product.product, $pricelistStore, list.minimum_quantity, key),
 											$selectedRateStore,
 											$exchangeRatesStore
 										)

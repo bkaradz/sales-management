@@ -460,7 +460,9 @@ export const createOrder = async (input: OrderInput, ctx: Context) => {
 
     if (input.orders_details) {
       input.orders_details.forEach(async (item) => {
-        await db.insert(orders_details).values({ ...item, order_id: orderResult[0].id })
+        const productId = item.product_id
+        if (!productId) throw new Error("Product Id not found");
+        await db.insert(orders_details).values({ ...item, order_id: orderResult[0].id, product_id: productId })
       })
     }
 
