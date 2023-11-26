@@ -14,7 +14,7 @@
 <!-- The button to open modal -->
 <!-- 🔵 set true on click -->
 
-<form data-sveltekit-keepfocus data-sveltekit-replacestate action="?/submit" method="post" use:enhance>
+<form id="myForm" data-sveltekit-keepfocus data-sveltekit-replacestate action="?/submit" method="post" use:enhance>
   <input
     use:selectTextOnFocus
     type="text"
@@ -36,8 +36,8 @@
     <p class="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
     <div class="modal-action">
 			<!-- 🔵 set false on click -->
-      <button class="btn" on:click={()=>isModalOpen = false}>Cancel</button>
-      <button class="btn" on:click={()=>isModalOpen = false}>Yes</button>
+      <input class="btn"  value="Cancel" on:click={()=>isModalOpen = false}>
+      <input form="myForm" value="Save" type="submit" class="btn" on:click={()=>isModalOpen = false}/>
     </div>
   </div>
 </dialog>
