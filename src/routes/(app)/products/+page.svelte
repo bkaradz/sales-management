@@ -8,11 +8,11 @@
 		svgEye,
 		svgForwardArrow,
 		svgPen,
-		svgSearch,
+		svgSearch
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
-	import {  dollars, format } from '$lib/utility/calculateCart.util';
+	import { dollars, format } from '$lib/utility/calculateCart.util';
 	import {
 		cartPricesStore,
 		cartStore,
@@ -24,6 +24,12 @@
 	import { converter } from '$lib/utility/currencyConvertor.util';
 
 	export let data: PageData;
+
+	let isModalOpen = false;
+	let deletedProduct = { productId: null, productName: null } as {
+		productId: null | number;
+		productName: null | string;
+	};
 </script>
 
 <svelte:head>
@@ -217,6 +223,13 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.name}
+									{#if product.stork_quantity}
+										<span
+											class="text-xs py-1 px-2 leading-none bg-green-100 text-green-600 dark:bg-gray-800 rounded-md"
+										>
+											{product.stork_quantity}
+										</span>
+									{/if}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
@@ -226,7 +239,9 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{$cartStore.has(product.id) ? $cartStore.get(product.id)?.orders_details.quantity: 0}
+									{$cartStore.has(product.id)
+										? $cartStore.get(product.id)?.orders_details.quantity
+										: 0}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
@@ -265,7 +280,9 @@
 										</button>
 										<div class="px-3">
 											<span>
-												{$cartStore.has(product.id) ? $cartStore.get(product.id)?.orders_details.quantity : 0}
+												{$cartStore.has(product.id)
+													? $cartStore.get(product.id)?.orders_details.quantity
+													: 0}
 											</span>
 										</div>
 										<button
@@ -284,11 +301,17 @@
 										<a href={`/products/edit/${product.id}`} class="px-2">
 											{@html svgPen}
 										</a>
-										<form action="?/delete" method="post" use:enhance>
+										<form id="deleteForm" action="?/delete" method="post" use:enhance>
 											<input type="hidden" name="delete" value={product.id} />
-											<button type="submit">
+											<a
+												href="#!"
+												on:click={() => {
+													isModalOpen = true;
+													deletedProduct = { productId: product.id, productName: product.name };
+												}}
+											>
 												{@html svgBin}
-											</button>
+											</a>
 										</form>
 									</div>
 								</td>
@@ -300,3 +323,40 @@
 		</div>
 	{/if}
 </div>
+
+<dialog class="modal" class:modal-open={isModalOpen}>
+	<div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
+		<h3 class="font-bold text-lg">Are you sure you want to delete product !!!</h3>
+		<div class="py-4 my-2">
+			<p class="py-4">
+				Id:	
+				<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
+					{deletedProduct.productId}
+				</span>
+			</p>
+			<p>
+				Name:
+				<span
+					class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md bg-green-100 text-green-600"
+				>
+					{deletedProduct.productName}
+				</span>
+			</p>
+		</div>
+		<div class="modal-action">
+			<input
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				type="button"
+				value="Cancel"
+				on:click={() => (isModalOpen = false)}
+			/>
+			<input
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				form="deleteForm"
+				value="Yes Delete"
+				type="submit"
+				on:click={() => (isModalOpen = false)}
+			/>
+		</div>
+	</div>
+</dialog>

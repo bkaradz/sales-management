@@ -20,6 +20,9 @@
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 
 	export let data: PageData;
+
+	let isModalOpen = false;
+	let deletedOrder = { orderId: null } as { orderId: null | number };
 </script>
 
 <svelte:head>
@@ -344,9 +347,15 @@
 											</a>
 											<form action="?/delete" method="post" use:enhance>
 												<input type="hidden" name="delete" value={ordersArray.orders.id} />
-												<button type="submit">
+												<a
+													href="#!"
+													on:click={() => {
+														isModalOpen = true;
+														deletedOrder = { orderId: ordersArray.orders.id  };
+													}}
+												>
 													{@html svgBin}
-												</button>
+												</a>
 											</form>
 										</div>
 									</td>
@@ -359,3 +368,40 @@
 		{/if}
 	</div>
 </div>
+
+<dialog class="modal" class:modal-open={isModalOpen}>
+	<div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
+		<h3 class="font-bold text-lg">Are you sure you want to delete order !!!</h3>
+		<div class="py-4 my-2">
+			<p class="py-4">
+				Id:
+				<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
+					{deletedOrder.orderId}
+				</span>
+			</p>
+			<!-- <p>
+				Name:
+				<span
+					class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md bg-green-100 text-green-600"
+				>
+					{deletedContact.contactName}
+				</span>
+			</p> -->
+		</div>
+		<div class="modal-action">
+			<input
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				type="button"
+				value="Cancel"
+				on:click={() => (isModalOpen = false)}
+			/>
+			<input
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				form="deleteForm"
+				value="Yes Delete"
+				type="submit"
+				on:click={() => (isModalOpen = false)}
+			/>
+		</div>
+	</div>
+</dialog>

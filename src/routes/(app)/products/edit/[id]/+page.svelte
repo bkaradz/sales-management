@@ -218,7 +218,7 @@
 									class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 									id="quantity"
 									name="quantity"
-									value={data.results.product.quantity}
+									value={data.results.product.stork_quantity}
 									placeholder="Quantity"
 								/>
 								<label

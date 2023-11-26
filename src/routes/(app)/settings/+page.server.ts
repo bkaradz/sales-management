@@ -12,18 +12,24 @@ export const load = (async () => {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	async default({ request, fetch }) {
-		const form_data = await request.formData();
-		const search = form_data.get('search') ?? '';
-		const result = await fetch('https://jsonplaceholder.typicode.com/posts').then((res) =>
-			res.json()
-		);
-		const posts = result.filter((post: any) =>
-			post.title.toLowerCase().includes(search.toString().toLowerCase())
-		);
-		for (let post of posts) {
-			await wait(100);
-		}
-		return { posts, search };
+	// async default({ request, fetch }) {
+	// 	const form_data = await request.formData();
+	// 	const search = form_data.get('search') ?? '';
+	// 	const result = await fetch('https://jsonplaceholder.typicode.com/posts').then((res) =>
+	// 		res.json()
+	// 	);
+	// 	const posts = result.filter((post: any) =>
+	// 		post.title.toLowerCase().includes(search.toString().toLowerCase())
+	// 	);
+	// 	for (let post of posts) {
+	// 		await wait(100);
+	// 	}
+	// 	return { posts, search };
+	// },
+	async submit(event) {
+		const data = await event.request.formData();
+		const formData = Object.fromEntries(data)
+		console.log("🚀 ~ file: +page.server.ts:32 ~ submit ~ formData:", formData)
+		
 	}
 };

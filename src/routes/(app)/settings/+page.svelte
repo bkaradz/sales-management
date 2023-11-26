@@ -28,16 +28,14 @@
 
 <!-- <button class="btn modal-button rounded-md" on:click={()=>isModalOpen = true}>open modal</button> -->
 
-<!-- Put this part before </body> tag -->
-<!-- 🔵 conditional `modal-open` class if true -->
+
 <dialog class="modal" class:modal-open={isModalOpen}>
-  <div class="modal-box rounded-md">
-    <h3 class="font-bold text-lg">Congratulations random Internet user!</h3>
-    <p class="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+  <div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
+    <h3 class="font-bold text-lg">Delete product!</h3>
+    <p class="py-4">Are you sure you want to delete the product!!!</p>
     <div class="modal-action">
-			<!-- 🔵 set false on click -->
-      <input class="btn"  value="Cancel" on:click={()=>isModalOpen = false}>
-      <input form="myForm" value="Save" type="submit" class="btn" on:click={()=>isModalOpen = false}/>
+      <input class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"  type="button" value="Cancel" on:click={()=>isModalOpen = false}>
+      <input class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none" form="myForm" value="Save" type="submit" on:click={()=>isModalOpen = false}/>
     </div>
   </div>
 </dialog>

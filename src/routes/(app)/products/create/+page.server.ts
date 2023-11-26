@@ -46,14 +46,14 @@ export const actions: Actions = {
 
 			if (product?.stitches) formResults = { ...formResults, stitches: +product.stitches }
 			if (product?.description) formResults = { ...formResults, description: product.description }
-			if (product?.quantity) formResults = { ...formResults, quantity: +product.quantity }
+			if (product?.stork_quantity) formResults = { ...formResults, stork_quantity: +product.stork_quantity }
 			if (product?.product_category) formResults = { ...formResults, product_category: product.product_category }
 			if (product?.name) formResults = { ...formResults, name: product.name }
 			if (product?.product_unit_price) {
 				const unitPrice = dollars(+product.product_unit_price * 1000)
 
 				if (greaterThan(unitPrice, dollars(0))) {
-					formResults = { ...formResults, unit_price: unitPrice.toJSON() }
+					formResults = { ...formResults, product_unit_price: unitPrice.toJSON() }
 				}
 			}
 			productsResultsArray.push(formResults as Products)
@@ -61,10 +61,13 @@ export const actions: Actions = {
 
 		try {
 			const parsedProduct = saveProductsArraySchema.safeParse(productsResultsArray);
+			console.log("🚀 ~ file: +page.server.ts:64 ~ upload: ~ productsResultsArray:", productsResultsArray)
+			console.log("🚀 ~ file: +page.server.ts:64 ~ upload: ~ parsedProduct:", parsedProduct)
 
 			if (!parsedProduct.success) {
 
 				const errorMap = zodErrorMessagesMap(parsedProduct);
+				console.log("🚀 ~ file: +page.server.ts:68 ~ upload: ~ errorMap:", errorMap)
 				return fail(400, {
 					message: 'Validation error',
 					errors: errorMap
@@ -97,14 +100,14 @@ export const actions: Actions = {
 
 		if (formData?.stitches) formResults = { ...formResults, stitches: +formData.stitches }
 		if (formData?.description) formResults = { ...formResults, description: formData.description }
-		if (formData?.quantity) formResults = { ...formResults, quantity: +formData.quantity }
+		if (formData?.stork_quantity) formResults = { ...formResults, stork_quantity: +formData.stork_quantity }
 		if (formData?.product_category) formResults = { ...formResults, product_category: formData.product_category }
 		if (formData?.name) formResults = { ...formResults, name: formData.name }
-		if (formData?.unit_price) {
-			const unitPrice = dinero(JSON.parse(formData.unit_price as string))
+		if (formData?.product_unit_price) {
+			const productUnitPrice = dinero(JSON.parse(formData.product_unit_price as string))
 
-			if (greaterThan(unitPrice, dollars(0))) {
-				formResults = { ...formResults, unit_price: unitPrice.toJSON() }
+			if (greaterThan(productUnitPrice, dollars(0))) {
+				formResults = { ...formResults, product_unit_price: productUnitPrice.toJSON() }
 			}
 		}
 
