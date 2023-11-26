@@ -142,9 +142,9 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
     // Update products inventory
     transactionOrdersDetails.forEach(async(orderDetail) => {
       if (nonEmbroideryProductsIdArray.has(orderDetail.product_id)) {
-        const quantity = nonEmbroideryProductsIdArray.get(orderDetail.product_id)?.quantity
-        if (quantity) {
-          await db.update(products).set({quantity: quantity - orderDetail.quantity})
+        const stork_quantity = nonEmbroideryProductsIdArray.get(orderDetail.product_id)?.stork_quantity
+        if (stork_quantity) {
+          await db.update(products).set({stork_quantity: stork_quantity - orderDetail.quantity})
           
         }
       }

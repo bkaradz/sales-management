@@ -617,9 +617,9 @@
 																	name: 'ADMIRABLE.EMB',
 																	description: null,
 																	product_category: 'Embroidery',
-																	unit_price: null,
+																	product_unit_price: null,
 																	stitches: 1537,
-																	quantity: null,
+																	stork_quantity: null,
 																	active: true,
 																	created_at: new Date(),
 																	updated_at: new Date()

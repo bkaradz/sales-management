@@ -55,7 +55,7 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
   
 
   if (product.product_category !== 'Embroidery') {
-    const unit_price = product.unit_price
+    const unit_price = product.product_unit_price
     if (!unit_price) throw new Error("Unit price not found");
     return dinero(unit_price)
   }

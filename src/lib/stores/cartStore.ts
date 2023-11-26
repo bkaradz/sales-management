@@ -28,7 +28,7 @@ const getOrderDetailObj = (product: Products) => {
 		}
 	}
 
-	const unit_price = product.unit_price
+	const unit_price = product.product_unit_price
 
 	if(!unit_price) throw new Error("Unit Price not found");
 

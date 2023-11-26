@@ -25,7 +25,7 @@
 	});
 
 	$: selectedProductCategoryStore.add(data.results?.product.product_category || 'Embroidery');
-	$: enteredAmountStore.addDinero(data.results?.product?.unit_price);
+	$: enteredAmountStore.addDinero(data.results?.product?.product_unit_price);
 
 	const changeEnteredAmountStore = (e: Event) => {
 		const target = e.target as HTMLInputElement;
