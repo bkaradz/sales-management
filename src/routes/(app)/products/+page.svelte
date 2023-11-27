@@ -14,7 +14,6 @@
 	import type { PageData } from './$types';
 	import { dollars, format } from '$lib/utility/calculateCart.util';
 	import {
-		cartPricesStore,
 		cartStore,
 		cartTotalsStore,
 		exchangeRatesStore,

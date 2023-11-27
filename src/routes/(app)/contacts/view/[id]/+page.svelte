@@ -21,6 +21,7 @@
 
 	export let data: PageData;
 
+
 	let isModalOpen = false;
 	let deletedOrder = { orderId: null } as { orderId: null | number };
 </script>

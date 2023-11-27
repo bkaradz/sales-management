@@ -230,7 +230,7 @@ export const orders_details = pgTable('orders_details', {
   product_category: text('product_category').$type<ProductCategoriesUnion>().notNull().default('Embroidery'),
   stitches: integer('stitches'),
   active: boolean('active').notNull().default(true),
-  price_calculated: boolean('price_calculated').notNull().default(true),
+  price_calculated: boolean('price_calculated').notNull(),
   quantity: integer('quantity').notNull(),
   embroidery_type: text('embroidery_type').$type<EmbroideryTypeUnion>(),
   garment_placement: text('garment_placement').$type<GarmentPlacementUnion>(),

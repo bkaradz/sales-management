@@ -23,6 +23,7 @@ export const saveOrderDetailsSchema = z
     quantity: z.number(),
     product_id: z.number(),
     product_category: ProductCategoriesZod,
+		price_calculated: z.boolean(),
 
     stitches: z.number().optional(),
     embroidery_type: EmbroideryTypeZod.optional(),

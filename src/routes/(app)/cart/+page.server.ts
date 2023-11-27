@@ -6,8 +6,7 @@ import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { saveCartOrderSchema, saveOrderDetailsSchema, saveOrderSchema } from '$lib/validation/cart.zod';
-import { z } from 'zod';
+import { saveCartOrderSchema } from '$lib/validation/cart.zod';
 
 export const load = (async (event) => {
     let query = {}

@@ -67,11 +67,14 @@ function cart() {
 			})
 		},
 		addProductsArray: (productArray: Products[] | undefined, order_details: OrdersDetails[] | undefined) => {
-			const orderDetailsMap = new Map<number, OrdersDetails>()
-			if (order_details) {
-				order_details.forEach((item) => orderDetailsMap.set(item.product_id, item))
+			const orderDetailsMap = new Map<number, NewOrderDetails>()
+			if (Array.isArray(order_details)) {
+				order_details.forEach((item) => {
+					const newItem = {...item, total_price: dinero(item.total_price), unit_price: dinero(item.unit_price)}
+					orderDetailsMap.set(item.product_id, newItem)
+				})
 			}
-			if (productArray) {
+			if (Array.isArray(productArray)) {
 				update((productMap) => {
 					productArray.forEach((product) => {
 						if (productMap.has(product.id)) {
@@ -82,15 +85,15 @@ function cart() {
 								getProductsOrderDetails.orders_details.quantity = 1
 							}
 						} else {
-							const get_orders_details = getOrderDetailObj(product)
-							const orders_details_input = getOrderDetailObj(product)
+							// const get_orders_details = getOrderDetailObj(product)
+							const orders_details_input = orderDetailsMap.get(product.id)
 							// const quantity = orderDetailsMap.get(product.id)?.quantity
 							// orders_details.quantity = quantity || 1
 							// const embroidery_type = orderDetailsMap.get(product.id)?.embroidery_type
 							// orders_details.embroidery_type = embroidery_type || 'Flat'
 							// const garment_placement = orderDetailsMap.get(product.id)?.garment_placement
 							// orders_details.garment_placement = garment_placement || 'Front Left'
-							productMap.set(product.id, { product, orders_details: { ...get_orders_details, ...orders_details_input } })
+							productMap.set(product.id, { product, orders_details: { ...orders_details_input } })
 						}
 					})
 					return productMap
@@ -290,8 +293,8 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 
 	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore)
-		cartResults.set(key, results)
 		value.orders_details = {...value.orders_details, ...results}
+		cartResults.set(key, {...value.orders_details, ...results})
 	})
 
 	return cartResults

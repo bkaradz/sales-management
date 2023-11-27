@@ -10,7 +10,6 @@
 	import type { PageData } from './$types';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import {
-		cartPricesStore,
 		cartStore,
 		exchangeRatesStore,
 		cartTotalsStore,
@@ -133,7 +132,7 @@
 							hidden
 							name="orders_details"
 							type="text"
-							value={JSON.stringify([...$cartPricesStore.values()])}
+							value={JSON.stringify([...$cartStore.values()].map((item) => item.orders_details))}
 						/>
 						{#if !($cartStore.size === 0) && $customerSelectedStore}
 							<button
@@ -289,14 +288,14 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{$cartPricesStore.get(key)?.quantity}
+								{$cartStore.get(key)?.orders_details.quantity}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{format(
 										converter(
-											$cartPricesStore.get(key)?.unit_price,
+											$cartStore.get(key)?.orders_details.unit_price,
 											$selectedRateStore,
 											$exchangeRatesStore
 										)
@@ -307,7 +306,7 @@
 								>
 									{format(
 										converter(
-											$cartPricesStore.get(key)?.total_price,
+											$cartStore.get(key)?.orders_details.total_price,
 											$selectedRateStore,
 											$exchangeRatesStore
 										)

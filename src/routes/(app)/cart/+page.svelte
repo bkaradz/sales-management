@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
-	import { calcPrice, calcProductPrices, dollars, format } from '$lib/utility/calculateCart.util';
+	import { calcProductPrices, dollars, format } from '$lib/utility/calculateCart.util';
 	import { dinero } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import {
-		cartPricesStore,
 		cartStore,
 		exchangeRatesStore,
 		cartTotalsStore,
@@ -211,7 +210,7 @@
 							hidden
 							name="orders_details"
 							type="text"
-							value={JSON.stringify([...$cartPricesStore.values()])}
+							value={JSON.stringify([...$cartStore.values()].map((item) => item.orders_details))}
 						/>
 						{#if !($cartStore.size === 0) && $customerSelectedStore}
 							<button type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8">
@@ -362,7 +361,7 @@
 									{/if}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{$cartPricesStore.get(key)?.quantity}
+									{$cartStore.get(key)?.orders_details.quantity}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
@@ -390,7 +389,7 @@
 											id="unit_price_label"
 											value={format(
 												converter(
-													$cartPricesStore.get(key)?.unit_price,
+													$cartStore.get(key)?.orders_details.unit_price,
 													$selectedRateStore,
 													$exchangeRatesStore
 												)
@@ -403,7 +402,7 @@
 								>
 									{format(
 										converter(
-											$cartPricesStore.get(key)?.total_price,
+											$cartStore.get(key)?.orders_details.total_price,
 											$selectedRateStore,
 											$exchangeRatesStore
 										)
