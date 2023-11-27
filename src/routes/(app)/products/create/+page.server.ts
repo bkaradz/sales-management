@@ -61,13 +61,10 @@ export const actions: Actions = {
 
 		try {
 			const parsedProduct = saveProductsArraySchema.safeParse(productsResultsArray);
-			console.log("🚀 ~ file: +page.server.ts:64 ~ upload: ~ productsResultsArray:", productsResultsArray)
-			console.log("🚀 ~ file: +page.server.ts:64 ~ upload: ~ parsedProduct:", parsedProduct)
 
 			if (!parsedProduct.success) {
 
 				const errorMap = zodErrorMessagesMap(parsedProduct);
-				console.log("🚀 ~ file: +page.server.ts:68 ~ upload: ~ errorMap:", errorMap)
 				return fail(400, {
 					message: 'Validation error',
 					errors: errorMap

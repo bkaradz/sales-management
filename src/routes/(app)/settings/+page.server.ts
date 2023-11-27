@@ -29,7 +29,6 @@ export const actions = {
 	async submit(event) {
 		const data = await event.request.formData();
 		const formData = Object.fromEntries(data)
-		console.log("🚀 ~ file: +page.server.ts:32 ~ submit ~ formData:", formData)
 		
 	}
 };
