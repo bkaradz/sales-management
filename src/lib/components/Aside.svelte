@@ -6,7 +6,7 @@
 </script>
 
 <div
-	class="bg-white dark:bg-gray-900 dark:border-gray-800 w-14 flex-shrink-0 border-r border-gray-200 flex-col hidden sm:flex"
+	class="z-50 relative bg-white dark:bg-gray-900 dark:border-gray-800 w-14 flex-shrink-0 border-r border-gray-200 flex-col hidden sm:flex"
 >
 	<!-- Company Logo -->
 	<div class="h-16 text-blue-500 flex items-center justify-center">

@@ -65,7 +65,7 @@ export const paymentStatus = [
 export type PaymentStatusUnion = typeof paymentStatus[number]
 
 export const productionStatus = [
-  'Origination', 'Received', 'Embroidery', 'Trimming', 'Collected'
+  'Origination', 'Received', 'Embroidery', 'Trimming', 'Done', 'Collected'
 ] as const;
 
 export type ProductionStatusUnion = typeof productionStatus[number]

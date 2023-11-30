@@ -1,19 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { svgDark, svgDropdown, svgLight, svgLogOut } from '$lib/assets/svgLogos';
+	import { svgDark, svgDropdown, svgLight, svgLogOut, svgUser } from '$lib/assets/svgLogos';
+	import type { User } from '$lib/server/drizzle/schema';
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
 	import { userManuallyChangedTheme } from '$lib/stores/darkMod.store';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
 
-	type User = {
-		id: string;
-		username: string;
-		full_name: string;
-		active: boolean;
-		created_at: Date;
-		updated_at: Date;
-	};
-
+	
 	export let data: Partial<{ user: User }>;
 
 	const changeTab = (tabElement: TabElement, url: string) => {
@@ -88,17 +81,7 @@
 			<button tabindex="0" class="flex items-center">
 				<span class="relative flex-shrink-0">
 					<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-						<svg
-							class="absolute w-9 h-9 text-gray-400 -left-1"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-							><path
-								fill-rule="evenodd"
-								d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-								clip-rule="evenodd"
-							/></svg
-						>
+						{@html svgUser}
 					</div>
 					<span
 						class="absolute right-0 -mb-0.5 bottom-0 w-2 h-2 rounded-full bg-green-500 border border-white dark:border-gray-900"

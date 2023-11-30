@@ -4,7 +4,6 @@
 	import '../app.css';
 	import '../styles/styles.css';
 	import { exchangeRatesStore, pricelistStore } from '$lib/stores/cartStore';
-	import { onMount } from 'svelte';
 
 	export let data: LayoutData;
 

@@ -6,8 +6,6 @@ import { sql } from "drizzle-orm";
 import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
-
-
 const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
 
 export const users = pgTable('auth_user', {

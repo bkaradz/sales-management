@@ -85,14 +85,7 @@ function cart() {
 								getProductsOrderDetails.orders_details.quantity = 1
 							}
 						} else {
-							// const get_orders_details = getOrderDetailObj(product)
 							const orders_details_input = orderDetailsMap.get(product.id)
-							// const quantity = orderDetailsMap.get(product.id)?.quantity
-							// orders_details.quantity = quantity || 1
-							// const embroidery_type = orderDetailsMap.get(product.id)?.embroidery_type
-							// orders_details.embroidery_type = embroidery_type || 'Flat'
-							// const garment_placement = orderDetailsMap.get(product.id)?.garment_placement
-							// orders_details.garment_placement = garment_placement || 'Front Left'
 							productMap.set(product.id, { product, orders_details: { ...orders_details_input } })
 						}
 					})
@@ -288,7 +281,7 @@ function selectedRate() {
 export const selectedRateStore = selectedRate();
 
 
-export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore, $pricelistStore]) => {
+export const cartTotalsStore = derived([cartStore, pricelistStore, vatStore], ([$cartStore, $pricelistStore, $vatStore]) => {
 	const cartResults = new Map<number, CalcPriceReturn>()
 
 	$cartStore.forEach((value, key) => {
@@ -297,19 +290,11 @@ export const cartPricesStore = derived([cartStore, pricelistStore], ([$cartStore
 		cartResults.set(key, {...value.orders_details, ...results})
 	})
 
-	return cartResults
-})
-
-export const cartTotalsStore = derived([cartPricesStore, vatStore], ([$cartPricesStore, $vatStore]) => {
-
-	let totalArray: Dinero<number>[] = [dollars(0)]
-	let totalProductsArray: number[] = []
-
-	$cartPricesStore.forEach((value, key) => {
-		totalArray.push(value.total_price)
-		totalProductsArray.push(value.quantity)
-	})
-
+	const totalArray: Dinero<number>[] = [...cartResults.values()].map((item) => item.total_price)
+	const totalProductsArray: number[] = [...cartResults.values()].map((item) => item.quantity)
+	
+	totalArray.push(dollars(0))
+	
 	const total = addMany(totalArray)
 	const totalProduct = totalProductsArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 	const vatTotal = multiply(total, { amount: ($vatStore * 1000), scale: 3 })

@@ -46,8 +46,10 @@ export const svgSearch = `<svg viewBox="0 0 24 24" class="w-4 absolute text-gray
 <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 </svg>`;
 
-export const svgThreeDots = `<svg	viewBox="0 0 24 24"	class="w-4" stroke="currentColor" stroke-width="2" fill="none"	stroke-linecap="round" stroke-linejoin="round">
-<circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" />
+export const svgThreeDots = `<svg	viewBox="0 0 24 24"	class="w-4" stroke="currentColor" stroke-width="2" fill="none"	stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" />
+</svg>`;
+
+export const svgThreeDotsBold = `<svg viewBox="0 0 24 24" class="w-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" />
 </svg>`;
 
 export const svgLogOut = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16"><path fill="#ef4444" fill-rule="evenodd" d="M11.02 3.77v1.56l1-.99V2.5l-.5-.5h-9l-.5.5v.486L2 3v10.29l.36.46l5 1.72L8 15v-1h3.52l.5-.5v-1.81l-1-1V13H8V4.71l-.33-.46L4.036 3h6.984v.77zM7 14.28l-4-1.34V3.72l4 1.34v9.22zm6.52-5.8H8.55v-1h4.93l-1.6-1.6l.71-.7l2.47 2.46v.71l-2.49 2.48l-.7-.7l1.65-1.65z" clip-rule="evenodd"/>
@@ -95,6 +97,12 @@ export const svgCart = `<svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 export const svgCard = `<svg viewBox="0 0 24 24" class="w-4 text-gray-400" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"> <rect x="1" y="4" width="22" height="16" rx="2" ry="2" /> <line x1="1" y1="10" x2="23" y2="10" />
 </svg>`;
 
+export const svgCardExclamation = `<svg viewBox="0 0 24 24" class="w-4 text-yellow-500" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+</svg>`;
+
+export const svgIncomeDownArrow = `<svg viewBox="0 0 24 24" class="w-4 text-green-500" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
+</svg>`;
+
 export const svgDoubleArrows = `<svg class="w-3 h-3 ml-2 sm:ml-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10"><path	stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"	stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
 </svg>`;
 
@@ -111,4 +119,10 @@ export const svgDark = `<svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 </svg>`;
 
 export const svgReports = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 2048 2048"><path fill="currentColor" d="M512 896h384v1152H512V896zm128 1024h128v-896H640v896zm384-768h384v896h-384v-896zm128 768h128v-640h-128v640zM0 1408h384v640H0v-640zm128 512h128v-384H128v384zM1536 640h384v1408h-384V640zm128 1280h128V768h-128v1152zM1389 621q19 41 19 83q0 40-15 75t-41 61t-61 41t-75 15q-40 0-75-15t-61-41t-41-61t-15-75v-12q0-6 1-12l-188-94q-26 26-61 40t-72 14q-42 0-83-19L365 877q19 41 19 83q0 40-15 75t-41 61t-61 41t-75 15q-40 0-75-15t-61-41t-41-61t-15-75q0-40 15-75t41-61t61-41t75-15q42 0 83 19l256-256q-19-41-19-83q0-40 15-75t41-61t61-41t75-15q40 0 75 15t61 41t41 61t15 75v12q0 6-1 12l188 94q26-26 61-40t72-14q42 0 83 19l256-256q-19-41-19-83q0-40 15-75t41-61t61-41t75-15q40 0 75 15t61 41t41 61t15 75q0 40-15 75t-41 61t-61 41t-75 15q-42 0-83-19l-256 256zM192 1024q26 0 45-19t19-45q0-26-19-45t-45-19q-26 0-45 19t-19 45q0 26 19 45t45 19zm1536-896q-26 0-45 19t-19 45q0 26 19 45t45 19q26 0 45-19t19-45q0-26-19-45t-45-19zM704 512q26 0 45-19t19-45q0-26-19-45t-45-19q-26 0-45 19t-19 45q0 26 19 45t45 19zm512 256q26 0 45-19t19-45q0-26-19-45t-45-19q-26 0-45 19t-19 45q0 26 19 45t45 19z"/>
+</svg>`;
+
+export const svgUser = `<svg class="absolute w-9 h-9 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" ><path	fill-rule="evenodd"	d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"	clip-rule="evenodd"/>
+</svg>`;
+
+export const svgUserBig = `<svg class="absolute w-14 h-14 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" ><path	fill-rule="evenodd"	d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"	clip-rule="evenodd"/>
 </svg>`;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { svgSearch, svgThreeDots } from '$lib/assets/svgLogos';
+	import { svgCard, svgCardExclamation, svgIncomeDownArrow, svgSearch, svgThreeDots, svgThreeDotsBold, svgUser, svgUserBig } from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
 	import { deptColor, users } from '$lib/data/users';
 </script>
@@ -33,7 +33,9 @@
 					<div
 						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						<img src={user.img} class="w-7 h-7 mr-2 rounded-full" alt="profile" />
+						<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2 border-gray-200 dark:border-gray-800">
+							{@html svgUser}
+						</div>
 						{user.name}
 					</div>
 					<div class="flex items-center w-full">
@@ -57,11 +59,9 @@
 		>
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">
-					<img
-						src="https://assets.codepen.io/344846/internal/avatars/users/default.png?fit=crop&format=auto&height=512&version=1582611188&width=512"
-						class="w-12 mr-4 rounded-full"
-						alt="profile"
-					/>
+					<div class="relative w-12 h-12 mr-4 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 border-gray-200 dark:border-gray-800">
+						{@html svgUserBig}
+					</div>
 					Mert Cukuren
 				</div>
 				<div class="ml-auto sm:flex hidden items-center justify-end">
@@ -208,19 +208,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-yellow-500"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<circle cx="12" cy="12" r="10" />
-									<line x1="12" y1="8" x2="12" y2="12" />
-									<line x1="12" y1="16" x2="12.01" y2="16" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCardExclamation}
+								</span>
 								Card
 							</div>
 						</td>
@@ -259,19 +249,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -279,18 +257,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -337,19 +306,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -357,18 +314,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -407,19 +355,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -427,28 +363,17 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-green-500"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<line x1="12" y1="5" x2="12" y2="19" />
-									<polyline points="19 12 12 19 5 12" />
-								</svg>
+								<span class="mr-5">
+									{@html svgIncomeDownArrow}
+								</span>
 								Income
 							</div>
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<img
-									class="w-7 h-7 mr-2.5 border border-gray-200 dark:border-gray-800 rounded-full"
-									src="https://images.unsplash.com/photo-1521587765099-8835e7201186?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
-									alt="profile"
-								/>
+								<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+									{@html svgUser}
+								</div>
 								James Smith
 							</div>
 						</td>
@@ -469,19 +394,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -489,18 +402,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -536,19 +440,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -556,18 +448,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -602,19 +485,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -622,18 +493,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -684,19 +546,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -704,28 +554,17 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-green-500"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<line x1="12" y1="5" x2="12" y2="19" />
-									<polyline points="19 12 12 19 5 12" />
-								</svg>
+								<span class="mr-5">
+									{@html svgIncomeDownArrow}
+								</span>
 								Income
 							</div>
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<img
-									class="w-7 h-7 mr-2.5 border border-gray-200 dark:border-gray-800 rounded-full"
-									src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
-									alt="profile"
-								/>
+								<div class="relative w-7 h-7 overflow-hidden border-gray-200 dark:border-gray-800 bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+									{@html svgUser}
+								</div>
 								Jane Cooper
 							</div>
 						</td>
@@ -746,19 +585,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -766,19 +593,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-yellow-500"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<circle cx="12" cy="12" r="10" />
-									<line x1="12" y1="8" x2="12" y2="12" />
-									<line x1="12" y1="16" x2="12.01" y2="16" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCardExclamation}
+								</span>
 								Card
 							</div>
 						</td>
@@ -817,19 +634,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -837,18 +642,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -895,19 +691,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -915,18 +699,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -965,19 +740,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -985,28 +748,17 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-green-500"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<line x1="12" y1="5" x2="12" y2="19" />
-									<polyline points="19 12 12 19 5 12" />
-								</svg>
+								<span class="mr-5">
+									{@html svgIncomeDownArrow}
+								</span>
 								Income
 							</div>
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<img
-									class="w-7 h-7 mr-2.5 border border-gray-200 dark:border-gray-800 rounded-full"
-									src="https://images.unsplash.com/photo-1521587765099-8835e7201186?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
-									alt="profile"
-								/>
+								<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+									{@html svgUser}
+								</div>
 								James Smith
 							</div>
 						</td>
@@ -1027,19 +779,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -1047,18 +787,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -1094,19 +825,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -1114,18 +833,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -1160,19 +870,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -1180,18 +878,9 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-gray-400"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-									<line x1="1" y1="10" x2="23" y2="10" />
-								</svg>
+								<span class="mr-5">
+									{@html svgCard}
+								</span>
 								Card
 							</div>
 						</td>
@@ -1242,19 +931,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -1262,28 +939,17 @@
 					<tr>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<svg
-									viewBox="0 0 24 24"
-									class="w-4 mr-5 text-green-500"
-									stroke="currentColor"
-									stroke-width="3"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<line x1="12" y1="5" x2="12" y2="19" />
-									<polyline points="19 12 12 19 5 12" />
-								</svg>
+								<span class="mr-5">
+									{@html svgIncomeDownArrow}
+								</span>
 								Income
 							</div>
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<img
-									class="w-7 h-7 mr-2.5 border border-gray-200 dark:border-gray-800 rounded-full"
-									src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
-									alt="profile"
-								/>
+								<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+									{@html svgUser}
+								</div>
 								Jane Cooper
 							</div>
 						</td>
@@ -1304,19 +970,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-									<svg
-										viewBox="0 0 24 24"
-										class="w-5"
-										stroke="currentColor"
-										stroke-width="2"
-										fill="none"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="1" />
-										<circle cx="19" cy="12" r="1" />
-										<circle cx="5" cy="12" r="1" />
-									</svg>
+								{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>

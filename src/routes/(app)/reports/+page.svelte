@@ -1,5 +1,5 @@
 <script lang="ts">
-	import GeneralPage from '$lib/components/print/general/GeneralPage.svelte';
+	import SalesReport from '$lib/components/print/general/SalesReport.svelte';
     import type { PageData } from './$types';
     
 </script>

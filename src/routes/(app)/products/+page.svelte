@@ -39,7 +39,7 @@
 	{#if data.results?.products}
 		<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 			<div
-				class=" z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
+				class="z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
 			>
 				<div class="flex w-full items-center border-b border-gray-200 dark:border-gray-800">
 					<div class="flex items-center text-3xl text-gray-900 dark:text-white">Products</div>

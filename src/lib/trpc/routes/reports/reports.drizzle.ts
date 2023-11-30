@@ -14,6 +14,7 @@ import { getById as getContactById } from "../contacts/contacts.drizzle";
 import { getById as getExchangeRateById } from "../exchangeRates/rates.drizzle";
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';
 import type { PaymentStatusUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
+import type { SaveCartOrder } from '$lib/validation/cart.zod';
 
 export const getReports = async (input: SearchParams, ctx: Context) => {
 
@@ -102,11 +103,19 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
 
     if (!trim(input.search)) {
 
-      ordersQuery = await db.select({ orders, contacts, orders_details, products }).from(orders)
+      ordersQuery = await db.select({
+        orders_details_id: orders_details.id,
+        contact_full_name: contacts.full_name,
+        product_name: products.name,
+        product_category: products.product_category,
+        order_details_quantity: orders_details.quantity,
+        order_details_unit_price: orders_details.unit_price,
+        order_payment_status: orders.payment_status
+      }).from(orders)
         .where(
           and(eq(orders.active, true),
-              and(ne(orders.sales_status, 'Quotation'),
-                ne(orders_details.production_status, 'Collected'))))
+            and(ne(orders.sales_status, 'Quotation'),
+              ne(orders_details.production_status, 'Collected'))))
         .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
@@ -116,7 +125,85 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
 
       const data = `%${input.search}%`
 
-      ordersQuery = await db.select({ orders, contacts, orders_details, products }).from(orders)
+      ordersQuery = await db.select({
+        orders_details_id: orders_details.id,
+        contact_full_name: contacts.full_name,
+        product_name: products.name,
+        product_category: products.product_category,
+        order_details_quantity: orders_details.quantity,
+        order_details_unit_price: orders_details.unit_price,
+        order_payment_status: orders.payment_status
+      }).from(orders)
+        .where(
+          and((sql`(full_name ||' '|| CAST(orders.id AS text)) ILIKE(${data})`),
+            and(eq(orders.active, true),
+                and(ne(orders.sales_status, 'Quotation'),
+                  ne(orders_details.production_status, 'Collected')))))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(products, eq(products.id, orders_details.product_id))
+        .orderBy(desc(orders.id))
+    }
+
+    return {
+      orders: ordersQuery,
+    }
+
+  } catch (error) {
+    console.error("🚀 ~ file: orders.drizzle.ts:72 ~ getReports ~ error:", error)
+  }
+};
+
+export type GetSalesReports = Awaited<ReturnType<typeof getSalesReports>>
+
+export const getDailyProductionReport = async (input: SearchParams, ctx: Context) => {
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  try {
+
+    let ordersQuery
+
+    if (!trim(input.search)) {
+
+      ordersQuery = await db.select({
+        orders_details_id: orders_details.id,
+        contact_full_name: contacts.full_name,
+        product_name: products.name,
+        product_category: products.product_category,
+        product_stitches: products.stitches,
+        order_details_quantity: orders_details.quantity,
+        order_details_garment_placement: orders_details.garment_placement,
+        order_details_unit_price: orders_details.unit_price,
+        order_payment_status: orders.payment_status
+      }).from(orders)
+        .where(
+          and(eq(orders.active, true),
+            and(eq(products.product_category, 'Embroidery'),
+              and(ne(orders.sales_status, 'Quotation'),
+                ne(orders_details.production_status, 'Collected')))))
+        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(products, eq(products.id, orders_details.product_id))
+        .orderBy(desc(orders.id))
+
+    } else {
+
+      const data = `%${input.search}%`
+
+      ordersQuery = await db.select({
+        orders_details_id: orders_details.id,
+        contact_full_name: contacts.full_name,
+        product_name: products.name,
+        product_category: products.product_category,
+        product_stitches: products.stitches,
+        order_details_quantity: orders_details.quantity,
+        order_details_garment_placement: orders_details.garment_placement,
+        order_details_unit_price: orders_details.unit_price,
+        order_payment_status: orders.payment_status
+      }).from(orders)
         .where(
           and((sql`(full_name ||' '|| CAST(orders.id AS text)) ILIKE(${data})`),
             and(eq(orders.active, true),
@@ -138,7 +225,7 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
   }
 };
 
-export type GetSalesReports = Awaited<ReturnType<typeof getSalesReports>>
+export type GetDailyProductionReport = Awaited<ReturnType<typeof getDailyProductionReport>>
 
 
 export const getReportsByUserId = async (input: {
@@ -403,7 +490,7 @@ export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'uni
 
 type ReportInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date' | 'sales_status' | 'total_products' | 'sales_amount'>, orders_details: CalcPriceReturnSnapshot[] }
 
-export const createReport = async (input: ReportInput, ctx: Context) => {
+export const createReport = async (input: SaveCartOrder, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');

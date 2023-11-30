@@ -14,6 +14,7 @@ import { getById as getContactById } from "../contacts/contacts.drizzle";
 import { getById as getExchangeRateById } from "../exchangeRates/rates.drizzle";
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';
 import type { PaymentStatusUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
+import type { SaveCartOrder } from '$lib/validation/cart.zod';
 
 export const getOrders = async (input: SearchParams, ctx: Context) => {
 
@@ -37,10 +38,10 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
 
       ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
         .where(eq(orders.active, true))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
         .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
         .orderBy(desc(orders.id))
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
     } else {
 
@@ -53,10 +54,10 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
 
       ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
         .where(and((sql`(full_name ||' '|| CAST(orders.id AS text)) ILIKE(${data})`), (eq(orders.active, true))))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
         .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
         .orderBy(desc(orders.id))
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
 
     pagination.totalRecords = +totalOrdersRecords[0].count
@@ -438,7 +439,7 @@ export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'uni
 
 type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date' | 'sales_status' | 'total_products' | 'sales_amount'>, orders_details: CalcPriceReturnSnapshot[] }
 
-export const createOrder = async (input: OrderInput, ctx: Context) => {
+export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
