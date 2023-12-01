@@ -92,6 +92,8 @@
 		altFormat: 'd F Y',
 		altInput: true
 	};
+
+	let isModalOpen = false;
 </script>
 
 <svelte:head>
@@ -104,7 +106,12 @@
 	<div
 		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 	>
-		<div class="text-xs text-gray-400 tracking-wider">Customer</div>
+	<div class="text-base text-gray-400 tracking-wider">Customer</div>
+	<button type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 my-2 w-full"
+	on:click={() => isModalOpen = true}
+	>
+		Add Contact
+	</button>
 		<div class="mt-2 relative">
 			<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
 				<input
@@ -838,3 +845,116 @@
 		{/if}
 	</div>
 </div>
+
+
+<dialog class="modal" class:modal-open={isModalOpen}>
+	<div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
+		<h3 class="font-bold text-lg">Create Contact</h3>
+		<div class="py-4 my-2">
+			<form id="createContact" method="POST" action="?/createContact" use:enhance>
+				<!--Username input-->
+				<div class="relative mb-4">
+					<input
+						type="text"
+						class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+						id="full_name"
+						name="full_name"
+						placeholder="Full Name"
+					/>
+					<label
+						for="full_name"
+						class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+						>Full Name
+					</label>
+				</div>
+
+				<!-- Corporate  -->
+				<div class=" mb-4 ml-3">
+					<label class="">
+						<input name="is_corporate" type="checkbox" />
+						<span class="text-neutral-500 ml-2"> Corporate </span>
+					</label>
+				</div>
+
+				<!--Vat No or Bp Number-->
+				<div class="relative mb-4">
+					<input
+						type="text"
+						class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+						id="vat_or_bp_number"
+						name="vat_or_bp_number"
+						placeholder="Vat No or Bp Number"
+					/>
+					<label
+						for="vat_or_bp_number"
+						class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+						>Vat No or Bp Number
+					</label>
+				</div>
+
+				<!--Email input-->
+				<div class="relative mb-4">
+					<input
+						type="text"
+						class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+						id="email"
+						name="email"
+						placeholder="Email"
+					/>
+					<label
+						for="email"
+						class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+						>Email
+					</label>
+				</div>
+
+				<!--Phone input-->
+				<div class="relative mb-4">
+					<input
+						type="text"
+						class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+						id="phone"
+						name="phone"
+						placeholder="Phone"
+					/>
+					<label
+						for="phone"
+						class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+						>Phone
+					</label>
+				</div>
+
+				<!--Address input-->
+				<div class="relative mb-4">
+					<textarea
+						class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
+						id="address"
+						rows="4"
+						name="address"
+						placeholder="Address"
+					/>
+					<label
+						for="address"
+						class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
+						>Address
+					</label>
+				</div>
+			</form>
+		</div>
+		<div class="modal-action">
+			<input
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				type="button"
+				value="Cancel"
+				on:click={() => (isModalOpen = false)}
+			/>
+			<input
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				form="createContact"
+				value="Submit"
+				type="submit"
+				on:click={() => (isModalOpen = false)}
+			/>
+		</div>
+	</div>
+</dialog>

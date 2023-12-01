@@ -152,20 +152,20 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 
 	try {
 
-		let contactResult: {id: number}[]
+		let contactResult: { id: number }[]
 
 		{
 			const { email, phone, address, ...rest } = input
 
 			contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
-	
+
 			if (phone) {
 				phone.forEach(async (item: string) => {
 					await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 				})
-	
+
 			}
-	
+
 			if (email) {
 				email.forEach(async (item: string) => {
 					await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
@@ -205,7 +205,7 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 
 		const allDeleted = await Promise.all(deleteWait)
 
-		let contactResult: {id: number}[]
+		let contactResult: { id: number }[]
 
 		{
 			const { email, phone, address, ...rest } = input
@@ -214,14 +214,14 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 				.set({ user_id: ctx.session.user.userId, active: true, ...rest })
 				.where(eq(contacts.id, input.id))
 				.returning({ id: contacts.id });
-	
+
 			if (phone) {
 				phone.forEach(async (item: string) => {
 					await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 				})
-	
+
 			}
-	
+
 			if (email) {
 				email.forEach(async (item: string) => {
 					await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
@@ -256,7 +256,7 @@ export const uploadContacts = async (input: saveContactsArray, ctx: Context) => 
 
 			try {
 
-				let contactResult: {id: number}[]
+				let contactResult: { id: number }[]
 
 				{
 

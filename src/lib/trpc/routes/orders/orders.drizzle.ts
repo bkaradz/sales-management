@@ -16,6 +16,7 @@ import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchang
 import type { PaymentStatusUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 import type { SaveCartOrder } from '$lib/validation/cart.zod';
 
+
 export const getOrders = async (input: SearchParams, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
@@ -33,15 +34,28 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders)
         .where(eq(orders.active, true))
-        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(contacts, eq(orders.customer_id, contacts.id))
+        .innerJoin(orders_details, eq(orders.id, orders_details.order_id))
 
-      ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
+      ordersQuery = await db.select({
+        orders, contacts, orders_details
+      }).from(orders)
         .where(eq(orders.active, true))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(contacts.id, orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .innerJoin(contacts, eq(orders.customer_id, contacts.id))
+        .innerJoin(orders_details, eq(orders.id, orders_details.order_id))
         .orderBy(desc(orders.id))
+
+      const ordersQue = await db.select({
+        id: orders.id,
+        productsSum: sql`sum(${orders_details.quantity})`,
+      }).from(orders)
+        .where(eq(orders.active, true))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+        .innerJoin(orders_details, eq(orders.id, orders_details.order_id))
+        .groupBy(orders.id)
+        .orderBy(desc(orders.id))
+      console.log("🚀 ~ file: orders.drizzle.ts:56 ~ getOrders ~ ordersQ:", ordersQue)
 
     } else {
 
@@ -52,11 +66,17 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
         .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
 
-      ordersQuery = await db.select({ orders, contacts, orders_details }).from(orders)
+
+      ordersQuery = await db.select({
+        
+        orders,
+        contacts,
+        orders_details
+      }).from(orders)
         .where(and((sql`(full_name ||' '|| CAST(orders.id AS text)) ILIKE(${data})`), (eq(orders.active, true))))
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
         .innerJoin(contacts, eq(contacts.id, orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.order_id, orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
         .orderBy(desc(orders.id))
     }
 
