@@ -487,6 +487,7 @@
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
 											<input
+												name="selected"
 												type="checkbox"
 												checked={$selectedOrdersPaymentStore.has(ordersArray.orders.id)}
 												on:click={(event) => changeSelection(event, ordersArray.orders)}

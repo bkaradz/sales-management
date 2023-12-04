@@ -486,6 +486,7 @@
 									</div>
 									<div class="ml-auto text-xs text-gray-500">
 										<input 
+										name="date"
 										disabled
 										class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
 										use:datePicker={options} 

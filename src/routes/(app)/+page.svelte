@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { svgCard, svgCardExclamation, svgIncomeDownArrow, svgSearch, svgThreeDots, svgThreeDotsBold, svgUser, svgUserBig } from '$lib/assets/svgLogos';
+	import {
+		svgCard,
+		svgCardExclamation,
+		svgIncomeDownArrow,
+		svgSearch,
+		svgThreeDots,
+		svgThreeDotsBold,
+		svgUser,
+		svgUserBig
+	} from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
 	import { deptColor, users } from '$lib/data/users';
 </script>
@@ -17,6 +26,8 @@
 		<div class="text-xs text-gray-400 tracking-wider">USERS</div>
 		<div class="relative mt-2">
 			<input
+				id="search"
+				name="search"
 				type="text"
 				class="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
 				placeholder="Search"
@@ -33,7 +44,9 @@
 					<div
 						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2 border-gray-200 dark:border-gray-800">
+						<div
+							class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2 border-gray-200 dark:border-gray-800"
+						>
 							{@html svgUser}
 						</div>
 						{user.name}
@@ -59,7 +72,9 @@
 		>
 			<div class="flex w-full items-center">
 				<div class="flex items-center text-3xl text-gray-900 dark:text-white">
-					<div class="relative w-12 h-12 mr-4 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 border-gray-200 dark:border-gray-800">
+					<div
+						class="relative w-12 h-12 mr-4 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 border-gray-200 dark:border-gray-800"
+					>
 						{@html svgUserBig}
 					</div>
 					Mert Cukuren
@@ -140,6 +155,8 @@
 				</button>
 				<div class="relative ml-3">
 					<input
+						name="search"
+						id="search"
 						type="text"
 						class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
 						placeholder="Search"
@@ -355,7 +372,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -371,7 +388,9 @@
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+								<div
+									class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5"
+								>
 									{@html svgUser}
 								</div>
 								James Smith
@@ -394,7 +413,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -440,7 +459,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -485,7 +504,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -546,7 +565,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -562,7 +581,9 @@
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<div class="relative w-7 h-7 overflow-hidden border-gray-200 dark:border-gray-800 bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+								<div
+									class="relative w-7 h-7 overflow-hidden border-gray-200 dark:border-gray-800 bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5"
+								>
 									{@html svgUser}
 								</div>
 								Jane Cooper
@@ -585,7 +606,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -634,7 +655,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -691,7 +712,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -740,7 +761,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -756,7 +777,9 @@
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+								<div
+									class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5"
+								>
 									{@html svgUser}
 								</div>
 								James Smith
@@ -779,7 +802,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -825,7 +848,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -870,7 +893,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -931,7 +954,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>
@@ -947,7 +970,9 @@
 						</td>
 						<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 							<div class="flex items-center">
-								<div class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5">
+								<div
+									class="relative w-7 h-7 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-2.5"
+								>
 									{@html svgUser}
 								</div>
 								Jane Cooper
@@ -970,7 +995,7 @@
 								<button
 									class="w-8 h-8 inline-flex items-center justify-center text-gray-400 ml-auto"
 								>
-								{@html svgThreeDotsBold}
+									{@html svgThreeDotsBold}
 								</button>
 							</div>
 						</td>

@@ -124,7 +124,6 @@ export const getById = async (input: number, ctx: Context) => {
 };
 
 export const deleteById = async (input: number, ctx: Context) => {
-console.log("🚀 ~ file: contacts.drizzle.ts:127 ~ deleteById ~ input:", input)
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');

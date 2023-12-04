@@ -4,8 +4,8 @@
 	export let heading: string;
 	export let dataResults: {
 		data:  (NonNullable<GetDailyProductionReport>)['orders'];
-		pageNumber: number;
-	};
+			pageNumber: number;
+		};
 </script>
 
 <div class="pageLandscape text-black">

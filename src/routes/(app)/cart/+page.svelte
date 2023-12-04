@@ -118,6 +118,7 @@
 					use:selectTextOnFocus
 					type="text"
 					name="search"
+					id="search"
 					class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
 					placeholder="Search"
 					on:input={debounceSearch}
@@ -943,12 +944,14 @@
 		</div>
 		<div class="modal-action">
 			<input
+				name="cancel"
 				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
 				type="button"
 				value="Cancel"
 				on:click={() => (isModalOpen = false)}
 			/>
 			<input
+				name="cancel"
 				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
 				form="createContact"
 				value="Submit"

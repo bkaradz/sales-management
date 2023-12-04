@@ -1,7 +1,7 @@
 export const splitPage = (data: any[] | undefined, splitLength: number) => {
-  if (!Array.isArray(data)) throw new Error('Data not an Array');
+  if (!(Array.isArray(data))) throw new Error('Data not an Array');
 
-  if (data.length <= splitLength) return [data];
+  if (data.length <= splitLength) return [{data, pageNumber: 1}];
 
   let pageDataArray: any[] = [];
   let resultsArray: any[] = [];

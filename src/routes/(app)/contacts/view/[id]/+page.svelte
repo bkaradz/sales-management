@@ -391,12 +391,14 @@
 		</div>
 		<div class="modal-action">
 			<input
+				name="cancel"
 				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
 				type="button"
 				value="Cancel"
 				on:click={() => (isModalOpen = false)}
 			/>
 			<input
+				name="submit"
 				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
 				form="deleteForm"
 				value="Yes Delete"

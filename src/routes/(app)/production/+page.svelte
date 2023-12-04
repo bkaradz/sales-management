@@ -214,6 +214,7 @@
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<input
+										name="selection"
 										type="checkbox"
 										checked={checkedMap.has(order.orders_details.id)}
 										on:click={(event) =>

@@ -34,8 +34,8 @@
     <h3 class="font-bold text-lg">Delete product!</h3>
     <p class="py-4">Are you sure you want to delete the product!!!</p>
     <div class="modal-action">
-      <input class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"  type="button" value="Cancel" on:click={()=>isModalOpen = false}>
-      <input class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none" form="myForm" value="Save" type="submit" on:click={()=>isModalOpen = false}/>
+      <input name="cancel" class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"  type="button" value="Cancel" on:click={()=>isModalOpen = false}>
+      <input name="submit" class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none" form="myForm" value="Save" type="submit" on:click={()=>isModalOpen = false}/>
     </div>
   </div>
 </dialog>
