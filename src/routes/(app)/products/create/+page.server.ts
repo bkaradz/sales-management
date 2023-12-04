@@ -41,7 +41,7 @@ export const actions: Actions = {
 		let productsResultsArray: Products[] = []
 
 
-		productsArray.forEach((product: any) => {
+		productsArray.forEach((product: Products) => {
 			let formResults = {}
 
 			if (product?.stitches) formResults = { ...formResults, stitches: +product.stitches }

@@ -14,16 +14,36 @@
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { dinero } from 'dinero.js';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
+	import { invalidateAll } from '$app/navigation';
+	import { toasts } from '$lib/stores/toasts.store';
 
 	export let data: PageData;
+	export let form: ActionData;
 
 	let isModalOpen = false;
 	let deletedContact = { contactId: null, contactName: null } as { contactId: null | number, contactName: null | string };
+
+	$: if (form?.success) {
+		invalidateAll();
+		toasts.add({
+			message: 'Contact deleted successfully',
+			type: 'success'
+		});
+	} else {
+		if (form?.errors instanceof Map) {
+			for (const [key, value] of form.errors.entries()) {
+				toasts.add({
+					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+					type: 'error'
+				});
+			}
+		}
+	}
 
 </script>
 
@@ -188,7 +208,7 @@
 										<a href={`/contacts/edit/${contact.id}`} class="px-2">
 											{@html svgPen}
 										</a>
-										<form action="?/delete" method="post" use:enhance>
+										<form id="deleteForm" action="?/delete" method="post" use:enhance>
 											<input type="hidden" name="delete" value={contact.id} />
 											<a href="#!"
 											on:click={() => {

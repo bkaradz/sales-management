@@ -4,7 +4,7 @@ import type { Context } from "$lib/trpc/context"
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
-import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema/schema';
+import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address, orders } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import type { SaveContacts, saveContactsArray } from '$lib/validation/contacts.zod';
 
@@ -124,6 +124,7 @@ export const getById = async (input: number, ctx: Context) => {
 };
 
 export const deleteById = async (input: number, ctx: Context) => {
+console.log("🚀 ~ file: contacts.drizzle.ts:127 ~ deleteById ~ input:", input)
 
 	if (!ctx.session.sessionId) {
 		throw error(404, 'User not found');
@@ -131,11 +132,19 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 	try {
 
-		db.execute(sql`SET my.app_user = ${ctx.session.user.userId}`)
+		// check that the customer does not have orders
+		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders).where(eq(orders.customer_id, input))
 
-		await db.update(contacts)
-			.set({ active: false })
-			.where(eq(contacts.id, input));
+		if (+totalOrdersRecords[0].count !== 0) {
+			await db.update(contacts).set({active: false}).where(eq(contacts.id, input));
+		} else {
+			await db.delete(emails).where(eq(emails.contact_id, input));
+			await db.delete(phones).where(eq(phones.contact_id, input));
+			await db.delete(address).where(eq(address.contact_id, input));
+	
+			await db.delete(contacts).where(eq(contacts.id, input));
+		}
+
 
 		return {
 			message: "success",
@@ -222,7 +231,6 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 				phone.forEach(async (item: string) => {
 					await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 				})
-
 			}
 
 			if (email) {

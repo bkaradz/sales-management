@@ -3,7 +3,7 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from '$lib/trpc/context';
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { products } from '$lib/server/drizzle/schema/schema';
+import { orders_details, products } from '$lib/server/drizzle/schema/schema';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 import type { saveProduct, saveProductArray } from '$lib/validation/product.zod';
@@ -93,7 +93,14 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 	try {
 
-		await db.update(products).set({ active: false }).where(eq(products.id, input));
+		// check that the customer does not have orders
+		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details).where(eq(orders_details.product_id, input))
+
+		if (+totalOrdersRecords[0].count !== 0) {
+			await db.update(products).set({ active: false }).where(eq(products.id, input));
+		} else {
+			await db.delete(products).where(eq(products.id, input));
+		}
 
 		return {
 			message: "success",
