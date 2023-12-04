@@ -1,4 +1,4 @@
-import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema';
+import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema/schema';
 import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';

@@ -1,4 +1,4 @@
-import type { Contacts, Orders } from '$lib/server/drizzle/schema';
+import type { Contacts, Orders } from '$lib/server/drizzle/schema/schema';
 import { addMany, dollars, subtractMany } from '$lib/utility/calculateCart.util';
 import type { PaymentMethodUnion } from '$lib/utility/lists.utility';
 import { dinero, toSnapshot } from 'dinero.js';

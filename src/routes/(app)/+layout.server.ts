@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { auth } from '$lib/server/lucia/client';
 import { db } from '$lib/server/drizzle/client';
-import { users } from '$lib/server/drizzle/schema';
+import { users } from '$lib/server/drizzle/schema/schema';
 import { eq } from 'drizzle-orm';
 import { router } from '$lib/trpc/router';
 import { createContext } from '$lib/trpc/context';

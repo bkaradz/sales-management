@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { svgDark, svgDropdown, svgLight, svgLogOut, svgUser } from '$lib/assets/svgLogos';
-	import type { User } from '$lib/server/drizzle/schema';
+	import type { User } from '$lib/server/drizzle/schema/schema';
 	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
 	import { userManuallyChangedTheme } from '$lib/stores/darkMod.store';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';

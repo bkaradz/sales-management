@@ -133,8 +133,7 @@ export const actions: Actions = {
         }
 
         const data = await event.request.formData();
-        const formData = Object.fromEntries(data) as dataType
-        console.log("🚀 ~ file: +page.server.ts:135 ~ createContact: ~ formData:", formData)
+        const formData = Object.fromEntries(data)
 
         let formResults = {}
 

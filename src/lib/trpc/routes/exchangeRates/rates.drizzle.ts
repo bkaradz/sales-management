@@ -1,5 +1,5 @@
 import { db } from "$lib/server/drizzle/client";
-import { exchange_rates, exchange_rate_details, type ExchangeRate, type ExchangeRateDetails } from "$lib/server/drizzle/schema";
+import { exchange_rates, exchange_rate_details, type ExchangeRate, type ExchangeRateDetails } from "$lib/server/drizzle/schema/schema";
 import type { Context } from "$lib/trpc/context";
 import { exchangeRateToMapObj } from "$lib/utility/monetary.util";
 import { error } from "@sveltejs/kit";

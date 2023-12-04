@@ -2,7 +2,7 @@
 import { contactsList, productsList, usersList, pricelistData, exchangeRates } from './seedData';
 import { auth } from '../lucia/clientSeed';
 import { db } from './client';
-import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema';
+import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema/schema';
 import { dinero, toSnapshot } from 'dinero.js';
 import type { EmbroideryTypeUnion } from '$lib/utility/lists.utility';
 

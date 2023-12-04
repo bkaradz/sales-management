@@ -3,7 +3,7 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from '$lib/trpc/context';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { contacts, orders, orders_details, products, transactions, transactions_details, type Products } from '$lib/server/drizzle/schema';
+import { contacts, orders, orders_details, products, transactions, transactions_details, type Products } from '$lib/server/drizzle/schema/schema';
 import { and, asc, eq, inArray, ne, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 import type { transactionInput } from '../../../../routes/(app)/sales/payment/[id]/proxy+page.server';

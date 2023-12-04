@@ -4,8 +4,8 @@ import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, desc, eq, ne, sql } from 'drizzle-orm';
-import { orders, orders_details, contacts, products } from '$lib/server/drizzle/schema';
-import type { Contacts, Orders, OrdersDetails } from '$lib/server/drizzle/schema';
+import { orders, orders_details, contacts, products } from '$lib/server/drizzle/schema/schema';
+import type { Contacts, Orders, OrdersDetails } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import { addMany, subtractMany, type CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import { dinero, toSnapshot, type DineroSnapshot } from 'dinero.js';
@@ -46,16 +46,15 @@ export const getOrders = async (input: SearchParams, ctx: Context) => {
         .innerJoin(orders_details, eq(orders.id, orders_details.order_id))
         .orderBy(desc(orders.id))
 
-      const ordersQue = await db.select({
-        id: orders.id,
-        productsSum: sql`sum(${orders_details.quantity})`,
-      }).from(orders)
-        .where(eq(orders.active, true))
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(orders_details, eq(orders.id, orders_details.order_id))
-        .groupBy(orders.id)
-        .orderBy(desc(orders.id))
-      console.log("🚀 ~ file: orders.drizzle.ts:56 ~ getOrders ~ ordersQ:", ordersQue)
+      // const ordersQue = await db.select({
+      //   id: orders.id,
+      //   productsSum: sql`sum(${orders_details.quantity})`,
+      // }).from(orders)
+      //   .where(eq(orders.active, true))
+      //   .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+      //   .innerJoin(orders_details, eq(orders.id, orders_details.order_id))
+      //   .groupBy(orders.id)
+      //   .orderBy(desc(orders.id))
 
     } else {
 

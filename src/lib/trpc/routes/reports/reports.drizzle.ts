@@ -4,8 +4,8 @@ import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, desc, eq, ne, sql } from 'drizzle-orm';
-import { orders, orders_details, contacts, products } from '$lib/server/drizzle/schema';
-import type { Contacts, Orders, OrdersDetails } from '$lib/server/drizzle/schema';
+import { orders, orders_details, contacts, products } from '$lib/server/drizzle/schema/schema';
+import type { Contacts, Orders, OrdersDetails } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import { addMany, subtractMany, type CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import { dinero, toSnapshot, type DineroSnapshot } from 'dinero.js';

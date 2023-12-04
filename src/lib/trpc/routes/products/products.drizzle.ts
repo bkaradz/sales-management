@@ -3,7 +3,7 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from '$lib/trpc/context';
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { products } from '$lib/server/drizzle/schema';
+import { products } from '$lib/server/drizzle/schema/schema';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 import type { saveProduct, saveProductArray } from '$lib/validation/product.zod';

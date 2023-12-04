@@ -6,7 +6,7 @@ import parseCsv from '$lib/utility/parseCsv';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveContactsArraySchema, saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
-import type { Contacts } from '$lib/server/drizzle/schema';
+import type { Contacts } from '$lib/server/drizzle/schema/schema';
 
 export const load = (async (event) => {
 	return {};

@@ -14,7 +14,7 @@ async function main() {
 
     console.info("migrations started......");
 
-    const migrationClient = postgres(connectionString, { max: 1 });
+    const migrationClient = postgres(connectionString, { max: 1,  onnotice: () => {} });
     await migrate(drizzle(migrationClient), { migrationsFolder: "drizzle/migrations" })
 
     console.info("migrations finished......");

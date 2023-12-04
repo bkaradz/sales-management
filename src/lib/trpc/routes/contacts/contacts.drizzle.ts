@@ -4,7 +4,7 @@ import type { Context } from "$lib/trpc/context"
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
-import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema';
+import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import type { SaveContacts, saveContactsArray } from '$lib/validation/contacts.zod';
 
@@ -131,6 +131,8 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 	try {
 
+		db.execute(sql`SET my.app_user = ${ctx.session.user.userId}`)
+
 		await db.update(contacts)
 			.set({ active: false })
 			.where(eq(contacts.id, input));
@@ -196,6 +198,7 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 
 	try {
 
+
 		const deleteWait = []
 
 		// delete address, phone and email with contact id from database then add new details
@@ -256,6 +259,8 @@ export const uploadContacts = async (input: saveContactsArray, ctx: Context) => 
 
 			try {
 
+				db.execute(sql`SET my.app_user = ${ctx.session.user.userId}`)
+
 				let contactResult: { id: number }[]
 
 				{
@@ -302,3 +307,4 @@ export const uploadContacts = async (input: saveContactsArray, ctx: Context) => 
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
 	}
 };
+

@@ -22,7 +22,7 @@
 		selectedOrdersPaymentStore,
 		selectedOrdersPaymentTotals
 	} from '$lib/stores/paymentsStore';
-	import type { Orders } from '$lib/server/drizzle/schema';
+	import type { Orders } from '$lib/server/drizzle/schema/schema';
 	import { enhance } from '$app/forms';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { invalidateAll } from '$app/navigation';

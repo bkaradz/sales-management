@@ -1,5 +1,5 @@
 import { db } from "$lib/server/drizzle/client";
-import { pricelist, pricelist_details, type Pricelist, type PricelistDetails } from "$lib/server/drizzle/schema";
+import { pricelist, pricelist_details, type Pricelist, type PricelistDetails } from "$lib/server/drizzle/schema/schema";
 import type { Context } from "$lib/trpc/context";
 import { pricelistToMapObj } from "$lib/utility/monetary.util";
 import { error } from "@sveltejs/kit";

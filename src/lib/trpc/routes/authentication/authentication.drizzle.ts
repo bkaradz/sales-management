@@ -4,7 +4,7 @@ import { error, redirect } from "@sveltejs/kit"
 import type { Context } from "$lib/trpc/context"
 import { db } from "$lib/server/drizzle/client"
 import { eq, sql } from "drizzle-orm"
-import { users } from "$lib/server/drizzle/schema"
+import { users } from "$lib/server/drizzle/schema/schema"
 
 
 export const registerUser = async (input: UserRegister) => {

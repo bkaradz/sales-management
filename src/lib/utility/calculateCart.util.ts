@@ -1,4 +1,4 @@
-import type { Products } from "$lib/server/drizzle/schema"
+import type { Products } from "$lib/server/drizzle/schema/schema"
 import { dinero, multiply, maximum, add, toDecimal, subtract, toSnapshot } from "dinero.js";
 import type { Dinero, Currency } from "dinero.js";
 import type { PricelistToMap } from "./monetary.util";

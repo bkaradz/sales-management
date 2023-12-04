@@ -1,4 +1,4 @@
-import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } from "$lib/server/drizzle/schema"
+import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } from "$lib/server/drizzle/schema/schema"
 import sortBy from "lodash-es/sortBy"
 import type { EmbroideryTypeUnion } from "./lists.utility"
 

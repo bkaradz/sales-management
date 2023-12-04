@@ -1,4 +1,4 @@
-import type { ExchangeRate, ExchangeRateDetails } from '$lib/server/drizzle/schema';
+import type { ExchangeRate, ExchangeRateDetails } from '$lib/server/drizzle/schema/schema';
 import { convert, type Dinero } from 'dinero.js';
 
 

@@ -7,7 +7,7 @@ import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveProductsArraySchema, saveProductsSchema } from '$lib/validation/product.zod';
 import { greaterThan, type DineroSnapshot, dinero } from 'dinero.js';
 import { dollars } from '$lib/utility/calculateCart.util';
-import type { Products } from '$lib/server/drizzle/schema';
+import type { Products } from '$lib/server/drizzle/schema/schema';
 
 export const load = (async () => {
 	return {};

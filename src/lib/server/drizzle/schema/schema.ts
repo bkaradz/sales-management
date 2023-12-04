@@ -1,12 +1,12 @@
 import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentMethodUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 import type { DineroSnapshot, Rates, Currency } from "dinero.js";
-import { toSnapshot, dinero, } from "dinero.js";
+import { toSnapshot } from "dinero.js";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { dollars } from "../../../utility/calculateCart.util";
 
-const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
 
 export const users = pgTable('auth_user', {
   id: text('id').primaryKey(),
