@@ -8,6 +8,9 @@ dependencies:
   buffer:
     specifier: ^6.0.3
     version: 6.0.3
+  currency.js:
+    specifier: ^2.0.4
+    version: 2.0.4
   svelte-flatpickr-plus:
     specifier: ^1.0.5
     version: 1.0.5(svelte@4.2.7)(typescript@5.3.2)
@@ -1482,6 +1485,11 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
     dev: true
+
+  /currency.js@2.0.4:
+    resolution: {integrity: sha512-6/OplJYgJ0RUlli74d93HJ/OsKVBi8lB1+Z6eJYS1YZzBuIp4qKKHpJ7ad+GvTlWmLR/hLJOWTykN5Nm8NJ7+w==}
+    engines: {node: '>=4'}
+    dev: false
 
   /d@1.0.1:
     resolution: {integrity: sha512-m62ShEObQ39CfralilEQRjH6oAMtNCV1xJyEx5LpRYUVN+EviphDgUc/F3hnYbADmkiNs67Y+3ylmlG7Lnu+FA==}

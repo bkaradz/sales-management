@@ -68,6 +68,7 @@
 	},
 	"dependencies": {
 		"buffer": "^6.0.3",
+		"currency.js": "^2.0.4",
 		"svelte-flatpickr-plus": "^1.0.5"
 	}
 }
