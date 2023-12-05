@@ -1,10 +1,39 @@
 <script lang="ts">
-	import SalesReport from '$lib/components/print/general/SalesReport.svelte';
-    import type { PageData } from './$types';
-    
+	import { enhance } from '$app/forms';
+	import { toasts } from '$lib/stores/toasts.store';
+	import { Buffer } from 'buffer';
+
+	export let form;
+
+	$: if (form?.success) {
+		const json = JSON.parse(form.data);
+
+		const pdfBuffer = Buffer.from(json.pdf, 'base64');
+
+		const file = new Blob([pdfBuffer], { type: 'application/pdf' });
+
+		const fileURL = URL.createObjectURL(file);
+
+		let fileLink = document.createElement('a');
+		fileLink.href = fileURL;
+		fileLink.download = `${'production'}.pdf`;
+		fileLink.click();
+	}
+
+	$: if (form?.errors) {
+		toasts.add({
+			message: `${form.message}`,
+			type: 'error'
+		});
+	}
 </script>
 
 <svelte:head>
 	<title>Reports</title>
 </svelte:head>
 <h1>Reports</h1>
+
+<form id="deleteForm" action="?/printPdf" method="post" use:enhance>
+	<input type="hidden" name="url" value="http://localhost:5173/reports/production" />
+	<button class="btn btn-success">Print</button>
+</form>

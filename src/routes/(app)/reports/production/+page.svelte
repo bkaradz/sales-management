@@ -9,7 +9,7 @@
 </script>
 
 <div class="flex-grow flex overflow-x-hidden">
-	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
+	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto print:overflow-hidden">
 		{#each splitPage(data?.results?.orders, 10) as dataResults}
 			<ProductionReport {heading} {dataResults} />
 		{/each}

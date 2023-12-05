@@ -28,7 +28,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="absolute top-[104px] left-0 mx-10">
+	<div class="absolute top-[104px] left-0 ml-5 mr-20">
 		<!-- List Slot -->
 		{#if dataResults}
 			<div class="flex justify-center w-full">
@@ -36,17 +36,17 @@
 					<table class="w-full">
 						<thead class="">
 							<tr class="border border-gray-200 bg-gray-100 text-white">
-								<th class="px-4 py-2 text-xs text-black text-left">#</th>
-								<th class="px-4 py-2 text-xs text-black text-left">Job Name</th>
-								<th class="px-4 py-2 text-xs text-black text-left">Client Name</th>
-								<th class="px-4 py-2 text-xs text-black text-left">Garment Placement</th>
-								<th class="px-4 py-2 text-xs text-black text-left">Quantity</th>
-								<th class="px-4 py-2 text-xs text-black text-right">Special Instruction</th>
-								<th class="px-4 py-2 text-xs text-black text-right">Stitches</th>
-								<th class="px-4 py-2 text-xs text-black text-right">Units Done</th>
-								<th class="px-4 py-2 text-xs text-black text-right">Units Bad</th>
-								<th class="px-4 py-2 text-xs text-black text-right">Units Rem</th>
-								<th class="px-4 py-2 text-xs text-black text-right">Remarks</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">#</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Job Name</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Client Name</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Garment Placement</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Quantity</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Special Instruction</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Stitches</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Units Done</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Units Bad</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Units Rem</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Remarks</th>
 							</tr>
 						</thead>
 						<tbody class="bg-white">
@@ -54,21 +54,21 @@
 								<tr
 									class="whitespace-no-wrap w-full border border-t-0 border-pickled-bluewood-300 font-normal even:bg-gray-50 odd:text-pickled-bluewood-900 even:text-pickled-bluewood-900"
 								>
-									<td class="px-4 py-2 text-xs text-black text-left"
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left"
 										>{index + 1 + 10 * (dataResults.pageNumber - 1)}</td
 									>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.contact_full_name}</td>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.product_name}</td>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.order_details_garment_placement}</td>
-									<td class="px-4 py-2 text-xs text-black text-left">
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.contact_full_name}</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.product_name}</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.order_details_garment_placement}</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
 										{item.order_details_quantity}
 									</td>
-									<td class="px-4 py-2 text-xs text-black text-left"></td>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.product_stitches}</td>
-									<td class="px-4 py-2 text-xs text-black text-left"></td>
-									<td class="px-4 py-2 text-xs text-black text-left"></td>
-									<td class="px-4 py-2 text-xs text-black text-left"></td>
-									<td class="px-4 py-2 text-xs text-black text-left"></td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left"></td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.product_stitches}</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left"></td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left"></td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left"></td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left"></td>
 								</tr>
 							{/each}
 						</tbody>
@@ -78,7 +78,7 @@
 		{/if}
 	</div>
 	<div class="footer border-t-2 border-blue-500 mb-10">
-		<div class="p-4 text-lg mx-auto">
+		<div class="p-4 text-xs mx-auto">
 			<p>
 				Page {dataResults.pageNumber}
 			</p>

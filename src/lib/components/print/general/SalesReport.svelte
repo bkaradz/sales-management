@@ -3,11 +3,11 @@
 	import type { GetSalesReports } from '$lib/trpc/routes/reports/reports.drizzle';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
-	import { dinero, multiply} from 'dinero.js';
+	import { dinero, multiply } from 'dinero.js';
 
 	export let heading: string;
 	export let dataResults: {
-		data: (NonNullable<GetSalesReports>)['orders'];
+		data: NonNullable<GetSalesReports>['orders'];
 		pageNumber: number;
 	};
 </script>
@@ -40,15 +40,15 @@
 					<table class="w-full">
 						<thead class="">
 							<tr class="border border-gray-200 bg-gray-100 text-white">
-								<th class="px-4 py-2 text-xs text-black text-left"> # </th>
-								<th class="px-4 py-2 text-xs text-black text-left"> Id </th>
-								<th class="px-4 py-2 text-xs text-black text-left"> Customer Name </th>
-								<th class="px-4 py-2 text-xs text-black text-left"> Product Name </th>
-								<th class="px-4 py-2 text-xs text-black text-left"> Product Category </th>
-								<th class="px-4 py-2 text-xs text-black text-right"> Quantity </th>
-								<th class="px-4 py-2 text-xs text-black text-right"> Unit Price </th>
-								<th class="px-4 py-2 text-xs text-black text-right"> Total </th>
-								<th class="px-4 py-2 text-xs text-black text-right"> Payment </th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">#</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Id</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Customer Name</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Product Name</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-left">Product Category</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Quantity</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Unit Price</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Total</th>
+								<th class="px-2 py-1 text-[0.63rem] text-black text-right">Payment</th>
 							</tr>
 						</thead>
 						<tbody class="bg-white">
@@ -56,17 +56,25 @@
 								<tr
 									class="whitespace-no-wrap w-full border border-t-0 border-pickled-bluewood-300 font-normal even:bg-gray-50 odd:text-pickled-bluewood-900 even:text-pickled-bluewood-900"
 								>
-									<td class="px-4 py-2 text-xs text-black text-left"
-										>{index + 1 + 10 * (dataResults.pageNumber - 1)}</td
-									>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.orders_details_id}</td>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.contact_full_name}</td>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.product_name}</td>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.product_category}</td>
-									<td class="px-4 py-2 text-xs text-black text-left"
-										>{item.order_details_quantity}</td
-									>
-									<td class="px-4 py-2 text-xs text-black text-right truncate">
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
+										{index + 1 + 10 * (dataResults.pageNumber - 1)}
+									</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
+										{item.orders_details_id}
+									</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
+										{item.contact_full_name}
+									</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
+										{item.product_name}
+									</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
+										{item.product_category}
+									</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
+										{item.order_details_quantity}
+									</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-right truncate">
 										{format(
 											converter(
 												dinero(item.order_details_unit_price),
@@ -75,7 +83,7 @@
 											)
 										)}
 									</td>
-									<td class="px-4 py-2 text-xs text-black font-semibold text-right truncate">
+									<td class="px-2 py-1 text-[0.63rem] text-black font-semibold text-right truncate">
 										{format(
 											converter(
 												multiply(dinero(item.order_details_unit_price), {
@@ -87,8 +95,9 @@
 											)
 										)}
 									</td>
-									<td class="px-4 py-2 text-xs text-black text-left">{item.order_payment_status}</td
-									>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
+										{item.order_payment_status}
+									</td>
 								</tr>
 							{/each}
 						</tbody>
@@ -98,7 +107,7 @@
 		{/if}
 	</div>
 	<div class="footer border-t-2 border-blue-500 mb-10">
-		<div class="p-4 text-lg mx-auto">
+		<div class="p-4 text-xs mx-auto">
 			<p>
 				Page {dataResults.pageNumber}
 			</p>
