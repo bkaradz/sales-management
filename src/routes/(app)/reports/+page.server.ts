@@ -16,6 +16,9 @@ export const load = (async () => {
 
 export const actions: Actions = {
     printPdf: async (event) => {
+        console.log("🚀 ~ file: +page.server.ts:19 ~ printPdf: ~ event:", 
+        event.request.headers.get('cookie')
+        )
 
         const session = await event.locals.auth.validate()
 

@@ -13,6 +13,7 @@ export const second: Handle = async ({ event, resolve }) => {
 	const theme = event.cookies.get('siteTheme')
 
 	event.locals.auth = auth.handleRequest(event);
+	
 	return await resolve(event, {
 		transformPageChunk: ({html}) => html.replace('class=""', `class="${theme}"`)
 	});
