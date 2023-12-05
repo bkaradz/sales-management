@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';	
 	import { enhance } from '$app/forms';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { Buffer } from 'buffer';
@@ -34,6 +35,7 @@
 <h1>Reports</h1>
 
 <form id="deleteForm" action="?/printPdf" method="post" use:enhance>
-	<input type="hidden" name="url" value="http://localhost:5173/reports/production" />
+	<input type="hidden" name="pathname" value="/reports/production" />
+	<input type="hidden" name="origin" value={$page.url.origin} />
 	<button class="btn btn-success">Print</button>
 </form>

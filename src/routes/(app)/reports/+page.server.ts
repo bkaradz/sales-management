@@ -6,9 +6,9 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const input = {
-	username: process.env.printerUser,
-	password: process.env.printerPassword
-} as {username: string, password: string};
+    username: process.env.printerUser,
+    password: process.env.printerPassword
+} as { username: string, password: string };
 
 export const load = (async () => {
     return {};
@@ -26,8 +26,13 @@ export const actions: Actions = {
         const data = await event.request.formData();
         const formData = Object.fromEntries(data)
 
-        const url = formData.url as string
-
+        const origin = formData.origin as string
+        const pathname = formData.pathname as string
+        const urlArray = []
+        urlArray.push(origin)
+        urlArray.push(pathname)
+        const url = urlArray.join('')
+        
         try {
 
             const browser = await puppeteer.launch({
@@ -37,7 +42,7 @@ export const actions: Actions = {
             // Create a new page
             const page1 = await browser.newPage();
 
-            await page1.goto('http://localhost:5173/', {
+            await page1.goto(`${origin}`, {
                 waitUntil: ['domcontentloaded', 'networkidle0']
             });
 
@@ -54,9 +59,7 @@ export const actions: Actions = {
             await page.setCookie(...cookies);
 
             //Get HTML content from HTML file
-            await page.goto(url, {
-                waitUntil: ['domcontentloaded', 'networkidle0']
-            });
+            await page.goto(url, { waitUntil: ['domcontentloaded', 'networkidle0'] });
 
             // To reflect CSS used for screens instead of print
             await page.emulateMediaType('print');
