@@ -1,6 +1,18 @@
 <script lang="ts">
-	import { svgDashboardCart, svgDashboardMessages, svgDashboardOrders, svgDashboardUser } from '$lib/assets/svgLogos';
+	import {
+		svgDashboardCart,
+		svgDashboardMessages,
+		svgDashboardOrders,
+		svgDashboardUser
+	} from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
+	import { format } from '$lib/utility/calculateCart.util';
+	
+	$: console.log('Rand: ', format(10000, 'ZAR'));
+	$: console.log('Rand: ', format(10000, 'BWP'));
+	$: console.log('Rand: ', format(10000, 'ZWB'));
+	$: console.log('Rand: ', format(10000, 'ZWR'));
+	$: console.log('Rand: ', format(10000, 'USD'));
 </script>
 
 <svelte:head>
@@ -38,7 +50,7 @@
 					<div
 						class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500"
 					>
-					{@html svgDashboardUser}
+						{@html svgDashboardUser}
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Daily Sales</p>
@@ -88,7 +100,7 @@
 					<div
 						class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500"
 					>
-					{@html svgDashboardUser}
+						{@html svgDashboardUser}
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Sales</p>
@@ -100,7 +112,7 @@
 					<div
 						class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500"
 					>
-					{@html svgDashboardOrders}
+						{@html svgDashboardOrders}
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Orders</p>

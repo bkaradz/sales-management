@@ -7,8 +7,8 @@
 
 	export let data: LayoutData;
 
-	$: pricelistStore.add(data.pricelists);
-	$: exchangeRatesStore.add(data.exchangeRates);
+	// $: pricelistStore.add(data.pricelists);
+	// $: exchangeRatesStore.add(data.exchangeRates);
 </script>
 
 <Toasts />

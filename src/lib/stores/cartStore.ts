@@ -1,13 +1,12 @@
 import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema/schema';
-import { addMany, calcPrice, dollars, format } from '$lib/utility/calculateCart.util';
+import { addMany, calcPrice, format } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
-import { multiply, dinero } from 'dinero.js';
-import type { Dinero, DineroSnapshot, } from 'dinero.js';
 import { get, writable, derived } from 'svelte/store';
+import currency from 'currency.js';
 
-export type NewOrderDetails = Omit<OrdersDetails, 'total_price' | 'unit_price'> & { total_price: Dinero<number>, unit_price: Dinero<number> }
+export type NewOrderDetails = OrdersDetails
 
 export type CartTypes = { product: Products, orders_details: Partial<NewOrderDetails> }
 
@@ -15,8 +14,8 @@ const getOrderDetailObj = (product: Products) => {
 
 	if (product.product_category === 'Embroidery') {
 		return {
-			total_price: dollars(0),
-			unit_price: dollars(0),
+			total_price: 0,
+			unit_price: 0,
 			price_calculated: true,
 			quantity: 1,
 			product_id: product.id,
@@ -33,8 +32,8 @@ const getOrderDetailObj = (product: Products) => {
 	if(!unit_price) throw new Error("Unit Price not found");
 
 	return {
-		total_price: dollars(0),
-		unit_price: dinero(unit_price),
+		total_price: 0,
+		unit_price: unit_price,
 		price_calculated: false,
 		quantity: 1,
 		product_id: product.id,
@@ -70,7 +69,7 @@ function cart() {
 			const orderDetailsMap = new Map<number, NewOrderDetails>()
 			if (Array.isArray(order_details)) {
 				order_details.forEach((item) => {
-					const newItem = {...item, total_price: dinero(item.total_price), unit_price: dinero(item.unit_price)}
+					const newItem = {...item, total_price: item.total_price, unit_price: item.unit_price}
 					orderDetailsMap.set(item.product_id, newItem)
 				})
 			}
@@ -132,7 +131,7 @@ function cart() {
 		changeUnitPrice: ({ id, unitPrice }: { id: number, unitPrice: number }) => {
 			update((productMap) => {
 				const getProductsOrderDetails = productMap.get(id) as CartTypes
-				getProductsOrderDetails.orders_details.unit_price = dollars(unitPrice * 1000)
+				getProductsOrderDetails.orders_details.unit_price = unitPrice
 				getProductsOrderDetails.orders_details.price_calculated = false
 				return productMap
 			})
@@ -290,14 +289,16 @@ export const cartTotalsStore = derived([cartStore, pricelistStore, vatStore], ([
 		cartResults.set(key, {...value.orders_details, ...results})
 	})
 
-	const totalArray: Dinero<number>[] = [...cartResults.values()].map((item) => item.total_price)
+	const totalArray: currency[] = [...cartResults.values()].map((item) => item.total_price)
 	const totalProductsArray: number[] = [...cartResults.values()].map((item) => item.quantity)
+
+	const initValue = 0 as unknown as currency
 	
-	totalArray.push(dollars(0))
+	totalArray.push(initValue)
 	
 	const total = addMany(totalArray)
 	const totalProduct = totalProductsArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-	const vatTotal = multiply(total, { amount: ($vatStore * 1000), scale: 3 })
+	const vatTotal = currency(total).multiply($vatStore)
 
 	return {
 		sub_total: total,
@@ -338,14 +339,14 @@ function enteredAmount() {
 				update(() => 0)
 			}
 		},
-		addDinero: (unitPrice: DineroSnapshot<number> | null | undefined) => {
-			if (unitPrice) {
-				const number = format(dinero(unitPrice)) as string
-				update(() => +number.split(" ")[1])
-			} else {
-				update(() => 0)
-			}
-		},
+		// addDinero: (unitPrice: currency | null | undefined) => {
+		// 	if (unitPrice) {
+		// 		const number = format(unitPrice)
+		// 		update(() => +number.split(" ")[1])
+		// 	} else {
+		// 		update(() => 0)
+		// 	}
+		// },
 		reset: () => set(0)
 	};
 }
@@ -354,7 +355,7 @@ export const enteredAmountStore = enteredAmount();
 
 export const enteredAmountValue = derived([enteredAmountStore, selectedRateStore, exchangeRatesStore], ([$enteredAmountStore, $selectedRateStore, $exchangeRatesStore]) => {
 
-	return dollars($enteredAmountStore * 1000)
+	return $enteredAmountStore
 
 })
 

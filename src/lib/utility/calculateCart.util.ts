@@ -1,14 +1,21 @@
 import type { Products } from "$lib/server/drizzle/schema/schema"
-import { dinero, multiply, maximum, add, toDecimal, subtract, toSnapshot } from "dinero.js";
-import type { Dinero, Currency } from "dinero.js";
 import type { PricelistToMap } from "./monetary.util";
-import type { EmbroideryTypeUnion } from "./lists.utility";
+import type { EmbroideryTypeUnion, currencyTypeUnion } from "./lists.utility";
 import type { CartTypes } from "$lib/stores/cartStore";
+import currency  from "currency.js";
+import { max } from "lodash-es";
 
 
-export const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
-export const addMany = (addends: Dinero<number>[]) => addends.reduce(add);
-export const subtractMany = (subtrahends: Dinero<number>[]) => subtrahends.reduce(subtract);
+export const addMany = (addends: currency[]) => {
+  let accumulator = 0 as unknown as currency
+  addends.forEach((value) => accumulator = currency(accumulator).add(value))
+  return accumulator
+};
+export const subtractMany = (subtrahends: currency[]) => {
+  let accumulator = 0 as unknown as currency
+  subtrahends.forEach((value) => accumulator = currency(accumulator).subtract(value))
+  return accumulator
+};
 /**
  * input products
  * calculate using pricelist(Function)
@@ -43,7 +50,7 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroi
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
 export const calcProductPrices = (product: Products, pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryTypeUnion = 'Flat') => {
-  
+
   if (!embroideryType) {
     embroideryType = 'Flat'
   }
@@ -52,12 +59,12 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
 
 
   if (!product) throw new Error("product not found");
-  
+
 
   if (product.product_category !== 'Embroidery') {
     const unit_price = product.product_unit_price
     if (!unit_price) throw new Error("Unit price not found");
-    return dinero(unit_price)
+    return unit_price
   }
 
   // Get pricelist
@@ -66,11 +73,11 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
   if (!product.stitches) throw new Error("Stitches not found");
 
   // Calculate price per 1000 stitches
-  const unitPricePerThousand = multiply(dinero(pricelistCalc.price_per_thousand_stitches), { amount: product.stitches, scale: 3 })
+  const unitPricePerThousand = currency(pricelistCalc.price_per_thousand_stitches).multiply(product.stitches)
 
-  const unit_price = maximum([unitPricePerThousand, dinero(pricelistCalc.minimum_price)])
-  
-  return  unit_price
+  const unit_price = max([unitPricePerThousand, currency(pricelistCalc.minimum_price).value])
+
+  return unit_price
 
 }
 
@@ -80,11 +87,11 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
 export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
 
   let embroideryType = values.orders_details.embroidery_type
-  
+
   if (!embroideryType) {
     embroideryType = 'Flat'
   }
-  
+
   let quantity = values.orders_details.quantity
 
   if (!quantity) throw new Error("Quantity not found");
@@ -92,7 +99,7 @@ export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
   let product = values.product
 
   if (!product) throw new Error("product not found");
-  
+
 
   if (!values.orders_details.price_calculated) {
     return calcNonEmbroidery(values)
@@ -108,11 +115,13 @@ export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
   if (!product.stitches) throw new Error("Stitches not found");
 
   // Calculate price per 1000 stitches
-  const unitPricePerThousand = multiply(dinero(pricelistCalc.price_per_thousand_stitches), { amount: product.stitches, scale: 3 })
+  const unitPricePerThousand = currency(pricelistCalc.price_per_thousand_stitches).multiply(product.stitches)
 
-  const unit_price = maximum([unitPricePerThousand, dinero(pricelistCalc.minimum_price)])
+  const unit_price = max([unitPricePerThousand, currency(pricelistCalc.minimum_price).value])
 
-  const total_price = multiply(unit_price, { amount: quantity * 1000, scale: 3 })
+  if (!unit_price) throw new Error("Unit price not found");
+
+  const total_price = currency(unit_price).multiply(quantity)
 
   return {
     total_price,
@@ -134,7 +143,7 @@ export type CalcPriceReturn = ReturnType<typeof calcPrice>
 const calcNonEmbroidery = (values: CartTypes) => {
 
   const unit_price = values.orders_details.unit_price
-  
+
   if (!unit_price) throw new Error("Unit price not found");
 
   const quantity = values.orders_details.quantity
@@ -143,7 +152,7 @@ const calcNonEmbroidery = (values: CartTypes) => {
 
   // const unit_price = unitPrice
 
-  const total_price = multiply(unit_price, { amount: (quantity * 1000), scale: 3 })
+  const total_price = currency(unit_price).multiply(quantity)
 
   return {
     total_price,
@@ -155,13 +164,22 @@ const calcNonEmbroidery = (values: CartTypes) => {
 }
 
 
-
-function createFormatter(transformer: any) {
-  return function formatter(dineroObject: Dinero<number>) {
-    return toDecimal(dineroObject, transformer)
+export const format = ((value: any, toCurrency: currencyTypeUnion) => {
+  switch (toCurrency) {
+    case 'ZAR':
+      return currency(value, { symbol: "R", separator: " ", decimal: "." }).format();
+      break;
+    case 'BWP':
+      return currency(value, { symbol: "P", separator: " ", decimal: "." }).format();
+      break;
+    case 'ZWB':
+      return currency(value, { symbol: "ZB$", separator: " ", decimal: "." }).format();
+      break;
+    case 'ZWR':
+      return currency(value, { symbol: "ZR$", separator: " ", decimal: "." }).format();
+      break;
+    default:
+      return currency(value, { symbol: "$", separator: " ", decimal: "." }).format();
+      break;
   }
-}
-
-export const format = createFormatter(({ value, currency }: { value: string, currency: Currency<number> }) =>
-  `${currency.code} ${Number(value).toFixed(2)}`
-)
+})
