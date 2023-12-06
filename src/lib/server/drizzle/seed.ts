@@ -62,28 +62,29 @@ async function main() {
 
 
 
-    // contactsList.forEach(async (contact) => {
-    //   const contactResult = await db.insert(contacts).values({ user_id: adminId, full_name: contact.full_name, active: true, is_corporate: false, }).returning({ id: contacts.id });
-    //   contactArray.push(contactResult)
-    //   if (contact?.phone) {
-    //     contact.phone.forEach(async (item) => {
-    //       const phoneResult = await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
-    //       phonesArray.push(phoneResult)
-    //     })
-    //   }
-    //   if (contact?.email) {
-    //     contact.email.forEach(async (item) => {
-    //       const emailResult = await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
-    //       emailsArray.push(emailResult)
-    //     })
-    //   }
-    //   if (contact?.address) {
-    //     contact.address.forEach(async (item) => {
-    //       const addressResult = await db.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
-    //       addressArray.push(addressResult)
-    //     })
-    //   }
-    // });
+    contactsList.forEach(async (contact) => {
+      const contactResult = await db.insert(contacts).values({ user_id: adminId, full_name: contact.full_name, active: true, is_corporate: false, }).returning({ id: contacts.id });
+      contactArray.push(contactResult)
+      
+      if (contact?.phone) {
+        contact.phone.forEach(async (item) => {
+          const phoneResult = await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
+          phonesArray.push(phoneResult)
+        })
+      }
+      if (contact?.email) {
+        contact.email.forEach(async (item) => {
+          const emailResult = await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
+          emailsArray.push(emailResult)
+        })
+      }
+      if (contact?.address) {
+        contact.address.forEach(async (item) => {
+          const addressResult = await db.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
+          addressArray.push(addressResult)
+        })
+      }
+    });
 
     pricelistData.forEach(async (priceList) => {
 
@@ -91,11 +92,11 @@ async function main() {
 
       priceList.pricelist_details.forEach(async (detail) => {
         await db.insert(pricelist_details).values({
-          pricelist_id: pricelistResult[0].id,
+          pricelist_id: pricelistResult[0].id as Number,
           embroidery_types: detail.embroidery_types as EmbroideryTypeUnion,
           minimum_quantity: detail.minimum_quantity,
-          minimum_price: toSnapshot(dollars(detail.minimum_price * 1000)),
-          price_per_thousand_stitches: toSnapshot(dollars(detail.price_per_thousand_stitches * 1000))
+          minimum_price: detail.minimum_price,
+          price_per_thousand_stitches: detail.price_per_thousand_stitches
         })
       })
     });
@@ -105,27 +106,19 @@ async function main() {
       const exchangeRatesResult = await db.insert(exchange_rates).values({ user_id: adminId, active: rates.active, default: rates.default }).returning({ id: exchange_rates.id });
 
       rates.exchange_rate_details.forEach(async (detail) => {
-
-        const newRate = { [detail.currency]: { amount: (detail.rate * 100), scale: 2 } } // times 100 for % and times 100 for scale
-
-        const currencyObject = currencyMap.get(detail.currency)
-
-        if (!currencyObject) throw new Error("Currency object not found");
-
         await db.insert(exchange_rate_details).values({
-          exchange_rates_id: exchangeRatesResult[0].id,
+          exchange_rates_id: exchangeRatesResult[0].id as Number,
           name: detail.name,
           currency: detail.currency,
-          currency_object: currencyObject,
-          rate: newRate
+          rate: detail.rate
         })
       })
     });
 
-    // productsList.forEach(async (product) => {
-    //   const productsResults = await db.insert(products).values({ user_id: adminId, ...product }).returning()
-    //   productsArray.push(productsResults)
-    // });
+    productsList.forEach(async (product) => {
+      const productsResults = await db.insert(products).values({ user_id: adminId, ...product }).returning()
+      productsArray.push(productsResults)
+    });
 
   });
   return await Promise.all([

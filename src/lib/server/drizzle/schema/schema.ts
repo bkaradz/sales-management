@@ -1,11 +1,9 @@
-import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentMethodUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
-import type { DineroSnapshot, Rates, Currency } from "dinero.js";
-import { toSnapshot } from "dinero.js";
+import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentMethodUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '../../../utility/lists.utility';
+import { currencyType } from '../../../utility/lists.utility';
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { sql } from "drizzle-orm";
-import { bigint, boolean, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { bigint, boolean, integer, numeric, pgEnum, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { dollars } from "../../../utility/calculateCart.util";
 
 
 export const users = pgTable('auth_user', {
@@ -20,9 +18,7 @@ export const users = pgTable('auth_user', {
 export type User = InferSelectModel<typeof users>;
 export type NewUser = InferInsertModel<typeof users>;
 
-// Schema for inserting a user - can be used to validate API requests
 export const InsertUserSchema = createInsertSchema(users);
-// Schema for selecting a user - can be used to validate API responses
 export const SelectUserSchema = createSelectSchema(users);
 
 
@@ -63,9 +59,9 @@ export const contacts = pgTable('contacts', {
   is_corporate: boolean('is_corporate').notNull().default(false),
   notes: text('notes'),
   vat_or_bp_number: text('vat_or_bp_number'),
-  deposit: json('deposit').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
-  orders_totals: json('orders_totals').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
-  total_receipts: json('total_receipts').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
+  deposit: numeric('deposit', { precision: 100, scale: 10 }).notNull().default('0'),
+  orders_totals: numeric('orders_totals', { precision: 100, scale: 10 }).notNull().default('0'),
+  total_receipts: numeric('total_receipts', { precision: 100, scale: 10 }).notNull().default('0'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -118,7 +114,7 @@ export const products = pgTable('products', {
   name: text('name').notNull().unique(),
   description: text('description'),
   product_category: text('product_category').$type<ProductCategoriesUnion>().notNull().default('Embroidery'),
-  product_unit_price: json('product_unit_price').$type<DineroSnapshot<number>>(),
+  product_unit_price: numeric('product_unit_price', { precision: 100, scale: 10 }),
   stitches: integer('stitches'),
   stork_quantity: integer('stork_quantity'),
   active: boolean('active').notNull().default(true),
@@ -152,8 +148,8 @@ export const SelectPricelistSchema = createSelectSchema(pricelist);
 
 export const pricelist_details = pgTable('pricelist_details', {
   id: serial('id').primaryKey(),
-  minimum_price: json('minimum_price').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
-  price_per_thousand_stitches: json('price_per_thousand_stitches').$type<DineroSnapshot<number>>().notNull().default(toSnapshot(dollars(0))),
+  minimum_price: numeric('minimum_price', { precision: 100, scale: 10 }).notNull().default('0'),
+  price_per_thousand_stitches: numeric('price_per_thousand_stitches', { precision: 100, scale: 10 }).notNull().default('0'),
   minimum_quantity: integer("minimum_quantity").default(0).notNull(),
   embroidery_types: text('embroidery_types').$type<EmbroideryTypeUnion>().notNull(),
   pricelist_id: integer('pricelist_id').notNull().references(() => pricelist.id),
@@ -181,13 +177,14 @@ export type NewExchangeRate = InferInsertModel<typeof exchange_rates>;
 export const InsertExchangeRateSchema = createInsertSchema(exchange_rates);
 export const SelectExchangeRateSchema = createSelectSchema(exchange_rates);
 
+export const currencyEnum = pgEnum('currency', currencyType);
+
 export const exchange_rate_details = pgTable('exchange_rate_details', {
   id: serial('id').primaryKey(),
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
   name: text('name').notNull(),
-  currency: text('currency').notNull(),
-  currency_object: json('currency_object').$type<Currency<number>>().notNull(),
-  rate: json('rate').$type<Rates<number>>().notNull(),
+  currency: currencyEnum('currency').notNull(),
+  rate: numeric('rate', { precision: 100, scale: 10 }).notNull(),
 })
 
 export type ExchangeRateDetails = InferSelectModel<typeof exchange_rate_details>;
@@ -204,7 +201,7 @@ export const orders = pgTable('orders', {
   exchange_rates_id: integer('exchange_rates_id').notNull().references(() => exchange_rates.id),
   sales_status: text('sales_status').$type<SalesStatusUnion>().notNull().default('Quotation'),
   payment_status: text('payment_status').$type<PaymentStatusUnion>().notNull().default('Awaiting Sales Order'),
-  sales_amount: json('sales_amount').notNull().$type<DineroSnapshot<number>>(),
+  sales_amount: numeric('sales_amount', { precision: 100, scale: 10 }).notNull(),
   total_products: integer('total_products').notNull(),
   description: text('description'),
   active: boolean('active').notNull().default(true),
@@ -223,8 +220,8 @@ export const orders_details = pgTable('orders_details', {
   id: serial('id').primaryKey(),
   order_id: integer('order_id').notNull().references(() => orders.id),
   product_id: integer('product_id').notNull().references(() => products.id),
-  unit_price: json('unit_price').notNull().$type<DineroSnapshot<number>>(),
-  total_price: json('total_price').notNull().$type<DineroSnapshot<number>>(),
+  unit_price: numeric('unit_price', { precision: 100, scale: 10 }).notNull(),
+  total_price: numeric('total_price', { precision: 100, scale: 10 }).notNull(),
   product_category: text('product_category').$type<ProductCategoriesUnion>().notNull().default('Embroidery'),
   stitches: integer('stitches'),
   active: boolean('active').notNull().default(true),
@@ -264,7 +261,7 @@ export const transactions = pgTable('transactions', {
   id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
-  amount_tendered: json('amount_tendered').notNull().$type<DineroSnapshot<number>>(),
+  amount_tendered: numeric('amount_tendered', { precision: 100, scale: 10 }).notNull(),
   payment_method: text('payment_method').$type<PaymentMethodUnion>().notNull(),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),

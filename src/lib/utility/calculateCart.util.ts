@@ -165,7 +165,3 @@ function createFormatter(transformer: any) {
 export const format = createFormatter(({ value, currency }: { value: string, currency: Currency<number> }) =>
   `${currency.code} ${Number(value).toFixed(2)}`
 )
-
-// function toSnapshot(unitPricePerThousand: Dinero<number>): any {
-//   throw new Error("Function not implemented.");
-// }

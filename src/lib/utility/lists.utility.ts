@@ -40,6 +40,10 @@ export const embroideryType = ['Flat', 'Cap', 'Applique', 'Name Tag'] as const;
 
 export type EmbroideryTypeUnion = typeof embroideryType[number];
 
+export const currencyType = ['USD', 'ZAR', 'BWP', 'ZWB', 'ZWR'] as const;
+
+export type currencyTypeUnion = typeof currencyType[number];
+
 export const salesStatus = ['Quotation', 'Sales Order', 'Invoice', 'Receipt', 'Cancelled'] as const;
 
 export type SalesStatusUnion = typeof salesStatus[number];
