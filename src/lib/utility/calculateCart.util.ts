@@ -6,12 +6,12 @@ import currency  from "currency.js";
 import { max } from "lodash-es";
 
 
-export const addMany = (addends: currency[]) => {
+export const addMany = (addends: (currency | string)[]) => {
   let accumulator = 0 as unknown as currency
   addends.forEach((value) => accumulator = currency(accumulator).add(value))
   return accumulator
 };
-export const subtractMany = (subtrahends: currency[]) => {
+export const subtractMany = (subtrahends: (currency | string)[]) => {
   let accumulator = 0 as unknown as currency
   subtrahends.forEach((value) => accumulator = currency(accumulator).subtract(value))
   return accumulator
@@ -75,9 +75,14 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
   // Calculate price per 1000 stitches
   const unitPricePerThousand = currency(pricelistCalc.price_per_thousand_stitches).multiply(product.stitches)
 
-  const unit_price = max([unitPricePerThousand, currency(pricelistCalc.minimum_price).value])
+  let unit_price = max([unitPricePerThousand, currency(pricelistCalc.minimum_price).value])
 
-  return unit_price
+  if (!unit_price) throw new Error("Unit price not found");
+
+  
+  
+
+  return unit_price.toString()
 
 }
 

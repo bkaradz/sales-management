@@ -1,7 +1,7 @@
 import type { Contacts, Orders } from '$lib/server/drizzle/schema/schema';
-import { addMany, dollars, subtractMany } from '$lib/utility/calculateCart.util';
+import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
 import type { PaymentMethodUnion } from '$lib/utility/lists.utility';
-import { dinero, toSnapshot } from 'dinero.js';
+import type currency from 'currency.js';
 import { writable, derived } from 'svelte/store';
 
 function selectedOrdersPayment() {
@@ -60,12 +60,12 @@ function customer() {
 export const customerStore = customer();
 
 export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, amountTenderedStore, customerStore], ([$selectedOrdersPaymentStore, $amountTenderedStore, $customerStore]) => {
-	const totalArray = [dollars(0)]
-	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => dinero(item.sales_amount))
+	const totalArray = ['0'] as unknown as currency[]
+	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => item.sales_amount) as unknown as currency[]
 	const selectedOrdersTotal = addMany([...totalArray, ...ordersTotalsArray])
-	const amountTendered = dollars($amountTenderedStore * 1000)
-	const customerDeposit = dinero($customerStore?.deposit || toSnapshot(dollars(0)))
-	const customerTotalTendered = addMany([customerDeposit, amountTendered])
+	const amountTendered = $amountTenderedStore
+	const customerDeposit = $customerStore?.deposit || '0'
+	const customerTotalTendered = addMany([customerDeposit, amountTendered.toString()])
 	const totalDue = subtractMany([selectedOrdersTotal, customerTotalTendered ])
 	const totalProducts = [...$selectedOrdersPaymentStore.values()].reduce((accumulator, currentValue) => accumulator + currentValue.total_products, 0)
 

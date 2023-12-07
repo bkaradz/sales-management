@@ -8,7 +8,6 @@ import { and, asc, eq, inArray, ne, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 import type { transactionInput } from '../../../../routes/(app)/sales/payment/[id]/proxy+page.server';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
-import { dinero, toSnapshot } from 'dinero.js';
 
 export const getTransactions = async (input: SearchParams, ctx: Context) => {
 
@@ -155,18 +154,18 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
 
 		const customerDeposit = customer.deposit
 		
-    const salesAmountArray = transactionOrders.map((item) => dinero(item.sales_amount)) // correct
+    const salesAmountArray = transactionOrders.map((item) => item.sales_amount) // correct
 		const salesAmountTotal = addMany(salesAmountArray) // correct
 
-    const total_receipts = toSnapshot(addMany([dinero(customer.total_receipts), salesAmountTotal])) // correct
+    const total_receipts = (addMany([customer.total_receipts, salesAmountTotal])) // correct
 
-		const totalCustomerAmountTendered = addMany([dinero(amountTendered), dinero(customerDeposit)])
+		const totalCustomerAmountTendered = addMany([amountTendered.toString(), customerDeposit])
 
-    const deposit = toSnapshot(subtractMany([totalCustomerAmountTendered, salesAmountTotal]))
+    const deposit = (subtractMany([totalCustomerAmountTendered, salesAmountTotal]))
 
-    const orders_totals = toSnapshot(subtractMany([dinero(customer.orders_totals), salesAmountTotal]))
+    const orders_totals = (subtractMany([customer.orders_totals, salesAmountTotal]))
     
-    await db.update(contacts).set({deposit, orders_totals , total_receipts }).where(eq(contacts.id, input.customer_id))
+    await db.update(contacts).set({deposit: deposit.toString(), orders_totals: orders_totals.toString() , total_receipts: total_receipts.toString() }).where(eq(contacts.id, input.customer_id))
 
 		return { success: true }
 

@@ -13,7 +13,6 @@
 		svgSearch
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -238,10 +237,11 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(
-											dinero(order.contacts?.orders_totals),
+											order.contacts?.orders_totals,
 											$selectedRateStore,
 											$exchangeRatesStore
-										)
+										),
+										$selectedRateStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -270,10 +270,11 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(
-											dinero(order.orders.sales_amount),
+											order.orders.sales_amount,
 											$selectedRateStore,
 											$exchangeRatesStore
-										)
+										),
+										$selectedRateStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

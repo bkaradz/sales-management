@@ -2,7 +2,6 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { DineroSnapshot } from 'dinero.js';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { savePaymentSchema } from '$lib/validation/payment.zod';
 import type { PaymentMethodUnion } from '$lib/utility/lists.utility';
@@ -35,8 +34,8 @@ export const load = (async (event) => {
 }) satisfies PageServerLoad;
 
 export type transactionInput = {
-    amount_tendered: DineroSnapshot<number>,
-    selected_orders_total: DineroSnapshot<number>,
+    amount_tendered: number,
+    selected_orders_total: number,
     selected_orders_ids: number[],
     payment_method: PaymentMethodUnion,
     customer_id: number

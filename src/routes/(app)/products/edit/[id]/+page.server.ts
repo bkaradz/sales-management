@@ -2,8 +2,6 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { dinero, greaterThan, type DineroSnapshot } from 'dinero.js';
-import { dollars } from '$lib/utility/calculateCart.util';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveProductsSchema } from '$lib/validation/product.zod';
 
@@ -39,9 +37,9 @@ export const actions: Actions = {
 		if (formData?.product_category) formResults = { ...formResults, product_category: formData.product_category }
 		if (formData?.name) formResults = { ...formResults, name: formData.name }
 		if (formData?.unit_price) {
-			const unitPrice = JSON.parse(formData.unit_price as string) as DineroSnapshot<number>
+			const unitPrice = formData.unit_price
 
-			if (greaterThan(dinero(unitPrice), dollars(0))) {
+			if (+unitPrice > 0) {
 				formResults = { ...formResults, unit_price: unitPrice }
 			}
 		}

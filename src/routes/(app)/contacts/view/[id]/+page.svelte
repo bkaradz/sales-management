@@ -10,7 +10,6 @@
 		svgPen,
 		svgSearch
 	} from '$lib/assets/svgLogos';
-	import { dinero } from 'dinero.js';
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
@@ -20,7 +19,6 @@
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 
 	export let data: PageData;
-
 
 	let isModalOpen = false;
 	let deletedOrder = { orderId: null } as { orderId: null | number };
@@ -72,10 +70,11 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								converter(
-									dinero(data.contact.contact.orders_totals),
+									data.contact.contact.orders_totals,
 									$selectedRateStore,
 									$exchangeRatesStore
-								)
+								),
+								$selectedRateStore
 							)}
 						</div>
 					</div>
@@ -88,10 +87,11 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								converter(
-									dinero(data.contact.contact.total_receipts),
+									data.contact.contact.total_receipts,
 									$selectedRateStore,
 									$exchangeRatesStore
-								)
+								),
+								$selectedRateStore
 							)}
 						</div>
 					</div>
@@ -332,10 +332,11 @@
 									>
 										{format(
 											converter(
-												dinero(ordersArray.orders.sales_amount),
+												ordersArray.orders.sales_amount,
 												$selectedRateStore,
 												$exchangeRatesStore
-											)
+											),
+											$selectedRateStore
 										)}
 									</td>
 									<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -352,7 +353,7 @@
 													href="#!"
 													on:click={() => {
 														isModalOpen = true;
-														deletedOrder = { orderId: ordersArray.orders.id  };
+														deletedOrder = { orderId: ordersArray.orders.id };
 													}}
 												>
 													{@html svgBin}

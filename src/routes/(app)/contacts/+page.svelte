@@ -13,7 +13,6 @@
 		svgThreeDots
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import { dinero } from 'dinero.js';
 	import type { ActionData, PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -26,7 +25,10 @@
 	export let form: ActionData;
 
 	let isModalOpen = false;
-	let deletedContact = { contactId: null, contactName: null } as { contactId: null | number, contactName: null | string };
+	let deletedContact = { contactId: null, contactName: null } as {
+		contactId: null | number;
+		contactName: null | string;
+	};
 
 	$: if (form?.success) {
 		invalidateAll();
@@ -44,7 +46,6 @@
 			}
 		}
 	}
-
 </script>
 
 <svelte:head>
@@ -96,7 +97,11 @@
 								>Page {data?.results.pagination.page} of {data?.results.pagination.totalPages}</span
 							>
 							<form class="inline-block" method="get">
-								<input type="hidden" name="page" value={data?.results.pagination.previous?.page || 1} />
+								<input
+									type="hidden"
+									name="page"
+									value={data?.results.pagination.previous?.page || 1}
+								/>
 								<input type="hidden" name="limit" value={data?.results.pagination.limit} />
 								<input type="hidden" name="search" value={data?.results.pagination.search || ''} />
 								<button
@@ -143,7 +148,6 @@
 				</div>
 			</div>
 			<div class="sm:p-7 p-4">
-
 				<table class="table table-sm">
 					<thead>
 						<tr class="text-gray-400">
@@ -174,7 +178,9 @@
 						{#each data.results?.contacts as contact (contact.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white text-white rounded-md">
+									<span
+										class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
+									>
 										{contact.id}
 									</span>
 								</td>
@@ -183,21 +189,20 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										converter(dinero(contact.deposit), $selectedRateStore, $exchangeRatesStore)
+										converter(contact.deposit, $selectedRateStore, $exchangeRatesStore),
+										$selectedRateStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										converter(dinero(contact.orders_totals), $selectedRateStore, $exchangeRatesStore)
+										converter(contact.orders_totals, $selectedRateStore, $exchangeRatesStore),
+										$selectedRateStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										converter(
-											dinero(contact.total_receipts),
-											$selectedRateStore,
-											$exchangeRatesStore
-										)
+										converter(contact.total_receipts, $selectedRateStore, $exchangeRatesStore),
+										$selectedRateStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -210,11 +215,15 @@
 										</a>
 										<form id="deleteForm" action="?/delete" method="post" use:enhance>
 											<input type="hidden" name="delete" value={contact.id} />
-											<a href="#!"
-											on:click={() => {
-												isModalOpen = true;
-												deletedContact = { contactId: contact.id, contactName: contact.full_name };
-											}}
+											<a
+												href="#!"
+												on:click={() => {
+													isModalOpen = true;
+													deletedContact = {
+														contactId: contact.id,
+														contactName: contact.full_name
+													};
+												}}
 											>
 												{@html svgBin}
 											</a>

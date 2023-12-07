@@ -3,7 +3,7 @@
 	import type { GetSalesReports } from '$lib/trpc/routes/reports/reports.drizzle';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
-	import { dinero, multiply } from 'dinero.js';
+	import currency from 'currency.js';
 
 	export let heading: string;
 	export let dataResults: {
@@ -77,22 +77,21 @@
 									<td class="px-2 py-1 text-[0.63rem] text-black text-right truncate">
 										{format(
 											converter(
-												dinero(item.order_details_unit_price),
+												item.order_details_unit_price,
 												$selectedRateStore,
 												$exchangeRatesStore
-											)
+											),
+											$selectedRateStore
 										)}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black font-semibold text-right truncate">
 										{format(
 											converter(
-												multiply(dinero(item.order_details_unit_price), {
-													amount: item.order_details_quantity * 1000,
-													scale: 3
-												}),
+												currency(item.order_details_unit_price).multiply(item.order_details_quantity),
 												$selectedRateStore,
 												$exchangeRatesStore
-											)
+											),
+											$selectedRateStore
 										)}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">

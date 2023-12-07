@@ -29,7 +29,7 @@
 
 	const changeEnteredAmountStore = (e: Event) => {
 		const target = e.target as HTMLInputElement;
-		enteredAmountStore.add(+target.value);
+		enteredAmountStore.add(target.value);
 	};
 
 	let doubleClicked = false;
@@ -191,7 +191,8 @@
 											id="unit_price_label"
 											name="unit_price_label"
 											value={format(
-												converter($enteredAmountValue, $selectedRateStore, $exchangeRatesStore)
+												converter($enteredAmountValue, $selectedRateStore, $exchangeRatesStore),
+												$selectedRateStore
 											)}
 											placeholder="Unit Price"
 										/>

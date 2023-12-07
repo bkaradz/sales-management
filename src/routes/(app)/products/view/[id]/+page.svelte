@@ -1,9 +1,7 @@
 <script lang="ts">
 	import {
 		svgBackArrow,
-		svgBin,
 		svgCalender,
-		svgCard,
 		svgDropdownArrow,
 		svgEye,
 		svgForwardArrow,
@@ -12,11 +10,11 @@
 	} from '$lib/assets/svgLogos';
 	import { exchangeRatesStore, pricelistStore, selectedRateStore } from '$lib/stores/cartStore';
 	import type { PageData } from './$types';
-	import { calcPrice, calcProductPrices, format } from '$lib/utility/calculateCart.util';
+	import { calcProductPrices, format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
-	import { dinero } from 'dinero.js';
+
 
 	export let data: PageData;
 </script>
@@ -85,7 +83,8 @@
 											calcProductPrices(data.product.product, $pricelistStore, list.minimum_quantity, key),
 											$selectedRateStore,
 											$exchangeRatesStore
-										)
+										),
+										$selectedRateStore
 									)}
 								</div>
 							</div>
@@ -301,10 +300,11 @@
 									>
 										{format(
 											converter(
-												dinero(ordersArray.orders.sales_amount),
+												ordersArray.orders.sales_amount,
 												$selectedRateStore,
 												$exchangeRatesStore
-											)
+											),
+											$selectedRateStore
 										)}
 									</td>
 									<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

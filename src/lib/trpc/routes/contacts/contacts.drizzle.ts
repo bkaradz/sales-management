@@ -145,9 +145,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 		}
 
 
-		return {
-			message: "success",
-		}
+		return { success: true }
 
 	} catch (error) {
 		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)

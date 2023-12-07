@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { EmbroideryTypeZod, GarmentPlacementZod, ProductCategoriesZod, SalesStatusZod, currencyZodObject } from './types.zod.typescript';
+import { EmbroideryTypeZod, GarmentPlacementZod, ProductCategoriesZod, SalesStatusZod } from './types.zod.typescript';
 
 export const saveOrderSchema = z
   .object({
@@ -9,7 +9,7 @@ export const saveOrderSchema = z
     sales_status: SalesStatusZod,
     description: z.string().optional(),
     delivery_date: z.string().datetime(),
-    sales_amount: currencyZodObject.required(),
+    sales_amount: z.string(),
     total_products: z.number(),
   })
 
@@ -18,8 +18,8 @@ export type SaveOrderKeys = keyof SaveOrder;
 
 export const saveOrderDetailsSchema = z
   .object({
-    total_price: currencyZodObject.required(),
-    unit_price: currencyZodObject.required(),
+    total_price: z.string(),
+    unit_price: z.string(),
     quantity: z.number(),
     product_id: z.number(),
     product_category: ProductCategoriesZod,

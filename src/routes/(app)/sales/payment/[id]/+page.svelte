@@ -7,9 +7,9 @@
 		svgForwardArrow,
 		svgSearch
 	} from '$lib/assets/svgLogos';
-	import { dinero, lessThanOrEqual } from 'dinero.js';
+
 	import type { PageData } from './$types';
-	import { dollars, format } from '$lib/utility/calculateCart.util';
+	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -27,6 +27,7 @@
 	import { toasts } from '$lib/stores/toasts.store';
 	import { invalidateAll } from '$app/navigation';
 	import { paymentMethod } from '$lib/utility/lists.utility';
+	import currency from 'currency.js';
 
 	export let data: PageData;
 
@@ -147,10 +148,11 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								converter(
-									dinero(data.contact.contact.orders_totals),
+									data.contact.contact.orders_totals,
 									$selectedRateStore,
 									$exchangeRatesStore
-								)
+								),
+								$selectedRateStore
 							)}
 						</div>
 					</div>
@@ -163,10 +165,11 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								converter(
-									dinero(data.contact.contact.total_receipts),
+									data.contact.contact.total_receipts,
 									$selectedRateStore,
 									$exchangeRatesStore
-								)
+								),
+								$selectedRateStore
 							)}
 						</div>
 					</div>
@@ -278,7 +281,7 @@
 									value={$paymentMethodSelectedStore}
 								/>
 
-								{#if $selectedOrdersPaymentStore.size >= 1 && lessThanOrEqual($selectedOrdersPaymentTotals.totalDue, dollars(0))}
+								{#if $selectedOrdersPaymentStore.size >= 1 && currency($selectedOrdersPaymentTotals.totalDue).value <= 0}
 									<button
 										type="submit"
 										class="h-8 px-3 rounded-md shadow text-white bg-blue-500 mr-8"
@@ -303,7 +306,8 @@
 											$selectedOrdersPaymentTotals.selectedOrdersTotal,
 											$selectedRateStore,
 											$exchangeRatesStore
-										)
+										),
+										$selectedRateStore
 									)}
 								</div>
 							</div>
@@ -538,10 +542,11 @@
 										>
 											{format(
 												converter(
-													dinero(ordersArray.orders.sales_amount),
+													ordersArray.orders.sales_amount,
 													$selectedRateStore,
 													$exchangeRatesStore
-												)
+												),
+												$selectedRateStore
 											)}
 										</td>
 									</tr>
@@ -573,7 +578,8 @@
 														$selectedOrdersPaymentTotals.selectedOrdersTotal,
 														$selectedRateStore,
 														$exchangeRatesStore
-													)
+													),
+													$selectedRateStore
 												)}
 											</span>
 										</div>
@@ -592,7 +598,8 @@
 														$selectedOrdersPaymentTotals.customerDeposit,
 														$selectedRateStore,
 														$exchangeRatesStore
-													)
+													),
+													$selectedRateStore
 												)}
 											</span>
 										</div>
@@ -641,7 +648,8 @@
 														$selectedOrdersPaymentTotals.totalDue,
 														$selectedRateStore,
 														$exchangeRatesStore
-													)
+													),
+													$selectedRateStore
 												)}
 											</span>
 										</div>

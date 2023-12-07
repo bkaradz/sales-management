@@ -8,7 +8,6 @@ import { orders, orders_details, contacts, products } from '$lib/server/drizzle/
 import type { Contacts, Orders, OrdersDetails } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import { addMany, subtractMany, type CalcPriceReturn } from '$lib/utility/calculateCart.util';
-import { dinero, toSnapshot, type DineroSnapshot } from 'dinero.js';
 import { getById as getPricelistById } from "../pricelist/pricelists.drizzle";
 import { getById as getContactById } from "../contacts/contacts.drizzle";
 import { getById as getExchangeRateById } from "../exchangeRates/rates.drizzle";
@@ -454,7 +453,7 @@ export const getOrdersByProductId = async (input: {
   }
 };
 
-export type CalcPriceReturnSnapshot = Omit<CalcPriceReturn, 'total_price' | 'unit_price'> & { total_price: DineroSnapshot<number>, unit_price: DineroSnapshot<number> }
+export type CalcPriceReturnSnapshot = CalcPriceReturn
 
 type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date' | 'sales_status' | 'total_products' | 'sales_amount'>, orders_details: CalcPriceReturnSnapshot[] }
 
@@ -488,8 +487,8 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
 
     if (!(input.order.sales_status === 'Quotation')) {
       const contact = await db.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
-      const ordersTotals = addMany([dinero(input.order.sales_amount), dinero(contact[0].orders_totals)])
-      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals) }).where(eq(contacts.id, input.order.customer_id))
+      const ordersTotals = addMany([input.order.sales_amount, contact[0].orders_totals])
+      await db.update(contacts).set({ orders_totals: ordersTotals.toString() }).where(eq(contacts.id, input.order.customer_id))
     }
 
 
@@ -528,14 +527,14 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
     if (input.payment_status === 'Paid') {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
       // Paid order totals was already removed
-      const ordersTotals = dinero(contact[0].orders_totals)
-      const totalReceipt = subtractMany([dinero(contact[0].total_receipts), dinero(orderResult[0].sales_amount)])
-      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals), total_receipts: toSnapshot(totalReceipt) })
+      const ordersTotals = contact[0].orders_totals
+      const totalReceipt = subtractMany([contact[0].total_receipts, orderResult[0].sales_amount])
+      await db.update(contacts).set({ orders_totals: ordersTotals, total_receipts: totalReceipt.toString() })
         .where(eq(contacts.id, orderResult[0].customer_id))
     } else {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const ordersTotals = subtractMany([dinero(contact[0].orders_totals), dinero(orderResult[0].sales_amount)])
-      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals) })
+      const ordersTotals = subtractMany([contact[0].orders_totals, orderResult[0].sales_amount])
+      await db.update(contacts).set({ orders_totals: ordersTotals.toString() })
         .where(eq(contacts.id, orderResult[0].customer_id))
     }
 
@@ -571,8 +570,8 @@ export const changeSalesStatusById = async (input: { id: number, sales_status: s
 
     if (!(input.sales_status === 'Quotation')) {
       const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const ordersTotals = addMany([dinero(orderResult[0].sales_amount), dinero(contact[0].orders_totals)])
-      await db.update(contacts).set({ orders_totals: toSnapshot(ordersTotals) }).where(eq(contacts.id, orderResult[0].customer_id))
+      const ordersTotals = addMany([orderResult[0].sales_amount, contact[0].orders_totals])
+      await db.update(contacts).set({ orders_totals: ordersTotals.toString() }).where(eq(contacts.id, orderResult[0].customer_id))
     }
 
     return {

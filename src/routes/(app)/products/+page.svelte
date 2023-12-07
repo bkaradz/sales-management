@@ -12,7 +12,7 @@
 	} from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
-	import { dollars, format } from '$lib/utility/calculateCart.util';
+	import { format } from '$lib/utility/calculateCart.util';
 	import {
 		cartStore,
 		cartTotalsStore,
@@ -54,21 +54,23 @@
 							<div class="text-xs text-gray-400 dark:text-gray-400">Sub Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore)
+									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore),
+									$selectedRateStore
 								)}
 							</div>
 						</div>
 						<div class="text-right mr-8">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Tax:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
-								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore))}
+								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore), $selectedRateStore)}
 							</div>
 						</div>
 						<div class="text-right mr-8">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Net Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore)
+									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore),
+									$selectedRateStore
 								)}
 							</div>
 						</div>
@@ -247,10 +249,11 @@
 								>
 									{format(
 										converter(
-											$cartStore.get(product.id)?.orders_details?.unit_price || dollars(0),
+											$cartStore.get(product.id)?.orders_details?.unit_price || '0',
 											$selectedRateStore,
 											$exchangeRatesStore
-										)
+										),
+										$selectedRateStore
 									)}
 								</td>
 								<td
@@ -258,10 +261,11 @@
 								>
 									{format(
 										converter(
-											$cartStore.get(product.id)?.orders_details?.total_price || dollars(0),
+											$cartStore.get(product.id)?.orders_details?.total_price || '0',
 											$selectedRateStore,
 											$exchangeRatesStore
-										)
+										),
+										$selectedRateStore
 									)}
 								</td>
 								<td

@@ -1,9 +1,10 @@
 import type { ExchangeRate, ExchangeRateDetails } from '$lib/server/drizzle/schema/schema';
 import currency from 'currency.js';
 import type { currencyTypeUnion } from './lists.utility';
+import type { ExchangeRateToMap } from './monetary.util';
 
 
-export function converter(currencyObject: currency | undefined, newCurrency: currencyTypeUnion, newRate: { exchange_rates: ExchangeRate, exchange_rate_details: Map<currencyTypeUnion, ExchangeRateDetails> }) {
+export function converter(currencyObject: currency | string | undefined, newCurrency: currencyTypeUnion, newRate: ExchangeRateToMap) {
 
   if (!currencyObject) throw new Error("Currency Object required");
   

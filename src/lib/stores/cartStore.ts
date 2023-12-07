@@ -2,7 +2,7 @@ import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/sche
 import { addMany, calcPrice, format } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
-import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
+import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import { get, writable, derived } from 'svelte/store';
 import currency from 'currency.js';
 
@@ -29,7 +29,7 @@ const getOrderDetailObj = (product: Products) => {
 
 	const unit_price = product.product_unit_price
 
-	if(!unit_price) throw new Error("Unit Price not found");
+	if (!unit_price) throw new Error("Unit Price not found");
 
 	return {
 		total_price: 0,
@@ -69,7 +69,7 @@ function cart() {
 			const orderDetailsMap = new Map<number, NewOrderDetails>()
 			if (Array.isArray(order_details)) {
 				order_details.forEach((item) => {
-					const newItem = {...item, total_price: item.total_price, unit_price: item.unit_price}
+					const newItem = { ...item, total_price: item.total_price, unit_price: item.unit_price }
 					orderDetailsMap.set(item.product_id, newItem)
 				})
 			}
@@ -131,7 +131,7 @@ function cart() {
 		changeUnitPrice: ({ id, unitPrice }: { id: number, unitPrice: number }) => {
 			update((productMap) => {
 				const getProductsOrderDetails = productMap.get(id) as CartTypes
-				getProductsOrderDetails.orders_details.unit_price = unitPrice
+				getProductsOrderDetails.orders_details.unit_price = unitPrice.toString()
 				getProductsOrderDetails.orders_details.price_calculated = false
 				return productMap
 			})
@@ -267,11 +267,11 @@ export const exchangeRatesStore = exchangeRates();
 
 // TODO: Change to selected currency
 function selectedRate() {
-	const { subscribe, set, update } = writable<string>('USD');
+	const { subscribe, set, update } = writable<currencyTypeUnion>('USD');
 
 	return {
 		subscribe,
-		add: (rate: string) => {
+		add: (rate: currencyTypeUnion) => {
 			update(() => rate)
 		},
 	};
@@ -285,17 +285,17 @@ export const cartTotalsStore = derived([cartStore, pricelistStore, vatStore], ([
 
 	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore)
-		value.orders_details = {...value.orders_details, ...results}
-		cartResults.set(key, {...value.orders_details, ...results})
+		value.orders_details = { ...value.orders_details, ...results }
+		cartResults.set(key, { ...value.orders_details, ...results })
 	})
 
 	const totalArray: currency[] = [...cartResults.values()].map((item) => item.total_price)
 	const totalProductsArray: number[] = [...cartResults.values()].map((item) => item.quantity)
 
 	const initValue = 0 as unknown as currency
-	
+
 	totalArray.push(initValue)
-	
+
 	const total = addMany(totalArray)
 	const totalProduct = totalProductsArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 	const vatTotal = currency(total).multiply($vatStore)
@@ -328,26 +328,25 @@ function selectedProductCategory() {
 export const selectedProductCategoryStore = selectedProductCategory();
 
 function enteredAmount() {
-	const { subscribe, set, update } = writable<number>(0);
+	const { subscribe, set, update } = writable<currency | string>('0');
 
 	return {
 		subscribe,
-		add: (amount: number) => {
+		add: (amount: currency | string) => {
 			if (amount) {
 				update(() => amount)
 			} else {
-				update(() => 0)
+				update(() => '0')
 			}
 		},
-		// addDinero: (unitPrice: currency | null | undefined) => {
-		// 	if (unitPrice) {
-		// 		const number = format(unitPrice)
-		// 		update(() => +number.split(" ")[1])
-		// 	} else {
-		// 		update(() => 0)
-		// 	}
-		// },
-		reset: () => set(0)
+		addDinero: (unitPrice: currency | string | null | undefined) => {
+			if (unitPrice) {
+				update(() => unitPrice)
+			} else {
+				update(() => '0')
+			}
+		},
+		reset: () => set('0')
 	};
 }
 

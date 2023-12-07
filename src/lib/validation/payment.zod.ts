@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { currencyZodObject } from './types.zod.typescript';
 
 export const savePaymentSchema = z
   .object({
-    amount_tendered: currencyZodObject.required(),
-    selected_orders_total: currencyZodObject.required(),
+    amount_tendered: z.string(),
+    selected_orders_total: z.string(),
     selected_orders_ids: z.array(z.number()),
     payment_method: z.string({ required_error: 'Payment Method is required' }),
     customer_id: z.number(),

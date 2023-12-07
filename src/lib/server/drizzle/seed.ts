@@ -3,18 +3,7 @@ import { contactsList, productsList, usersList, pricelistData, exchangeRates } f
 import { auth } from '../lucia/clientSeed';
 import { db } from './client';
 import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema/schema';
-import { dinero, toSnapshot } from 'dinero.js';
 import type { EmbroideryTypeUnion } from '$lib/utility/lists.utility';
-
-const dollars = (amount: number) => dinero({ amount, currency: { code: 'USD', base: 10, exponent: 2 }, scale: 3 });
-
-const currencyMap = new Map([
-  ["USD", { code: 'USD', base: 10, exponent: 2 }],
-  ["BWP", { code: 'BWP', base: 10, exponent: 2 }],
-  ["ZAR", { code: 'ZAR', base: 10, exponent: 2 }],
-  ["ZWR", { code: 'ZWR', base: 10, exponent: 2 }],
-  ["ZWB", { code: 'ZWB', base: 10, exponent: 2 }],
-])
 
 const contactArray: any[] = []
 const phonesArray: any[] = []

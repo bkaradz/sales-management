@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ProductCategoriesZod, currencyZodObject } from './types.zod.typescript';
+import { ProductCategoriesZod } from './types.zod.typescript';
 
 
 
@@ -16,7 +16,7 @@ export const saveProductsSchema = z
 		description: z.string().optional(),
 		product_category: ProductCategoriesZod,
 		stitches: z.number().optional(),
-		product_unit_price: currencyZodObject.optional(),
+		product_unit_price: z.string().optional(),
 		stork_quantity: z.number().optional()
 	})
 	.superRefine((data, ctx) => {

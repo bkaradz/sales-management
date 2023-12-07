@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
-	import { calcProductPrices, dollars, format } from '$lib/utility/calculateCart.util';
-	import { dinero } from 'dinero.js';
+	import { calcProductPrices, format } from '$lib/utility/calculateCart.util';
 	import type { ActionData, PageData } from './$types';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -152,7 +151,8 @@
 							</div>
 							<div class="ml-auto text-xs text-gray-500">
 								{format(
-									converter(dinero(user.orders_totals), $selectedRateStore, $exchangeRatesStore)
+									converter(user.orders_totals, $selectedRateStore, $exchangeRatesStore),
+									$selectedRateStore
 								)}
 							</div>
 						</div>
@@ -231,7 +231,8 @@
 						<div class="text-xs text-gray-400 dark:text-gray-400">Cart Total:</div>
 						<div class="text-gray-900 text-lg dark:text-white">
 							{format(
-								converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore)
+								converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore),
+								$selectedRateStore
 							)}
 						</div>
 					</div>
@@ -401,7 +402,8 @@
 													$cartStore.get(key)?.orders_details.unit_price,
 													$selectedRateStore,
 													$exchangeRatesStore
-												)
+												),
+												$selectedRateStore
 											)}
 										/>
 									{/if}
@@ -414,7 +416,8 @@
 											$cartStore.get(key)?.orders_details.total_price,
 											$selectedRateStore,
 											$exchangeRatesStore
-										)
+										),
+										$selectedRateStore
 									)}
 								</td>
 
@@ -462,7 +465,8 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore)
+									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore),
+									$selectedRateStore
 								)}
 							</td>
 							{#each [1, 2] as item (item)}
@@ -477,7 +481,7 @@
 								<span>Vat</span>
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
-								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore))}
+								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore), $selectedRateStore)}
 							</td>
 							{#each [1, 2] as item (item)}
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
@@ -492,7 +496,8 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore)
+									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore),
+									$selectedRateStore
 								)}
 							</td>
 							{#each [1, 2] as item (item)}
@@ -553,10 +558,11 @@
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
 												converter(
-													dinero($customerSelectedStore.orders_totals),
+													$customerSelectedStore.orders_totals,
 													$selectedRateStore,
 													$exchangeRatesStore
-												)
+												),
+												$selectedRateStore
 											)}
 										</div>
 									</div>
@@ -569,10 +575,11 @@
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
 												converter(
-													dinero($customerSelectedStore.total_receipts),
+													$customerSelectedStore.total_receipts,
 													$selectedRateStore,
 													$exchangeRatesStore
-												)
+												),
+												$selectedRateStore
 											)}
 										</div>
 									</div>
@@ -744,7 +751,8 @@
 															),
 															$selectedRateStore,
 															$exchangeRatesStore
-														)
+														),
+														$selectedRateStore
 													)}
 												</div>
 											</div>
@@ -833,7 +841,7 @@
 												<span class="ml-0.5">({value.currency})</span>
 											</div>
 											<div class="ml-auto text-xs text-gray-500">
-												{format(converter(dollars(1 * 1000), value.currency, $exchangeRatesStore))}
+												{format(converter('1', value.currency, $exchangeRatesStore), $selectedRateStore)}
 											</div>
 										</div>
 									{/each}

@@ -5,8 +5,6 @@ import { createContext } from '$lib/trpc/context';
 import parseCsv from '$lib/utility/parseCsv';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveProductsArraySchema, saveProductsSchema } from '$lib/validation/product.zod';
-import { greaterThan, type DineroSnapshot, dinero } from 'dinero.js';
-import { dollars } from '$lib/utility/calculateCart.util';
 import type { Products } from '$lib/server/drizzle/schema/schema';
 
 export const load = (async () => {
@@ -50,10 +48,10 @@ export const actions: Actions = {
 			if (product?.product_category) formResults = { ...formResults, product_category: product.product_category }
 			if (product?.name) formResults = { ...formResults, name: product.name }
 			if (product?.product_unit_price) {
-				const unitPrice = dollars(+product.product_unit_price * 1000)
+				const unitPrice = product.product_unit_price
 
-				if (greaterThan(unitPrice, dollars(0))) {
-					formResults = { ...formResults, product_unit_price: unitPrice.toJSON() }
+				if (+unitPrice > 0) {
+					formResults = { ...formResults, product_unit_price: unitPrice }
 				}
 			}
 			productsResultsArray.push(formResults as Products)
@@ -101,10 +99,10 @@ export const actions: Actions = {
 		if (formData?.product_category) formResults = { ...formResults, product_category: formData.product_category }
 		if (formData?.name) formResults = { ...formResults, name: formData.name }
 		if (formData?.product_unit_price) {
-			const productUnitPrice = dinero(JSON.parse(formData.product_unit_price as string))
+			const productUnitPrice = formData.product_unit_price
 
-			if (greaterThan(productUnitPrice, dollars(0))) {
-				formResults = { ...formResults, product_unit_price: productUnitPrice.toJSON() }
+			if ((+productUnitPrice > 0)) {
+				formResults = { ...formResults, product_unit_price: productUnitPrice }
 			}
 		}
 

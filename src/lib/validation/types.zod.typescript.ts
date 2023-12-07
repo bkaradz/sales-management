@@ -10,12 +10,3 @@ export const PaymentStatusZod = z.enum(paymentStatus, { required_error: 'Payment
 export const GarmentPlacementZod = z.enum(garmentPlacement, { required_error: 'Garment Placement is required' })
 export const EmbroideryTypeZod = z.enum(embroideryType, { required_error: 'Embroidery Type is required' })
 
-export const currencyZodObject = z.object({
-  amount: z.number(),
-  currency: z.object({
-    code: z.string(),
-    base: z.number(),
-    exponent: z.number()
-  }),
-  scale: z.number()
-})
