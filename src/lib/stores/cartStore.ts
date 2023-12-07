@@ -1,21 +1,20 @@
-import type { Contacts, OrdersDetails, Products } from '$lib/server/drizzle/schema/schema';
-import { addMany, calcPrice, format } from '$lib/utility/calculateCart.util';
+import type { Contacts, NewOrdersDetails, Products } from '$lib/server/drizzle/schema/schema';
+import { addMany, calcPrice } from '$lib/utility/calculateCart.util';
 import type { CalcPriceReturn } from '$lib/utility/calculateCart.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import { get, writable, derived } from 'svelte/store';
 import currency from 'currency.js';
 
-export type NewOrderDetails = OrdersDetails
 
-export type CartTypes = { product: Products, orders_details: Partial<NewOrderDetails> }
+export type CartTypes = { product: Products, orders_details: Partial<NewOrdersDetails> }
 
 const getOrderDetailObj = (product: Products) => {
 
 	if (product.product_category === 'Embroidery') {
 		return {
-			total_price: 0,
-			unit_price: 0,
+			total_price: '0' as currency | string,
+			unit_price: '0' as currency | string,
 			price_calculated: true,
 			quantity: 1,
 			product_id: product.id,
@@ -32,8 +31,8 @@ const getOrderDetailObj = (product: Products) => {
 	if (!unit_price) throw new Error("Unit Price not found");
 
 	return {
-		total_price: 0,
-		unit_price: unit_price,
+		total_price: '0' as currency | string,
+		unit_price: unit_price as currency | string,
 		price_calculated: false,
 		quantity: 1,
 		product_id: product.id,
@@ -60,13 +59,14 @@ function cart() {
 				} else {
 					const orders_details = getOrderDetailObj(product)
 
-					productMap.set(product.id, { product, orders_details })
+					productMap.set(product.id, { product, orders_details: {...orders_details, unit_price: orders_details.unit_price.toString(), total_price: orders_details.total_price.toString()} })
+
 					return productMap
 				}
 			})
 		},
-		addProductsArray: (productArray: Products[] | undefined, order_details: OrdersDetails[] | undefined) => {
-			const orderDetailsMap = new Map<number, NewOrderDetails>()
+		addProductsArray: (productArray: Products[] | undefined, order_details: NewOrdersDetails[] | undefined) => {
+			const orderDetailsMap = new Map<number, NewOrdersDetails>()
 			if (Array.isArray(order_details)) {
 				order_details.forEach((item) => {
 					const newItem = { ...item, total_price: item.total_price, unit_price: item.unit_price }
@@ -285,11 +285,11 @@ export const cartTotalsStore = derived([cartStore, pricelistStore, vatStore], ([
 
 	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore)
-		value.orders_details = { ...value.orders_details, ...results }
+		value.orders_details = { ...value.orders_details, ...results, total_price: results.total_price.toString(), unit_price: results.unit_price.toString() }
 		cartResults.set(key, { ...value.orders_details, ...results })
 	})
 
-	const totalArray: currency[] = [...cartResults.values()].map((item) => item.total_price)
+	const totalArray: (currency | string)[] = [...cartResults.values()].map((item) => item.total_price)
 	const totalProductsArray: number[] = [...cartResults.values()].map((item) => item.quantity)
 
 	const initValue = 0 as unknown as currency
@@ -328,7 +328,7 @@ function selectedProductCategory() {
 export const selectedProductCategoryStore = selectedProductCategory();
 
 function enteredAmount() {
-	const { subscribe, set, update } = writable<currency | string>('0');
+	const { subscribe, set, update } = writable<currency | string >('0');
 
 	return {
 		subscribe,

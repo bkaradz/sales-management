@@ -3,7 +3,7 @@ import { contactsList, productsList, usersList, pricelistData, exchangeRates } f
 import { auth } from '../lucia/clientSeed';
 import { db } from './client';
 import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema/schema';
-import type { EmbroideryTypeUnion } from '$lib/utility/lists.utility';
+import type { EmbroideryTypeUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 
 const contactArray: any[] = []
 const phonesArray: any[] = []
@@ -81,11 +81,11 @@ async function main() {
 
       priceList.pricelist_details.forEach(async (detail) => {
         await db.insert(pricelist_details).values({
-          pricelist_id: pricelistResult[0].id as Number,
+          pricelist_id: pricelistResult[0].id,
           embroidery_types: detail.embroidery_types as EmbroideryTypeUnion,
           minimum_quantity: detail.minimum_quantity,
-          minimum_price: detail.minimum_price,
-          price_per_thousand_stitches: detail.price_per_thousand_stitches
+          minimum_price: detail.minimum_price.toString(),
+          price_per_thousand_stitches: detail.price_per_thousand_stitches.toString()
         })
       })
     });
@@ -96,10 +96,10 @@ async function main() {
 
       rates.exchange_rate_details.forEach(async (detail) => {
         await db.insert(exchange_rate_details).values({
-          exchange_rates_id: exchangeRatesResult[0].id as Number,
+          exchange_rates_id: exchangeRatesResult[0].id,
           name: detail.name,
-          currency: detail.currency,
-          rate: detail.rate
+          currency: detail.currency as currencyTypeUnion,
+          rate: detail.rate.toString()
         })
       })
     });

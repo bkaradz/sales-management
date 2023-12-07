@@ -15,6 +15,7 @@ export const transactions = router({
 	deleteById: protectedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
 		return await deleteById(input, ctx);
 	}),
+	// TODO: Validation
 	createTransaction: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
 		return await createTransaction(input, ctx);
 	})

@@ -8,11 +8,6 @@
 	import { activitiesTabs } from '$lib/data/tabsData';
 	import { format } from '$lib/utility/calculateCart.util';
 	
-	$: console.log('Rand: ', format(10000, 'ZAR'));
-	$: console.log('Rand: ', format(10000, 'BWP'));
-	$: console.log('Rand: ', format(10000, 'ZWB'));
-	$: console.log('Rand: ', format(10000, 'ZWR'));
-	$: console.log('Rand: ', format(10000, 'USD'));
 </script>
 
 <svelte:head>

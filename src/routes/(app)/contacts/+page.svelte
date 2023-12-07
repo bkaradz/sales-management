@@ -37,14 +37,14 @@
 			type: 'success'
 		});
 	} else {
-		if (form?.errors instanceof Map) {
-			for (const [key, value] of form.errors.entries()) {
-				toasts.add({
-					message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
-					type: 'error'
-				});
-			}
-		}
+		// if (form?.errors instanceof Map) {
+		// 	for (const [key, value] of form.errors.entries()) {
+		// 		toasts.add({
+		// 			message: `${key.charAt(0).toUpperCase() + key.slice(1)} = ${value}`,
+		// 			type: 'error'
+		// 		});
+		// 	}
+		// }
 	}
 </script>
 
