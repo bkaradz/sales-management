@@ -120,7 +120,7 @@ export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
   if (!product.stitches) throw new Error("Stitches not found");
 
   // Calculate price per 1000 stitches
-  const unitPricePerThousand = currency(pricelistCalc.price_per_thousand_stitches).multiply(product.stitches)
+  const unitPricePerThousand = currency(pricelistCalc.price_per_thousand_stitches).multiply((product.stitches / 1000))
 
   const unit_price = max([unitPricePerThousand, currency(pricelistCalc.minimum_price).value])
 

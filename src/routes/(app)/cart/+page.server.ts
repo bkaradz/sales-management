@@ -91,7 +91,7 @@ export const actions: Actions = {
                 sales_status: formData.sales_status,
                 description: formData.description,
                 delivery_date: new Date(formData.delivery_date).toISOString(),
-                sales_amount: JSON.parse(formData.sales_amount),
+                sales_amount: formData.sales_amount,
                 total_products: +formData.total_products
             },
             orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
