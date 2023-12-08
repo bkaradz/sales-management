@@ -488,7 +488,7 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
     if (!(input.order.sales_status === 'Quotation')) {
       const contact = await db.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
       const ordersTotals = addMany([input.order.sales_amount, contact[0].orders_totals])
-      await db.update(contacts).set({ orders_totals: ordersTotals.toString() }).where(eq(contacts.id, input.order.customer_id))
+      await db.update(contacts).set({ orders_totals: ordersTotals.toString(), deposit: (-ordersTotals).toString() }).where(eq(contacts.id, input.order.customer_id))
     }
 
 

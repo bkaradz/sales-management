@@ -84,7 +84,7 @@
 
 	const changeEnteredAmountStore = (e: Event, id: number) => {
 		const target = e.target as HTMLInputElement;
-		cartStore.changeUnitPrice({ id, unitPrice: +target.value });
+		cartStore.changeUnitPrice({ id, unitPrice: target.value });
 	};
 	const options = {
 		dateFormat: 'Z',

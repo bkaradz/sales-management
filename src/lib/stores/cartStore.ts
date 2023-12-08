@@ -128,7 +128,7 @@ function cart() {
 				return productMap
 			})
 		},
-		changeUnitPrice: ({ id, unitPrice }: { id: number, unitPrice: number }) => {
+		changeUnitPrice: ({ id, unitPrice }: { id: number, unitPrice: string }) => {
 			update((productMap) => {
 				const getProductsOrderDetails = productMap.get(id) as CartTypes
 				getProductsOrderDetails.orders_details.unit_price = unitPrice.toString()
