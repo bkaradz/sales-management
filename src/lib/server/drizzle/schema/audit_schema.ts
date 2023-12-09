@@ -63,7 +63,7 @@ export const products_audit = pgTable('products_audit', {
   updated_at: timestamp('updated_at'),
 })
 
-export const orders_audit = pgTable('orders_audit', {
+export const shop_orders_audit = pgTable('shop_orders_audit', {
   op: char('op', { enum: ["D", "U", "I"] }).notNull(),
   timestamp: timestamp('timestamp').notNull(),
   user_to_blame: text('user_to_blame').notNull(),

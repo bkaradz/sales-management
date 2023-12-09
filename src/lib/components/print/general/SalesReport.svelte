@@ -7,7 +7,7 @@
 
 	export let heading: string;
 	export let dataResults: {
-		data: NonNullable<GetSalesReports>['orders'];
+		data: NonNullable<GetSalesReports>['shop_orders'];
 		pageNumber: number;
 	};
 </script>

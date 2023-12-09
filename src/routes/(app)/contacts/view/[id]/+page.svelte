@@ -137,7 +137,7 @@
 	<!-- Orders Table -->
 
 	<div class="flex-grow flex overflow-x-hidden">
-		{#if data.orders}
+		{#if data.shop_orders}
 			<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 				<div
 					class=" z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
@@ -162,11 +162,11 @@
 						</button>
 						<div class="relative ml-3">
 							<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
-								<input type="hidden" name="limit" value={data.orders.pagination.limit} />
+								<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
 								<input
 									type="hidden"
 									name="page"
-									value={data.orders.pagination.previous?.page || 1}
+									value={data.shop_orders.pagination.previous?.page || 1}
 								/>
 								<input
 									use:selectTextOnFocus
@@ -183,36 +183,36 @@
 						<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 							<div>
 								<span class="mr-3"
-									>Page {data.orders.pagination.page} of {data.orders.pagination.totalPages}</span
+									>Page {data.shop_orders.pagination.page} of {data.shop_orders.pagination.totalPages}</span
 								>
 								<form class="inline-block" method="get">
 									<input
 										type="hidden"
 										name="page"
-										value={data.orders.pagination.previous?.page || 1}
+										value={data.shop_orders.pagination.previous?.page || 1}
 									/>
-									<input type="hidden" name="limit" value={data.orders.pagination.limit} />
-									<input type="hidden" name="search" value={data.orders.pagination.search || ''} />
+									<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
+									<input type="hidden" name="search" value={data.shop_orders.pagination.search || ''} />
 									<button
 										type="submit"
-										class="{!data.orders.pagination.previous
+										class="{!data.shop_orders.pagination.previous
 											? 'cursor-not-allowed'
 											: ''} inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-										disabled={!data.orders.pagination.previous}
+										disabled={!data.shop_orders.pagination.previous}
 									>
 										{@html svgBackArrow}
 									</button>
 								</form>
 								<form class="inline-block" method="get">
-									<input type="hidden" name="page" value={data.orders.pagination.next?.page || 1} />
-									<input type="hidden" name="limit" value={data.orders.pagination.limit} />
-									<input type="hidden" name="search" value={data.orders.pagination.search || ''} />
+									<input type="hidden" name="page" value={data.shop_orders.pagination.next?.page || 1} />
+									<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
+									<input type="hidden" name="search" value={data.shop_orders.pagination.search || ''} />
 									<button
 										type="submit"
-										class="{!data.orders.pagination.next
+										class="{!data.shop_orders.pagination.next
 											? 'cursor-not-allowed'
 											: ''} inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-										disabled={!data.orders.pagination.next}
+										disabled={!data.shop_orders.pagination.next}
 									>
 										{@html svgForwardArrow}
 									</button>
@@ -225,13 +225,13 @@
 										use:selectTextOnFocus
 										type="number"
 										class="appearance-none h-8 mr-2 w-20 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white rounded-md text-sm"
-										value={data.orders.pagination.limit}
+										value={data.shop_orders.pagination.limit}
 										name="limit"
 										on:input={debounceSearch}
 										on:change={debounceSearch}
 									/>
 								</form>
-								<span class="">of {data.orders.pagination.totalRecords} entries</span>
+								<span class="">of {data.shop_orders.pagination.totalRecords} entries</span>
 							</div>
 						</div>
 					</div>
@@ -285,54 +285,54 @@
 							</tr>
 						</thead>
 						<tbody class="text-gray-600 dark:text-gray-100">
-							{#each data.orders.orders as ordersArray (ordersArray.orders.id)}
+							{#each data.shop_orders.shop_orders as ordersArray (ordersArray.shop_orders.id)}
 								<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.orders.id}
+											{ordersArray.shop_orders.id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.orders.pricelist_id}
+											{ordersArray.shop_orders.pricelist_id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.orders.exchange_rates_id}
+											{ordersArray.shop_orders.exchange_rates_id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.orders.sales_status}
+											{ordersArray.shop_orders.sales_status}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.orders.payment_status}
+											{ordersArray.shop_orders.payment_status}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										{ordersArray.orders.total_products}
+										{ordersArray.shop_orders.total_products}
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										{format(
 											converter(
-												ordersArray.orders.sales_amount,
+												ordersArray.shop_orders.sales_amount,
 												$selectedRateStore,
 												$exchangeRatesStore
 											),
@@ -341,19 +341,19 @@
 									</td>
 									<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 										<div class="flex items-center">
-											<a href={`/sales/view/${ordersArray.orders.id}`}>
+											<a href={`/sales/view/${ordersArray.shop_orders.id}`}>
 												{@html svgEye}
 											</a>
-											<a href={`/sales/edit/${ordersArray.orders.id}`} class="px-2">
+											<a href={`/sales/edit/${ordersArray.shop_orders.id}`} class="px-2">
 												{@html svgPen}
 											</a>
 											<form action="?/delete" method="post" use:enhance>
-												<input type="hidden" name="delete" value={ordersArray.orders.id} />
+												<input type="hidden" name="delete" value={ordersArray.shop_orders.id} />
 												<a
 													href="#!"
 													on:click={() => {
 														isModalOpen = true;
-														deletedOrder = { orderId: ordersArray.orders.id };
+														deletedOrder = { orderId: ordersArray.shop_orders.id };
 													}}
 												>
 													{@html svgBin}

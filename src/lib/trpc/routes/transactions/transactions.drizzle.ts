@@ -3,7 +3,7 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from '$lib/trpc/context';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { contacts, orders, orders_details, products, transactions, transactions_details, type Products } from '$lib/server/drizzle/schema/schema';
+import { contacts, shop_orders, orders_details, products, transactions, transactions_details, type Products } from '$lib/server/drizzle/schema/schema';
 import { and, asc, eq, inArray, ne, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 import type { transactionInput } from '../../../../routes/(app)/sales/payment/[id]/proxy+page.server';
@@ -115,7 +115,7 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
 
 		const customer = (await db.select().from(contacts).where(eq(contacts.id, input.customer_id)))[0];
 
-		const transactionOrders = await db.select().from(orders).where(inArray(orders.id, input.selected_orders_ids));
+		const transactionOrders = await db.select().from(shop_orders).where(inArray(shop_orders.id, input.selected_orders_ids));
 
 		const transactionOrdersDetails = await db.select().from(orders_details).where(inArray(orders_details.order_id, input.selected_orders_ids));
 
@@ -128,10 +128,10 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
     transactionOrdersProducts.forEach((item) => nonEmbroideryProductsIdArray.set(item.id, item))
 
     // Insert transaction 
-		const transactionId = await db.insert(transactions).values({ user_id: ctx.session.user.userId, ...input }).returning({id: transactions.id});
+		const transactionId = await db.insert(transactions).values({ user_id: ctx.session.user.userId, ...input, amount_tendered: input.amount_tendered.toString() }).returning({id: transactions.id});
 
     // Update Orders payment_status as paid and sales_status to Invoiced
-    await db.update(orders).set({ payment_status: 'Paid', sales_status: 'Invoice' }).where(inArray(orders.id, input.selected_orders_ids))
+    await db.update(shop_orders).set({ payment_status: 'Paid', sales_status: 'Invoice' }).where(inArray(shop_orders.id, input.selected_orders_ids))
 
     // Insert transaction details
     input.selected_orders_ids.forEach(async (item) => {

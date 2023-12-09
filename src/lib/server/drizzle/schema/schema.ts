@@ -193,7 +193,7 @@ export type NewExchangeRateDetails = InferInsertModel<typeof exchange_rate_detai
 export const InsertExchangeRateDetailsSchema = createInsertSchema(exchange_rate_details);
 export const SelectExchangeRateDetailsSchema = createSelectSchema(exchange_rate_details);
 
-export const orders = pgTable('orders', {
+export const shop_orders = pgTable('shop_orders', {
   id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
@@ -210,15 +210,15 @@ export const orders = pgTable('orders', {
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
 
-export type Orders = InferSelectModel<typeof orders>;
-export type NewOrders = InferInsertModel<typeof orders>;
+export type Orders = InferSelectModel<typeof shop_orders>;
+export type NewOrders = InferInsertModel<typeof shop_orders>;
 
-export const InsertOrdersSchema = createInsertSchema(orders);
-export const SelectOrdersSchema = createSelectSchema(orders);
+export const InsertOrdersSchema = createInsertSchema(shop_orders);
+export const SelectOrdersSchema = createSelectSchema(shop_orders);
 
 export const orders_details = pgTable('orders_details', {
   id: serial('id').primaryKey(),
-  order_id: integer('order_id').notNull().references(() => orders.id),
+  order_id: integer('order_id').notNull().references(() => shop_orders.id),
   product_id: integer('product_id').notNull().references(() => products.id),
   unit_price: numeric('unit_price', { precision: 100, scale: 10 }).notNull(),
   total_price: numeric('total_price', { precision: 100, scale: 10 }).notNull(),
@@ -243,7 +243,7 @@ export const SelectOrdersDetailsSchema = createSelectSchema(orders_details);
 export const transactions_details = pgTable('transactions_details', {
   id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
-  orders_id: integer('orders_id').notNull().references(() => orders.id),
+  orders_id: integer('orders_id').notNull().references(() => shop_orders.id),
   transaction_id: integer('transaction_id').notNull().references(() => transactions.id),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),

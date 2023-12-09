@@ -5,7 +5,7 @@ import { createOrder, deleteById, getById, getOrders, changeSalesStatusById, get
 import { PaymentStatusZod, ProductionStatusZod, SalesStatusZod } from "$lib/validation/types.zod.typescript";
 
 
-export const orders = router({
+export const shop_orders = router({
     getOrders: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
         return await getOrders(input, ctx);
     }),

@@ -14,8 +14,8 @@ export const load = (async (event) => {
     const search = event.url.searchParams.get('search')
     if (search) query = { ...query, search }
 
-    const orders = async (query: any) => {
-        return await router.createCaller(await createContext(event)).orders.getOrdersByProductId({...query, product_id: parseInt(event.params.id, 10)});
+    const shop_orders = async (query: any) => {
+        return await router.createCaller(await createContext(event)).shop_orders.getOrdersByProductId({...query, product_id: parseInt(event.params.id, 10)});
     }
 
     const product = async () => {
@@ -23,6 +23,6 @@ export const load = (async (event) => {
     };
     return {
         product: product(),
-        orders: orders(query)
+        shop_orders: shop_orders(query)
     };
 }) satisfies PageServerLoad;

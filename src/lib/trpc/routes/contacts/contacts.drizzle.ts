@@ -4,7 +4,7 @@ import type { Context } from "$lib/trpc/context"
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
-import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address, orders } from '$lib/server/drizzle/schema/schema';
+import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address, shop_orders } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import type { SaveContacts, saveContactsArray } from '$lib/validation/contacts.zod';
 
@@ -131,8 +131,8 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 	try {
 
-		// check that the customer does not have orders
-		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders).where(eq(orders.customer_id, input))
+		// check that the customer does not have shop_orders
+		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders).where(eq(shop_orders.customer_id, input))
 
 		if (+totalOrdersRecords[0].count !== 0) {
 			await db.update(contacts).set({active: false}).where(eq(contacts.id, input));

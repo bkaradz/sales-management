@@ -93,7 +93,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 	try {
 
-		// check that the customer does not have orders
+		// check that the customer does not have shop_orders
 		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details).where(eq(orders_details.product_id, input))
 
 		if (+totalOrdersRecords[0].count !== 0) {

@@ -4,7 +4,7 @@ import { contacts } from '$lib/trpc/routes/contacts/contacts';
 import { products } from '$lib/trpc/routes/products/products';
 import { pricelists } from '$lib/trpc/routes/pricelist/pricelists';
 import { rates } from '$lib/trpc/routes/exchangeRates/rates';
-import { orders } from '$lib/trpc/routes/orders/orders';
+import { shop_orders } from '$lib/trpc/routes/orders/orders';
 import { transactions } from '$lib/trpc/routes/transactions/transactions';
 import { reports } from '$lib/trpc/routes/reports/reports';
 import { t } from '$lib/trpc/t';
@@ -16,7 +16,7 @@ export const router = t.router({
 	products,
 	pricelists,
 	rates,
-	orders,
+	shop_orders,
 	transactions,
 	reports
 });

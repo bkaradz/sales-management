@@ -3,7 +3,7 @@
 
 	export let heading: string;
 	export let dataResults: {
-		data:  (NonNullable<GetDailyProductionReport>)['orders'];
+		data:  (NonNullable<GetDailyProductionReport>)['shop_orders'];
 			pageNumber: number;
 		};
 </script>

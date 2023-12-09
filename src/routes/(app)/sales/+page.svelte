@@ -51,7 +51,7 @@
 </svelte:head>
 
 <div class="flex-grow flex overflow-x-hidden">
-	{#if data.results?.orders}
+	{#if data.results?.shop_orders}
 		<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 			<div
 				class="sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0"
@@ -212,20 +212,20 @@
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
-						{#each data.results?.orders as order (order.orders.id)}
+						{#each data.results?.shop_orders as order (order.shop_orders.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<input
 										name="selected"
 										type="checkbox"
-										checked={checkedMap.has(order.orders.id)}
+										checked={checkedMap.has(order.shop_orders.id)}
 										on:click={(event) =>
-											changeSelection(event, order.orders.id, order.orders.sales_status, order.orders.payment_status)}
+											changeSelection(event, order.shop_orders.id, order.shop_orders.sales_status, order.shop_orders.payment_status)}
 									/>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.orders.id}
+										{order.shop_orders.id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -246,31 +246,31 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.orders.pricelist_id}
+										{order.shop_orders.pricelist_id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.orders.exchange_rates_id}
+										{order.shop_orders.exchange_rates_id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.orders.sales_status}
+										{order.shop_orders.sales_status}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.orders.payment_status}
+										{order.shop_orders.payment_status}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.orders.total_products}
+									{order.shop_orders.total_products}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(
-											order.orders.sales_amount,
+											order.shop_orders.sales_amount,
 											$selectedRateStore,
 											$exchangeRatesStore
 										),
@@ -279,16 +279,16 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/sales/view/${order.orders.id}`}>
+										<a href={`/sales/view/${order.shop_orders.id}`}>
 											{@html svgEye}
 										</a>
-										<a href={`/sales/edit/${order.orders.id}`} class="px-2">
+										<a href={`/sales/edit/${order.shop_orders.id}`} class="px-2">
 											{@html svgPen}
 										</a>
 										<form action="?/delete" method="post" use:enhance>
-											<input type="hidden" name="id" value={order.orders.id} />
-											<input type="hidden" name="sales_status" value={order.orders.sales_status} />
-											<input type="hidden" name="payment_status" value={order.orders.payment_status} />
+											<input type="hidden" name="id" value={order.shop_orders.id} />
+											<input type="hidden" name="sales_status" value={order.shop_orders.sales_status} />
+											<input type="hidden" name="payment_status" value={order.shop_orders.payment_status} />
 											<button type="submit">
 												{@html svgBin}
 											</button>

@@ -115,7 +115,7 @@ export const actions: Actions = {
                 })
             }
 
-            return await router.createCaller(await createContext(event)).orders.createOrder(parsedCartOrder.data)
+            return await router.createCaller(await createContext(event)).shop_orders.createOrder(parsedCartOrder.data)
 
         } catch (error) {
             return fail(400, {

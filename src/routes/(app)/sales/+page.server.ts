@@ -17,12 +17,12 @@ export const load = (async (event) => {
 	const search = event.url.searchParams.get('search')
 	if (search) query = { ...query, search }
 	
-	const orders = async (query: any) => {
-			return await router.createCaller(await createContext(event)).orders.getOrders(query);
+	const shop_orders = async (query: any) => {
+			return await router.createCaller(await createContext(event)).shop_orders.getOrders(query);
 	};
 
 	return {
-		results: orders(query)
+		results: shop_orders(query)
 	};
 }) satisfies PageServerLoad;
 
@@ -38,7 +38,7 @@ export const actions: Actions = {
 			const data = await event.request.formData();
 			const formData = Object.fromEntries(data) as {id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion}
 
-			return await router.createCaller(await createContext(event)).orders.deleteById({...formData, id: +formData.id})
+			return await router.createCaller(await createContext(event)).shop_orders.deleteById({...formData, id: +formData.id})
 	},
 	salesStatus: async (event) => {
 
@@ -51,6 +51,6 @@ export const actions: Actions = {
 			const data = await event.request.formData();
 			const formData = Object.fromEntries(data) as {id: string, sales_status: SalesStatusUnion, payment_status: PaymentStatusUnion}
 
-			return await router.createCaller(await createContext(event)).orders.changeSalesStatusById({...formData, id: +formData.id})
+			return await router.createCaller(await createContext(event)).shop_orders.changeSalesStatusById({...formData, id: +formData.id})
 	}
 }

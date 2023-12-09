@@ -11,7 +11,7 @@
 
 <div class="flex-grow flex overflow-x-hidden">
 	<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
-		{#each splitPage(data?.results?.orders, 10) as dataResults}
+		{#each splitPage(data?.results?.shop_orders, 10) as dataResults}
 			<SalesReport {heading} {dataResults} />
 		{/each}
 	</div>

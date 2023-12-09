@@ -14,11 +14,11 @@ export const load = (async (event) => {
     const search = event.url.searchParams.get('search')
     if (search) query = { ...query, search }
 
-    const orders = async (query: any) => {
+    const shop_orders = async (query: any) => {
         return await router.createCaller(await createContext(event)).reports.getSalesReports(query);
     };
 
     return {
-        results: orders(query)
+        results: shop_orders(query)
     };
 }) satisfies PageServerLoad;
