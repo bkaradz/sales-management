@@ -157,14 +157,17 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Full Name
 							</th>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+							<!-- <th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Amounts
+							</th> -->
+							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+								Sales Amount
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
-								Orders Totals
+								Total Orders
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
-								Total Receipts
+								Total Products
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Actions
@@ -178,32 +181,30 @@
 						{#each data.results?.contacts as contact (contact.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									<span
-										class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
-									>
+									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 										{contact.id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{contact.full_name}
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(contact.deposit, $selectedRateStore, $exchangeRatesStore),
 										$selectedRateStore
 									)}
-								</td>
+								</td> -->
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										converter(contact.orders_totals, $selectedRateStore, $exchangeRatesStore),
+										converter(contact.sales_amount, $selectedRateStore, $exchangeRatesStore),
 										$selectedRateStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{format(
-										converter(contact.total_receipts, $selectedRateStore, $exchangeRatesStore),
-										$selectedRateStore
-									)}
+									{contact.total_orders}
+								</td>
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+									{contact.total_products}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">

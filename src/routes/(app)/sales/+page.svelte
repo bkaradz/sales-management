@@ -182,9 +182,9 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Full Name/Id
 							</th>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
+							<!-- <th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Balance
-							</th>
+							</th> -->
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Pricelist Id
 							</th>
@@ -212,65 +212,65 @@
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
-						{#each data.results?.shop_orders as order (order.shop_orders.id)}
+						{#each data.results?.shop_orders as order (order.id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<input
 										name="selected"
 										type="checkbox"
-										checked={checkedMap.has(order.shop_orders.id)}
+										checked={checkedMap.has(order.id)}
 										on:click={(event) =>
-											changeSelection(event, order.shop_orders.id, order.shop_orders.sales_status, order.shop_orders.payment_status)}
+											changeSelection(event, order.id, order.sales_status, order.payment_status)}
 									/>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.shop_orders.id}
+										{order.id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.contacts?.full_name}
+									{order?.full_name}
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.contacts?.id}
+										{order.contact_id}
 									</span>
 								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(
-											order.contacts?.orders_totals,
+											order.sales_amount,
 											$selectedRateStore,
 											$exchangeRatesStore
 										),
 										$selectedRateStore
 									)}
-								</td>
+								</td> -->
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.shop_orders.pricelist_id}
+										{order.pricelist_id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.shop_orders.exchange_rates_id}
+										{order.exchange_rates_id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.shop_orders.sales_status}
+										{order.sales_status}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.shop_orders.payment_status}
+										{order.payment_status}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.shop_orders.total_products}
+									{order.total_products}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(
-											order.shop_orders.sales_amount,
+											order.sales_amount,
 											$selectedRateStore,
 											$exchangeRatesStore
 										),
@@ -279,16 +279,16 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/sales/view/${order.shop_orders.id}`}>
+										<a href={`/sales/view/${order.id}`}>
 											{@html svgEye}
 										</a>
-										<a href={`/sales/edit/${order.shop_orders.id}`} class="px-2">
+										<a href={`/sales/edit/${order.id}`} class="px-2">
 											{@html svgPen}
 										</a>
 										<form action="?/delete" method="post" use:enhance>
-											<input type="hidden" name="id" value={order.shop_orders.id} />
-											<input type="hidden" name="sales_status" value={order.shop_orders.sales_status} />
-											<input type="hidden" name="payment_status" value={order.shop_orders.payment_status} />
+											<input type="hidden" name="id" value={order.id} />
+											<input type="hidden" name="sales_status" value={order.sales_status} />
+											<input type="hidden" name="payment_status" value={order.payment_status} />
 											<button type="submit">
 												{@html svgBin}
 											</button>
@@ -297,7 +297,7 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/sales/payment/${order.contacts.id}`} class="pr-2">
+										<a href={`/sales/payment/${order.id}`} class="pr-2">
 											{@html svgCard}
 										</a>
 									</div>

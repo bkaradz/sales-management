@@ -16,9 +16,9 @@ export const load = (async (event) => {
 
 	const search = event.url.searchParams.get('search')
 	if (search) query = { ...query, search }
-	
+
 	const shop_orders = async (query: any) => {
-			return await router.createCaller(await createContext(event)).shop_orders.getProductionOrders(query);
+		return await router.createCaller(await createContext(event)).production.getProductionOrders(query);
 	};
 
 	return {
@@ -29,29 +29,29 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	delete: async (event) => {
 
-			const session = await event.locals.auth.validate()
+		const session = await event.locals.auth.validate()
 
-			if (!session) {
-					throw redirect(303, "/auth/login")
-			}
+		if (!session) {
+			throw redirect(303, "/auth/login")
+		}
 
-			const data = await event.request.formData();
-			const formData = Object.fromEntries(data) as {id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion, production_status: ProductionStatusUnion}
-			
+		const data = await event.request.formData();
+		const formData = Object.fromEntries(data) as { id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion, production_status: ProductionStatusUnion }
 
-			// return await router.createCaller(await createContext(event)).shop_orders.deleteById(+formData.delete)
+
+		// return await router.createCaller(await createContext(event)).shop_orders.deleteById(+formData.delete)
 	},
 	productionStatus: async (event) => {
 
-			const session = await event.locals.auth.validate()
+		const session = await event.locals.auth.validate()
 
-			if (!session) {
-					throw redirect(303, "/auth/login")
-			}
+		if (!session) {
+			throw redirect(303, "/auth/login")
+		}
 
-			const data = await event.request.formData();
-			const formData = Object.fromEntries(data) as {id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion, production_status: ProductionStatusUnion}
+		const data = await event.request.formData();
+		const formData = Object.fromEntries(data) as { id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion, production_status: ProductionStatusUnion }
 
-			return await router.createCaller(await createContext(event)).shop_orders.changeProductionStatusById({...formData, id: +formData.id})
+		return await router.createCaller(await createContext(event)).shop_orders.changeProductionStatusById({ ...formData, id: +formData.id })
 	}
 }

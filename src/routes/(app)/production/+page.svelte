@@ -210,56 +210,56 @@
 						</tr>
 					</thead>
 					<tbody class="text-gray-600 dark:text-gray-100">
-						{#each data.results?.shop_orders as order (order.orders_details.id)}
+						{#each data.results?.shop_orders as order (order.orders_details_id)}
 							<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<input
 										name="selection"
 										type="checkbox"
-										checked={checkedMap.has(order.orders_details.id)}
+										checked={checkedMap.has(order.orders_details_id)}
 										on:click={(event) =>
 											changeSelection(
 												event,
-												order.orders_details.id,
-												order.orders_details.production_status,
-												order.shop_orders.sales_status,
-												order.shop_orders.payment_status
+												order.orders_details_id,
+												order.order_production_status,
+												order.order_sales_status,
+												order.order_payment_status
 											)}
 									/>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.shop_orders.id}
+										{order.order_id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.contacts?.full_name}
+									{order.full_name}
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.contacts?.id}
+										{order.contacts_id}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.products.name}
+									{order.products_name}
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.products.id}
+										{order.products_id}
 									</span>
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{order.orders_details.stitches}
+									{order.order_stitches}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-									{order.orders_details.quantity}
+									{order.order_quantity}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.orders_details.garment_placement}
+									{order.order_garment_placement}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.orders_details.production_status}
+										{order.order_production_status}
 									</span>
 								</td>
 							</tr>

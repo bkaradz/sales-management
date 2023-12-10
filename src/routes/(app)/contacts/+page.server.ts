@@ -18,7 +18,7 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
     
     const contacts = async (query: any) => {
-        return await router.createCaller(await createContext(event)).contacts.getContacts(query);
+        return await router.createCaller(await createContext(event)).contacts.getContactsList(query);
     };
 
     return {

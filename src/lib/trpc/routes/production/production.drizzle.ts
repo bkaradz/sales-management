@@ -16,175 +16,6 @@ import type { PaymentStatusUnion, ProductionStatusUnion, SalesStatusUnion } from
 import type { SaveCartOrder } from '$lib/validation/cart.zod';
 
 
-export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
-
-  if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
-  }
-
-  const pagination = getPagination(input);
-
-  try {
-
-    let totalOrdersRecords
-    let ordersQuery
-
-    if (!trim(input.search)) {
-
-      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(eq(shop_orders.active, true))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.order_id))
-
-      ordersQuery = await db.select({
-        id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
-      }).from(shop_orders)
-        .where(eq(shop_orders.active, true))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.order_id))
-        .orderBy(desc(shop_orders.id))
-
-    } else {
-
-      const data = `%${input.search}%`
-
-      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.order_id))
-
-      ordersQuery = await db.select({
-        id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
-      }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.order_id))
-        .orderBy(desc(shop_orders.id))
-    }
-
-    pagination.totalRecords = +totalOrdersRecords[0].count
-    pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
-
-    if (pagination.endIndex >= pagination.totalRecords) {
-      pagination.next = undefined;
-    }
-
-    return {
-      shop_orders: ordersQuery,
-      pagination
-    }
-
-  } catch (error) {
-    console.error("🚀 ~ file: shop_orders.drizzle.ts:72 ~ getOrders ~ error:", error)
-  }
-};
-
-export const getOrders = async (input: SearchParams, ctx: Context) => {
-
-  if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
-  }
-
-  const pagination = getPagination(input);
-
-  try {
-
-    let totalOrdersRecords
-    let ordersQuery
-
-    if (!trim(input.search)) {
-
-      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(eq(shop_orders.active, true))
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.order_id))
-
-      ordersQuery = await db.select({
-        shop_orders, contacts, orders_details
-      }).from(shop_orders)
-        .where(eq(shop_orders.active, true))
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.order_id))
-        .orderBy(desc(shop_orders.id))
-
-    } else {
-
-      const data = `%${input.search}%`
-
-      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
-
-
-      ordersQuery = await db.select({
-
-        shop_orders,
-        contacts,
-        orders_details
-      }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .orderBy(desc(shop_orders.id))
-    }
-
-    pagination.totalRecords = +totalOrdersRecords[0].count
-    pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
-
-    if (pagination.endIndex >= pagination.totalRecords) {
-      pagination.next = undefined;
-    }
-
-    const result = ordersQuery.reduce<Record<number, { shop_orders: Orders; contacts: Contacts; orders_details: OrdersDetails[] }>>(
-      (acc, row) => {
-        const shop_orders = row.shop_orders;
-        const contacts = row.contacts;
-        const orders_details = row.orders_details;
-
-        if (!acc[shop_orders.id]) acc[shop_orders.id] = { shop_orders, contacts, orders_details: [] };
-
-        if (orders_details) acc[shop_orders.id].orders_details.push(orders_details);
-
-        return acc;
-      }, {},
-    );
-
-    return {
-      shop_orders: Object.values(result),
-      pagination
-    }
-
-  } catch (error) {
-    console.error("🚀 ~ file: shop_orders.drizzle.ts:72 ~ getOrders ~ error:", error)
-  }
-};
-
 export const getProductionOrders = async (input: SearchParams, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
@@ -210,7 +41,20 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
         .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
 
-      ordersQuery = await db.select({ shop_orders, contacts, orders_details, products }).from(shop_orders)
+      ordersQuery = await db.select({
+        orders_details_id: orders_details.id,
+        order_id: shop_orders.id,
+        full_name: contacts.full_name,
+        contacts_id: contacts.id,
+        products_name: products.name,
+        products_id: products.id,
+        order_stitches: orders_details.stitches,
+        order_quantity: orders_details.quantity,
+        order_garment_placement: orders_details.garment_placement,
+        order_production_status: orders_details.production_status,
+        order_sales_status: shop_orders.sales_status,
+        order_payment_status: shop_orders.payment_status,
+      }).from(shop_orders)
         .where(
           and(eq(shop_orders.active, true),
             and(eq(products.product_category, 'Embroidery'),
@@ -237,7 +81,20 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
         .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
 
-      ordersQuery = await db.select({ shop_orders, contacts, orders_details, products }).from(shop_orders)
+      ordersQuery = await db.select({
+        orders_details_id: orders_details.id,
+        order_id: shop_orders.id,
+        full_name: contacts.full_name,
+        contacts_id: contacts.id,
+        products_name: products.name,
+        products_id: products.id,
+        order_stitches: orders_details.stitches,
+        order_quantity: orders_details.quantity,
+        order_garment_placement: orders_details.garment_placement,
+        order_production_status: orders_details.production_status,
+        order_sales_status: shop_orders.sales_status,
+        order_payment_status: shop_orders.payment_status,
+      }).from(shop_orders)
         .where(
           and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),

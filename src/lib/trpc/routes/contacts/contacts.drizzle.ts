@@ -4,9 +4,89 @@ import type { Context } from "$lib/trpc/context"
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
-import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address, shop_orders } from '$lib/server/drizzle/schema/schema';
+import { address, contacts, emails, phones, type Contacts, type Phones, type Emails, type Address, shop_orders, orders_details } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import type { SaveContacts, saveContactsArray } from '$lib/validation/contacts.zod';
+
+export const getContactsList = async (input: SearchParams, ctx: Context) => {
+
+	if (!ctx.session.sessionId) {
+		throw error(404, 'User not found');
+	}
+
+	const pagination = getPagination(input);
+
+	try {
+
+		let totalContactsRecords
+		let contactsQuery
+
+		if (!trim(input.search)) {
+
+			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
+				.from(contacts)
+				.groupBy(contacts.id)
+				.where(eq(contacts.active, true))
+				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)))
+
+			contactsQuery = await db.select({
+				id: contacts.id,
+				full_name: contacts.full_name,
+				sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
+				total_products: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
+				total_orders: sql<string>`count(DISTINCT ${shop_orders.id})`
+			}).from(contacts)
+				.orderBy(asc(contacts.full_name))
+				.groupBy(contacts.id)
+				.where(eq(contacts.active, true))
+				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)))
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+
+		} else {
+
+			const data = `%${input.search}%`
+
+			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
+				.from(contacts)
+				.groupBy(contacts.id)
+				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)));
+
+			contactsQuery = await db.select({
+				id: contacts.id,
+				full_name: contacts.full_name,
+				sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
+				total_products: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
+				total_orders: sql<string>`count(DISTINCT ${shop_orders.id})`
+			}).from(contacts)
+				.orderBy(asc(contacts.full_name))
+				.groupBy(contacts.id)
+				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)))
+				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+
+		}
+
+		pagination.totalRecords = +totalContactsRecords[0].count
+		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
+
+		if (pagination.endIndex >= pagination.totalRecords) {
+			pagination.next = undefined;
+		}
+
+		return {
+			contacts: contactsQuery,
+			pagination
+		}
+
+	} catch (error) {
+		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+	}
+};
 
 export const getContacts = async (input: SearchParams, ctx: Context) => {
 
@@ -135,12 +215,12 @@ export const deleteById = async (input: number, ctx: Context) => {
 		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders).where(eq(shop_orders.customer_id, input))
 
 		if (+totalOrdersRecords[0].count !== 0) {
-			await db.update(contacts).set({active: false}).where(eq(contacts.id, input));
+			await db.update(contacts).set({ active: false }).where(eq(contacts.id, input));
 		} else {
 			await db.delete(emails).where(eq(emails.contact_id, input));
 			await db.delete(phones).where(eq(phones.contact_id, input));
 			await db.delete(address).where(eq(address.contact_id, input));
-	
+
 			await db.delete(contacts).where(eq(contacts.id, input));
 		}
 

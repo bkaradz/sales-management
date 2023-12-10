@@ -18,7 +18,7 @@ export const load = (async (event) => {
 	if (search) query = { ...query, search }
 	
 	const shop_orders = async (query: any) => {
-			return await router.createCaller(await createContext(event)).shop_orders.getOrders(query);
+			return await router.createCaller(await createContext(event)).shop_orders.getOrdersLine(query);
 	};
 
 	return {

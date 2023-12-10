@@ -5,11 +5,12 @@ import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.ut
 import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import { get, writable, derived } from 'svelte/store';
 import currency from 'currency.js';
+import type { GetProducts } from '$lib/trpc/routes/products/products.drizzle';
 
 
-export type CartTypes = { product: Products, orders_details: Partial<NewOrdersDetails> }
+export type CartTypes = { product: GetProducts['products'][0], orders_details: Partial<NewOrdersDetails> }
 
-const getOrderDetailObj = (product: Products) => {
+const getOrderDetailObj = (product: GetProducts['products'][0]) => {
 
 	if (product.product_category === 'Embroidery') {
 		return {
@@ -46,7 +47,7 @@ function cart() {
 
 	return {
 		subscribe,
-		add: (product: Products) => {
+		add: (product: GetProducts['products'][0]) => {
 			update((productMap) => {
 				if (productMap.has(product.id)) {
 					const getProductsOrderDetails = productMap.get(product.id) as CartTypes
@@ -92,7 +93,7 @@ function cart() {
 				})
 			}
 		},
-		subtract: (product: Products) => {
+		subtract: (product: GetProducts['products'][0]) => {
 			update((productMap) => {
 				if (productMap.has(product.id)) {
 					const getProductsOrderDetails = productMap.get(product.id) as CartTypes

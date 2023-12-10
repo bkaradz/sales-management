@@ -2,12 +2,15 @@ import { router } from "$lib/trpc/t";
 import { z } from "zod";
 import { protectedProcedure } from '$lib/trpc/middleware/auth';
 import { searchParamsSchema } from "$lib/validation/searchParams.validate";
-import { getContacts, createContact, deleteById, getById, uploadContacts, updateContact } from "./contacts.drizzle";
+import { getContacts, createContact, deleteById, getById, uploadContacts, updateContact, getContactsList } from "./contacts.drizzle";
 
 
 export const contacts = router({
     getContacts: protectedProcedure.input(searchParamsSchema.passthrough()).query(async ({ input, ctx }) => {
         return await getContacts(input, ctx);
+    }),
+    getContactsList: protectedProcedure.input(searchParamsSchema.passthrough()).query(async ({ input, ctx }) => {
+        return await getContactsList(input, ctx);
     }),
     getById: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
         return await getById(input, ctx);
