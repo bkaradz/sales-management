@@ -84,9 +84,11 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 		}
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: contacts.drizzle.ts:87 ~ getContactsList ~ error:", error)
 	}
 };
+
+export type GetContactsList = NonNullable<Awaited<ReturnType<typeof getContactsList>>>
 
 export const getContacts = async (input: SearchParams, ctx: Context) => {
 
@@ -140,7 +142,7 @@ export const getContacts = async (input: SearchParams, ctx: Context) => {
 		}
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: contacts.drizzle.ts:143 ~ getContacts ~ error:", error)
 	}
 };
 
@@ -199,7 +201,7 @@ export const getById = async (input: number, ctx: Context) => {
 		return result[input]
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: contacts.drizzle.ts:202 ~ getById ~ error:", error)
 	}
 };
 
@@ -228,7 +230,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 		return { success: true }
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: contacts.drizzle.ts:231 ~ deleteById ~ error:", error)
 	}
 };
 
@@ -389,7 +391,7 @@ export const uploadContacts = async (input: saveContactsArray, ctx: Context) => 
 		return { success: true }
 
 	} catch (error) {
-		console.error("🚀 ~ file: contacts.drizzle.ts:84 ~ getContacts ~ error:", error)
+		console.error("🚀 ~ file: contacts.drizzle.ts:392 ~ uploadContacts ~ error:", error)
 	}
 };
 

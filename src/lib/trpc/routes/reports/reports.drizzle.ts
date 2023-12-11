@@ -1,4 +1,3 @@
-import { getPagination } from '$lib/utility/pagination.util';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
@@ -54,8 +53,8 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
         .where(
           and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
-                and(ne(shop_orders.sales_status, 'Quotation'),
-                  ne(orders_details.production_status, 'Collected')))))
+              and(ne(shop_orders.sales_status, 'Quotation'),
+                ne(orders_details.production_status, 'Collected')))))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
@@ -67,7 +66,7 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
     }
 
   } catch (error) {
-    console.error("🚀 ~ file: shop_orders.drizzle.ts:72 ~ getReports ~ error:", error)
+    console.error("🚀 ~ file: reports.drizzle.ts:70 ~ getSalesReports ~ error:", error)
   }
 };
 
@@ -138,7 +137,7 @@ export const getDailyProductionReport = async (input: SearchParams, ctx: Context
     }
 
   } catch (error) {
-    console.error("🚀 ~ file: shop_orders.drizzle.ts:72 ~ getReports ~ error:", error)
+    console.error("🚀 ~ file: reports.drizzle.ts:141 ~ getDailyProductionReport ~ error:", error)
   }
 };
 

@@ -178,7 +178,10 @@ export const uploadProducts = async (input: saveProductArray, ctx: Context) => {
 
 			try {
 
+				const { name, ...rest } = product
+
 				await db.insert(products).values({ user_id: ctx.session.user.userId, ...product })
+					.onConflictDoUpdate({ target: products.id, set: { ...rest } });
 
 			} catch (err: unknown) {
 

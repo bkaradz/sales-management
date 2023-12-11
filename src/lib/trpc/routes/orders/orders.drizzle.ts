@@ -310,11 +310,11 @@ export const getOrdersByProductId = async (input: {
 
     if (!trim(input.search)) {
 
-      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details)
         .where(and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id)))
         .groupBy(shop_orders.id, contacts.full_name, contacts.id)
+        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.order_id))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
@@ -333,17 +333,16 @@ export const getOrdersByProductId = async (input: {
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-      console.log("🚀 ~ file: orders.drizzle.ts:336 ~ ordersQuery:", ordersQuery)
 
     } else {
 
       const data = `%${input.search}%`
 
-      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details)
         .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
         .groupBy(shop_orders.id, contacts.full_name, contacts.id)
+        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.order_id))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
@@ -355,13 +354,13 @@ export const getOrdersByProductId = async (input: {
         contact_id: contacts.id,
         sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
         total_products: sql<string>`sum(${orders_details.quantity})`
-      }).from(shop_orders)
+      }).from(orders_details)
         .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
         .groupBy(shop_orders.id, contacts.full_name, contacts.id)
+        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.order_id))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
         .orderBy(desc(shop_orders.id))
-        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
     }
 
     pagination.totalRecords = +totalOrdersRecords[0].count
@@ -377,85 +376,8 @@ export const getOrdersByProductId = async (input: {
     }
 
   } catch (error) {
-    console.error("🚀 ~ file: orders.drizzle.ts:265 ~ error:", error)
+    console.error("🚀 ~ file: orders.drizzle.ts:379 ~ error:", error)
   }
-
-  // try {
-
-  //   let totalOrdersRecords
-  //   let ordersQuery
-
-  //   if (!trim(input.search)) {
-
-  //     totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-  //       .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-  //       .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
-  //       .where(and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id)))
-  //       .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-
-  //     ordersQuery = await db.select({
-  //       id: shop_orders.id,
-  //       pricelist_id: shop_orders.pricelist_id,
-  //       exchange_rates_id: shop_orders.exchange_rates_id,
-  //       sales_status: shop_orders.sales_status,
-  //       payment_status: shop_orders.payment_status,
-  //       full_name: contacts.full_name,
-  //       contact_id: contacts.id,
-  //       sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-  //       total_products: sql<string>`sum(${orders_details.quantity})`
-  //     }).from(shop_orders)
-  //       .where(and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id)))
-  //       .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-  //       .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-  //       .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
-  //       .orderBy(desc(shop_orders.id))
-  //       .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-  //     console.log("🚀 ~ file: orders.drizzle.ts:336 ~ ordersQuery:", ordersQuery)
-
-  //   } else {
-
-  //     const data = `%${input.search}%`
-
-  //     totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-  //       .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-  //       .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
-  //       .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
-  //       .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-
-  //     ordersQuery = await db.select({
-  //       id: shop_orders.id,
-  //       pricelist_id: shop_orders.pricelist_id,
-  //       exchange_rates_id: shop_orders.exchange_rates_id,
-  //       sales_status: shop_orders.sales_status,
-  //       payment_status: shop_orders.payment_status,
-  //       full_name: contacts.full_name,
-  //       contact_id: contacts.id,
-  //       sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-  //       total_products: sql<string>`sum(${orders_details.quantity})`
-  //     }).from(shop_orders)
-  //       .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
-  //       .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-  //       .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-  //       .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
-  //       .orderBy(desc(shop_orders.id))
-  //       .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
-  //   }
-
-  //   pagination.totalRecords = +totalOrdersRecords[0].count
-  //   pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
-
-  //   if (pagination.endIndex >= pagination.totalRecords) {
-  //     pagination.next = undefined;
-  //   }
-
-  //   return {
-  //     shop_orders: ordersQuery,
-  //     pagination
-  //   }
-
-  // } catch (error) {
-  //   console.error("🚀 ~ file: orders.drizzle.ts:443 ~ error:", error)
-  // }
 };
 
 export type CalcPriceReturnSnapshot = CalcPriceReturn

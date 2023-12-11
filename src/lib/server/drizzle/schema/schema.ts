@@ -1,4 +1,4 @@
-import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentMethodUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion } from '../../../utility/lists.utility';
+import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentMethodUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion, currencyTypeUnion } from '../../../utility/lists.utility';
 import { currencyType } from '../../../utility/lists.utility';
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { sql } from "drizzle-orm";
@@ -273,3 +273,20 @@ export type NewTransactionDetails = InferInsertModel<typeof transactions>;
 
 export const InsertTransactionSchema = createInsertSchema(transactions);
 export const SelectTransactionSchema = createSelectSchema(transactions);
+
+export const payments = pgTable('payments', {
+  id: serial('id').primaryKey(),
+  user_id: text('user_id').notNull().references(() => users.id),
+  customer_id: integer('customer_id').notNull().references(() => contacts.id),
+  amount_tendered: numeric('amount_tendered', { precision: 100, scale: 10 }).notNull(),
+  payment_method: text('payment_method').$type<PaymentMethodUnion>().notNull(),
+  currency: text('currency').$type<currencyTypeUnion>().notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type PaymentsDetails = InferSelectModel<typeof payments>;
+export type NewPaymentsDetails = InferInsertModel<typeof payments>;
+
+export const InsertPaymentsSchema = createInsertSchema(payments);
+export const SelectPaymentsSchema = createSelectSchema(payments);
