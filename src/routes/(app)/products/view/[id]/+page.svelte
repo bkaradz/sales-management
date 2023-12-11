@@ -248,59 +248,59 @@
 							</tr>
 						</thead>
 						<tbody class="text-gray-600 dark:text-gray-100">
-							{#each data.shop_orders.shop_orders as ordersArray (ordersArray.shop_orders.id)}
+							{#each data.shop_orders.shop_orders as ordersArray (ordersArray.id)}
 								<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.shop_orders.id}
+											{ordersArray.id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										{ordersArray.contacts.full_name}
+										{ordersArray.full_name}
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.shop_orders.pricelist_id}
+											{ordersArray.pricelist_id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.shop_orders.exchange_rates_id}
+											{ordersArray.exchange_rates_id}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.shop_orders.sales_status}
+											{ordersArray.sales_status}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.shop_orders.payment_status}
+											{ordersArray.payment_status}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										{ordersArray.shop_orders.total_products}
+										{ordersArray.total_products}
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										{format(
 											converter(
-												ordersArray.shop_orders.sales_amount,
+												ordersArray.sales_amount,
 												$selectedRateStore,
 												$exchangeRatesStore
 											),
@@ -309,7 +309,7 @@
 									</td>
 									<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 										<div class="flex items-center">
-											<a href={`/sales/view/${ordersArray.shop_orders.id}`}>
+											<a href={`/sales/view/${ordersArray.id}`}>
 												{@html svgEye}
 											</a>
 										</div>

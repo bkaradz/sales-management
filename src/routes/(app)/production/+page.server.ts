@@ -52,6 +52,6 @@ export const actions: Actions = {
 		const data = await event.request.formData();
 		const formData = Object.fromEntries(data) as { id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion, production_status: ProductionStatusUnion }
 
-		return await router.createCaller(await createContext(event)).shop_orders.changeProductionStatusById({ ...formData, id: +formData.id })
+		return await router.createCaller(await createContext(event)).production.changeProductionStatusById({ ...formData, id: +formData.id })
 	}
 }

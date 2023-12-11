@@ -1,19 +1,13 @@
 import { router } from "$lib/trpc/t";
 import { z } from "zod";
 import { protectedProcedure } from '$lib/trpc/middleware/auth';
-import { createOrder, deleteById, getById, getOrders, changeSalesStatusById, getOrdersByUserId, getOrdersByProductId, getProductionOrders, changeProductionStatusById, getOrdersAwaitingPaymentByUserId, getOrdersLine } from "./orders.drizzle";
-import { PaymentStatusZod, ProductionStatusZod, SalesStatusZod } from "$lib/validation/types.zod.typescript";
+import { createOrder, deleteById, getById, changeSalesStatusById, getOrdersByUserId, getOrdersByProductId, getOrdersAwaitingPaymentByUserId, getOrdersLine } from "./orders.drizzle";
+import { PaymentStatusZod, SalesStatusZod } from "$lib/validation/types.zod.typescript";
 
 
 export const shop_orders = router({
-    getOrders: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
-        return await getOrders(input, ctx);
-    }),
     getOrdersLine: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
         return await getOrdersLine(input, ctx);
-    }),
-    getProductionOrders: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
-        return await getProductionOrders(input, ctx);
     }),
     getOrdersByUserId: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
         return await getOrdersByUserId(input, ctx);
@@ -31,27 +25,12 @@ export const shop_orders = router({
         id: z.number(),
         sales_status: SalesStatusZod,
         payment_status: PaymentStatusZod
-    }))
-        .query(async ({ input, ctx }) => {
-            return await changeSalesStatusById(input, ctx);
-        }),
-    changeProductionStatusById: protectedProcedure.input(z.object({
-        id: z.number(),
-        sales_status: SalesStatusZod,
-        payment_status: PaymentStatusZod,
-        production_status: ProductionStatusZod
-    }))
-        .query(async ({ input, ctx }) => {
-            return await changeProductionStatusById(input, ctx);
-        }),
+    })).query(async ({ input, ctx }) => { return await changeSalesStatusById(input, ctx) }),
     deleteById: protectedProcedure.input(z.object({
         id: z.number(),
         sales_status: SalesStatusZod,
         payment_status: PaymentStatusZod
-    }))
-        .mutation(async ({ input, ctx }) => {
-            return await deleteById(input, ctx);
-        }),
+    })).mutation(async ({ input, ctx }) => { return await deleteById(input, ctx) }),
     createOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
         return await createOrder(input, ctx);
     })
