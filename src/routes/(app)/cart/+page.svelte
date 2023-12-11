@@ -21,6 +21,8 @@
 	import { toasts } from '$lib/stores/toasts.store';
 	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
 	import { datePicker } from 'svelte-flatpickr-plus';
+	import currency from 'currency.js';
+	import { multiply } from 'lodash-es';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -413,7 +415,7 @@
 								>
 									{format(
 										converter(
-											$cartStore.get(key)?.orders_details.total_price,
+											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply($cartStore.get(key)?.orders_details.quantity || '0'),
 											$selectedRateStore,
 											$exchangeRatesStore
 										),

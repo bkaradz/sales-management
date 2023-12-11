@@ -35,8 +35,8 @@ export const load = (async (event) => {
     };
 
     return {
-        results: order(),
-        pricelistAll: pricelist(),
-        exchangeRateAll: exchangeRate()
+        results: await order(),
+        pricelistAll: await pricelist(),
+        exchangeRateAll: await exchangeRate()
     };
 }) satisfies PageServerLoad;

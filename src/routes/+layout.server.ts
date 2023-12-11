@@ -13,7 +13,7 @@ export const load = (async (event) => {
     }
 
     return {
-        pricelists: pricelist(),
-        exchangeRates: exchange()
+        pricelists: await pricelist(),
+        exchangeRates: await exchange()
     };
 }) satisfies LayoutServerLoad;

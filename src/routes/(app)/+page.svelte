@@ -48,7 +48,7 @@
 						{@html svgDashboardUser}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Daily Sales</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income Today</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">6389</p>
 					</div>
 				</div>
@@ -60,7 +60,7 @@
 						{@html svgDashboardOrders}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Daly Orders</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Expenses Today</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">$ 46,760.89</p>
 					</div>
 				</div>
@@ -98,7 +98,7 @@
 						{@html svgDashboardUser}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Sales</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income this Month</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">6389</p>
 					</div>
 				</div>
@@ -110,7 +110,7 @@
 						{@html svgDashboardOrders}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Orders</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Expenses this Month</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">$ 46,760.89</p>
 					</div>
 				</div>

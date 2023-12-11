@@ -23,7 +23,7 @@ export const load = (async (event) => {
     };
 
     return {
-        user: user()
+        user: await user()
     };
 
 }) satisfies LayoutServerLoad;

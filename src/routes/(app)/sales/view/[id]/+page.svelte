@@ -20,6 +20,8 @@
 	import { datePicker } from 'svelte-flatpickr-plus';
 	import { enhance } from '$app/forms';
 	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
+	import currency from 'currency.js';
+	import { multiply } from 'lodash-es';
 
 	export let data: PageData;
 
@@ -304,7 +306,7 @@
 								>
 									{format(
 										converter(
-											$cartStore.get(key)?.orders_details.total_price,
+											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply($cartStore.get(key)?.orders_details.quantity || '0'),
 											$selectedRateStore,
 											$exchangeRatesStore
 										),

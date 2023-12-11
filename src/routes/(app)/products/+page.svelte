@@ -21,6 +21,8 @@
 	} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
+	import currency from 'currency.js';
+	import { multiply } from 'lodash-es';
 
 	export let data: PageData;
 
@@ -261,7 +263,7 @@
 								>
 									{format(
 										converter(
-											$cartStore.get(product.id)?.orders_details?.total_price || '0',
+											currency($cartStore.get(product.id)?.orders_details?.unit_price || '0').multiply($cartStore.get(product.id)?.orders_details?.quantity || '0'),
 											$selectedRateStore,
 											$exchangeRatesStore
 										),

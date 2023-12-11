@@ -12,7 +12,7 @@ export const load = (async (event) => {
     }
 
     return {
-        results: product()
+        results: await product()
     };
 }) satisfies PageServerLoad;
 

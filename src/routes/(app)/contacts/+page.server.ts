@@ -22,7 +22,7 @@ export const load = (async (event) => {
     };
 
     return {
-        results: contacts(query)
+        results: await contacts(query)
     };
 }) satisfies PageServerLoad;
 

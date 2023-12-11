@@ -221,7 +221,6 @@ export const orders_details = pgTable('orders_details', {
   order_id: integer('order_id').notNull().references(() => shop_orders.id),
   product_id: integer('product_id').notNull().references(() => products.id),
   unit_price: numeric('unit_price', { precision: 100, scale: 10 }).notNull(),
-  total_price: numeric('total_price', { precision: 100, scale: 10 }).notNull(),
   product_category: text('product_category').$type<ProductCategoriesUnion>().notNull().default('Embroidery'),
   stitches: integer('stitches'),
   active: boolean('active').notNull().default(true),

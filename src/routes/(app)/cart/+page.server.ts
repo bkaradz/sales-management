@@ -11,6 +11,7 @@ import { saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 
 export const load = (async (event) => {
+
     let query = {}
 
     const limit = 6
@@ -53,9 +54,9 @@ export const load = (async (event) => {
     };
 
     return {
-        results: contacts(query),
-        pricelistAll: pricelist(),
-        exchangeRateAll: exchangeRate()
+        results: await contacts(query),
+        pricelistAll: await pricelist(),
+        exchangeRateAll: await exchangeRate()
     };
 }) satisfies PageServerLoad;
 
@@ -102,7 +103,7 @@ export const actions: Actions = {
         }
 
         try {
-            
+
             const parsedCartOrder = saveCartOrderSchema.safeParse(cartOrderSubmit);
 
             if (!parsedCartOrder.success) {
@@ -137,33 +138,33 @@ export const actions: Actions = {
 
         let formResults = {}
 
-		if (formData?.full_name) formResults = { ...formResults, full_name: formData.full_name }
-		if (formData?.email) formResults = { ...formResults, email: normalizeEmail(formData.email as string) }
-		if (formData?.phone) formResults = { ...formResults, phone: normalizePhone(formData.phone as string) }
-		if (formData?.address) formResults = { ...formResults, address: normalizeAddress(formData.address as string) }
-		if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
-		if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
+        if (formData?.full_name) formResults = { ...formResults, full_name: formData.full_name }
+        if (formData?.email) formResults = { ...formResults, email: normalizeEmail(formData.email as string) }
+        if (formData?.phone) formResults = { ...formResults, phone: normalizePhone(formData.phone as string) }
+        if (formData?.address) formResults = { ...formResults, address: normalizeAddress(formData.address as string) }
+        if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
+        if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
 
-		try {
+        try {
 
-			const parsedContact = saveContactsSchema.safeParse(formResults);
+            const parsedContact = saveContactsSchema.safeParse(formResults);
 
-			if (!parsedContact.success) {
+            if (!parsedContact.success) {
 
-				const errorMap = zodErrorMessagesMap(parsedContact);
-				return fail(400, {
-					message: 'Validation error',
-					errors: errorMap
-				})
-			}
+                const errorMap = zodErrorMessagesMap(parsedContact);
+                return fail(400, {
+                    message: 'Validation error',
+                    errors: errorMap
+                })
+            }
 
-			return await router.createCaller(await createContext(event)).contacts.createContact(parsedContact.data)
+            return await router.createCaller(await createContext(event)).contacts.createContact(parsedContact.data)
 
-		} catch (error) {
-			return fail(400, {
-				message: 'Could not register user',
-				errors: { error }
-			})
-		}
+        } catch (error) {
+            return fail(400, {
+                message: 'Could not register user',
+                errors: { error }
+            })
+        }
     }
 }

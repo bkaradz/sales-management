@@ -60,7 +60,7 @@ function cart() {
 				} else {
 					const orders_details = getOrderDetailObj(product)
 
-					productMap.set(product.id, { product, orders_details: {...orders_details, unit_price: orders_details.unit_price.toString(), total_price: orders_details.total_price.toString()} })
+					productMap.set(product.id, { product, orders_details: {...orders_details, unit_price: orders_details.unit_price.toString()} })
 
 					return productMap
 				}
@@ -70,7 +70,7 @@ function cart() {
 			const orderDetailsMap = new Map<number, NewOrdersDetails>()
 			if (Array.isArray(order_details)) {
 				order_details.forEach((item) => {
-					const newItem = { ...item, total_price: item.total_price, unit_price: item.unit_price }
+					const newItem = { ...item, unit_price: item.unit_price }
 					orderDetailsMap.set(item.product_id, newItem)
 				})
 			}
@@ -286,7 +286,7 @@ export const cartTotalsStore = derived([cartStore, pricelistStore, vatStore], ([
 
 	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore)
-		value.orders_details = { ...value.orders_details, ...results, total_price: results.total_price.toString(), unit_price: results.unit_price.toString() }
+		value.orders_details = { ...value.orders_details, ...results, unit_price: results.unit_price.toString() }
 		cartResults.set(key, { ...value.orders_details, ...results })
 	})
 

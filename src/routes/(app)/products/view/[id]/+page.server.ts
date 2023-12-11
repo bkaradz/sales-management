@@ -22,7 +22,7 @@ export const load = (async (event) => {
         return await router.createCaller(await createContext(event)).products.getById(parseInt(event.params.id, 10));
     };
     return {
-        product: product(),
-        shop_orders: shop_orders(query)
+        product: await product(),
+        shop_orders: await shop_orders(query)
     };
 }) satisfies PageServerLoad;

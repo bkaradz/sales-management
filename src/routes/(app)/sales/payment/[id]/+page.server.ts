@@ -28,8 +28,8 @@ export const load = (async (event) => {
     };
 
     return {
-        contact: contact(),
-        shop_orders: shop_orders(query)
+        contact: await contact(),
+        shop_orders: await shop_orders(query)
     };
 }) satisfies PageServerLoad;
 

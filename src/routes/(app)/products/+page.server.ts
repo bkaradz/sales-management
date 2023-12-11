@@ -20,7 +20,7 @@ export const load = (async (event) => {
 		return await router.createCaller(await createContext(event)).products.getProducts(query);
 	}
     return {
-		results: products(query)
+		results: await products(query)
 	};
 }) satisfies PageServerLoad;
 

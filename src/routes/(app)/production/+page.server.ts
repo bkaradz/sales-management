@@ -22,7 +22,7 @@ export const load = (async (event) => {
 	};
 
 	return {
-		results: shop_orders(query)
+		results: await shop_orders(query)
 	};
 }) satisfies PageServerLoad;
 
