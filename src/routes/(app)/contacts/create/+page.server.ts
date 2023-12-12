@@ -92,7 +92,7 @@ export const actions: Actions = {
 		if (formData?.full_name) formResults = { ...formResults, full_name: formData.full_name }
 		if (formData?.email) formResults = { ...formResults, email: normalizeEmail(formData.email as string) }
 		if (formData?.phone) formResults = { ...formResults, phone: normalizePhone(formData.phone as string) }
-		if (formData?.address) formResults = { ...formResults, address: normalizeAddress(formData.address as string) }
+		if (formData?.address) formResults = { ...formResults, addresses: normalizeAddress(formData.address as string) }
 		if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
 		if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
 

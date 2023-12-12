@@ -4,7 +4,6 @@ import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.u
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { CalcPriceReturnSnapshot } from '$lib/trpc/routes/orders/orders.drizzle';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveCartOrderSchema } from '$lib/validation/cart.zod';
 import { saveContactsSchema } from '$lib/validation/contacts.zod';
@@ -95,7 +94,7 @@ export const actions: Actions = {
                 sales_amount: formData.sales_amount,
                 total_products: +formData.total_products
             },
-            orders_details: JSON.parse(formData.orders_details) as CalcPriceReturnSnapshot[]
+            orders_details: JSON.parse(formData.orders_details)
         };
 
         if (!cartOrderSubmit.order.description) {

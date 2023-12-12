@@ -290,6 +290,106 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
   }
 };
 
+export const getOrdersAwaitingPaymentByOrderId = async (input: {
+  limit?: number | undefined;
+  page?: number | undefined;
+  search?: string | undefined;
+  id: number
+}, ctx: Context) => {
+  console.log("🚀 ~ file: orders.drizzle.ts:196 ~ input:", input)
+
+  if (!ctx.session.sessionId) {
+    throw error(404, 'User not found');
+  }
+
+  const pagination = getPagination(input);
+
+  try {
+
+    let totalOrdersRecords
+    let ordersQuery
+
+    if (!trim(input.search)) {
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
+        .where(
+          and(eq(shop_orders.active, true),
+            and(eq(shop_orders.id, input.id),
+              eq(shop_orders.payment_status, 'Awaiting Payment')
+            )))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+
+      ordersQuery = await db.select({ shop_orders, contacts, orders_details }).from(shop_orders)
+        .where(
+          and(eq(shop_orders.active, true),
+            and(eq(shop_orders.id, input.id),
+              eq(shop_orders.payment_status, 'Awaiting Payment')
+            )))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+        .orderBy(desc(shop_orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
+      console.log("🚀 ~ file: orders.drizzle.ts:235 ~ ordersQuery:", ordersQuery)
+
+    } else {
+
+      const data = `%${input.search}%`
+
+      totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
+        .where(
+          and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+            and(eq(shop_orders.active, true),
+              and(eq(shop_orders.id, input.id),
+                eq(shop_orders.payment_status, 'Awaiting Payment')
+              ))))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+
+      ordersQuery = await db.select({ shop_orders, contacts, orders_details }).from(shop_orders)
+        .where(
+          and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+            and(eq(shop_orders.active, true),
+              and(eq(shop_orders.id, input.id),
+                eq(shop_orders.payment_status, 'Awaiting Payment')
+              ))))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+        .orderBy(desc(shop_orders.id))
+        .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+    }
+
+    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
+
+    if (pagination.endIndex >= pagination.totalRecords) {
+      pagination.next = undefined;
+    }
+
+    const result = ordersQuery.reduce<Record<number, { shop_orders: Orders; contacts: Contacts; orders_details: OrdersDetails[] }>>(
+      (acc, row) => {
+        const shop_orders = row.shop_orders;
+        const contacts = row.contacts;
+        const orders_details = row.orders_details;
+
+        if (!acc[shop_orders.id]) acc[shop_orders.id] = { shop_orders, contacts, orders_details: [] };
+
+        if (orders_details) acc[shop_orders.id].orders_details.push(orders_details);
+
+        return acc;
+      }, {},
+    );
+
+    return {
+      shop_orders: Object.values(result),
+      pagination
+    }
+
+  } catch (error) {
+    console.error("🚀 ~ file: orders.drizzle.ts:363 ~ error:", error)
+  }
+};
+
 export const getOrdersByProductId = async (input: {
   limit?: number | undefined;
   page?: number | undefined;
@@ -380,10 +480,6 @@ export const getOrdersByProductId = async (input: {
   }
 };
 
-export type CalcPriceReturnSnapshot = CalcPriceReturn
-
-type OrderInput = { order: Pick<Orders, 'customer_id' | 'pricelist_id' | 'exchange_rates_id' | 'description' | 'delivery_date' | 'sales_status' | 'total_products' | 'sales_amount'>, orders_details: CalcPriceReturnSnapshot[] }
-
 export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
@@ -396,28 +492,31 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
      * TODO: calculate first before saving
      */
 
-    let paymentStatus: PaymentStatusUnion = 'Awaiting Sales Order'
+    await db.transaction(async (tx) => {
+      let paymentStatus: PaymentStatusUnion = 'Awaiting Sales Order'
 
-    if (!(input.order.sales_status === 'Quotation')) {
-      paymentStatus = 'Awaiting Payment'
-    }
+      if (!(input.order.sales_status === 'Quotation')) {
+        paymentStatus = 'Awaiting Payment'
+      }
 
-    const orderResult = await db.insert(shop_orders).values({ user_id: ctx.session.user.userId, ...input.order, delivery_date: new Date(input.order.delivery_date), payment_status: paymentStatus }).returning({ id: shop_orders.id });
+      const orderResult = await tx.insert(shop_orders).values({ user_id: ctx.session.user.userId, ...input.order, delivery_date: new Date(input.order.delivery_date), payment_status: paymentStatus }).returning({ id: shop_orders.id });
 
-    if (input.orders_details) {
-      input.orders_details.forEach(async (item) => {
-        const productId = item.product_id
-        if (!productId) throw new Error("Product Id not found");
-        await db.insert(orders_details).values({ ...item, order_id: orderResult[0].id, product_id: productId })
-      })
-    }
+      await tx.transaction(async (tx2) => {
+        if (input.orders_details) {
+          input.orders_details.forEach(async (item) => {
+            const productId = item.product_id
+            if (!productId) throw new Error("Product Id not found");
+            await tx2.insert(orders_details).values({ ...item, order_id: orderResult[0].id, product_id: productId })
+          })
+        }
 
-    if (!(input.order.sales_status === 'Quotation')) {
-      const contact = await db.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
-      const ordersTotals = addMany([input.order.sales_amount, contact[0].orders_totals])
-      await db.update(contacts).set({ orders_totals: ordersTotals.toString(), deposit: (-ordersTotals).toString() }).where(eq(contacts.id, input.order.customer_id))
-    }
-
+        if (!(input.order.sales_status === 'Quotation')) {
+          const contact = await tx2.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
+          const ordersTotals = addMany([input.order.sales_amount, contact[0].orders_totals])
+          await tx2.update(contacts).set({ orders_totals: ordersTotals.toString(), deposit: (-ordersTotals).toString() }).where(eq(contacts.id, input.order.customer_id))
+        }
+      });
+    });
 
     return { success: true }
 

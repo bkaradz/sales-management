@@ -45,7 +45,6 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroi
 
 }
 
-
 // check that the product_category is Embroidery first
 // Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
 
@@ -79,15 +78,9 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
 
   if (!unit_price) throw new Error("Unit price not found");
 
-  
-  
-
   return unit_price.toString()
 
 }
-
-
-
 
 export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
 
@@ -109,10 +102,6 @@ export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
   if (!values.orders_details.price_calculated) {
     return calcNonEmbroidery(values)
   }
-
-  // if (values.orders_details.unit_price) {
-  //   return calcNonEmbroidery(values)
-  // }
 
   // Get pricelist
   const pricelistCalc = getPricelist(pricelist, quantity, embroideryType)
@@ -173,18 +162,13 @@ export const format = ((value: any, toCurrency: currencyTypeUnion) => {
   switch (toCurrency) {
     case 'ZAR':
       return currency(value, { symbol: "R", separator: " ", decimal: "." }).format();
-      break;
     case 'BWP':
       return currency(value, { symbol: "P", separator: " ", decimal: "." }).format();
-      break;
     case 'ZWB':
       return currency(value, { symbol: "ZB$", separator: " ", decimal: "." }).format();
-      break;
     case 'ZWR':
       return currency(value, { symbol: "ZR$", separator: " ", decimal: "." }).format();
-      break;
     default:
       return currency(value, { symbol: "$", separator: " ", decimal: "." }).format();
-      break;
   }
 })

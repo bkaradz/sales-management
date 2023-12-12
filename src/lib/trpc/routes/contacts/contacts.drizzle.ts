@@ -219,13 +219,13 @@ export const deleteById = async (input: number, ctx: Context) => {
 		if (+totalOrdersRecords[0].count !== 0) {
 			await db.update(contacts).set({ active: false }).where(eq(contacts.id, input));
 		} else {
-			await db.delete(emails).where(eq(emails.contact_id, input));
-			await db.delete(phones).where(eq(phones.contact_id, input));
-			await db.delete(address).where(eq(address.contact_id, input));
-
-			await db.delete(contacts).where(eq(contacts.id, input));
+			await db.transaction(async (tx) => {
+				await tx.delete(emails).where(eq(emails.contact_id, input));
+				await tx.delete(phones).where(eq(phones.contact_id, input));
+				await tx.delete(address).where(eq(address.contact_id, input));
+				await tx.delete(contacts).where(eq(contacts.id, input));
+			});
 		}
-
 
 		return { success: true }
 
@@ -242,33 +242,30 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 
 	try {
 
-		let contactResult: { id: number }[]
+		await db.transaction(async (tx) => {
+			let contactResult: { id: number }[]
+			const { email, phone, addresses, ...rest } = input
 
-		{
-			const { email, phone, address, ...rest } = input
+			contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
 
-			contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
-
-			if (phone) {
-				phone.forEach(async (item: string) => {
-					await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
-				})
-
-			}
-
-			if (email) {
-				email.forEach(async (item: string) => {
-					await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
-				})
-			}
-		}
-
-
-		if (input?.address) {
-			input.address.forEach(async (item: string) => {
-				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
-			})
-		}
+			await tx.transaction(async (tx2) => {
+				if (phone) {
+					phone.forEach(async (item: string) => {
+						await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+					})
+				}
+				if (email) {
+					email.forEach(async (item: string) => {
+						await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+					})
+				}
+				if (input?.addresses) {
+					input.addresses.forEach(async (item: string) => {
+						await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+					})
+				}
+			});
+		});
 
 		return { success: true }
 
@@ -286,52 +283,48 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 
 	try {
 
+		await db.transaction(async (tx) => {
+			const deleteWait = []
 
-		const deleteWait = []
+			// delete address, phone and email with contact id from database then add new details
+			deleteWait.push(await tx.delete(phones).where(eq(phones.contact_id, input.id)).returning({ id: phones.id }))
+			deleteWait.push(await tx.delete(emails).where(eq(emails.contact_id, input.id)).returning({ id: emails.id }))
+			deleteWait.push(await tx.delete(address).where(eq(address.contact_id, input.id)).returning({ id: address.id }))
 
-		// delete address, phone and email with contact id from database then add new details
-		deleteWait.push(await db.delete(phones).where(eq(phones.contact_id, input.id)).returning({ id: phones.id }))
-		deleteWait.push(await db.delete(emails).where(eq(emails.contact_id, input.id)).returning({ id: emails.id }))
-		deleteWait.push(await db.delete(address).where(eq(address.contact_id, input.id)).returning({ id: address.id }))
+			await Promise.all(deleteWait)
 
-		const allDeleted = await Promise.all(deleteWait)
+			let contactResult: { id: number }[]
+			const { email, phone, addresses, ...rest } = input
 
-		let contactResult: { id: number }[]
-
-		{
-			const { email, phone, address, ...rest } = input
-
-			contactResult = await db.update(contacts)
+			contactResult = await tx.update(contacts)
 				.set({ user_id: ctx.session.user.userId, active: true, ...rest })
 				.where(eq(contacts.id, input.id))
 				.returning({ id: contacts.id });
 
-			if (phone) {
-				phone.forEach(async (item: string) => {
-					await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
-				})
-			}
-
-			if (email) {
-				email.forEach(async (item: string) => {
-					await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
-				})
-			}
-		}
-
-
-		if (input?.address) {
-			input.address.forEach(async (item: string) => {
-				await db.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
-			})
-		}
+			await tx.transaction(async (tx2) => {
+				if (phone) {
+					phone.forEach(async (item: string) => {
+						await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+					})
+				}
+				if (email) {
+					email.forEach(async (item: string) => {
+						await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+					})
+				}
+				if (input?.addresses) {
+					input.addresses.forEach(async (item: string) => {
+						await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+					})
+				}
+			});
+		});
 
 		return { success: true }
 
 	} catch (error) {
 		console.error("🚀 ~ file: contacts.drizzle.ts:216 ~ updateContact ~ error:", error)
 	}
-
 };
 
 export const uploadContacts = async (input: saveContactsArray, ctx: Context) => {
@@ -346,37 +339,30 @@ export const uploadContacts = async (input: saveContactsArray, ctx: Context) => 
 
 			try {
 
-				db.execute(sql`SET my.app_user = ${ctx.session.user.userId}`)
-
-				let contactResult: { id: number }[]
-
-				{
-
-					const { email, phone, address, ...rest } = contact
-
-					contactResult = await db.insert(contacts).values({ user_id: ctx.session.user.userId, active: true, ...rest }).returning({ id: contacts.id });
-
-					if (phone) {
-						phone.forEach(async (item: string) => {
-							await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item }).onConflictDoNothing()
-						})
-
-					}
-
-					if (email) {
-						email.forEach(async (item: string) => {
-							await db.insert(emails).values({ contact_id: contactResult[0].id, email: item }).onConflictDoNothing()
-						})
-					}
-
-				}
-
-				if (contact?.address) {
-					contact.address.forEach(async (item: string) => {
-						await db.insert(address).values({ contact_id: contactResult[0].id, address: item }).onConflictDoNothing()
-					})
-				}
-
+				await db.transaction(async (tx) => {
+					let contactResult: { id: number }[]
+					const { email, phone, addresses, ...rest } = contact
+		
+					contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
+		
+					await tx.transaction(async (tx2) => {
+						if (phone) {
+							phone.forEach(async (item: string) => {
+								await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+							})
+						}
+						if (email) {
+							email.forEach(async (item: string) => {
+								await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+							})
+						}
+						if (contact?.addresses) {
+							contact.addresses.forEach(async (item: string) => {
+								await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+							})
+						}
+					});
+				});
 
 			} catch (err: unknown) {
 

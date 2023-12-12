@@ -262,6 +262,7 @@ export const transactions = pgTable('transactions', {
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   amount_tendered: numeric('amount_tendered', { precision: 100, scale: 10 }).notNull(),
   payment_method: text('payment_method').$type<PaymentMethodUnion>().notNull(),
+  part_payment: boolean('active').notNull().default(false),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()

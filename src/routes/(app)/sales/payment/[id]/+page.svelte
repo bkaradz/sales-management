@@ -31,7 +31,7 @@
 
 	export let data: PageData;
 
-	$: customerStore.add(data.contact?.contact)
+	$: customerStore.add(data.contact?.contact);
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Orders', selected: true },
@@ -80,12 +80,12 @@
 	};
 
 	export let form;
-	
+
 	$: if (form?.success) {
 		invalidateAll();
-		amountTenderedStore.reset()
-		paymentMethodSelectedStore.reset()
-		selectedOrdersPaymentStore.reset()
+		amountTenderedStore.reset();
+		paymentMethodSelectedStore.reset();
+		selectedOrdersPaymentStore.reset();
 		toasts.add({
 			message: 'Payment record added successfully',
 			type: 'success'
@@ -371,7 +371,8 @@
 							<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 								<div>
 									<span class="mr-3"
-										>Page {data.shop_orders.pagination.page} of {data.shop_orders.pagination.totalPages}</span
+										>Page {data.shop_orders.pagination.page} of {data.shop_orders.pagination
+											.totalPages}</span
 									>
 									<form class="inline-block" method="get">
 										<input
@@ -500,35 +501,45 @@
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
-											<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
+											<span
+												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
+											>
 												{ordersArray.shop_orders.id}
 											</span>
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
-											<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
+											<span
+												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
+											>
 												{ordersArray.shop_orders.pricelist_id}
 											</span>
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
-											<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
+											<span
+												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
+											>
 												{ordersArray.shop_orders.exchange_rates_id}
 											</span>
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 										>
-											<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
+											<span
+												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
+											>
 												{ordersArray.shop_orders.sales_status}
 											</span>
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 										>
-											<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
+											<span
+												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
+											>
 												{ordersArray.shop_orders.payment_status}
 											</span>
 										</td>

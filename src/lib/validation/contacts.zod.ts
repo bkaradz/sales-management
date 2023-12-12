@@ -5,7 +5,7 @@ export const saveContactsSchema = z
     full_name: z.string({ required_error: 'Full Name is required' }).min(3).trim(),
     email: z.array(z.string().email()).optional(),
     phone: z.array(z.string()).optional(),
-    address: z.array(z.string()).optional(),
+    addresses: z.array(z.string()).optional(),
     is_corporate: z.boolean().optional(),
     vat_or_bp_number: z.string().optional()
   }).required({ full_name: true })
