@@ -6,8 +6,26 @@
 		svgDashboardUser
 	} from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
-	import { format } from '$lib/utility/calculateCart.util';
-	
+	import { exchangeRatesStore } from '$lib/stores/cartStore';
+	import fx from 'money';
+
+	let rates = {};
+
+	$exchangeRatesStore.exchange_rate_details.forEach((value, key) => {
+		rates = { ...rates, [key]: value.rate };
+	});
+
+	$: console.log('🚀 ~ file: +page.svelte:13 ~ rates:', rates);
+
+	fx.base = 'USD';
+	fx.rates = rates;
+
+	fx.settings = { from: "ZAR", to: "USD" };
+	// $: console.log("object", fx.convert('1000'));
+
+	$: console.log('to rand', fx.convert('1000', { to: 'ZAR' }));
+	$: console.log("FROM rand TO USD", fx.convert('1000', {from: "ZAR", to: 'USD'}));
+	$: console.log("FROM PULA TO RAND", fx.convert('1000', {from: "BWP", to: 'ZAR'}));
 </script>
 
 <svelte:head>
@@ -98,7 +116,9 @@
 						{@html svgDashboardUser}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income this Month</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+							Income this Month
+						</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">6389</p>
 					</div>
 				</div>
@@ -110,7 +130,9 @@
 						{@html svgDashboardOrders}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Expenses this Month</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+							Expenses this Month
+						</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">$ 46,760.89</p>
 					</div>
 				</div>
