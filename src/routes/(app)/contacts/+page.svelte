@@ -20,6 +20,7 @@
 	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
+	import { page } from '$app/stores';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -46,6 +47,9 @@
 		// 	}
 		// }
 	}
+
+	$: console.log("pathname", $page.url.pathname);
+	$: console.log("url", $page.url);
 </script>
 
 <svelte:head>
@@ -233,7 +237,7 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/sales/payment/${contact.id}`} class="pr-2">
+										<a href={`/sales/payment${$page.url.pathname}/${contact.id}`} class="pr-2">
 											{@html svgCard}
 										</a>
 									</div>

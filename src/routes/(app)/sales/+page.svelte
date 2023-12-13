@@ -24,6 +24,7 @@
 		selectedRateStore
 	} from '$lib/stores/cartStore';
 	import { salesStatus, type PaymentStatusUnion, type SalesStatusUnion } from '$lib/utility/lists.utility';
+	import { page } from '$app/stores';
 
 	export let data: PageData;
 	
@@ -297,7 +298,7 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/sales/payment/${order.id}`} class="pr-2">
+										<a href={`/sales/payment${$page.url.pathname}/${order.id}`} class="pr-2">
 											{@html svgCard}
 										</a>
 									</div>

@@ -20,7 +20,12 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const shop_orders = async (query: any) => {
-        return await router.createCaller(await createContext(event)).shop_orders.getOrdersAwaitingPaymentByOrderId({ ...query, id: parseInt(event.params.id, 10) });
+        if (event.params.path === 'contacts') {
+            return await router.createCaller(await createContext(event)).shop_orders.getOrdersAwaitingPaymentByUserId({ ...query, id: parseInt(event.params.id, 10) });
+        }
+        if (event.params.path === 'sales') {
+            return await router.createCaller(await createContext(event)).shop_orders.getOrdersAwaitingPaymentByOrderId({ ...query, id: parseInt(event.params.id, 10) });
+        }
     }
 
     const contact = async () => {
