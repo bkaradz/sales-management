@@ -3,15 +3,15 @@ import type { SearchParams } from '$lib/validation/searchParams.validate';
 import type { Context } from "$lib/trpc/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
-import { and, desc, eq, sql } from 'drizzle-orm';
-import { shop_orders, orders_details, contacts, products } from '$lib/server/drizzle/schema/schema';
+import { and, desc, eq, ne, sql } from 'drizzle-orm';
+import { shop_orders, orders_details, contacts, products, transactions, transactions_details, payments } from '$lib/server/drizzle/schema/schema';
 import type { Contacts, Orders, OrdersDetails } from '$lib/server/drizzle/schema/schema';
 import trim from 'lodash-es/trim';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
 import { getById as getPricelistById } from "../pricelist/pricelists.drizzle";
 import { getById as getContactById } from "../contacts/contacts.drizzle";
 import { getById as getExchangeRateById } from "../exchangeRates/rates.drizzle";
-import type { PricelistToMap, ExchangeRateToMap  } from '$lib/utility/monetary.util';
+import type { PricelistToMap, ExchangeRateToMap } from '$lib/utility/monetary.util';
 import { pricelistToMapObj, exchangeRateToMapObj } from '$lib/utility/monetary.util';
 import type { PaymentStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
 import type { SaveCartOrder } from '$lib/validation/cart.zod';
@@ -482,7 +482,7 @@ export const getOrdersByProductId = async (input: {
 };
 
 export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
-console.log("🚀 ~ file: orders.drizzle.ts:485 ~ createOrder ~ input:", input)
+  console.log("🚀 ~ file: orders.drizzle.ts:485 ~ createOrder ~ input:", input)
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
@@ -512,30 +512,47 @@ console.log("🚀 ~ file: orders.drizzle.ts:485 ~ createOrder ~ input:", input)
           })
         }
 
-        // export const transactions = pgTable('transactions', {
-        //   id: serial('id').primaryKey(),
-        //   user_id: text('user_id').notNull().references(() => users.id),
-        //   customer_id: integer('customer_id').notNull().references(() => contacts.id),
-        //   orders_id: integer('orders_id').notNull().references(() => shop_orders.id),
-        //   partial_transaction_id: integer('partial_transaction_id'),
-        //   payments_id: integer('payments_id').notNull().references(() => payments.id),
-        //   amount_paid: numeric('amount_paid', { precision: 100, scale: 10 }).notNull(),
-        //   fully_paid: boolean('fully_paid').notNull().default(true),
-        //   active: boolean('active').notNull().default(true),
-        //   created_at: timestamp('created_at').defaultNow().notNull(),
-        //   updated_at: timestamp('updated_at').defaultNow().notNull()
-        // })
         // create transaction
-        if (!(input.order.sales_status === 'Quotation')) {
-          const contact = await tx2.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
-          const ordersTotals = addMany([input.order.sales_amount, contact[0].orders_totals])
-          await tx2.update(contacts).set({ orders_totals: ordersTotals.toString(), amount: (-ordersTotals).toString() }).where(eq(contacts.id, input.order.customer_id))
-        }
 
         if (!(input.order.sales_status === 'Quotation')) {
-          const contact = await tx2.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
-          const ordersTotals = addMany([input.order.sales_amount, contact[0].orders_totals])
-          await tx2.update(contacts).set({ orders_totals: ordersTotals.toString(), amount: (-ordersTotals).toString() }).where(eq(contacts.id, input.order.customer_id))
+          await tx2.insert(transactions).values({
+            user_id: ctx.session.user.userId,
+            customer_id: input.order.customer_id,
+            shop_orders_id: orderResult[0].id,
+          })
+        }
+
+        // Update contact amount 
+
+        if (!(input.order.sales_status === 'Quotation')) {
+          const allShopOrdersTotals = await tx2.select({
+            shop_orders_totals: sql<string>`sum(${shop_orders.sales_amount})`
+          }).from(shop_orders)
+            .where(
+              and(
+                and(eq(shop_orders.customer_id, input.order.customer_id), ne(shop_orders.sales_status, 'Quotation')),
+                ne(shop_orders.sales_status, 'Cancelled')
+              ))
+
+          const ordersTotals = await tx2.select({
+            shop_orders_totals: sql<string>`sum(${shop_orders.sales_amount})`
+          }).from(shop_orders)
+            .where(
+              and(and(and(eq(shop_orders.customer_id, input.order.customer_id), ne(shop_orders.sales_status, 'Quotation')),
+                ne(shop_orders.sales_status, 'Cancelled')
+              ),
+                ne(shop_orders.payment_status, 'Paid')
+              ),
+            )
+
+          const allPaymentsTotals = await tx2.select({
+            payments_totals: sql<string>`sum(${shop_orders.sales_amount})`
+          }).from(payments)
+            .where(eq(payments.customer_id, input.order.customer_id))
+
+          const amount = subtractMany([allPaymentsTotals[0].payments_totals, allShopOrdersTotals[0].shop_orders_totals])
+
+          await tx2.update(contacts).set({ orders_totals: ordersTotals[0].shop_orders_totals, amount: amount.toString() }).where(eq(contacts.id, input.order.customer_id))
         }
       });
     });
