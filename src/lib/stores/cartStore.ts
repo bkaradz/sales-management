@@ -14,7 +14,7 @@ const getOrderDetailObj = (product: GetProducts['products'][0]) => {
 
 	if (product.product_category === 'Embroidery') {
 		return {
-			total_price: '0' as currency | string,
+			// total_price: '0' as currency | string,
 			unit_price: '0' as currency | string,
 			price_calculated: true,
 			quantity: 1,
@@ -32,7 +32,7 @@ const getOrderDetailObj = (product: GetProducts['products'][0]) => {
 	if (!unit_price) throw new Error("Unit Price not found");
 
 	return {
-		total_price: '0' as currency | string,
+		// total_price: '0' as currency | string,
 		unit_price: unit_price as currency | string,
 		price_calculated: false,
 		quantity: 1,

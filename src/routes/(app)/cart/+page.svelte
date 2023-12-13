@@ -95,6 +95,8 @@
 	};
 
 	let isModalOpen = false;
+
+	$: console.log("object", JSON.stringify([...$cartStore.values()].map((item) => item.orders_details)));
 </script>
 
 <svelte:head>

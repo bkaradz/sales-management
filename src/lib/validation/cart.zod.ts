@@ -18,7 +18,6 @@ export type SaveOrderKeys = keyof SaveOrder;
 
 export const saveOrderDetailsSchema = z
   .object({
-    total_price: z.string(),
     unit_price: z.string(),
     quantity: z.number(),
     product_id: z.number(),

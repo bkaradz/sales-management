@@ -31,7 +31,7 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
               and(ne(shop_orders.sales_status, 'Quotation'),
                 ne(orders_details.production_status, 'Collected')))))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
 
       ordersQuery = await db.select({
@@ -54,7 +54,7 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
               and(ne(shop_orders.sales_status, 'Quotation'),
                 ne(orders_details.production_status, 'Collected')))))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
@@ -71,7 +71,7 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
                 and(ne(shop_orders.sales_status, 'Quotation'),
                   ne(orders_details.production_status, 'Collected'))))))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
 
       ordersQuery = await db.select({
@@ -95,7 +95,7 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
                 and(ne(shop_orders.sales_status, 'Quotation'),
                   ne(orders_details.production_status, 'Collected'))))))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.order_id, shop_orders.id))
+        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
         .innerJoin(products, eq(products.id, orders_details.product_id))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);

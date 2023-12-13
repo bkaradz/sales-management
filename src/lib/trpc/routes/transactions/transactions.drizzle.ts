@@ -6,8 +6,8 @@ import { db } from '$lib/server/drizzle/client';
 import { contacts, shop_orders, orders_details, products, transactions, transactions_details, type Products } from '$lib/server/drizzle/schema/schema';
 import { and, asc, eq, inArray, ne, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
-import type { transactionInput } from '../../../../routes/(app)/sales/payment/[id]/proxy+page.server';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
+import type { transactionInput } from '../../../../routes/(app)/sales/payment/[path]/[id]/+page.server';
 
 export const getTransactions = async (input: SearchParams, ctx: Context) => {
 
@@ -117,7 +117,7 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
 
 		const transactionOrders = await db.select().from(shop_orders).where(inArray(shop_orders.id, input.selected_orders_ids));
 
-		const transactionOrdersDetails = await db.select().from(orders_details).where(inArray(orders_details.order_id, input.selected_orders_ids));
+		const transactionOrdersDetails = await db.select().from(orders_details).where(inArray(orders_details.shop_orders_id, input.selected_orders_ids));
 
 		const productsIdArray = transactionOrdersDetails.map((item) => item.product_id)
 
@@ -152,7 +152,7 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
     // Update customer orders_totals and total_receipts
 		const amountTendered = input.amount_tendered
 
-		const customerDeposit = customer.deposit
+		const customerDeposit = customer.amount
 		
     const salesAmountArray = transactionOrders.map((item) => item.sales_amount) // correct
 		const salesAmountTotal = addMany(salesAmountArray) // correct
@@ -161,11 +161,11 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
 
 		const totalCustomerAmountTendered = addMany([amountTendered.toString(), customerDeposit])
 
-    const deposit = (subtractMany([totalCustomerAmountTendered, salesAmountTotal]))
+    const amount = (subtractMany([totalCustomerAmountTendered, salesAmountTotal]))
 
     const orders_totals = (subtractMany([customer.orders_totals, salesAmountTotal]))
     
-    await db.update(contacts).set({deposit: deposit.toString(), orders_totals: orders_totals.toString() , total_receipts: total_receipts.toString() }).where(eq(contacts.id, input.customer_id))
+    await db.update(contacts).set({amount: amount.toString(), orders_totals: orders_totals.toString() , total_receipts: total_receipts.toString() }).where(eq(contacts.id, input.customer_id))
 
 		return { success: true }
 

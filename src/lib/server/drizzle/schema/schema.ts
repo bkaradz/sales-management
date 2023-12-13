@@ -59,7 +59,7 @@ export const contacts = pgTable('contacts', {
   is_corporate: boolean('is_corporate').notNull().default(false),
   notes: text('notes'),
   vat_or_bp_number: text('vat_or_bp_number'),
-  deposit: numeric('deposit', { precision: 100, scale: 10 }).notNull().default('0'),
+  amount: numeric('amount', { precision: 100, scale: 10 }).notNull().default('0'),
   orders_totals: numeric('orders_totals', { precision: 100, scale: 10 }).notNull().default('0'),
   total_receipts: numeric('total_receipts', { precision: 100, scale: 10 }).notNull().default('0'),
   created_at: timestamp('created_at').defaultNow().notNull(),
@@ -218,7 +218,7 @@ export const SelectOrdersSchema = createSelectSchema(shop_orders);
 
 export const orders_details = pgTable('orders_details', {
   id: serial('id').primaryKey(),
-  order_id: integer('order_id').notNull().references(() => shop_orders.id),
+  shop_orders_id: integer('shop_orders_id').notNull().references(() => shop_orders.id),
   product_id: integer('product_id').notNull().references(() => products.id),
   unit_price: numeric('unit_price', { precision: 100, scale: 10 }).notNull(),
   product_category: text('product_category').$type<ProductCategoriesUnion>().notNull().default('Embroidery'),
@@ -242,8 +242,10 @@ export const SelectOrdersDetailsSchema = createSelectSchema(orders_details);
 export const transactions_details = pgTable('transactions_details', {
   id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
-  orders_id: integer('orders_id').notNull().references(() => shop_orders.id),
-  transaction_id: integer('transaction_id').notNull().references(() => transactions.id),
+  transactions_id: integer('transactions_id').notNull().references(() => transactions.id),
+  payments_id: integer('payments_id').notNull().references(() => payments.id),
+  amount_paid: numeric('amount_paid', { precision: 100, scale: 10 }).notNull(),
+  fully_paid: boolean('fully_paid').notNull().default(true),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()
@@ -260,9 +262,7 @@ export const transactions = pgTable('transactions', {
   id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
-  amount_tendered: numeric('amount_tendered', { precision: 100, scale: 10 }).notNull(),
-  payment_method: text('payment_method').$type<PaymentMethodUnion>().notNull(),
-  part_payment: boolean('active').notNull().default(false),
+  shop_orders_id: integer('shop_orders_id').notNull().references(() => shop_orders.id),
   active: boolean('active').notNull().default(true),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull()

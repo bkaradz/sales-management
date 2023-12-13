@@ -28,7 +28,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 				.groupBy(contacts.id)
 				.where(eq(contacts.active, true))
 				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)))
 
 			contactsQuery = await db.select({
 				id: contacts.id,
@@ -41,7 +41,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 				.groupBy(contacts.id)
 				.where(eq(contacts.active, true))
 				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		} else {
@@ -53,7 +53,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 				.groupBy(contacts.id)
 				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)));
+				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)));
 
 			contactsQuery = await db.select({
 				id: contacts.id,
@@ -66,7 +66,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 				.groupBy(contacts.id)
 				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.order_id, shop_orders.id), eq(orders_details.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		}

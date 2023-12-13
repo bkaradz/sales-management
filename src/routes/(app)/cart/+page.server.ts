@@ -5,7 +5,7 @@ import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.ut
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { saveCartOrderSchema } from '$lib/validation/cart.zod';
+import { saveCartOrderSchema, type SaveOrderDetails } from '$lib/validation/cart.zod';
 import { saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 
@@ -96,6 +96,7 @@ export const actions: Actions = {
             },
             orders_details: JSON.parse(formData.orders_details)
         };
+        console.log("🚀 ~ file: +page.server.ts:98 ~ submit: ~ orders_details:", cartOrderSubmit.orders_details)
 
         if (!cartOrderSubmit.order.description) {
             delete cartOrderSubmit.order.description
@@ -104,10 +105,12 @@ export const actions: Actions = {
         try {
 
             const parsedCartOrder = saveCartOrderSchema.safeParse(cartOrderSubmit);
+            console.log("🚀 ~ file: +page.server.ts:107 ~ submit: ~ parsedCartOrder:", parsedCartOrder)
 
             if (!parsedCartOrder.success) {
 
                 const errorMap = zodErrorMessagesMap(parsedCartOrder);
+                console.log("🚀 ~ file: +page.server.ts:112 ~ submit: ~ errorMap:", errorMap)
 
                 return fail(400, {
                     message: 'Validation error',

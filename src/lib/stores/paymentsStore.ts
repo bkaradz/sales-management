@@ -64,7 +64,7 @@ export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, 
 	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => item.sales_amount) as unknown as currency[]
 	const selectedOrdersTotal = addMany([...totalArray, ...ordersTotalsArray])
 	const amountTendered = $amountTenderedStore
-	const customerDeposit = $customerStore?.deposit || '0'
+	const customerDeposit = $customerStore?.amount || '0'
 	const customerTotalTendered = addMany([customerDeposit, amountTendered.toString()])
 	const totalDue = subtractMany([selectedOrdersTotal, customerTotalTendered ])
 	const totalProducts = [...$selectedOrdersPaymentStore.values()].reduce((accumulator, currentValue) => accumulator + currentValue.total_products, 0)
