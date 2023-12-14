@@ -63,7 +63,8 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 
 		}
 
-		pagination.totalRecords = +totalProductsRecords[0].count
+    pagination.totalRecords = totalProductsRecords.length === 0 ? 0 : +totalProductsRecords[0]?.count
+
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 		if (pagination.endIndex >= pagination.totalRecords) {

@@ -278,6 +278,8 @@ export const payments = pgTable('payments', {
   id: serial('id').primaryKey(),
   user_id: text('user_id').notNull().references(() => users.id),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
+  exchange_rate_id: integer('exchange_rate_id').notNull().references(() => exchange_rates.id),
+  default_currency_equivalent: numeric('default_currency_equivalent', { precision: 100, scale: 10 }).notNull(),
   amount_tendered: numeric('amount_tendered', { precision: 100, scale: 10 }).notNull(),
   payment_method: text('payment_method').$type<PaymentMethodUnion>().notNull(),
   currency: text('currency').$type<currencyTypeUnion>().notNull(),

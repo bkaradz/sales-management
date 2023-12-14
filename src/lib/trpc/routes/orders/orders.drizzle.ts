@@ -86,7 +86,7 @@ export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
         .orderBy(desc(shop_orders.id))
     }
 
-    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalRecords = totalOrdersRecords.length === 0 ? 0 : +totalOrdersRecords[0]?.count
     pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
     if (pagination.endIndex >= pagination.totalRecords) {
@@ -176,7 +176,7 @@ export const getOrdersByUserId = async (input: {
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
 
-    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalRecords = totalOrdersRecords.length === 0 ? 0 : +totalOrdersRecords[0]?.count
     pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
     if (pagination.endIndex >= pagination.totalRecords) {
@@ -260,7 +260,7 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
 
-    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalRecords = totalOrdersRecords.length === 0 ? 0 : +totalOrdersRecords[0]?.count
     pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
     if (pagination.endIndex >= pagination.totalRecords) {
@@ -358,7 +358,7 @@ export const getOrdersAwaitingPaymentByOrderId = async (input: {
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
 
-    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalRecords = totalOrdersRecords.length === 0 ? 0 : +totalOrdersRecords[0]?.count
     pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
     if (pagination.endIndex >= pagination.totalRecords) {
@@ -462,7 +462,7 @@ export const getOrdersByProductId = async (input: {
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
     }
 
-    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalRecords = totalOrdersRecords.length === 0 ? 0 : +totalOrdersRecords[0]?.count
     pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
     if (pagination.endIndex >= pagination.totalRecords) {
@@ -522,7 +522,7 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
         // Update contact amount 
 
         if (!(input.order.sales_status === 'Quotation')) {
-          
+
           const allShopOrdersTotals = await tx2.select({
             shop_orders_totals: sql<string>`sum(${shop_orders.sales_amount})`
           }).from(shop_orders)

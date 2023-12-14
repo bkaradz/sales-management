@@ -573,7 +573,24 @@
 						>
 							<div class="md:mx-6 md:p-12">
 								<div class="text-center">
-									<h4 class="mb-6 pb-1 text-xl font-semibold">Payment</h4>
+									<h4 class="mb-10 pb-1 text-xl font-semibold">Choose Payment Method</h4>
+								</div>
+
+								<div class="mb-8 bg-slate-900 text-lg p-4 rounded-md">
+									<div class="grid grid-cols-3 gap-4">
+										<div class="col-span-2 grid grid-cols-3 bg-slate-950 px-4 rounded-md">
+											<span>1</span>
+											<span>2</span>
+											<span>3</span>
+										</div>
+										<div class="">
+											<button
+												class="h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full"
+											>
+												Select Currency
+											</button>
+										</div>
+									</div>
 								</div>
 
 								<!--Grand Total-->

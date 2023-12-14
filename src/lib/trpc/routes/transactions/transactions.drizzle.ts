@@ -50,7 +50,8 @@ export const getTransactions = async (input: SearchParams, ctx: Context) => {
 
 		}
 
-		pagination.totalRecords = +totalTransactionsRecords[0].count
+    pagination.totalRecords = totalTransactionsRecords.length === 0 ? 0 : +totalTransactionsRecords[0]?.count
+		
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 		if (pagination.endIndex >= pagination.totalRecords) {

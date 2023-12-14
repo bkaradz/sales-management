@@ -73,7 +73,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 
 		}
 
-		pagination.totalRecords = +totalContactsRecords[0].count
+		pagination.totalRecords = totalContactsRecords.length === 0 ? 0 : +totalContactsRecords[0]?.count
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 		if (pagination.endIndex >= pagination.totalRecords) {
@@ -131,7 +131,7 @@ export const getContacts = async (input: SearchParams, ctx: Context) => {
 
 		}
 
-		pagination.totalRecords = +totalContactsRecords[0].count
+		pagination.totalRecords = totalContactsRecords.length === 0 ? 0 : +totalContactsRecords[0]?.count
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
 		if (pagination.endIndex >= pagination.totalRecords) {

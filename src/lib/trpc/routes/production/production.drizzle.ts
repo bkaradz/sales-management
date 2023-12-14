@@ -101,7 +101,7 @@ export const getProductionOrders = async (input: SearchParams, ctx: Context) => 
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
 
-    pagination.totalRecords = +totalOrdersRecords[0].count
+    pagination.totalRecords = totalOrdersRecords.length === 0 ? 0 : +totalOrdersRecords[0]?.count
     pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
     if (pagination.endIndex >= pagination.totalRecords) {
