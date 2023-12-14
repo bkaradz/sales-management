@@ -65,11 +65,11 @@
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Balance</div>
-						<div class="ml-auto text-xs text-gray-500">
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Amount</div>
+						<div class="ml-auto text-xs text-gray-500 {+data.contact.contact.amount < 0 ? 'text-red-500' : 'text-green-500'}">
 							{format(
 								converter(
-									data.contact.contact.orders_totals,
+									data.contact.contact.amount,
 									$selectedRateStore,
 									$exchangeRatesStore
 								),

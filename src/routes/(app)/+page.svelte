@@ -15,7 +15,6 @@
 		rates = { ...rates, [key]: value.rate };
 	});
 
-	$: console.log('🚀 ~ file: +page.svelte:13 ~ rates:', rates);
 
 	fx.base = 'USD';
 	fx.rates = rates;

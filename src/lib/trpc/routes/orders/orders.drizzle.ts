@@ -297,7 +297,6 @@ export const getOrdersAwaitingPaymentByOrderId = async (input: {
   search?: string | undefined;
   id: number
 }, ctx: Context) => {
-  console.log("🚀 ~ file: orders.drizzle.ts:196 ~ input:", input)
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
@@ -331,7 +330,6 @@ export const getOrdersAwaitingPaymentByOrderId = async (input: {
         .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-      console.log("🚀 ~ file: orders.drizzle.ts:235 ~ ordersQuery:", ordersQuery)
 
     } else {
 
@@ -482,7 +480,6 @@ export const getOrdersByProductId = async (input: {
 };
 
 export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
-  console.log("🚀 ~ file: orders.drizzle.ts:485 ~ createOrder ~ input:", input)
 
   if (!ctx.session.sessionId) {
     throw error(404, 'User not found');
@@ -525,6 +522,7 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
         // Update contact amount 
 
         if (!(input.order.sales_status === 'Quotation')) {
+          
           const allShopOrdersTotals = await tx2.select({
             shop_orders_totals: sql<string>`sum(${shop_orders.sales_amount})`
           }).from(shop_orders)
@@ -546,7 +544,7 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
             )
 
           const allPaymentsTotals = await tx2.select({
-            payments_totals: sql<string>`sum(${shop_orders.sales_amount})`
+            payments_totals: sql<string>`sum(${payments.amount_tendered})`
           }).from(payments)
             .where(eq(payments.customer_id, input.order.customer_id))
 

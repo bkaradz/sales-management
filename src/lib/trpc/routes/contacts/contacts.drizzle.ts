@@ -33,6 +33,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 			contactsQuery = await db.select({
 				id: contacts.id,
 				full_name: contacts.full_name,
+				amount: contacts.amount,
 				sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
 				total_products: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
 				total_orders: sql<string>`count(DISTINCT ${shop_orders.id})`
@@ -58,6 +59,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 			contactsQuery = await db.select({
 				id: contacts.id,
 				full_name: contacts.full_name,
+				amount: contacts.amount,
 				sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
 				total_products: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
 				total_orders: sql<string>`count(DISTINCT ${shop_orders.id})`

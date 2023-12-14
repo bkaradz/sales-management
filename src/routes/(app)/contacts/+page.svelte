@@ -48,8 +48,6 @@
 		// }
 	}
 
-	$: console.log("pathname", $page.url.pathname);
-	$: console.log("url", $page.url);
 </script>
 
 <svelte:head>
@@ -165,10 +163,10 @@
 								Amounts
 							</th> -->
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
-								Sales Amount
+								Amount
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
-								Total Orders
+								Sales Amounts
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Total Products
@@ -198,14 +196,17 @@
 										$selectedRateStore
 									)}
 								</td> -->
+								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 {+contact.amount < 0 ? 'text-red-500' : 'text-green-500'}">
+									{format(
+										converter(contact.amount, $selectedRateStore, $exchangeRatesStore),
+										$selectedRateStore
+									)}
+								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										converter(contact.sales_amount, $selectedRateStore, $exchangeRatesStore),
 										$selectedRateStore
 									)}
-								</td>
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{contact.total_orders}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{contact.total_products}

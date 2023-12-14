@@ -96,7 +96,6 @@ export const actions: Actions = {
             },
             orders_details: JSON.parse(formData.orders_details)
         };
-        console.log("🚀 ~ file: +page.server.ts:98 ~ submit: ~ orders_details:", cartOrderSubmit.orders_details)
 
         if (!cartOrderSubmit.order.description) {
             delete cartOrderSubmit.order.description
@@ -105,12 +104,10 @@ export const actions: Actions = {
         try {
 
             const parsedCartOrder = saveCartOrderSchema.safeParse(cartOrderSubmit);
-            console.log("🚀 ~ file: +page.server.ts:107 ~ submit: ~ parsedCartOrder:", parsedCartOrder)
 
             if (!parsedCartOrder.success) {
 
                 const errorMap = zodErrorMessagesMap(parsedCartOrder);
-                console.log("🚀 ~ file: +page.server.ts:112 ~ submit: ~ errorMap:", errorMap)
 
                 return fail(400, {
                     message: 'Validation error',

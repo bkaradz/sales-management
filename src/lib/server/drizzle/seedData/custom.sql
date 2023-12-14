@@ -112,10 +112,10 @@ CREATE TRIGGER orders_details_audit_trigger
   FOR each ROW
   EXECUTE PROCEDURE universal_audit_information('orders_details_audit');
 
--- CREATE TRIGGER transactions_details_audit_trigger
---   AFTER INSERT OR UPDATE OR DELETE ON transactions_details
---   FOR each ROW
---   EXECUTE PROCEDURE universal_audit_information('transactions_details_audit');
+CREATE TRIGGER transactions_details_audit_trigger
+  AFTER INSERT OR UPDATE OR DELETE ON transactions_details
+  FOR each ROW
+  EXECUTE PROCEDURE universal_audit_information('transactions_details_audit');
 
 CREATE TRIGGER transactions_audit_trigger
   AFTER INSERT OR UPDATE OR DELETE ON transactions

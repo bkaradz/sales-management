@@ -96,7 +96,6 @@
 
 	let isModalOpen = false;
 
-	$: console.log("object", JSON.stringify([...$cartStore.values()].map((item) => item.orders_details)));
 </script>
 
 <svelte:head>
@@ -151,11 +150,11 @@
 						</div>
 						<div class="flex items-center w-full">
 							<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
-								<p>Balance</p>
+								<p>Amount</p>
 							</div>
-							<div class="ml-auto text-xs text-gray-500">
+							<div class="ml-auto text-xs text-gray-500 {+user.amount < 0 ? 'text-red-500' : 'text-green-500'}">
 								{format(
-									converter(user.orders_totals, $selectedRateStore, $exchangeRatesStore),
+									converter(user.amount, $selectedRateStore, $exchangeRatesStore),
 									$selectedRateStore
 								)}
 							</div>
@@ -557,12 +556,12 @@
 										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-											Balance
+											Amount
 										</div>
-										<div class="ml-auto text-xs text-gray-500">
+										<div class="ml-auto text-xs text-gray-500 {+$customerSelectedStore.amount < 0 ? 'text-red-500' : 'text-green-500'}">
 											{format(
 												converter(
-													$customerSelectedStore.orders_totals,
+													$customerSelectedStore.amount,
 													$selectedRateStore,
 													$exchangeRatesStore
 												),
