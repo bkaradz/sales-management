@@ -8,6 +8,7 @@ import { shop_orders } from '$lib/trpc/routes/orders/orders';
 import { production } from '$lib/trpc/routes/production/production';
 import { transactions } from '$lib/trpc/routes/transactions/transactions';
 import { reports } from '$lib/trpc/routes/reports/reports';
+import { payments } from '$lib/trpc/routes/payments/payments';
 import { t } from '$lib/trpc/t';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 
@@ -20,7 +21,8 @@ export const router = t.router({
 	shop_orders,
 	production,
 	transactions,
-	reports
+	reports,
+	payments
 });
 
 export type Router = typeof router;
