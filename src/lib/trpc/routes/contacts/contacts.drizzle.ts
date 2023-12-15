@@ -11,7 +11,7 @@ import type { SaveContacts, saveContactsArray } from '$lib/validation/contacts.z
 export const getContactsList = async (input: SearchParams, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	const pagination = getPagination(input);
@@ -95,7 +95,7 @@ export type GetContactsList = NonNullable<Awaited<ReturnType<typeof getContactsL
 export const getContacts = async (input: SearchParams, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	const pagination = getPagination(input);
@@ -151,7 +151,7 @@ export const getContacts = async (input: SearchParams, ctx: Context) => {
 export const getById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 
@@ -210,7 +210,7 @@ export const getById = async (input: number, ctx: Context) => {
 export const deleteById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -239,7 +239,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 export const createContact = async (input: SaveContacts, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -280,7 +280,7 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 export const updateContact = async (input: SaveContacts & { id: number }, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -332,7 +332,7 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 export const uploadContacts = async (input: saveContactsArray, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {

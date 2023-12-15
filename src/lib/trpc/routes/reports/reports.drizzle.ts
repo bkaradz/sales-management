@@ -10,7 +10,7 @@ import trim from 'lodash-es/trim';
 export const getSalesReports = async (input: SearchParams, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -75,7 +75,7 @@ export type GetSalesReports = Awaited<ReturnType<typeof getSalesReports>>
 export const getDailyProductionReport = async (input: SearchParams, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {

@@ -11,7 +11,7 @@ export const load = (async (event) => {
 
     const session = await event.locals.auth.validate()
 
-    if (!session) throw redirect(302, "/login")
+    if (!session) redirect(302, "/login");
 
     // TODO: change to trpc
     // const user = await db.select().from(users).where(eq(users.id, session.user.userId));

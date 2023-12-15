@@ -39,7 +39,7 @@ export const actions: Actions = {
 		const session = await event.locals.auth.validate()
 
 		if (!session) {
-			throw redirect(303, "/auth/login")
+			redirect(303, "/auth/login");
 		}
 
 		const data = await event.request.formData()

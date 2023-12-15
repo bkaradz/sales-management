@@ -4,7 +4,7 @@ import { router } from '$lib/trpc/router';
 import { createContext } from '$lib/trpc/context';
 
 export const load = (async () => {
-    throw redirect(302, '/')
+    redirect(302, '/');
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

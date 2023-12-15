@@ -12,7 +12,7 @@ import type { PaymentStatusUnion, ProductionStatusUnion } from '$lib/utility/lis
 export const getProductionOrders = async (input: SearchParams, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   const pagination = getPagination(input);
@@ -124,7 +124,7 @@ export type GetProductionOrders = Awaited<ReturnType<typeof getProductionOrders>
 export const changeProductionStatusById = async (input: { id: number, sales_status: string, payment_status: PaymentStatusUnion, production_status: ProductionStatusUnion }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {

@@ -44,7 +44,7 @@ export const getDefaultRates = async () => {
 export const getAllRates = async (ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
 
@@ -80,7 +80,7 @@ export const getAllRates = async (ctx: Context) => {
 export const getById = async (input: number, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -115,7 +115,7 @@ export const getById = async (input: number, ctx: Context) => {
 export const deleteById = async (input: number, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
 
@@ -137,7 +137,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 export const createRate = async (input: any, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {

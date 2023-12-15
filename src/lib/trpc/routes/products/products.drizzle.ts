@@ -11,7 +11,7 @@ import type { saveProduct, saveProductArray } from '$lib/validation/product.zod'
 export const getProducts = async (input: SearchParams, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	const pagination = getPagination(input);
@@ -86,7 +86,7 @@ export type GetProducts = NonNullable<Awaited<ReturnType<typeof getProducts>>>
 export const getById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -105,7 +105,7 @@ export const getById = async (input: number, ctx: Context) => {
 export const deleteById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -131,7 +131,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 export const createProduct = async (input: saveProduct, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -149,7 +149,7 @@ export const createProduct = async (input: saveProduct, ctx: Context) => {
 export const updateProduct = async (input: any, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -170,7 +170,7 @@ export const updateProduct = async (input: any, ctx: Context) => {
 export const uploadProducts = async (input: saveProductArray, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {

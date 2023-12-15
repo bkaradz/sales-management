@@ -46,7 +46,7 @@ export const logoutUser = async (ctx: Context) => {
   const session = await ctx.event.locals.auth.validate()
 
   if (!session) {
-    throw redirect(302, `/`)
+    redirect(302, `/`);
   }
 
   await auth.invalidateSession(session.sessionId)
@@ -57,7 +57,7 @@ export const logoutUser = async (ctx: Context) => {
 export const getUsers = async (ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
  
   try {
@@ -77,7 +77,7 @@ export const getUsers = async (ctx: Context) => {
 export const getById = async (input: string, ctx: Context ) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -94,7 +94,7 @@ export const getById = async (input: string, ctx: Context ) => {
 export const deleteById = async (input: string, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
   
   try {

@@ -44,7 +44,7 @@ export const getDefaultPricelists = async () => {
 export const getAllPricelists = async (ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -81,7 +81,7 @@ export const getAllPricelists = async (ctx: Context) => {
 export const getById = async (input: number, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -117,7 +117,7 @@ export const getById = async (input: number, ctx: Context) => {
 export const deleteById = async (input: number, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -138,7 +138,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 export const createPricelist = async (input: any, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {

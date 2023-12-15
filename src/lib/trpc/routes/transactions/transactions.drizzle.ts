@@ -12,7 +12,7 @@ import type { transactionInput } from '../../../../routes/(app)/sales/payment/[p
 export const getTransactions = async (input: SearchParams, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	const pagination = getPagination(input);
@@ -71,7 +71,7 @@ export const getTransactions = async (input: SearchParams, ctx: Context) => {
 export const getById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -90,7 +90,7 @@ export const getById = async (input: number, ctx: Context) => {
 export const deleteById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {
@@ -109,7 +109,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 export const createTransaction = async (input: transactionInput, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {
-		throw error(404, 'User not found');
+		error(404, 'User not found');
 	}
 
 	try {

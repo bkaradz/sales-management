@@ -20,7 +20,7 @@ import type { SaveCartOrder } from '$lib/validation/cart.zod';
 export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   const pagination = getPagination(input);
@@ -111,7 +111,7 @@ export const getOrdersByUserId = async (input: {
 }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   const pagination = getPagination(input);
@@ -201,7 +201,7 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
 }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   const pagination = getPagination(input);
@@ -299,7 +299,7 @@ export const getOrdersAwaitingPaymentByOrderId = async (input: {
 }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   const pagination = getPagination(input);
@@ -397,7 +397,7 @@ export const getOrdersByProductId = async (input: {
 }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   const pagination = getPagination(input);
@@ -482,7 +482,7 @@ export const getOrdersByProductId = async (input: {
 export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -566,7 +566,7 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
 export const deleteById = async (input: { id: number, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -613,7 +613,7 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
 export const changeSalesStatusById = async (input: { id: number, sales_status: string }, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
@@ -649,7 +649,7 @@ export const changeSalesStatusById = async (input: { id: number, sales_status: s
 export const getById = async (input: number, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
-    throw error(404, 'User not found');
+    error(404, 'User not found');
   }
 
   try {
