@@ -207,6 +207,8 @@ export const getById = async (input: number, ctx: Context) => {
 	}
 };
 
+export type GetContactsById = NonNullable<Awaited<ReturnType<typeof getById>>>
+
 export const deleteById = async (input: number, ctx: Context) => {
 
 	if (!ctx.session.sessionId) {

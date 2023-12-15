@@ -7,13 +7,13 @@ import { saveProductsSchema } from '$lib/validation/product.zod';
 
 export const load = (async (event) => {
 
-    const product = async () => {
-        return await router.createCaller(await createContext(event)).products.getById(+event.params.id);
-    }
+	const [productsPromise] = await Promise.all([
+		await router.createCaller(await createContext(event)).products.getById(+event.params.id),
+	]);
 
-    return {
-        results: await product()
-    };
+	return {
+		results: productsPromise
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -27,7 +27,7 @@ export const actions: Actions = {
 
 		const data = await event.request.formData()
 		const formData = Object.fromEntries(data)
-     
+
 		let formResults = {}
 
 		if (formData?.id) formResults = { ...formResults, id: +formData.id }
@@ -64,8 +64,8 @@ export const actions: Actions = {
 				errors: { error }
 			})
 		}
-	
-		
+
+
 
 	}
 };

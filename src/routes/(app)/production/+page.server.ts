@@ -17,12 +17,12 @@ export const load = (async (event) => {
 	const search = event.url.searchParams.get('search')
 	if (search) query = { ...query, search }
 
-	const shop_orders = async (query: any) => {
-		return await router.createCaller(await createContext(event)).production.getProductionOrders(query);
-	};
+	const [shopOrdersPromise] = await Promise.all([
+		await router.createCaller(await createContext(event)).production.getProductionOrders(query)
+	]);
 
 	return {
-		results: await shop_orders(query)
+		results: shopOrdersPromise
 	};
 }) satisfies PageServerLoad;
 

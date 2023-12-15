@@ -2,7 +2,6 @@ import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { trpc } from '$lib/trpc/client';
 
 export const load = (async (event) => {
 
@@ -16,13 +15,13 @@ export const load = (async (event) => {
 
     const search = event.url.searchParams.get('search')
     if (search) query = { ...query, search }
-    
-    const contacts = async (query: any) => {
-        return await router.createCaller(await createContext(event)).contacts.getContactsList(query);
-    };
+
+    const [contacts] = await Promise.all([
+        await router.createCaller(await createContext(event)).contacts.getContactsList(query),
+    ]);
 
     return {
-        results: await contacts(query)
+        results: contacts
     };
 }) satisfies PageServerLoad;
 
@@ -37,7 +36,7 @@ export const actions: Actions = {
 
         const data = await event.request.formData();
         const formData = Object.fromEntries(data)
-        
+
         return await router.createCaller(await createContext(event)).contacts.deleteById(+formData.delete)
 
     }

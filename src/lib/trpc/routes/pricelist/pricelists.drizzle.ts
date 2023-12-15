@@ -78,6 +78,8 @@ export const getAllPricelists = async (ctx: Context) => {
   }
 }
 
+export type PricelistsAll = NonNullable<Awaited<ReturnType<typeof getAllPricelists>>>
+
 export const getById = async (input: number, ctx: Context) => {
 
   if (!ctx.session.sessionId) {

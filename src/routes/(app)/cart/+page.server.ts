@@ -8,6 +8,9 @@ import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveCartOrderSchema, type SaveOrderDetails } from '$lib/validation/cart.zod';
 import { saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
+import type { Pricelist } from '$lib/server/drizzle/schema/schema';
+import type { PricelistsAll } from '$lib/trpc/routes/pricelist/pricelists.drizzle';
+import type { ratesAll } from '$lib/trpc/routes/exchangeRates/rates.drizzle';
 
 export const load = (async (event) => {
 
@@ -22,12 +25,8 @@ export const load = (async (event) => {
     const search = event.url.searchParams.get('search')
     if (search) query = { ...query, search }
 
-    const contacts = async (query: any) => {
-        return await router.createCaller(await createContext(event)).contacts.getContacts(query);
-    };
 
-    const pricelist = async () => {
-        const pricelistArray = await router.createCaller(await createContext(event)).pricelists.getAllPricelists();
+    const pricelist = async (pricelistArray: PricelistsAll | undefined) => {
 
         if (!pricelistArray) throw new Error("Pricelists not found");
 
@@ -38,8 +37,8 @@ export const load = (async (event) => {
         return pricelistMap
     };
 
-    const exchangeRate = async () => {
-        const exchangeRateArray = await router.createCaller(await createContext(event)).rates.getAllRates();
+    const exchangeRate = async (exchangeRateArray: ratesAll | undefined) => {
+        // const exchangeRateArray = await router.createCaller(await createContext(event)).rates.getAllRates();
 
         if (!exchangeRateArray) throw new Error("Exchange Rate not found");
 
@@ -52,10 +51,16 @@ export const load = (async (event) => {
         return eRateMap
     };
 
+    const [contactsPromise, pricelistPromise, exchangeRatePromise] = await Promise.all([
+        await router.createCaller(await createContext(event)).contacts.getContacts(query),
+        await router.createCaller(await createContext(event)).pricelists.getAllPricelists(),
+        await router.createCaller(await createContext(event)).rates.getAllRates()
+    ]);
+
     return {
-        results: await contacts(query),
-        pricelistAll: await pricelist(),
-        exchangeRateAll: await exchangeRate()
+        results: contactsPromise,
+        pricelistAll: pricelist(pricelistPromise),
+        exchangeRateAll: exchangeRate(exchangeRatePromise)
     };
 }) satisfies PageServerLoad;
 

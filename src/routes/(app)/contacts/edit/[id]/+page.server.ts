@@ -3,33 +3,40 @@ import { router } from '$lib/trpc/router';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
-import { saveContactsSchema, updateContactsSchema } from '$lib/validation/contacts.zod';
+import { updateContactsSchema } from '$lib/validation/contacts.zod';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
+import type { GetContactsById } from '$lib/trpc/routes/contacts/contacts.drizzle';
 
 export const load = (async (event) => {
-    
-        const contactResults = await router.createCaller(await createContext(event)).contacts.getById(+event.params.id);
 
-        const contact = {
-            ...contactResults?.contact,
-            phones: '',
-            emails: '',
-            address: ''
-        }
+	const processContacts = (contactResults: GetContactsById | undefined) => {
+		
+		const contact = {
+			...contactResults?.contact,
+			phones: '',
+			emails: '',
+			address: ''
+		}
+	
+		if (contactResults) {
+	
+			contact.phones = contactResults?.phones.map(phone => phone.phone).toString() || ''
+	
+			contact.emails = contactResults?.emails.map(email => email.email).toString() || ''
+	
+			contact.address = contactResults?.address.map(address => address.address).toString() || ''
+		}
+	}
 
-        if (contactResults) {
-            
-            contact.phones = contactResults?.phones.map(phone => phone.phone).toString() || ''
 
-            contact.emails = contactResults?.emails.map(email => email.email).toString() || ''
-
-            contact.address = contactResults?.address.map(address => address.address).toString() || ''
-        }
+	const [contactPromise] = await Promise.all([
+		await router.createCaller(await createContext(event)).contacts.getById(+event.params.id),
+	]);
 
 
-    return { 
-        results: contact
-    };
+	return {
+		results: processContacts(contactPromise)
+	};
 }) satisfies PageServerLoad;
 
 
@@ -44,8 +51,8 @@ export const actions: Actions = {
 
 		const data = await event.request.formData()
 		const formData = Object.fromEntries(data)
-       
-        let formResults = {}
+
+		let formResults = {}
 
 		if (formData?.id) formResults = { ...formResults, id: +formData.id }
 		if (formData?.full_name) formResults = { ...formResults, full_name: formData.full_name }
@@ -55,7 +62,7 @@ export const actions: Actions = {
 		if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
 		if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
 
-        try {
+		try {
 
 			const parsedContact = updateContactsSchema.safeParse(formResults);
 
@@ -75,6 +82,6 @@ export const actions: Actions = {
 				message: 'Could not register user',
 				errors: { error }
 			})
-		}	
+		}
 	}
 };

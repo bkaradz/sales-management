@@ -32,9 +32,14 @@ export const load = (async (event) => {
         return await router.createCaller(await createContext(event)).contacts.getById(parseInt(event.params.id, 10));
     };
 
+    const [shopOrdersPromise, contactPromise] = await Promise.all([
+        await shop_orders(query),
+        await router.createCaller(await createContext(event)).contacts.getById(parseInt(event.params.id, 10)),
+    ]);
+
     return {
-        contact: await contact(),
-        shop_orders: await shop_orders(query)
+        contact: contactPromise,
+        shop_orders: shopOrdersPromise
     };
 }) satisfies PageServerLoad;
 
@@ -90,11 +95,11 @@ export const actions: Actions = {
 
         } catch (error) {
             return fail(400, {
-				message: 'Could not register user',
-				errors: { error }
-			})
+                message: 'Could not register user',
+                errors: { error }
+            })
         }
 
-        
+
     }
 }

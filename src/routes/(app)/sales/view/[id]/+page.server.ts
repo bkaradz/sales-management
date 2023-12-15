@@ -1,15 +1,13 @@
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
+import type { ratesAll } from '$lib/trpc/routes/exchangeRates/rates.drizzle';
+import type { PricelistsAll } from '$lib/trpc/routes/pricelist/pricelists.drizzle';
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
-    const order = async () => {
-        return await router.createCaller(await createContext(event)).shop_orders.getById(parseInt(event.params.id, 10))
-    };
 
-    const pricelist = async () => {
-        const pricelistArray = await router.createCaller(await createContext(event)).pricelists.getAllPricelists();
+    const pricelist = async (pricelistArray: PricelistsAll | undefined) => {
 
         if (!pricelistArray) throw new Error("Pricelists not found");
 
@@ -20,8 +18,7 @@ export const load = (async (event) => {
         return pricelistMap
     };
 
-    const exchangeRate = async () => {
-        const exchangeRateArray = await router.createCaller(await createContext(event)).rates.getAllRates();
+    const exchangeRate = async (exchangeRateArray: ratesAll | undefined) => {
 
         if (!exchangeRateArray) throw new Error("Exchange Rate not found");
 
@@ -34,9 +31,15 @@ export const load = (async (event) => {
         return eRateMap
     };
 
+    const [shopOrdersPromise, pricelistPromise, ratesPromise] = await Promise.all([
+        await router.createCaller(await createContext(event)).shop_orders.getById(parseInt(event.params.id, 10)),
+        await router.createCaller(await createContext(event)).pricelists.getAllPricelists(),
+        await router.createCaller(await createContext(event)).rates.getAllRates()
+      ]);
+
     return {
-        results: await order(),
-        pricelistAll: await pricelist(),
-        exchangeRateAll: await exchangeRate()
+        results: shopOrdersPromise,
+        pricelistAll: pricelist(pricelistPromise),
+        exchangeRateAll: exchangeRate(ratesPromise)
     };
 }) satisfies PageServerLoad;

@@ -77,6 +77,8 @@ export const getAllRates = async (ctx: Context) => {
   }
 }
 
+export type ratesAll = NonNullable<Awaited<ReturnType<typeof getAllRates>>>
+
 export const getById = async (input: number, ctx: Context) => {
 
   if (!ctx.session.sessionId) {
