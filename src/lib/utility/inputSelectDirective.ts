@@ -26,3 +26,29 @@ export function blurOnEscape(node: HTMLInputElement | HTMLTextAreaElement) {
 		}
 	};
 }
+
+export function longPress(node: HTMLButtonElement, threshold = 50) {
+	const handle_mousedown = () => {
+		
+		const timeout = setInterval(() => {
+			node.dispatchEvent(new CustomEvent('longPress'));
+		}, threshold);
+		
+		const cancel = () => {
+			clearInterval(timeout);
+			node.removeEventListener('mousemove', cancel);
+			node.removeEventListener('mouseup', cancel);
+		};
+		
+		node.addEventListener('mousemove', cancel);
+		node.addEventListener('mouseup', cancel);
+	}
+	
+	node.addEventListener('mousedown', handle_mousedown);
+	
+	return {
+		destroy() {
+			node.removeEventListener('mousedown', handle_mousedown);
+		}
+	};
+}

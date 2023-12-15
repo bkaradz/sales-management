@@ -576,7 +576,7 @@
 									<h4 class="mb-10 pb-1 text-xl font-semibold">Choose Payment Method</h4>
 								</div>
 
-								<div class="mb-8 bg-slate-900 text-lg p-4 rounded-md">
+								<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
 									<div class="grid grid-cols-3 gap-4">
 										<div class="col-span-2 grid grid-cols-3 bg-slate-950 px-4 rounded-md">
 											<span>1</span>
@@ -589,6 +589,25 @@
 											>
 												Select Currency
 											</button>
+										</div>
+									</div>
+								</div>
+
+								<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
+									<div class="grid grid-cols-3">
+										<!-- <div class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md"> -->
+											<input
+												type="text"
+												class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
+												id="phone"
+												name="phone"
+												placeholder="Phone"
+											/>
+										<!-- </div> -->
+										<div class="">
+											<div class="h-8 px-3 rounded-r-md shadow text-white bg-blue-500 w-full">
+												$100.00
+											</div>
 										</div>
 									</div>
 								</div>

@@ -39,3 +39,11 @@
 	bottom: 0px;
 	left: 0px;
 }
+
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+input[type="number"]:hover,
+input[type="number"]:focus {
+	-moz-appearance: number-input;
+}

@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { Buffer } from 'buffer';
+	import { longPress } from '$lib/utility/inputSelectDirective.js';
 
 	export let form;
 
@@ -27,6 +28,13 @@
 			type: 'error'
 		});
 	}
+
+	let pressed = false;
+
+	let counter = 0
+	const add = () => {
+		counter = counter + 1
+	}
 </script>
 
 <svelte:head>
@@ -39,3 +47,19 @@
 	<input type="hidden" name="origin" value={$page.url.origin} />
 	<button class="btn btn-success">Print</button>
 </form>
+
+<button class="btn btn-primary mb-4" use:longPress on:longPress="{() => add()}">
+	long press me
+</button>
+
+<button class="btn btn-primary mb-4" use:longPress={2000} on:longPress="{e => pressed = true}">
+	long press me (for two seconds)
+</button>
+
+<button class="btn btn-primary mb-4" on:click="{() => pressed = false}">
+	reset
+</button>
+
+<div>
+	counter = <span>{counter}</span>
+</div>

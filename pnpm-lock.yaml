@@ -10,7 +10,7 @@ devDependencies:
     version: 4.3.6
   '@lucia-auth/adapter-postgresql':
     specifier: ^2.0.2
-    version: 2.0.2(lucia@2.7.4)(pg@8.11.3)(postgres@3.4.3)
+    version: 2.0.2(lucia@2.7.5)(pg@8.11.3)(postgres@3.4.3)
   '@sveltejs/adapter-auto':
     specifier: ^2.1.1
     version: 2.1.1(@sveltejs/kit@1.30.3)
@@ -87,8 +87,8 @@ devDependencies:
     specifier: ^4.17.21
     version: 4.17.21
   lucia:
-    specifier: ^2.7.4
-    version: 2.7.4
+    specifier: ^2.7.5
+    version: 2.7.5
   money:
     specifier: ^0.2.0
     version: 0.2.0
@@ -539,7 +539,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@lucia-auth/adapter-postgresql@2.0.2(lucia@2.7.4)(pg@8.11.3)(postgres@3.4.3):
+  /@lucia-auth/adapter-postgresql@2.0.2(lucia@2.7.5)(pg@8.11.3)(postgres@3.4.3):
     resolution: {integrity: sha512-gQ7SlFu+gxQj2IX2J8ZVivcLBbdnf9SbNQOVWkJxZOdY1uaaIQGeNfEDld2Awy02VrXmA4sjHsbkJx1JPVw2+A==}
     peerDependencies:
       lucia: ^2.0.0
@@ -551,7 +551,7 @@ packages:
       postgres:
         optional: true
     dependencies:
-      lucia: 2.7.4
+      lucia: 2.7.5
       pg: 8.11.3
       postgres: 3.4.3
     dev: true
@@ -1223,7 +1223,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001570
-      electron-to-chromium: 1.4.612
+      electron-to-chromium: 1.4.613
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.2)
     dev: true
@@ -1725,8 +1725,8 @@ packages:
       zod: 3.22.4
     dev: true
 
-  /electron-to-chromium@1.4.612:
-    resolution: {integrity: sha512-dM8BMtXtlH237ecSMnYdYuCkib2QHq0kpWfUnavjdYsyr/6OsAwg5ZGUfnQ9KD1Ga4QgB2sqXlB2NT8zy2GnVg==}
+  /electron-to-chromium@1.4.613:
+    resolution: {integrity: sha512-r4x5+FowKG6q+/Wj0W9nidx7QO31BJwmR2uEo+Qh3YLGQ8SbBAFuDFpTxzly/I2gsbrFwBuIjrMp423L3O5U3w==}
     dev: true
 
   /emoji-regex@8.0.0:
@@ -2615,8 +2615,8 @@ packages:
       es5-ext: 0.10.62
     dev: true
 
-  /lucia@2.7.4:
-    resolution: {integrity: sha512-do6Aah5kX2DUl7N0CvELWV1/b+qZGF0AUmUrkthYeNfXfgx4RAkWi4BkAlgGDBB/0c1WApb18mUD1pA5qTaWmw==}
+  /lucia@2.7.5:
+    resolution: {integrity: sha512-2e/Oezb+b2qjQLyP28CraBlad2s9GAp22bfPLn05IsXi99FEX/oTo2TGMM4Gn9nJT7ow15kEFkwL3lBUpknopA==}
     dev: true
 
   /magic-string@0.27.0:
