@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		svgDashboardCart,
+		svgDashboardCashFlow,
 		svgDashboardMessages,
 		svgDashboardOrders,
 		svgDashboardUser
@@ -15,16 +16,15 @@
 		rates = { ...rates, [key]: value.rate };
 	});
 
-
 	fx.base = 'USD';
 	fx.rates = rates;
 
-	fx.settings = { from: "ZAR", to: "USD" };
+	fx.settings = { from: 'ZAR', to: 'USD' };
 	// $: console.log("object", fx.convert('1000'));
 
 	$: console.log('to rand', fx.convert('1000', { to: 'ZAR' }));
-	$: console.log("FROM rand TO USD", fx.convert('1000', {from: "ZAR", to: 'USD'}));
-	$: console.log("FROM PULA TO RAND", fx.convert('1000', {from: "BWP", to: 'ZAR'}));
+	$: console.log('FROM rand TO USD', fx.convert('1000', { from: 'ZAR', to: 'USD' }));
+	$: console.log('FROM PULA TO RAND', fx.convert('1000', { from: 'BWP', to: 'ZAR' }));
 </script>
 
 <svelte:head>
@@ -60,9 +60,9 @@
 				<!-- Card -->
 				<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
 					<div
-						class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500"
+						class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500"
 					>
-						{@html svgDashboardUser}
+						{@html svgDashboardOrders}
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income Today</p>
@@ -72,9 +72,9 @@
 				<!-- Card -->
 				<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
 					<div
-						class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500"
+						class="p-3 mr-4 text-red-500 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-500"
 					>
-						{@html svgDashboardOrders}
+						{@html svgDashboardCashFlow}
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Expenses Today</p>
@@ -89,7 +89,7 @@
 						{@html svgDashboardCart}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">New sales</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Today sales</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">376</p>
 					</div>
 				</div>
@@ -110,10 +110,11 @@
 				<!-- Card -->
 				<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
 					<div
-						class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500"
+						class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500"
 					>
-						{@html svgDashboardUser}
+						{@html svgDashboardOrders}
 					</div>
+
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
 							Income this Month
@@ -124,9 +125,9 @@
 				<!-- Card -->
 				<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
 					<div
-						class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500"
+						class="p-3 mr-4 text-red-500 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-500"
 					>
-						{@html svgDashboardOrders}
+						{@html svgDashboardCashFlow}
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -143,16 +144,16 @@
 						{@html svgDashboardCart}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">New sales</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Monthly sales</p>
 						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">376</p>
 					</div>
 				</div>
 				<!-- Card -->
 				<div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
 					<div
-						class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500"
+						class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500"
 					>
-						{@html svgDashboardMessages}
+						{@html svgDashboardUser}
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">

@@ -1,9 +1,27 @@
 <script>
-	import { enhance } from "$app/forms";
-	import { svgSearch } from "$lib/assets/svgLogos";
-	import { selectTextOnFocus } from "$lib/utility/inputSelectDirective";
+	import { enhance } from '$app/forms';
+	import { svgSearch } from '$lib/assets/svgLogos';
+	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import puppeteer from 'puppeteer';
 
-	let isModalOpen = false
+	let isModalOpen = false;
+
+	// const playwrightPdf = async () => {
+	// 	const browser = await playwright.chromium.launch();
+	// 	const context = await browser.newContext();
+	// 	const page = await context.newPage();
+	// 	await page.goto('https://www.google.com/search?q=Google');
+	// 	await page.pdf({ path: `document.pdf` });
+	// 	await browser.close();
+	// };
+
+	const puppeteerPDF = async () => {
+		const browser = await puppeteer.launch();
+		const page = await browser.newPage();
+		await page.goto('https://www.google.com/search?q=Google');
+		await page.pdf({ path: 'document.pdf' });
+		await browser.close();
+	};
 </script>
 
 <!-- <svelte:head>
@@ -14,28 +32,51 @@
 <!-- The button to open modal -->
 <!-- 🔵 set true on click -->
 
-<form id="myForm" data-sveltekit-keepfocus data-sveltekit-replacestate action="?/submit" method="post" use:enhance>
-  <input
-    use:selectTextOnFocus
-    type="text"
-    name="search"
-    class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
-    placeholder="Search"
-  />
-  {@html svgSearch}
+<form
+	id="myForm"
+	data-sveltekit-keepfocus
+	data-sveltekit-replacestate
+	action="?/submit"
+	method="post"
+	use:enhance
+>
+	<input
+		use:selectTextOnFocus
+		type="text"
+		name="search"
+		class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+		placeholder="Search"
+	/>
+	{@html svgSearch}
 </form>
-<button class="btn modal-button rounded-md" on:click={()=>isModalOpen = true}>Submit</button>
+<button class="btn modal-button rounded-md" on:click={() => (isModalOpen = true)}>Submit</button>
 
 <!-- <button class="btn modal-button rounded-md" on:click={()=>isModalOpen = true}>open modal</button> -->
 
-
 <dialog class="modal" class:modal-open={isModalOpen}>
-  <div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
-    <h3 class="font-bold text-lg">Delete product!</h3>
-    <p class="py-4">Are you sure you want to delete the product!!!</p>
-    <div class="modal-action">
-      <input name="cancel" class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"  type="button" value="Cancel" on:click={()=>isModalOpen = false}>
-      <input name="submit" class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none" form="myForm" value="Save" type="submit" on:click={()=>isModalOpen = false}/>
-    </div>
-  </div>
+	<div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
+		<h3 class="font-bold text-lg">Delete product!</h3>
+		<p class="py-4">Are you sure you want to delete the product!!!</p>
+		<div class="modal-action">
+			<input
+				name="cancel"
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				type="button"
+				value="Cancel"
+				on:click={() => (isModalOpen = false)}
+			/>
+			<input
+				name="submit"
+				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
+				form="myForm"
+				value="Save"
+				type="submit"
+				on:click={() => (isModalOpen = false)}
+			/>
+		</div>
+	</div>
 </dialog>
+
+<button class="btn btn-primary" on:click={() => puppeteerPDF}>
+  pdf with puppeteer
+</button>

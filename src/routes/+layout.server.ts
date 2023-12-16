@@ -4,16 +4,13 @@ import type { LayoutServerLoad } from './$types';
 
 export const load = (async (event) => {
 
-    const pricelist = async () => {
-        return await router.createCaller(await createContext(event)).pricelists.getDefaultPricelists();
-    }
-
-    const exchange = async () => {
-        return await router.createCaller(await createContext(event)).rates.getDefaultRates()
-    }
+    const [pricelistPromise, exchangePromise] = await Promise.all([
+        await router.createCaller(await createContext(event)).pricelists.getDefaultPricelists(),
+        await router.createCaller(await createContext(event)).rates.getDefaultRates(),
+    ]);
 
     return {
-        pricelists: await pricelist(),
-        exchangeRates: await exchange()
+        pricelists: pricelistPromise,
+        exchangeRates: exchangePromise
     };
 }) satisfies LayoutServerLoad;

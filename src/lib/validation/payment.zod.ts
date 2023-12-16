@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const savePaymentSchema = z
   .object({
-    amount_tendered: z.string(),
+    cash_paid: z.string(),
     selected_orders_total: z.string(),
     selected_orders_ids: z.array(z.number()),
     payment_method: z.string({ required_error: 'Payment Method is required' }),

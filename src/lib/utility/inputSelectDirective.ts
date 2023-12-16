@@ -1,54 +1,62 @@
-export function selectTextOnFocus(node: HTMLInputElement | HTMLTextAreaElement) {
+import type { Action } from "svelte/action";
+
+
+export function selectTextOnFocus(element: HTMLInputElement | HTMLTextAreaElement) {
 	const handleFocus = () => {
-		node && typeof node.select === 'function' && node.select();
+		element && typeof element.select === 'function' && element.select();
 	};
 
-	node.addEventListener('focus', handleFocus);
+	element.addEventListener('focus', handleFocus);
 
 	return {
 		destroy() {
-			node.removeEventListener('focus', handleFocus);
+			element.removeEventListener('focus', handleFocus);
 		}
 	};
 }
 
 /** Blurs the node when Escape is pressed */
-export function blurOnEscape(node: HTMLInputElement | HTMLTextAreaElement) {
+export function blurOnEscape(element: HTMLInputElement | HTMLTextAreaElement) {
 	const handleKey = (event: KeyboardEvent) => {
-		if (event.key === 'Escape' && node && typeof node.blur === 'function') node.blur();
+		if (event.key === 'Escape' && element && typeof element.blur === 'function') element.blur();
 	};
 
-	node.addEventListener('keydown', handleKey as EventListener);
+	element.addEventListener('keydown', handleKey as EventListener);
 
 	return {
 		destroy() {
-			node.removeEventListener('keydown', handleKey as EventListener);
+			element.removeEventListener('keydown', handleKey as EventListener);
 		}
 	};
 }
 
-export function longPress(node: HTMLButtonElement, threshold = 50) {
+interface Attribute {
+	'on:longPress'?: (event: CustomEvent) => void
+}
+
+// TODO: correct the any threshold type to number
+export const longPress: Action<HTMLElement, any, Attribute> = (element, threshold = 100) => {
 	const handle_mousedown = () => {
 		
 		const timeout = setInterval(() => {
-			node.dispatchEvent(new CustomEvent('longPress'));
+			element.dispatchEvent(new CustomEvent('longPress'));
 		}, threshold);
 		
 		const cancel = () => {
 			clearInterval(timeout);
-			node.removeEventListener('mousemove', cancel);
-			node.removeEventListener('mouseup', cancel);
+			element.removeEventListener('mousemove', cancel as EventListener);
+			element.removeEventListener('mouseup', cancel as EventListener);
 		};
 		
-		node.addEventListener('mousemove', cancel);
-		node.addEventListener('mouseup', cancel);
+		element.addEventListener('mousemove', cancel);
+		element.addEventListener('mouseup', cancel);
 	}
 	
-	node.addEventListener('mousedown', handle_mousedown);
+	element.addEventListener('mousedown', handle_mousedown as EventListener);
 	
 	return {
 		destroy() {
-			node.removeEventListener('mousedown', handle_mousedown);
+			element.removeEventListener('mousedown', handle_mousedown as EventListener);
 		}
 	};
 }

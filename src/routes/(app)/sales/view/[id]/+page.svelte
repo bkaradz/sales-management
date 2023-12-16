@@ -21,7 +21,6 @@
 	import { enhance } from '$app/forms';
 	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
 	import currency from 'currency.js';
-	import { multiply } from 'lodash-es';
 
 	export let data: PageData;
 

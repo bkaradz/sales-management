@@ -18,7 +18,9 @@
 
 		let fileLink = document.createElement('a');
 		fileLink.href = fileURL;
-		fileLink.download = `${'production'}.pdf`;
+		fileLink.setAttribute('target','_blank') 
+		// fileLink.download = `${'production'}.pdf`;
+		// fileLink.setAttribute('name', 'test.pdf')
 		fileLink.click();
 	}
 
@@ -32,8 +34,12 @@
 	let pressed = false;
 
 	let counter = 0
+
 	const add = () => {
 		counter = counter + 1
+	}
+	const subtract = () => {
+		counter = counter - 1
 	}
 </script>
 
@@ -48,16 +54,12 @@
 	<button class="btn btn-success">Print</button>
 </form>
 
-<button class="btn btn-primary mb-4" use:longPress on:longPress="{() => add()}">
-	long press me
+<button class="btn btn-primary mb-4" on:longPress={() => add()} use:longPress>
+	long press me add
 </button>
 
-<button class="btn btn-primary mb-4" use:longPress={2000} on:longPress="{e => pressed = true}">
-	long press me (for two seconds)
-</button>
-
-<button class="btn btn-primary mb-4" on:click="{() => pressed = false}">
-	reset
+<button class="btn btn-primary mb-4" on:longPress={() => subtract()} use:longPress>
+	long press me subtract
 </button>
 
 <div>

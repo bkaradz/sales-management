@@ -141,7 +141,7 @@ export const payments_audit = pgTable('payments_audit', {
   customer_id: integer('customer_id').notNull(),
   exchange_rate_id: integer('exchange_rate_id').notNull(),
   default_currency_equivalent: numeric('default_currency_equivalent', { precision: 100, scale: 10 }).notNull(),
-  amount_tendered: numeric('amount_tendered', { precision: 100, scale: 10 }).notNull(),
+  cash_paid: numeric('cash_paid', { precision: 100, scale: 10 }).notNull(),
   payment_method: text('payment_method').notNull(),
   currency: text('currency').notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),

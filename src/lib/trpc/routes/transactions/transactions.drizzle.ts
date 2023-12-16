@@ -129,7 +129,7 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
     transactionOrdersProducts.forEach((item) => nonEmbroideryProductsIdArray.set(item.id, item))
 
     // Insert transaction 
-		const transactionId = await db.insert(transactions).values({ user_id: ctx.session.user.userId, ...input, amount_tendered: input.amount_tendered.toString() }).returning({id: transactions.id});
+		const transactionId = await db.insert(transactions).values({ user_id: ctx.session.user.userId, ...input, cash_paid: input.cash_paid.toString() }).returning({id: transactions.id});
 
     // Update Orders payment_status as paid and sales_status to Invoiced
     await db.update(shop_orders).set({ payment_status: 'Paid', sales_status: 'Invoice' }).where(inArray(shop_orders.id, input.selected_orders_ids))
@@ -151,7 +151,7 @@ export const createTransaction = async (input: transactionInput, ctx: Context) =
     })
 
     // Update customer orders_totals and total_receipts
-		const amountTendered = input.amount_tendered
+		const amountTendered = input.cash_paid
 
 		const customerDeposit = customer.amount
 		

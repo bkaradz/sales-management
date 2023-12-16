@@ -16,12 +16,8 @@ export const load = (async (event) => {
 	const search = event.url.searchParams.get('search')
 	if (search) query = { ...query, search }
 
-	const products = async (query: any) => {
-		return await router.createCaller(await createContext(event)).products.getProducts(query);
-	}
-
 	const [productsPromise] = await Promise.all([
-		router.createCaller(await createContext(event)).products.getProducts(query),
+		await router.createCaller(await createContext(event)).products.getProducts(query),
 	]);
 
 	return {

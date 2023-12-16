@@ -6,6 +6,11 @@ declare global {
 		interface Locals {
 			auth: import("lucia").AuthRequest;
 		}
+
+		interface Attribute {
+			'on:longPress'?: (event: CustomEvent) => void
+		}
+		
 		// interface PageData {}
 		// interface Platform {}
 	}

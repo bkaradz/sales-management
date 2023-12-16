@@ -2,7 +2,7 @@
 	import { svgBin, svgDropdown, svgSearch } from '$lib/assets/svgLogos';
 	import { calcProductPrices, format } from '$lib/utility/calculateCart.util';
 	import type { ActionData, PageData } from './$types';
-	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import { longPress, selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
 	import {
@@ -26,7 +26,6 @@
 
 	export let data: PageData;
 	export let form: ActionData;
-
 
 	$: if (form?.success) {
 		invalidateAll();
@@ -95,7 +94,6 @@
 	};
 
 	let isModalOpen = false;
-
 </script>
 
 <svelte:head>
@@ -108,12 +106,14 @@
 	<div
 		class="xl:w-72 w-48 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 h-full overflow-y-auto lg:block hidden p-5"
 	>
-	<div class="text-base text-gray-400 tracking-wider">Customer</div>
-	<button type="submit" class="h-8 px-3 rounded-md shadow text-white bg-blue-500 my-2 w-full"
-	on:click={() => isModalOpen = true}
-	>
-		Add Contact
-	</button>
+		<div class="text-base text-gray-400 tracking-wider">Customer</div>
+		<button
+			type="submit"
+			class="h-8 px-3 rounded-md shadow text-white bg-blue-500 my-2 w-full"
+			on:click={() => (isModalOpen = true)}
+		>
+			Add Contact
+		</button>
 		<div class="mt-2 relative">
 			<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
 				<input
@@ -152,7 +152,11 @@
 							<div class="text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md">
 								<p>Amount</p>
 							</div>
-							<div class="ml-auto text-xs text-gray-500 {+user.amount < 0 ? 'text-red-500' : 'text-green-500'}">
+							<div
+								class="ml-auto text-xs text-gray-500 {+user.amount < 0
+									? 'text-red-500'
+									: 'text-green-500'}"
+							>
 								{format(
 									converter(user.amount, $selectedRateStore, $exchangeRatesStore),
 									$selectedRateStore
@@ -279,7 +283,9 @@
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
 								Units
 							</th>
-							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right">
+							<th
+								class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800 text-right"
+							>
 								Unit Price
 							</th>
 							<th class="font-normal px-3 pt-0 pb-3 border-b border-gray-200 dark:border-gray-800">
@@ -316,7 +322,9 @@
 												tabindex="0"
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
-												<span class="ml-2">{productsOrderDetails.orders_details.garment_placement}</span>
+												<span class="ml-2"
+													>{productsOrderDetails.orders_details.garment_placement}</span
+												>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -349,7 +357,9 @@
 												tabindex="0"
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
-												<span class="ml-2">{productsOrderDetails.orders_details.embroidery_type}</span>
+												<span class="ml-2"
+													>{productsOrderDetails.orders_details.embroidery_type}</span
+												>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -416,7 +426,9 @@
 								>
 									{format(
 										converter(
-											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply($cartStore.get(key)?.orders_details.quantity || '0'),
+											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply(
+												$cartStore.get(key)?.orders_details.quantity || '0'
+											),
 											$selectedRateStore,
 											$exchangeRatesStore
 										),
@@ -429,6 +441,8 @@
 								>
 									<div class="flex items-center">
 										<button
+											on:longPress={() => cartStore.subtract(productsOrderDetails.product)}
+											use:longPress
 											on:click={() => cartStore.subtract(productsOrderDetails.product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
@@ -440,6 +454,8 @@
 											</span>
 										</div>
 										<button
+											on:longPress={() => cartStore.add(productsOrderDetails.product)}
+											use:longPress
 											on:click={() => cartStore.add(productsOrderDetails.product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
@@ -484,7 +500,10 @@
 								<span>Vat</span>
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
-								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore), $selectedRateStore)}
+								{format(
+									converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore),
+									$selectedRateStore
+								)}
 							</td>
 							{#each [1, 2] as item (item)}
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
@@ -558,7 +577,11 @@
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 											Amount
 										</div>
-										<div class="ml-auto text-xs text-gray-500 {+$customerSelectedStore.amount < 0 ? 'text-red-500' : 'text-green-500'}">
+										<div
+											class="ml-auto text-xs text-gray-500 {+$customerSelectedStore.amount < 0
+												? 'text-red-500'
+												: 'text-green-500'}"
+										>
 											{format(
 												converter(
 													$customerSelectedStore.amount,
@@ -609,14 +632,14 @@
 									>
 										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 											Delivery Date
-											
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											<input 
-											class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
-											use:datePicker={options} 
-											bind:value={deliveryDate} 
-											readonly />
+											<input
+												class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+												use:datePicker={options}
+												bind:value={deliveryDate}
+												readonly
+											/>
 										</div>
 									</div>
 									<div
@@ -844,7 +867,10 @@
 												<span class="ml-0.5">({value.currency})</span>
 											</div>
 											<div class="ml-auto text-xs text-gray-500">
-												{format(converter('1', value.currency, $exchangeRatesStore), $selectedRateStore)}
+												{format(
+													converter('1', value.currency, $exchangeRatesStore),
+													$selectedRateStore
+												)}
 											</div>
 										</div>
 									{/each}
@@ -857,7 +883,6 @@
 		{/if}
 	</div>
 </div>
-
 
 <dialog class="modal" class:modal-open={isModalOpen}>
 	<div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">

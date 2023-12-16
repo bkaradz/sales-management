@@ -10,29 +10,29 @@ import type { GetContactsById } from '$lib/trpc/routes/contacts/contacts.drizzle
 export const load = (async (event) => {
 
 	const processContacts = (contactResults: GetContactsById | undefined) => {
-		
+
+		if (!contactResults) throw new Error("Contact results not found");
+
 		const contact = {
 			...contactResults?.contact,
 			phones: '',
 			emails: '',
 			address: ''
 		}
-	
-		if (contactResults) {
-	
-			contact.phones = contactResults?.phones.map(phone => phone.phone).toString() || ''
-	
-			contact.emails = contactResults?.emails.map(email => email.email).toString() || ''
-	
-			contact.address = contactResults?.address.map(address => address.address).toString() || ''
-		}
-	}
 
+		contact.phones = contactResults?.phones.map(phone => phone.phone).join(',') || ''
+
+		contact.emails = contactResults?.emails.map(email => email.email).join(',') || ''
+
+		contact.address = contactResults?.address.map(address => address.address).join(',') || ''
+
+		return contact
+
+	}
 
 	const [contactPromise] = await Promise.all([
 		await router.createCaller(await createContext(event)).contacts.getById(+event.params.id),
 	]);
-
 
 	return {
 		results: processContacts(contactPromise)

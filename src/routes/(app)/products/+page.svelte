@@ -10,7 +10,7 @@
 		svgPen,
 		svgSearch
 	} from '$lib/assets/svgLogos';
-	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import { longPress, selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import {
@@ -64,7 +64,10 @@
 						<div class="text-right mr-8">
 							<div class="text-xs text-gray-400 dark:text-gray-400">Tax:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
-								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore), $selectedRateStore)}
+								{format(
+									converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore),
+									$selectedRateStore
+								)}
 							</div>
 						</div>
 						<div class="text-right mr-8">
@@ -263,7 +266,9 @@
 								>
 									{format(
 										converter(
-											currency($cartStore.get(product.id)?.orders_details?.unit_price || '0').multiply($cartStore.get(product.id)?.orders_details?.quantity || '0'),
+											currency(
+												$cartStore.get(product.id)?.orders_details?.unit_price || '0'
+											).multiply($cartStore.get(product.id)?.orders_details?.quantity || '0'),
 											$selectedRateStore,
 											$exchangeRatesStore
 										),
@@ -278,6 +283,8 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
 										<button
+											on:longPress={() => cartStore.subtract(product)}
+											use:longPress
 											on:click={() => cartStore.subtract(product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
@@ -291,6 +298,8 @@
 											</span>
 										</div>
 										<button
+											on:longPress={() => cartStore.add(product)}
+											use:longPress
 											on:click={() => cartStore.add(product)}
 											class="dark:bg-slate-600 bg-slate-200 px-2 hover:bg-blue-500"
 										>
@@ -334,7 +343,7 @@
 		<h3 class="font-bold text-lg">Are you sure you want to delete product !!!</h3>
 		<div class="py-4 my-2">
 			<p class="py-4">
-				Id:	
+				Id:
 				<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 					{deletedProduct.productId}
 				</span>

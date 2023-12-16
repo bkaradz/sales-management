@@ -26,7 +26,7 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
 
-    const pricelist = async (pricelistArray: PricelistsAll | undefined) => {
+    const pricelist = (pricelistArray: PricelistsAll | undefined) => {
 
         if (!pricelistArray) throw new Error("Pricelists not found");
 
@@ -37,8 +37,7 @@ export const load = (async (event) => {
         return pricelistMap
     };
 
-    const exchangeRate = async (exchangeRateArray: ratesAll | undefined) => {
-        // const exchangeRateArray = await router.createCaller(await createContext(event)).rates.getAllRates();
+    const exchangeRate = (exchangeRateArray: ratesAll | undefined) => {
 
         if (!exchangeRateArray) throw new Error("Exchange Rate not found");
 

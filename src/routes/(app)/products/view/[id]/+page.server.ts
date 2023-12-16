@@ -15,8 +15,8 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const [productPromise, shopOrdersPromise] = await Promise.all([
-        await router.createCaller(await createContext(event)).shop_orders.getOrdersByProductId({ ...query, product_id: parseInt(event.params.id, 10) }),
         await router.createCaller(await createContext(event)).products.getById(parseInt(event.params.id, 10)),
+        await router.createCaller(await createContext(event)).shop_orders.getOrdersByProductId({ ...query, product_id: parseInt(event.params.id, 10) }),
     ]);
 
     return {

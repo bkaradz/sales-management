@@ -7,7 +7,7 @@ import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
 
-    const pricelist = async (pricelistArray: PricelistsAll | undefined) => {
+    const pricelist = (pricelistArray: PricelistsAll | undefined) => {
 
         if (!pricelistArray) throw new Error("Pricelists not found");
 
@@ -18,7 +18,7 @@ export const load = (async (event) => {
         return pricelistMap
     };
 
-    const exchangeRate = async (exchangeRateArray: ratesAll | undefined) => {
+    const exchangeRate = (exchangeRateArray: ratesAll | undefined) => {
 
         if (!exchangeRateArray) throw new Error("Exchange Rate not found");
 
@@ -35,7 +35,7 @@ export const load = (async (event) => {
         await router.createCaller(await createContext(event)).shop_orders.getById(parseInt(event.params.id, 10)),
         await router.createCaller(await createContext(event)).pricelists.getAllPricelists(),
         await router.createCaller(await createContext(event)).rates.getAllRates()
-      ]);
+    ]);
 
     return {
         results: shopOrdersPromise,
