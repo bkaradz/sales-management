@@ -49,10 +49,7 @@ export const salesStatus = ['Quotation', 'Sales Order', 'Invoice', 'Receipt', 'C
 export type SalesStatusUnion = typeof salesStatus[number];
 
 export const paymentMethod = [
-  'Cash USD',
-  'Cash Rand',
-  'Cash Pula',
-  'Cash Bonds',
+  'Cash',
   'Ecocash',
   'Swipe',
   'Banc ABC',

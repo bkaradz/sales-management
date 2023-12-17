@@ -4,12 +4,12 @@ export const exchangeRates = [
 		default: false,
 		exchange_rate_details: [
 			{
-				name: 'United States Dollar',
+				name: 'US Dollar',
 				currency: 'USD',
 				rate: 1
 			},
 			{
-				name: 'South African Rand',
+				name: 'SA Rand',
 				currency: 'ZAR',
 				rate: 20
 			},
@@ -19,12 +19,12 @@ export const exchangeRates = [
 				rate: 13
 			},
 			{
-				name: 'Zimbabwe Bond',
+				name: 'Zim Bond',
 				currency: 'ZWB',
 				rate: 1000
 			},
 			{
-				name: 'Zimbabwe RTGS',
+				name: 'Zim RTGS',
 				currency: 'ZWR',
 				rate: 6100
 			}
@@ -35,12 +35,12 @@ export const exchangeRates = [
 		default: true,
 		exchange_rate_details: [
 			{
-				name: 'United States Dollar',
+				name: 'US Dollar',
 				currency: 'USD',
 				rate: 1
 			},
 			{
-				name: 'South African Rand',
+				name: 'SA Rand',
 				currency: 'ZAR',
 				rate: 20
 			},
@@ -50,12 +50,12 @@ export const exchangeRates = [
 				rate: 15
 			},
 			{
-				name: 'Zimbabwe Bond',
+				name: 'Zim Bond',
 				currency: 'ZWB',
 				rate: 7000
 			},
 			{
-				name: 'Zimbabwe RTGS',
+				name: 'Zim RTGS',
 				currency: 'ZWR',
 				rate: 7000
 			}

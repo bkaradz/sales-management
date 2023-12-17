@@ -1,7 +1,7 @@
 import { router } from "$lib/trpc/t";
 import { z } from "zod";
 import { protectedProcedure } from '$lib/trpc/middleware/auth';
-import { createOrder, deleteById, getById, changeSalesStatusById, getOrdersByUserId, getOrdersByProductId, getOrdersAwaitingPaymentByUserId, getOrdersLine, getOrdersAwaitingPaymentByOrderId } from "./orders.drizzle";
+import { createOrder, deleteById, getById, changeSalesStatusById, getOrdersByUserId, getOrdersByProductId, getOrdersAwaitingPaymentByUserId, getOrdersLine } from "./orders.drizzle";
 import { PaymentStatusZod, SalesStatusZod } from "$lib/validation/types.zod.typescript";
 
 
@@ -14,9 +14,6 @@ export const shop_orders = router({
     }),
     getOrdersAwaitingPaymentByUserId: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
         return await getOrdersAwaitingPaymentByUserId(input, ctx);
-    }),
-    getOrdersAwaitingPaymentByOrderId: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
-        return await getOrdersAwaitingPaymentByOrderId(input, ctx);
     }),
     getOrdersByProductId: protectedProcedure.input(z.any()).query(async ({ input, ctx }) => {
         return await getOrdersByProductId(input, ctx);

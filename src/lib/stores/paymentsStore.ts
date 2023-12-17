@@ -1,6 +1,6 @@
 import type { Contacts, Orders } from '$lib/server/drizzle/schema/schema';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
-import type { PaymentMethodUnion } from '$lib/utility/lists.utility';
+import type { PaymentMethodUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import type currency from 'currency.js';
 import { writable, derived } from 'svelte/store';
 
@@ -80,7 +80,7 @@ export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, 
 })
 
 function paymentMethodSelected() {
-	const { subscribe, set, update } = writable<PaymentMethodUnion>('Cash USD');
+	const { subscribe, set, update } = writable<PaymentMethodUnion>('Cash');
 
 	return {
 		subscribe,
@@ -91,11 +91,29 @@ function paymentMethodSelected() {
 				}
 			}
 		},
-		reset: () => set('Cash USD')
+		reset: () => set('Cash')
 	};
 }
 
 export const paymentMethodSelectedStore = paymentMethodSelected();
+
+function paymentCurrency() {
+	const { subscribe, set, update } = writable<string>('US Dollar');
+
+	return {
+		subscribe,
+		add: (paymentCurrency: currencyTypeUnion) => {
+			if (paymentCurrency) {
+				if (paymentCurrency) {
+					update(() => paymentCurrency)
+				}
+			}
+		},
+		reset: () => set('US Dollar')
+	};
+}
+
+export const paymentCurrencyStore = paymentCurrency();
 
 
 

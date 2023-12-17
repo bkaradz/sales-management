@@ -6,11 +6,6 @@ declare global {
 		interface Locals {
 			auth: import("lucia").AuthRequest;
 		}
-
-		interface Attribute {
-			'on:longPress'?: (event: CustomEvent) => void
-		}
-		
 		// interface PageData {}
 		// interface Platform {}
 	}
@@ -21,6 +16,12 @@ declare global {
 			full_name: string
 			active: boolean
 		};
+	}
+	namespace svelte.JSX {
+		interface HTMLAttributes<T> {
+			// onclickOutside?: (e: CustomEvent) => void
+			onlongPress?: (event: CustomEvent) => void
+		}
 	}
 }
 

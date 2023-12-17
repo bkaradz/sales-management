@@ -18,6 +18,7 @@
 	import {
 		amountTenderedStore,
 		customerStore,
+		paymentCurrencyStore,
 		paymentMethodSelectedStore,
 		selectedOrdersPaymentStore,
 		selectedOrdersPaymentTotals
@@ -100,6 +101,8 @@
 			}
 		}
 	}
+
+	let payment_currency = 'USD'
 </script>
 
 <svelte:head>
@@ -144,11 +147,15 @@
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Balance</div>
-						<div class="ml-auto text-xs text-gray-500">
+						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Amount</div>
+						<div 
+						class="ml-auto text-xs text-gray-500 {+data.contact.contact.amount < 0
+							? 'text-red-500'
+							: 'text-green-500'}"
+						>
 							{format(
 								converter(
-									data.contact.contact.orders_totals,
+									data.contact.contact.amount,
 									$selectedRateStore,
 									$exchangeRatesStore
 								),
@@ -215,7 +222,7 @@
 	<!-- Orders Table -->
 
 	<div class="flex-grow flex overflow-x-hidden">
-		{#if data.shop_orders}
+		{#if data.results}
 			<div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
 				<div
 					class="z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
@@ -224,34 +231,6 @@
 						<div class="flex items-center text-3xl text-gray-900 dark:text-white">Orders</div>
 
 						<div class="flex">
-							<div class="dropdown dropdown-bottom dropdown-end mr-8">
-								<button
-									tabindex="0"
-									class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
-								>
-									<span class="ml-2">{$paymentMethodSelectedStore}</span>
-									{@html svgDropdown}
-								</button>
-								<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-								<ul
-									tabindex="0"
-									class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
-								>
-									{#each paymentMethod as type (type)}
-										{#if !(type === $paymentMethodSelectedStore)}
-											<li>
-												<button
-													on:click={() => paymentMethodSelectedStore.add(type)}
-													class="rounded-sm"
-												>
-													{type}
-												</button>
-											</li>
-										{/if}
-									{/each}
-								</ul>
-							</div>
-
 							<form action="?/submit" method="post" use:enhance>
 								<input
 									hidden
@@ -349,11 +328,11 @@
 							</button>
 							<div class="relative ml-3">
 								<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
-									<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
+									<input type="hidden" name="limit" value={data.results.pagination.limit} />
 									<input
 										type="hidden"
 										name="page"
-										value={data.shop_orders.pagination.previous?.page || 1}
+										value={data.results.pagination.previous?.page || 1}
 									/>
 									<input
 										use:selectTextOnFocus
@@ -371,27 +350,27 @@
 							<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 								<div>
 									<span class="mr-3"
-										>Page {data.shop_orders.pagination.page} of {data.shop_orders.pagination
+										>Page {data.results.pagination.page} of {data.results.pagination
 											.totalPages}</span
 									>
 									<form class="inline-block" method="get">
 										<input
 											type="hidden"
 											name="page"
-											value={data.shop_orders.pagination.previous?.page || 1}
+											value={data.results.pagination.previous?.page || 1}
 										/>
-										<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
+										<input type="hidden" name="limit" value={data.results.pagination.limit} />
 										<input
 											type="hidden"
 											name="search"
-											value={data.shop_orders.pagination.search || ''}
+											value={data.results.pagination.search || ''}
 										/>
 										<button
 											type="submit"
-											class="{!data.shop_orders.pagination.previous
+											class="{!data.results.pagination.previous
 												? 'cursor-not-allowed'
 												: ''} inline-flex mr-2 items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-											disabled={!data.shop_orders.pagination.previous}
+											disabled={!data.results.pagination.previous}
 										>
 											{@html svgBackArrow}
 										</button>
@@ -400,20 +379,20 @@
 										<input
 											type="hidden"
 											name="page"
-											value={data.shop_orders.pagination.next?.page || 1}
+											value={data.results.pagination.next?.page || 1}
 										/>
-										<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
+										<input type="hidden" name="limit" value={data.results.pagination.limit} />
 										<input
 											type="hidden"
 											name="search"
-											value={data.shop_orders.pagination.search || ''}
+											value={data.results.pagination.search || ''}
 										/>
 										<button
 											type="submit"
-											class="{!data.shop_orders.pagination.next
+											class="{!data.results.pagination.next
 												? 'cursor-not-allowed'
 												: ''} inline-flex items-center h-8 w-8 justify-center text-gray-400 rounded-md shadow border border-gray-200 dark:border-gray-800 leading-none py-0"
-											disabled={!data.shop_orders.pagination.next}
+											disabled={!data.results.pagination.next}
 										>
 											{@html svgForwardArrow}
 										</button>
@@ -426,13 +405,13 @@
 											use:selectTextOnFocus
 											type="number"
 											class="appearance-none h-8 mr-2 w-20 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white rounded-md text-sm"
-											value={data.shop_orders.pagination.limit}
+											value={data.results.pagination.limit}
 											name="limit"
 											on:input={debounceSearch}
 											on:change={debounceSearch}
 										/>
 									</form>
-									<span class="">of {data.shop_orders.pagination.totalRecords} entries</span>
+									<span class="">of {data.results.pagination.totalRecords} entries</span>
 								</div>
 							</div>
 						</div>
@@ -486,7 +465,7 @@
 								</tr>
 							</thead>
 							<tbody class="text-gray-600 dark:text-gray-100">
-								{#each data.shop_orders.shop_orders as ordersArray (ordersArray.shop_orders.id)}
+								{#each data?.results?.shop_orders as ordersArray (ordersArray?.id)}
 									<tr class="hover:bg-gray-100 hover:dark:bg-gray-500">
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
@@ -494,8 +473,8 @@
 											<input
 												name="selected"
 												type="checkbox"
-												checked={$selectedOrdersPaymentStore.has(ordersArray.shop_orders.id)}
-												on:click={(event) => changeSelection(event, ordersArray.shop_orders)}
+												checked={$selectedOrdersPaymentStore.has(ordersArray.id)}
+												on:click={(event) => changeSelection(event, ordersArray)}
 											/>
 										</td>
 										<td
@@ -504,7 +483,7 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.shop_orders.id}
+												{ordersArray.id}
 											</span>
 										</td>
 										<td
@@ -513,7 +492,7 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.shop_orders.pricelist_id}
+												{ordersArray.pricelist_id}
 											</span>
 										</td>
 										<td
@@ -522,7 +501,7 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.shop_orders.exchange_rates_id}
+												{ordersArray.exchange_rates_id}
 											</span>
 										</td>
 										<td
@@ -531,7 +510,7 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.shop_orders.sales_status}
+												{ordersArray.sales_status}
 											</span>
 										</td>
 										<td
@@ -540,20 +519,20 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.shop_orders.payment_status}
+												{ordersArray.payment_status}
 											</span>
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
-											{ordersArray.shop_orders.total_products}
+											{ordersArray.total_products}
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
 											{format(
 												converter(
-													ordersArray.shop_orders.sales_amount,
+													ordersArray.sales_amount,
 													$selectedRateStore,
 													$exchangeRatesStore
 												),
@@ -577,37 +556,83 @@
 								</div>
 
 								<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
-									<div class="grid grid-cols-3 gap-4">
-										<div class="col-span-2 grid grid-cols-3 bg-slate-950 px-4 rounded-md">
-											<span>1</span>
-											<span>2</span>
-											<span>3</span>
-										</div>
-										<div class="">
+									<div class="grid grid-cols-3">
+										<input
+											type="number"
+											class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
+											id="cash_paid"
+											name="cash_paid"
+											placeholder="Enter Cash Paid"
+										/>
+
+										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
-												class="h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full"
+												tabindex="0"
+												class="flex items-center h-8 px-3 rounded-r-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
-												Select Currency
+												<span class="ml-2">
+													{$paymentCurrencyStore}
+												</span>
+												{@html svgDropdown}
 											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
+											>
+												{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
+													{#if !($paymentCurrencyStore === value.name)}
+														<li>
+															<button
+																on:click={() => paymentCurrencyStore.add(value.name)}
+																class="rounded-sm"
+															>
+																{value.name}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
 										</div>
 									</div>
 								</div>
-
 								<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
 									<div class="grid grid-cols-3">
-										<!-- <div class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md"> -->
-											<input
-												type="text"
-												class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
-												id="phone"
-												name="phone"
-												placeholder="Phone"
-											/>
-										<!-- </div> -->
-										<div class="">
-											<div class="h-8 px-3 rounded-r-md shadow text-white bg-blue-500 w-full">
-												$100.00
-											</div>
+										<input
+											disabled
+											type="number"
+											class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
+											id="cash_paid"
+											name="cash_paid"
+											placeholder="Payment Method"
+										/>
+
+										<div class="dropdown dropdown-bottom dropdown-end mr-8 w-full">
+											<button
+												tabindex="0"
+												class="flex items-center h-8 px-3 rounded-r-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
+											>
+												<span class="ml-2">{$paymentMethodSelectedStore}</span>
+												{@html svgDropdown}
+											</button>
+											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+											<ul
+												tabindex="0"
+												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-900 rounded-sm w-52 mt-4"
+											>
+												{#each paymentMethod as type (type)}
+													{#if !(type === $paymentMethodSelectedStore)}
+														<li>
+															<button
+																on:click={() => paymentMethodSelectedStore.add(type)}
+																class="rounded-sm"
+															>
+																{type}
+															</button>
+														</li>
+													{/if}
+												{/each}
+											</ul>
 										</div>
 									</div>
 								</div>

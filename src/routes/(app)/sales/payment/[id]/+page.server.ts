@@ -19,27 +19,16 @@ export const load = (async (event) => {
     const search = event.url.searchParams.get('search')
     if (search) query = { ...query, search }
 
-    const shop_orders = async (query: any) => {
-        if (event.params.path === 'contacts') {
-            return await router.createCaller(await createContext(event)).shop_orders.getOrdersAwaitingPaymentByUserId({ ...query, id: parseInt(event.params.id, 10) });
-        }
-        if (event.params.path === 'sales') {
-            return await router.createCaller(await createContext(event)).shop_orders.getOrdersAwaitingPaymentByOrderId({ ...query, id: parseInt(event.params.id, 10) });
-        }
-    }
-
-    const contact = async () => {
-        return await router.createCaller(await createContext(event)).contacts.getById(parseInt(event.params.id, 10));
-    };
-
     const [shopOrdersPromise, contactPromise] = await Promise.all([
-        await shop_orders(query),
+        await router.createCaller(await createContext(event)).shop_orders.getOrdersAwaitingPaymentByUserId({ ...query, id: parseInt(event.params.id, 10) }),
         await router.createCaller(await createContext(event)).contacts.getById(parseInt(event.params.id, 10)),
     ]);
 
+    if (!shopOrdersPromise) throw new Error("Order not found");
+
     return {
         contact: contactPromise,
-        shop_orders: shopOrdersPromise
+        results: shopOrdersPromise
     };
 }) satisfies PageServerLoad;
 
