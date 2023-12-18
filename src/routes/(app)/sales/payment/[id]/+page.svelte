@@ -75,10 +75,10 @@
 		}
 	};
 
-	const changeAmountTenderedStore = (e: Event) => {
-		const target = e.target as HTMLInputElement;
-		amountTenderedStore.add(+target.value);
-	};
+	// const changeAmountTenderedStore = (e: Event) => {
+	// 	const target = e.target as HTMLInputElement;
+	// 	amountTenderedStore.add(+target.value);
+	// };
 
 	export let form;
 
@@ -102,7 +102,36 @@
 		}
 	}
 
-	let payment_currency = 'USD'
+	let paymentPart = 0;
+
+	const amountTendered = () => {
+		const user_id = data?.user?.id
+		const customer_id = $customerStore?.id
+
+		if (!user_id) {
+			toasts.add({
+					message: `User Not found`,
+					type: 'error'
+				});
+				return
+		}
+		if (!customer_id) {
+			toasts.add({
+					message: `Please select customer`,
+					type: 'error'
+				});
+				return
+		}
+		amountTenderedStore.add({
+			user_id,
+			customer_id,
+			exchange_rate_id: $exchangeRatesStore.exchange_rates.id,
+			payment_method: $paymentMethodSelectedStore,
+			currency: $paymentCurrencyStore,
+			cash_paid: paymentPart.toString(),
+			default_currency_equivalent: '0'
+		});
+	};
 </script>
 
 <svelte:head>
@@ -148,17 +177,13 @@
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Amount</div>
-						<div 
-						class="ml-auto text-xs text-gray-500 {+data.contact.contact.amount < 0
-							? 'text-red-500'
-							: 'text-green-500'}"
+						<div
+							class="ml-auto text-xs text-gray-500 {+data.contact.contact.amount < 0
+								? 'text-red-500'
+								: 'text-green-500'}"
 						>
 							{format(
-								converter(
-									data.contact.contact.amount,
-									$selectedRateStore,
-									$exchangeRatesStore
-								),
+								converter(data.contact.contact.amount, $selectedRateStore, $exchangeRatesStore),
 								$selectedRateStore
 							)}
 						</div>
@@ -558,6 +583,7 @@
 								<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
 									<div class="grid grid-cols-3">
 										<input
+											bind:value={paymentPart}
 											type="number"
 											class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
 											id="cash_paid"
@@ -571,7 +597,8 @@
 												class="flex items-center h-8 px-3 rounded-r-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
 												<span class="ml-2">
-													{$paymentCurrencyStore}
+													{$exchangeRatesStore.exchange_rate_details.get($paymentCurrencyStore)
+														?.name}
 												</span>
 												{@html svgDropdown}
 											</button>
@@ -581,10 +608,10 @@
 												class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
-													{#if !($paymentCurrencyStore === value.name)}
+													{#if !($paymentCurrencyStore === key)}
 														<li>
 															<button
-																on:click={() => paymentCurrencyStore.add(value.name)}
+																on:click={() => paymentCurrencyStore.add(key)}
 																class="rounded-sm"
 															>
 																{value.name}
@@ -636,6 +663,54 @@
 										</div>
 									</div>
 								</div>
+								<button
+									class="h-8 px-3 w-full mb-6 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400"
+									on:click={() => amountTendered()}
+								>
+									Add
+								</button>
+								{#each $amountTenderedStore.entries() as [key, value] (key)}
+									<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
+										<div class="grid grid-cols-3">
+											<input
+												disabled
+												type="number"
+												class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
+												id="cash_paid"
+												name="cash_paid"
+												placeholder="Payment Method"
+											/>
+
+											<div class="dropdown dropdown-bottom dropdown-end mr-8 w-full">
+												<button
+													tabindex="0"
+													class="flex items-center h-8 px-3 rounded-r-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
+												>
+													<span class="ml-2">{$paymentMethodSelectedStore}</span>
+													{@html svgDropdown}
+												</button>
+												<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+												<ul
+													tabindex="0"
+													class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-900 rounded-sm w-52 mt-4"
+												>
+													{#each paymentMethod as type (type)}
+														{#if !(type === $paymentMethodSelectedStore)}
+															<li>
+																<button
+																	on:click={() => paymentMethodSelectedStore.add(type)}
+																	class="rounded-sm"
+																>
+																	{type}
+																</button>
+															</li>
+														{/if}
+													{/each}
+												</ul>
+											</div>
+										</div>
+									</div>
+								{/each}
 
 								<!--Grand Total-->
 								<div class="mb-8">

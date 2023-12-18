@@ -1,8 +1,9 @@
-import type { Contacts, Orders } from '$lib/server/drizzle/schema/schema';
+import type { Contacts, NewPaymentsDetails, Orders } from '$lib/server/drizzle/schema/schema';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
 import type { PaymentMethodUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import type currency from 'currency.js';
 import { writable, derived } from 'svelte/store';
+import { v4 as uuidv4 } from 'uuid';
 
 function selectedOrdersPayment() {
 	const { subscribe, set, update } = writable<Map<number, Orders>>(new Map);
@@ -31,15 +32,27 @@ function selectedOrdersPayment() {
 
 export const selectedOrdersPaymentStore = selectedOrdersPayment();
 
+
+
 function amountTendered() {
-	const { subscribe, set, update } = writable<number>(0);
+	const { subscribe, set, update } = writable<Map<string, NewPaymentsDetails>>(new Map());
 
 	return {
 		subscribe,
-		add: (amount: number) => {
-			update(() => amount)
+		add: (amount: NewPaymentsDetails) => {
+			const key = uuidv4()
+			update((paymentStore) => {
+				paymentStore.set(key, amount)
+				return paymentStore
+			})
 		},
-		reset: () => set(0)
+		remove: (key: string) => {
+			update((paymentStore) => {
+				paymentStore.delete(key)
+				return paymentStore
+			})
+		},
+		reset: () => set(new Map())
 	};
 }
 
@@ -98,7 +111,7 @@ function paymentMethodSelected() {
 export const paymentMethodSelectedStore = paymentMethodSelected();
 
 function paymentCurrency() {
-	const { subscribe, set, update } = writable<string>('US Dollar');
+	const { subscribe, set, update } = writable<currencyTypeUnion>('USD');
 
 	return {
 		subscribe,
@@ -109,7 +122,7 @@ function paymentCurrency() {
 				}
 			}
 		},
-		reset: () => set('US Dollar')
+		reset: () => set('USD')
 	};
 }
 

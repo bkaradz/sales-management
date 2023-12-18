@@ -2,35 +2,10 @@
 	import { enhance } from '$app/forms';
 	import { svgSearch } from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import puppeteer from 'puppeteer';
 
 	let isModalOpen = false;
 
-	// const playwrightPdf = async () => {
-	// 	const browser = await playwright.chromium.launch();
-	// 	const context = await browser.newContext();
-	// 	const page = await context.newPage();
-	// 	await page.goto('https://www.google.com/search?q=Google');
-	// 	await page.pdf({ path: `document.pdf` });
-	// 	await browser.close();
-	// };
-
-	const puppeteerPDF = async () => {
-		const browser = await puppeteer.launch();
-		const page = await browser.newPage();
-		await page.goto('https://www.google.com/search?q=Google');
-		await page.pdf({ path: 'document.pdf' });
-		await browser.close();
-	};
 </script>
-
-<!-- <svelte:head>
-	<link href="https://cdn.jsdelivr.net/npm/daisyui@2/dist/full.css" rel="stylesheet" type="text/css" />
-	<script src="https://cdn.tailwindcss.com"></script>
-</svelte:head> -->
-
-<!-- The button to open modal -->
-<!-- 🔵 set true on click -->
 
 <form
 	id="myForm"
@@ -76,7 +51,3 @@
 		</div>
 	</div>
 </dialog>
-
-<button class="btn btn-primary" on:click={() => puppeteerPDF}>
-  pdf with puppeteer
-</button>
