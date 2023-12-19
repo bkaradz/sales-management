@@ -2,6 +2,7 @@ import type { ExchangeRate, ExchangeRateDetails } from '$lib/server/drizzle/sche
 import currency from 'currency.js';
 import type { currencyTypeUnion } from './lists.utility';
 import type { ExchangeRateToMap } from './monetary.util';
+import fx from 'money';
 
 
 export function converter(currencyObject: currency | string | undefined, newCurrency: currencyTypeUnion, newRate: ExchangeRateToMap) {
@@ -16,3 +17,19 @@ export function converter(currencyObject: currency | string | undefined, newCurr
 
 }
 
+const convertFx = (exchange_rate_details: ExchangeRateToMap['exchange_rate_details'], amount: string, from: currencyTypeUnion, to: currencyTypeUnion= 'USD') => {
+
+  let rates = {};
+
+  exchange_rate_details.forEach((value, key) => {
+		rates = { ...rates, [key]: value.rate };
+	});
+
+	fx.base = 'USD';
+	fx.rates = rates;
+
+  fx.settings = { from: 'ZAR', to: 'USD' };
+
+  return fx.convert(amount, { from, to });
+  
+}

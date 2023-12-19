@@ -23,13 +23,13 @@
 		selectedOrdersPaymentStore,
 		selectedOrdersPaymentTotals
 	} from '$lib/stores/paymentsStore';
-	import type { Orders } from '$lib/server/drizzle/schema/schema';
 	import { enhance } from '$app/forms';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { invalidateAll } from '$app/navigation';
 	import { paymentMethod } from '$lib/utility/lists.utility';
 	import currency from 'currency.js';
 	import type { OrdersByUserId } from '$lib/trpc/routes/orders/orders.drizzle';
+	$: console.log("🚀 ~ file: +page.svelte:26 ~ amountTenderedStore:", $amountTenderedStore)
 
 	export let data: PageData;
 
@@ -103,7 +103,7 @@
 		}
 	}
 
-	let paymentPart = 0;
+	let paymentPart = '';
 
 	const amountTendered = () => {
 		const user_id = data?.user?.id
@@ -132,6 +132,8 @@
 			cash_paid: paymentPart.toString(),
 			default_currency_equivalent: '0'
 		});
+
+		paymentPart = ''
 	};
 </script>
 
