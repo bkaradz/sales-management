@@ -45,8 +45,7 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 
 			totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(products)
-				.where(and((sql`to_tsvector('simple', ${products.name} ||' '|| CAST(id AS text) ||' '|| coalesce(CAST(stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))));
-			// .where(and((sql`(name ||' '|| CAST(id AS text) ||' '|| CAST(stitches AS text)) ILIKE(${data})`), (eq(products.active, true))));
+				.where(and((sql`to_tsvector('simple', products.name ||' '|| CAST(products.id AS text) ||' '|| coalesce(CAST(products.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))));
 
 			productsQuery = await db.select({
 				id: products.id,
@@ -57,8 +56,7 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 				product_unit_price: products.product_unit_price
 			}).from(products)
 				.orderBy(asc(products.name))
-				.where(and((sql`to_tsvector('simple', name ||' '|| CAST(id AS text) ||' '|| coalesce(CAST(stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))))
-				// .where(and((sql`(name ||' '|| CAST(id AS text) ||' '|| CAST(stitches AS text)) ILIKE(${data})`), (eq(products.active, true))))
+				.where(and((sql`to_tsvector('simple', products.name ||' '|| CAST(products.id AS text) ||' '|| coalesce(CAST(products.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		}

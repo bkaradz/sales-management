@@ -62,7 +62,7 @@ export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
       const data = `%${input.search}%`
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
+        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
         .groupBy(contacts.full_name, shop_orders.id, contacts.id)
         .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
         .innerJoin(orders_details, eq(shop_orders.id, orders_details.shop_orders_id))
@@ -78,7 +78,7 @@ export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
         sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
         total_products: sql<string>`sum(${orders_details.quantity})`
       }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
+        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
         .groupBy(contacts.full_name, shop_orders.id, contacts.id)
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
         .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
@@ -152,7 +152,7 @@ export const getOrdersByUserId = async (input: {
       const data = `%${input.search}%`
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id))))
+        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id))))
         .groupBy(contacts.full_name, shop_orders.id, contacts.id)
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
@@ -168,7 +168,7 @@ export const getOrdersByUserId = async (input: {
         sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
         total_products: sql<string>`sum(${orders_details.quantity})`
       }).from(shop_orders)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id))))
+        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id))))
         .groupBy(contacts.full_name, shop_orders.id, contacts.id)
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
         .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
@@ -247,7 +247,7 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
         .where(
-          and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
               and(eq(shop_orders.customer_id, input.id),
                 eq(shop_orders.payment_status, 'Awaiting Payment')
@@ -267,7 +267,7 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
         active: shop_orders.active,
       }).from(shop_orders)
         .where(
-          and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
               and(eq(shop_orders.customer_id, input.id),
                 eq(shop_orders.payment_status, 'Awaiting Payment')
@@ -293,6 +293,8 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
     console.error("🚀 ~ file: orders.drizzle.ts:363 ~ error:", error)
   }
 };
+
+export type OrdersByUserId = NonNullable<Awaited<ReturnType<typeof getOrdersAwaitingPaymentByUserId>>>['shop_orders'][0]
 
 export const getOrdersByProductId = async (input: {
   limit?: number | undefined;
@@ -343,7 +345,7 @@ export const getOrdersByProductId = async (input: {
       const data = `%${input.search}%`
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
+        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
         .groupBy(shop_orders.id, contacts.full_name, contacts.id)
         .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shop_orders_id))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
@@ -359,7 +361,7 @@ export const getOrdersByProductId = async (input: {
         sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
         total_products: sql<string>`sum(${orders_details.quantity})`
       }).from(orders_details)
-        .where(and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
+        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
         .groupBy(shop_orders.id, contacts.full_name, contacts.id)
         .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shop_orders_id))
         .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))

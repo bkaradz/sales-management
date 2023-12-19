@@ -1,4 +1,5 @@
 import type { Contacts, NewPaymentsDetails, Orders } from '$lib/server/drizzle/schema/schema';
+import type { OrdersByUserId } from '$lib/trpc/routes/orders/orders.drizzle';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
 import type { PaymentMethodUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import type currency from 'currency.js';
@@ -6,11 +7,11 @@ import { writable, derived } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
 
 function selectedOrdersPayment() {
-	const { subscribe, set, update } = writable<Map<number, Orders>>(new Map);
+	const { subscribe, set, update } = writable<Map<number, OrdersByUserId>>(new Map);
 
 	return {
 		subscribe,
-		add: (order: Orders) => {
+		add: (order: OrdersByUserId) => {
 			update((ordersMap) => {
 				if (ordersMap.has(order.id)) {
 					return ordersMap

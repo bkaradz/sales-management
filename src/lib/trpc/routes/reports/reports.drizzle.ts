@@ -51,7 +51,7 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
         order_payment_status: shop_orders.payment_status
       }).from(shop_orders)
         .where(
-          and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
               and(ne(shop_orders.sales_status, 'Quotation'),
                 ne(orders_details.production_status, 'Collected')))))
@@ -121,7 +121,7 @@ export const getDailyProductionReport = async (input: SearchParams, ctx: Context
         order_payment_status: shop_orders.payment_status
       }).from(shop_orders)
         .where(
-          and((sql`(full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
               and(eq(products.product_category, 'Embroidery'),
                 and(ne(shop_orders.sales_status, 'Quotation'),

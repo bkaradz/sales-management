@@ -52,7 +52,7 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
 				.groupBy(contacts.id)
-				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
 				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)));
 
@@ -66,11 +66,10 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 			}).from(contacts)
 				.orderBy(asc(contacts.full_name))
 				.groupBy(contacts.id)
-				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
 				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
-
 		}
 
 		pagination.totalRecords = totalContactsRecords.length === 0 ? 0 : +totalContactsRecords[0]?.count
@@ -122,11 +121,11 @@ export const getContacts = async (input: SearchParams, ctx: Context) => {
 
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
-				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))));
+				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))));
 
 			contactsQuery = await db.select().from(contacts)
 				.orderBy(asc(contacts.full_name))
-				.where(and((sql`(full_name ||' '|| CAST(id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		}

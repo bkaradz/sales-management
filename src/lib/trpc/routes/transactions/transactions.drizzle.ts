@@ -39,12 +39,11 @@ export const getTransactions = async (input: SearchParams, ctx: Context) => {
 
 			totalTransactionsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(transactions)
-				.where(and((sql`to_tsvector('simple', ${transactions.id} ||' '|| CAST(id AS text) ||' '|| coalesce(CAST(stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(transactions.active, true))));
-			// .where(and((sql`(name ||' '|| CAST(id AS text) ||' '|| CAST(stitches AS text)) ILIKE(${data})`), (eq(transactions.active, true))));
+				.where(and((sql`to_tsvector('simple', transactions.id ||' '|| CAST(transactions.id AS text) ||' '|| coalesce(CAST(transactions.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(transactions.active, true))));
 
 			transactionsQuery = await db.select().from(transactions)
 				.orderBy(asc(transactions.id))
-				.where(and((sql`to_tsvector('simple', name ||' '|| CAST(id AS text) ||' '|| coalesce(CAST(stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(transactions.active, true))))
+				.where(and((sql`to_tsvector('simple', transactions.name ||' '|| CAST(transactions.id AS text) ||' '|| coalesce(CAST(transactions.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(transactions.active, true))))
 				// .where(and((sql`(name ||' '|| CAST(id AS text) ||' '|| CAST(stitches AS text)) ILIKE(${data})`), (eq(transactions.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
