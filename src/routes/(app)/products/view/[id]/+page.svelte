@@ -11,10 +11,9 @@
 	import { exchangeRatesStore, pricelistStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import type { PageData } from './$types';
 	import { calcProductPrices, format } from '$lib/utility/calculateCart.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
-
 
 	export let data: PageData;
 </script>
@@ -79,10 +78,15 @@
 								</div>
 								<div class="ml-auto text-xs text-gray-500">
 									{format(
-										converter(
-											calcProductPrices(data.product.product, $pricelistStore, list.minimum_quantity, key),
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+										convertFx(
+											calcProductPrices(
+												data.product.product,
+												$pricelistStore,
+												list.minimum_quantity,
+												key
+											),
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}
@@ -142,7 +146,8 @@
 						<div class="ml-auto text-gray-500 text-xs sm:inline-flex hidden items-center">
 							<div>
 								<span class="mr-3"
-									>Page {data.shop_orders.pagination.page} of {data.shop_orders.pagination.totalPages}</span
+									>Page {data.shop_orders.pagination.page} of {data.shop_orders.pagination
+										.totalPages}</span
 								>
 								<form class="inline-block" method="get">
 									<input
@@ -151,7 +156,11 @@
 										value={data.shop_orders.pagination.previous?.page || 1}
 									/>
 									<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
-									<input type="hidden" name="search" value={data.shop_orders.pagination.search || ''} />
+									<input
+										type="hidden"
+										name="search"
+										value={data.shop_orders.pagination.search || ''}
+									/>
 									<button
 										type="submit"
 										class="{!data.shop_orders.pagination.previous
@@ -163,9 +172,17 @@
 									</button>
 								</form>
 								<form class="inline-block" method="get">
-									<input type="hidden" name="page" value={data.shop_orders.pagination.next?.page || 1} />
+									<input
+										type="hidden"
+										name="page"
+										value={data.shop_orders.pagination.next?.page || 1}
+									/>
 									<input type="hidden" name="limit" value={data.shop_orders.pagination.limit} />
-									<input type="hidden" name="search" value={data.shop_orders.pagination.search || ''} />
+									<input
+										type="hidden"
+										name="search"
+										value={data.shop_orders.pagination.search || ''}
+									/>
 									<button
 										type="submit"
 										class="{!data.shop_orders.pagination.next
@@ -299,10 +316,10 @@
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										{format(
-											converter(
+											convertFx(
 												ordersArray.sales_amount,
-												$selectedCurrencyStore,
-												$exchangeRatesStore
+												$exchangeRatesStore,
+												$selectedCurrencyStore
 											),
 											$selectedCurrencyStore
 										)}

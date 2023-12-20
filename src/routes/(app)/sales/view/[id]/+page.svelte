@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { svgDropdown } from '$lib/assets/svgLogos';
-	import {
-		calcPrice,
-		calcProductPrices,
-		format,
-	} from '$lib/utility/calculateCart.util';
+	import { calcProductPrices, format } from '$lib/utility/calculateCart.util';
 	import type { PageData } from './$types';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import {
 		cartStore,
 		exchangeRatesStore,
@@ -145,7 +141,11 @@
 						<div class="text-xs text-gray-400 dark:text-gray-400">Cart Total:</div>
 						<div class="text-gray-900 text-lg dark:text-white">
 							{format(
-								converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+								convertFx(
+									$cartTotalsStore.grand_total,
+									$exchangeRatesStore,
+									$selectedCurrencyStore
+								),
 								$selectedCurrencyStore
 							)}
 						</div>
@@ -225,7 +225,9 @@
 												disabled
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between cursor-not-allowed"
 											>
-												<span class="ml-2">{productsOrderDetails.orders_details.garment_placement}</span>
+												<span class="ml-2"
+													>{productsOrderDetails.orders_details.garment_placement}</span
+												>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -259,7 +261,9 @@
 												disabled
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between cursor-not-allowed"
 											>
-												<span class="ml-2">{productsOrderDetails.orders_details.embroidery_type}</span>
+												<span class="ml-2"
+													>{productsOrderDetails.orders_details.embroidery_type}</span
+												>
 												{@html svgDropdown}
 											</button>
 											<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -286,16 +290,16 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
-								{$cartStore.get(key)?.orders_details.quantity}
+									{$cartStore.get(key)?.orders_details.quantity}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{format(
-										converter(
+										convertFx(
 											$cartStore.get(key)?.orders_details.unit_price,
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}
@@ -304,10 +308,12 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{format(
-										converter(
-											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply($cartStore.get(key)?.orders_details.quantity || '0'),
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+										convertFx(
+											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply(
+												$cartStore.get(key)?.orders_details.quantity || '0'
+											),
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}
@@ -349,7 +355,11 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.sub_total, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx(
+										$cartTotalsStore.sub_total,
+										$exchangeRatesStore,
+										$selectedCurrencyStore
+									),
 									$selectedCurrencyStore
 								)}
 							</td>
@@ -365,7 +375,10 @@
 								<span>Vat</span>
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
-								{format(converter($cartTotalsStore.vat, $selectedCurrencyStore, $exchangeRatesStore), $selectedCurrencyStore)}
+								{format(
+									convertFx($cartTotalsStore.vat, $exchangeRatesStore, $selectedCurrencyStore),
+									$selectedCurrencyStore
+								)}
 							</td>
 							{#each [1, 2] as item (item)}
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
@@ -380,7 +393,11 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx(
+										$cartTotalsStore.grand_total,
+										$exchangeRatesStore,
+										$selectedCurrencyStore
+									),
 									$selectedCurrencyStore
 								)}
 							</td>
@@ -443,10 +460,10 @@
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
-												converter(
+												convertFx(
 													$customerSelectedStore.orders_totals,
-													$selectedCurrencyStore,
-													$exchangeRatesStore
+													$exchangeRatesStore,
+													$selectedCurrencyStore
 												),
 												$selectedCurrencyStore
 											)}
@@ -460,10 +477,10 @@
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
-												converter(
+												convertFx(
 													$customerSelectedStore.total_receipts,
-													$selectedCurrencyStore,
-													$exchangeRatesStore
+													$exchangeRatesStore,
+													$selectedCurrencyStore
 												),
 												$selectedCurrencyStore
 											)}
@@ -482,22 +499,22 @@
 										</div>
 									{/if}
 									<div
-									class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
-								>
-									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-										Delivery Date
-										
+										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									>
+										<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+											Delivery Date
+										</div>
+										<div class="ml-auto text-xs text-gray-500">
+											<input
+												name="date"
+												disabled
+												class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
+												use:datePicker={options}
+												bind:value={deliveryDate}
+												readonly
+											/>
+										</div>
 									</div>
-									<div class="ml-auto text-xs text-gray-500">
-										<input 
-										name="date"
-										disabled
-										class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
-										use:datePicker={options} 
-										bind:value={deliveryDate} 
-										readonly />
-									</div>
-								</div>
 									<div
 										class="flex items-center mb-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
@@ -614,7 +631,7 @@
 												</div>
 												<div class="ml-auto text-xs text-gray-500">
 													{format(
-														converter(
+														convertFx(
 															calcProductPrices(
 																{
 																	id: 19,
@@ -633,8 +650,8 @@
 																list.minimum_quantity,
 																key
 															),
-															$selectedCurrencyStore,
-															$exchangeRatesStore
+															$exchangeRatesStore,
+															$selectedCurrencyStore
 														),
 														$selectedCurrencyStore
 													)}
@@ -726,7 +743,10 @@
 												<span class="ml-0.5">({value.currency})</span>
 											</div>
 											<div class="ml-auto text-xs text-gray-500">
-												{format(converter('1', value.currency, $exchangeRatesStore), $selectedCurrencyStore)}
+												{format(
+													convertFx('1', $exchangeRatesStore, value.currency),
+													$selectedCurrencyStore
+												)}
 											</div>
 										</div>
 									{/each}

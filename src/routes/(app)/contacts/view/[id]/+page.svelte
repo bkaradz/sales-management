@@ -11,7 +11,7 @@
 	} from '$lib/assets/svgLogos';
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import { enhance } from '$app/forms';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
@@ -68,10 +68,10 @@
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Amount</div>
 						<div class="ml-auto text-xs text-gray-500 {+data.contact.contact.amount < 0 ? 'text-red-500' : 'text-green-500'}">
 							{format(
-								converter(
+								convertFx(
 									data.contact.contact.amount,
-									$selectedCurrencyStore,
-									$exchangeRatesStore
+									$exchangeRatesStore,
+									$selectedCurrencyStore
 								),
 								$selectedCurrencyStore
 							)}
@@ -85,10 +85,10 @@
 						</div>
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
-								converter(
+								convertFx(
 									data.contact.contact.total_receipts,
-									$selectedCurrencyStore,
-									$exchangeRatesStore
+									$exchangeRatesStore,
+									$selectedCurrencyStore
 								),
 								$selectedCurrencyStore
 							)}
@@ -330,10 +330,10 @@
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										{format(
-											converter(
+											convertFx(
 												ordersArray.sales_amount,
-												$selectedCurrencyStore,
-												$exchangeRatesStore
+												$exchangeRatesStore,
+												$selectedCurrencyStore
 											),
 											$selectedCurrencyStore
 										)}

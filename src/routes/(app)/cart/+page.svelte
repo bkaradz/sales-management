@@ -4,7 +4,7 @@
 	import type { ActionData, PageData } from './$types';
 	import { longPress, selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import {
 		cartStore,
 		exchangeRatesStore,
@@ -158,7 +158,7 @@
 									: 'text-green-500'}"
 							>
 								{format(
-									converter(user.amount, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx(user.amount, $exchangeRatesStore, $selectedCurrencyStore),
 									$selectedCurrencyStore
 								)}
 							</div>
@@ -238,7 +238,11 @@
 						<div class="text-xs text-gray-400 dark:text-gray-400">Cart Total:</div>
 						<div class="text-gray-900 text-lg dark:text-white">
 							{format(
-								converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+								convertFx(
+									$cartTotalsStore.grand_total,
+									$exchangeRatesStore,
+									$selectedCurrencyStore
+								),
 								$selectedCurrencyStore
 							)}
 						</div>
@@ -411,10 +415,10 @@
 											name="unit_price_label"
 											id="unit_price_label"
 											value={format(
-												converter(
+												convertFx(
 													$cartStore.get(key)?.orders_details.unit_price,
-													$selectedCurrencyStore,
-													$exchangeRatesStore
+													$exchangeRatesStore,
+													$selectedCurrencyStore
 												),
 												$selectedCurrencyStore
 											)}
@@ -425,12 +429,12 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{format(
-										converter(
+										convertFx(
 											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply(
 												$cartStore.get(key)?.orders_details.quantity || '0'
 											),
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}
@@ -484,7 +488,11 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.sub_total, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx(
+										$cartTotalsStore.sub_total,
+										$exchangeRatesStore,
+										$selectedCurrencyStore
+									),
 									$selectedCurrencyStore
 								)}
 							</td>
@@ -501,7 +509,7 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.vat, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx($cartTotalsStore.vat, $exchangeRatesStore, $selectedCurrencyStore),
 									$selectedCurrencyStore
 								)}
 							</td>
@@ -518,7 +526,11 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx(
+										$cartTotalsStore.grand_total,
+										$exchangeRatesStore,
+										$selectedCurrencyStore
+									),
 									$selectedCurrencyStore
 								)}
 							</td>
@@ -583,10 +595,10 @@
 												: 'text-green-500'}"
 										>
 											{format(
-												converter(
+												convertFx(
 													$customerSelectedStore.amount,
-													$selectedCurrencyStore,
-													$exchangeRatesStore
+													$exchangeRatesStore,
+													$selectedCurrencyStore
 												),
 												$selectedCurrencyStore
 											)}
@@ -600,10 +612,10 @@
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
-												converter(
+												convertFx(
 													$customerSelectedStore.total_receipts,
-													$selectedCurrencyStore,
-													$exchangeRatesStore
+													$exchangeRatesStore,
+													$selectedCurrencyStore
 												),
 												$selectedCurrencyStore
 											)}
@@ -756,7 +768,7 @@
 												</div>
 												<div class="ml-auto text-xs text-gray-500">
 													{format(
-														converter(
+														convertFx(
 															calcProductPrices(
 																{
 																	id: 19,
@@ -775,8 +787,8 @@
 																list.minimum_quantity,
 																key
 															),
-															$selectedCurrencyStore,
-															$exchangeRatesStore
+															$exchangeRatesStore,
+															$selectedCurrencyStore
 														),
 														$selectedCurrencyStore
 													)}
@@ -868,7 +880,7 @@
 											</div>
 											<div class="ml-auto text-xs text-gray-500">
 												{format(
-													converter('1', value.currency, $exchangeRatesStore),
+													convertFx('1', $exchangeRatesStore, value.currency),
 													$selectedCurrencyStore
 												)}
 											</div>

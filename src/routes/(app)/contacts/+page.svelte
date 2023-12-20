@@ -16,7 +16,7 @@
 	import type { ActionData, PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
@@ -47,7 +47,6 @@
 		// 	}
 		// }
 	}
-
 </script>
 
 <svelte:head>
@@ -190,21 +189,20 @@
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{contact.full_name}
 								</td>
-								<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
+								<td
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 {+contact.amount <
+									0
+										? 'text-red-500'
+										: 'text-green-500'}"
+								>
 									{format(
-										converter(contact.amount, $selectedCurrencyStore, $exchangeRatesStore),
-										$selectedCurrencyStore
-									)}
-								</td> -->
-								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 {+contact.amount < 0 ? 'text-red-500' : 'text-green-500'}">
-									{format(
-										converter(contact.amount, $selectedCurrencyStore, $exchangeRatesStore),
+										convertFx(contact.amount, $exchangeRatesStore, $selectedCurrencyStore),
 										$selectedCurrencyStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										converter(contact.sales_amount, $selectedCurrencyStore, $exchangeRatesStore),
+										convertFx(contact.sales_amount, $exchangeRatesStore, $selectedCurrencyStore),
 										$selectedCurrencyStore
 									)}
 								</td>

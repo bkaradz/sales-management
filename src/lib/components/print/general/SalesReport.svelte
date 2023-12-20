@@ -2,7 +2,7 @@
 	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import type { GetSalesReports } from '$lib/trpc/routes/reports/reports.drizzle';
 	import { format } from '$lib/utility/calculateCart.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import currency from 'currency.js';
 
 	export let heading: string;
@@ -76,20 +76,20 @@
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-right truncate">
 										{format(
-											converter(
+											convertFx(
 												item.order_details_unit_price,
-												$selectedCurrencyStore,
-												$exchangeRatesStore
+												$exchangeRatesStore,
+												$selectedCurrencyStore
 											),
 											$selectedCurrencyStore
 										)}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black font-semibold text-right truncate">
 										{format(
-											converter(
+											convertFx(
 												currency(item.order_details_unit_price).multiply(item.order_details_quantity),
-												$selectedCurrencyStore,
-												$exchangeRatesStore
+												$exchangeRatesStore,
+												$selectedCurrencyStore
 											),
 											$selectedCurrencyStore
 										)}

@@ -20,9 +20,8 @@
 		selectedCurrencyStore
 	} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import currency from 'currency.js';
-	import { multiply } from 'lodash-es';
 
 	export let data: PageData;
 
@@ -56,7 +55,10 @@
 							<div class="text-xs text-gray-400 dark:text-gray-400">Sub Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.sub_total, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx($cartTotalsStore.sub_total, 
+									$exchangeRatesStore,
+									$selectedCurrencyStore
+									),
 									$selectedCurrencyStore
 								)}
 							</div>
@@ -65,7 +67,10 @@
 							<div class="text-xs text-gray-400 dark:text-gray-400">Tax:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.vat, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx($cartTotalsStore.vat, 
+									$exchangeRatesStore,
+									$selectedCurrencyStore
+									),
 									$selectedCurrencyStore
 								)}
 							</div>
@@ -74,7 +79,10 @@
 							<div class="text-xs text-gray-400 dark:text-gray-400">Net Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+									convertFx($cartTotalsStore.grand_total, 
+									$exchangeRatesStore,
+									$selectedCurrencyStore
+									),
 									$selectedCurrencyStore
 								)}
 							</div>
@@ -253,10 +261,10 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{format(
-										converter(
+										convertFx(
 											$cartStore.get(product.id)?.orders_details?.unit_price || '0',
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}
@@ -265,12 +273,12 @@
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 								>
 									{format(
-										converter(
+										convertFx(
 											currency(
 												$cartStore.get(product.id)?.orders_details?.unit_price || '0'
 											).multiply($cartStore.get(product.id)?.orders_details?.quantity || '0'),
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}

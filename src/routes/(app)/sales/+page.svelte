@@ -16,7 +16,7 @@
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import {
 		exchangeRatesStore,
 		paymentStatusSelectedStore,
@@ -235,16 +235,6 @@
 										{order.contact_id}
 									</span>
 								</td>
-								<!-- <td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{format(
-										converter(
-											order.sales_amount,
-											$selectedCurrencyStore,
-											$exchangeRatesStore
-										),
-										$selectedCurrencyStore
-									)}
-								</td> -->
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 										{order.pricelist_id}
@@ -270,10 +260,10 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										converter(
+										convertFx(
 											order.sales_amount,
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}

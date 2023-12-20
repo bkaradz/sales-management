@@ -11,7 +11,7 @@
 
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
-	import { convertFx, converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -191,7 +191,7 @@
 								: 'text-green-500'}"
 						>
 							{format(
-								converter(data.contact.contact.amount, $selectedCurrencyStore, $exchangeRatesStore),
+								convertFx(data.contact.contact.amount, $exchangeRatesStore, $selectedCurrencyStore),
 								$selectedCurrencyStore
 							)}
 						</div>
@@ -204,10 +204,10 @@
 						</div>
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
-								converter(
+								convertFx(
 									data.contact.contact.total_receipts,
-									$selectedCurrencyStore,
-									$exchangeRatesStore
+									$exchangeRatesStore,
+									$selectedCurrencyStore
 								),
 								$selectedCurrencyStore
 							)}
@@ -316,10 +316,10 @@
 								<div class="text-xs text-gray-400 dark:text-gray-400">Selected Orders Totals:</div>
 								<div class="text-gray-900 text-lg dark:text-white">
 									{format(
-										converter(
+										convertFx(
 											$selectedOrdersPaymentTotals.selectedOrdersTotal,
-											$selectedCurrencyStore,
-											$exchangeRatesStore
+											$exchangeRatesStore,
+											$selectedCurrencyStore
 										),
 										$selectedCurrencyStore
 									)}
@@ -566,10 +566,10 @@
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
 											{format(
-												converter(
+												convertFx(
 													ordersArray.sales_amount,
-													$selectedCurrencyStore,
-													$exchangeRatesStore
+													$exchangeRatesStore,
+													$selectedCurrencyStore
 												),
 												$selectedCurrencyStore
 											)}
@@ -716,10 +716,10 @@
 										<div class="relative">
 											<span>
 												{format(
-													converter(
+													convertFx(
 														$selectedOrdersPaymentTotals.selectedOrdersTotal,
-														$selectedCurrencyStore,
-														$exchangeRatesStore
+														$exchangeRatesStore,
+														$selectedCurrencyStore
 													),
 													$selectedCurrencyStore
 												)}
@@ -736,10 +736,10 @@
 										<div class="relative">
 											<span>
 												{format(
-													converter(
+													convertFx(
 														$selectedOrdersPaymentTotals.customerDeposit,
-														$selectedCurrencyStore,
-														$exchangeRatesStore
+														$exchangeRatesStore,
+														$selectedCurrencyStore
 													),
 													$selectedCurrencyStore
 												)}
@@ -786,10 +786,10 @@
 										<div class="relative">
 											<span>
 												{format(
-													converter(
+													convertFx(
 														$selectedOrdersPaymentTotals.totalDue,
-														$selectedCurrencyStore,
-														$exchangeRatesStore
+														$exchangeRatesStore,
+														$selectedCurrencyStore
 													),
 													$selectedCurrencyStore
 												)}

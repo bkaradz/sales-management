@@ -1,4 +1,7 @@
 Dockerfile
+example-Dockerfile
+docker-compose.yaml
+example-docker-compose.yaml
 .dockerignore
 .git
 .gitignore
@@ -6,7 +9,9 @@ Dockerfile
 README.md
 .npmrc
 .prettierrc
+.prettierignore
 .eslintrc.cjs
+.eslintignore
 .graphqlrc
 .editorconfig
 .svelte-kit
@@ -14,4 +19,5 @@ README.md
 node_modules
 build
 package
+drizzle
 **/.env

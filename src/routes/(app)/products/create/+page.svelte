@@ -11,11 +11,10 @@
 	} from '$lib/stores/cartStore';
 	import { toasts } from '$lib/stores/toasts.store.js';
 	import { format } from '$lib/utility/calculateCart.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { productCategories } from '$lib/utility/lists.utility.js';
 	import { onMount } from 'svelte';
-	
 
 	const changeEnteredAmountStore = (e: Event) => {
 		const target = e.target as HTMLInputElement;
@@ -23,17 +22,17 @@
 	};
 
 	onMount(() => {
-		enteredAmountStore.reset()
-		selectedProductCategoryStore.reset()
-	})
+		enteredAmountStore.reset();
+		selectedProductCategoryStore.reset();
+	});
 
 	let doubleClicked = false;
 
 	export let form;
-	
+
 	$: if (form?.success) {
-		enteredAmountStore.reset()
-		selectedProductCategoryStore.reset()
+		enteredAmountStore.reset();
+		selectedProductCategoryStore.reset();
 		toasts.add({
 			message: 'Product created successfully',
 			type: 'success'
@@ -194,7 +193,7 @@
 										id="unit_price_label"
 										name="unit_price_label"
 										value={format(
-											converter($enteredAmountValue, $selectedCurrencyStore, $exchangeRatesStore),
+											convertFx($enteredAmountValue, $exchangeRatesStore, $selectedCurrencyStore),
 											$selectedCurrencyStore
 										)}
 										placeholder="Unit Price"

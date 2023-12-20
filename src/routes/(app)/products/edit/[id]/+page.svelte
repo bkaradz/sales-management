@@ -11,7 +11,7 @@
 	} from '$lib/stores/cartStore';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { format } from '$lib/utility/calculateCart.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
+	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { productCategories } from '$lib/utility/lists.utility';
 	import { onMount } from 'svelte';
@@ -80,7 +80,7 @@
 					</div>
 
 					<form method="POST" action="?/update" use:enhance>
-						<input hidden type="number" name="id" id="id" value={data.results.product.id}>
+						<input hidden type="number" name="id" id="id" value={data.results.product.id} />
 						<!--Product Name input-->
 						<div class="relative mb-4">
 							<input
@@ -191,7 +191,7 @@
 											id="unit_price_label"
 											name="unit_price_label"
 											value={format(
-												converter($enteredAmountValue, $selectedCurrencyStore, $exchangeRatesStore),
+												convertFx($enteredAmountValue, $exchangeRatesStore, $selectedCurrencyStore),
 												$selectedCurrencyStore
 											)}
 											placeholder="Unit Price"
