@@ -7,24 +7,7 @@
 		svgDashboardUser
 	} from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
-	import { exchangeRatesStore } from '$lib/stores/cartStore';
-	import fx from 'money';
 
-	let rates = {};
-
-	$exchangeRatesStore.exchange_rate_details.forEach((value, key) => {
-		rates = { ...rates, [key]: value.rate };
-	});
-
-	fx.base = 'USD';
-	fx.rates = rates;
-
-	fx.settings = { from: 'ZAR', to: 'USD' };
-	// $: console.log("object", fx.convert('1000'));
-
-	$: console.log('to rand', fx.convert('1000', { to: 'ZAR' }));
-	$: console.log('FROM rand TO USD', fx.convert('1000', { from: 'ZAR', to: 'USD' }));
-	$: console.log('FROM PULA TO RAND', fx.convert('1000', { from: 'BWP', to: 'ZAR' }));
 </script>
 
 <svelte:head>

@@ -12,7 +12,7 @@
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
-	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
+	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import { enhance } from '$app/forms';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
@@ -70,10 +70,10 @@
 							{format(
 								converter(
 									data.contact.contact.amount,
-									$selectedRateStore,
+									$selectedCurrencyStore,
 									$exchangeRatesStore
 								),
-								$selectedRateStore
+								$selectedCurrencyStore
 							)}
 						</div>
 					</div>
@@ -87,10 +87,10 @@
 							{format(
 								converter(
 									data.contact.contact.total_receipts,
-									$selectedRateStore,
+									$selectedCurrencyStore,
 									$exchangeRatesStore
 								),
-								$selectedRateStore
+								$selectedCurrencyStore
 							)}
 						</div>
 					</div>
@@ -332,10 +332,10 @@
 										{format(
 											converter(
 												ordersArray.sales_amount,
-												$selectedRateStore,
+												$selectedCurrencyStore,
 												$exchangeRatesStore
 											),
-											$selectedRateStore
+											$selectedCurrencyStore
 										)}
 									</td>
 									<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

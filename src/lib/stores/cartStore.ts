@@ -266,8 +266,7 @@ function exchangeRates() {
 
 export const exchangeRatesStore = exchangeRates();
 
-// TODO: Change to selected currency
-function selectedRate() {
+function selectedCurrency() {
 	const { subscribe, set, update } = writable<currencyTypeUnion>('USD');
 
 	return {
@@ -278,7 +277,7 @@ function selectedRate() {
 	};
 }
 
-export const selectedRateStore = selectedRate();
+export const selectedCurrencyStore = selectedCurrency();
 
 
 export const cartTotalsStore = derived([cartStore, pricelistStore, vatStore], ([$cartStore, $pricelistStore, $vatStore]) => {
@@ -353,7 +352,7 @@ function enteredAmount() {
 
 export const enteredAmountStore = enteredAmount();
 
-export const enteredAmountValue = derived([enteredAmountStore, selectedRateStore, exchangeRatesStore], ([$enteredAmountStore, $selectedRateStore, $exchangeRatesStore]) => {
+export const enteredAmountValue = derived([enteredAmountStore, selectedCurrencyStore, exchangeRatesStore], ([$enteredAmountStore, $selectedCurrencyStore, $exchangeRatesStore]) => {
 
 	return $enteredAmountStore
 

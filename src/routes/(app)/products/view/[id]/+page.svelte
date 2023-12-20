@@ -8,7 +8,7 @@
 		svgPen,
 		svgSearch
 	} from '$lib/assets/svgLogos';
-	import { exchangeRatesStore, pricelistStore, selectedRateStore } from '$lib/stores/cartStore';
+	import { exchangeRatesStore, pricelistStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import type { PageData } from './$types';
 	import { calcProductPrices, format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
@@ -81,10 +81,10 @@
 									{format(
 										converter(
 											calcProductPrices(data.product.product, $pricelistStore, list.minimum_quantity, key),
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</div>
 							</div>
@@ -301,10 +301,10 @@
 										{format(
 											converter(
 												ordersArray.sales_amount,
-												$selectedRateStore,
+												$selectedCurrencyStore,
 												$exchangeRatesStore
 											),
-											$selectedRateStore
+											$selectedCurrencyStore
 										)}
 									</td>
 									<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

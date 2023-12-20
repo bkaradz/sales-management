@@ -21,7 +21,7 @@
 		exchangeRatesStore,
 		paymentStatusSelectedStore,
 		salesStatusSelectedStore,
-		selectedRateStore
+		selectedCurrencyStore
 	} from '$lib/stores/cartStore';
 	import { salesStatus, type PaymentStatusUnion, type SalesStatusUnion } from '$lib/utility/lists.utility';
 	import { page } from '$app/stores';
@@ -239,10 +239,10 @@
 									{format(
 										converter(
 											order.sales_amount,
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</td> -->
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -272,10 +272,10 @@
 									{format(
 										converter(
 											order.sales_amount,
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">

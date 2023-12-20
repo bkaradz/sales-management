@@ -34,7 +34,6 @@ interface Attribute {
 	'on:longPress'?: (event: CustomEvent) => void
 }
 
-// TODO: correct the any threshold type to number
 export const longPress: Action<HTMLElement, any, Attribute> = (element, threshold = 100) => {
 	const handle_mousedown = () => {
 		

@@ -1,35 +1,34 @@
-import type { ExchangeRate, ExchangeRateDetails } from '$lib/server/drizzle/schema/schema';
 import currency from 'currency.js';
 import type { currencyTypeUnion } from './lists.utility';
 import type { ExchangeRateToMap } from './monetary.util';
 import fx from 'money';
 
+// TODO: REMOVE THIS FUNCTION
+export function converter(amount: currency | string | undefined, newCurrency: currencyTypeUnion, newRate: ExchangeRateToMap) {
 
-export function converter(currencyObject: currency | string | undefined, newCurrency: currencyTypeUnion, newRate: ExchangeRateToMap) {
-
-  if (!currencyObject) throw new Error("Currency Object required");
+  if (!amount) throw new Error("Currency Object required");
   
   const exchange_rate_details = newRate.exchange_rate_details.get(newCurrency)
 
   if (!exchange_rate_details) throw new Error("Exchange Rate not found");
 
-  return currency(currencyObject).multiply(exchange_rate_details.rate);
+  return convertFx(amount, newRate, newCurrency);
 
 }
 
-const convertFx = (exchange_rate_details: ExchangeRateToMap['exchange_rate_details'], amount: string, from: currencyTypeUnion, to: currencyTypeUnion= 'USD') => {
+export const convertFx = (amount: string | currency, exchange_rate: ExchangeRateToMap, to: currencyTypeUnion, from: currencyTypeUnion= 'USD') => {
 
   let rates = {};
 
-  exchange_rate_details.forEach((value, key) => {
+  exchange_rate.exchange_rate_details.forEach((value, key) => {
 		rates = { ...rates, [key]: value.rate };
 	});
 
 	fx.base = 'USD';
 	fx.rates = rates;
 
-  fx.settings = { from: 'ZAR', to: 'USD' };
+  fx.settings = { from: 'USD', to: 'ZAR' };
 
-  return fx.convert(amount, { from, to });
+  return fx.convert(amount.toString(), { from, to }).toString();
   
 }

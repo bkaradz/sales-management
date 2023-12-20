@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		svgBackArrow,
+		svgBin,
 		svgCalender,
 		svgDropdown,
 		svgDropdownArrow,
@@ -10,8 +11,8 @@
 
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
-	import { converter } from '$lib/utility/currencyConvertor.util';
-	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
+	import { convertFx, converter } from '$lib/utility/currencyConvertor.util';
+	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { v4 as uuidv4 } from 'uuid';
@@ -29,7 +30,6 @@
 	import { paymentMethod } from '$lib/utility/lists.utility';
 	import currency from 'currency.js';
 	import type { OrdersByUserId } from '$lib/trpc/routes/orders/orders.drizzle';
-	$: console.log("🚀 ~ file: +page.svelte:26 ~ amountTenderedStore:", $amountTenderedStore)
 
 	export let data: PageData;
 
@@ -37,7 +37,7 @@
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Orders', selected: true },
-		{ id: uuidv4(), name: 'Payment', selected: false }
+		{ id: uuidv4(), name: 'Payments', selected: false }
 	];
 
 	let selectedActivitiesTab = activitiesTabs.find((tab) => (tab.selected = true)) as {
@@ -106,22 +106,22 @@
 	let paymentPart = '';
 
 	const amountTendered = () => {
-		const user_id = data?.user?.id
-		const customer_id = $customerStore?.id
+		const user_id = data?.user?.id;
+		const customer_id = $customerStore?.id;
 
 		if (!user_id) {
 			toasts.add({
-					message: `User Not found`,
-					type: 'error'
-				});
-				return
+				message: `User Not found`,
+				type: 'error'
+			});
+			return;
 		}
 		if (!customer_id) {
 			toasts.add({
-					message: `Please select customer`,
-					type: 'error'
-				});
-				return
+				message: `Please select customer`,
+				type: 'error'
+			});
+			return;
 		}
 		amountTenderedStore.add({
 			user_id,
@@ -130,10 +130,15 @@
 			payment_method: $paymentMethodSelectedStore,
 			currency: $paymentCurrencyStore,
 			cash_paid: paymentPart.toString(),
-			default_currency_equivalent: '0'
+			default_currency_equivalent: convertFx(
+				paymentPart.toString(),
+				$exchangeRatesStore,
+				'USD',
+				$paymentCurrencyStore
+			)
 		});
 
-		paymentPart = ''
+		paymentPart = '';
 	};
 </script>
 
@@ -186,8 +191,8 @@
 								: 'text-green-500'}"
 						>
 							{format(
-								converter(data.contact.contact.amount, $selectedRateStore, $exchangeRatesStore),
-								$selectedRateStore
+								converter(data.contact.contact.amount, $selectedCurrencyStore, $exchangeRatesStore),
+								$selectedCurrencyStore
 							)}
 						</div>
 					</div>
@@ -201,10 +206,10 @@
 							{format(
 								converter(
 									data.contact.contact.total_receipts,
-									$selectedRateStore,
+									$selectedCurrencyStore,
 									$exchangeRatesStore
 								),
-								$selectedRateStore
+								$selectedCurrencyStore
 							)}
 						</div>
 					</div>
@@ -256,7 +261,9 @@
 					class="z-10 sm:px-7 sm:pt-7 px-4 pt-4 flex flex-col w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 dark:text-white sticky top-0"
 				>
 					<div class="flex w-full items-center justify-between">
-						<div class="flex items-center text-3xl text-gray-900 dark:text-white">Orders</div>
+						<div class="flex items-center text-3xl text-gray-900 dark:text-white">
+							{selectedActivitiesTab.name}
+						</div>
 
 						<div class="flex">
 							<form action="?/submit" method="post" use:enhance>
@@ -311,10 +318,10 @@
 									{format(
 										converter(
 											$selectedOrdersPaymentTotals.selectedOrdersTotal,
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</div>
 							</div>
@@ -561,10 +568,10 @@
 											{format(
 												converter(
 													ordersArray.sales_amount,
-													$selectedRateStore,
+													$selectedCurrencyStore,
 													$exchangeRatesStore
 												),
-												$selectedRateStore
+												$selectedCurrencyStore
 											)}
 										</td>
 									</tr>
@@ -573,15 +580,15 @@
 						</table>
 					</div>
 				{/if}
-				{#if selectedActivitiesTab.name === 'Payment'}
+				{#if selectedActivitiesTab.name === 'Payments'}
 					<div class="grid grid-cols-1 gap-4">
 						<div
 							class="px-4 md:px-0 lg:w-6/12 bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-700 m-auto"
 						>
 							<div class="md:mx-6 md:p-12">
-								<div class="text-center">
-									<h4 class="mb-10 pb-1 text-xl font-semibold">Choose Payment Method</h4>
-								</div>
+								<!-- <div class="text-center">
+									<h4 class="mb-10 pb-1 text-xl font-semibold">Payments</h4>
+								</div> -->
 
 								<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
 									<div class="grid grid-cols-3">
@@ -673,48 +680,32 @@
 								>
 									Add
 								</button>
-								{#each $amountTenderedStore.entries() as [key, value] (key)}
-									<div class="mb-6 bg-slate-900 text-lg p-2 rounded-md">
-										<div class="grid grid-cols-3">
-											<input
-												disabled
-												type="number"
-												class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
-												id="cash_paid"
-												name="cash_paid"
-												placeholder="Payment Method"
-											/>
+								{#if $amountTenderedStore.size !== 0}
+									<div class="mb-6 bg-slate-900 text-lg px-3 py-1 rounded-md">
+										{#each $amountTenderedStore.entries() as [key, value] (key)}
+											<div class="grid grid-cols-3 bg-slate-800 rounded-l-md my-2">
+												<div class="col-span-2 grid grid-cols-3">
+													<span class="ml-2">{format(value.cash_paid, value.currency)}</span>
+													<span>{value.currency}</span>
+													<span>{value.payment_method}</span>
+												</div>
 
-											<div class="dropdown dropdown-bottom dropdown-end mr-8 w-full">
-												<button
-													tabindex="0"
-													class="flex items-center h-8 px-3 rounded-r-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
+												<div
+													class="mr-8 w-full rounded-r-md text-white bg-blue-500 flex justify-between"
 												>
-													<span class="ml-2">{$paymentMethodSelectedStore}</span>
-													{@html svgDropdown}
-												</button>
-												<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-												<ul
-													tabindex="0"
-													class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-900 rounded-sm w-52 mt-4"
-												>
-													{#each paymentMethod as type (type)}
-														{#if !(type === $paymentMethodSelectedStore)}
-															<li>
-																<button
-																	on:click={() => paymentMethodSelectedStore.add(type)}
-																	class="rounded-sm"
-																>
-																	{type}
-																</button>
-															</li>
-														{/if}
-													{/each}
-												</ul>
+													<span class="ml-4"
+														>{format(value.default_currency_equivalent, 'USD')}</span
+													>
+													<span class="mr-2 text-red-900">
+														<button on:click={() => amountTenderedStore.remove(key)}>
+															{@html svgBin}
+														</button>
+													</span>
+												</div>
 											</div>
-										</div>
+										{/each}
 									</div>
-								{/each}
+								{/if}
 
 								<!--Grand Total-->
 								<div class="mb-8">
@@ -727,10 +718,10 @@
 												{format(
 													converter(
 														$selectedOrdersPaymentTotals.selectedOrdersTotal,
-														$selectedRateStore,
+														$selectedCurrencyStore,
 														$exchangeRatesStore
 													),
-													$selectedRateStore
+													$selectedCurrencyStore
 												)}
 											</span>
 										</div>
@@ -747,10 +738,10 @@
 												{format(
 													converter(
 														$selectedOrdersPaymentTotals.customerDeposit,
-														$selectedRateStore,
+														$selectedCurrencyStore,
 														$exchangeRatesStore
 													),
-													$selectedRateStore
+													$selectedCurrencyStore
 												)}
 											</span>
 										</div>
@@ -797,10 +788,10 @@
 												{format(
 													converter(
 														$selectedOrdersPaymentTotals.totalDue,
-														$selectedRateStore,
+														$selectedCurrencyStore,
 														$exchangeRatesStore
 													),
-													$selectedRateStore
+													$selectedCurrencyStore
 												)}
 											</span>
 										</div>

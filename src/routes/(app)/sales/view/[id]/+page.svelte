@@ -11,7 +11,7 @@
 		cartStore,
 		exchangeRatesStore,
 		cartTotalsStore,
-		selectedRateStore,
+		selectedCurrencyStore,
 		pricelistStore,
 		customerSelectedStore,
 		salesStatusSelectedStore
@@ -145,8 +145,8 @@
 						<div class="text-xs text-gray-400 dark:text-gray-400">Cart Total:</div>
 						<div class="text-gray-900 text-lg dark:text-white">
 							{format(
-								converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore),
-								$selectedRateStore
+								converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+								$selectedCurrencyStore
 							)}
 						</div>
 					</div>
@@ -294,10 +294,10 @@
 									{format(
 										converter(
 											$cartStore.get(key)?.orders_details.unit_price,
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</td>
 								<td
@@ -306,10 +306,10 @@
 									{format(
 										converter(
 											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply($cartStore.get(key)?.orders_details.quantity || '0'),
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</td>
 
@@ -349,8 +349,8 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore),
-									$selectedRateStore
+									converter($cartTotalsStore.sub_total, $selectedCurrencyStore, $exchangeRatesStore),
+									$selectedCurrencyStore
 								)}
 							</td>
 							{#each [1, 2] as item (item)}
@@ -365,7 +365,7 @@
 								<span>Vat</span>
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
-								{format(converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore), $selectedRateStore)}
+								{format(converter($cartTotalsStore.vat, $selectedCurrencyStore, $exchangeRatesStore), $selectedCurrencyStore)}
 							</td>
 							{#each [1, 2] as item (item)}
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800" />
@@ -380,8 +380,8 @@
 							</td>
 							<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right">
 								{format(
-									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore),
-									$selectedRateStore
+									converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+									$selectedCurrencyStore
 								)}
 							</td>
 							{#each [1, 2] as item (item)}
@@ -445,10 +445,10 @@
 											{format(
 												converter(
 													$customerSelectedStore.orders_totals,
-													$selectedRateStore,
+													$selectedCurrencyStore,
 													$exchangeRatesStore
 												),
-												$selectedRateStore
+												$selectedCurrencyStore
 											)}
 										</div>
 									</div>
@@ -462,10 +462,10 @@
 											{format(
 												converter(
 													$customerSelectedStore.total_receipts,
-													$selectedRateStore,
+													$selectedCurrencyStore,
 													$exchangeRatesStore
 												),
-												$selectedRateStore
+												$selectedCurrencyStore
 											)}
 										</div>
 									</div>
@@ -633,10 +633,10 @@
 																list.minimum_quantity,
 																key
 															),
-															$selectedRateStore,
+															$selectedCurrencyStore,
 															$exchangeRatesStore
 														),
-														$selectedRateStore
+														$selectedCurrencyStore
 													)}
 												</div>
 											</div>
@@ -726,7 +726,7 @@
 												<span class="ml-0.5">({value.currency})</span>
 											</div>
 											<div class="ml-auto text-xs text-gray-500">
-												{format(converter('1', value.currency, $exchangeRatesStore), $selectedRateStore)}
+												{format(converter('1', value.currency, $exchangeRatesStore), $selectedCurrencyStore)}
 											</div>
 										</div>
 									{/each}

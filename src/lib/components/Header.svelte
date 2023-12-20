@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { svgDark, svgDropdown, svgLight, svgLogOut, svgUser } from '$lib/assets/svgLogos';
 	import type { User } from '$lib/server/drizzle/schema/schema';
-	import { selectedRateStore, exchangeRatesStore } from '$lib/stores/cartStore';
+	import { selectedCurrencyStore, exchangeRatesStore } from '$lib/stores/cartStore';
 	import { userManuallyChangedTheme } from '$lib/stores/darkMod.store';
 	import { menuTabsList, type TabElement } from '$lib/stores/menuTabsList.store';
 
@@ -52,7 +52,7 @@
 				class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 			>
 				<span class="ml-2">
-					{$exchangeRatesStore.exchange_rate_details.get($selectedRateStore)?.name}
+					{$exchangeRatesStore.exchange_rate_details.get($selectedCurrencyStore)?.name}
 				</span>
 				{@html svgDropdown}
 			</button>
@@ -62,9 +62,9 @@
 				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 			>
 				{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
-					{#if !($selectedRateStore === key)}
+					{#if !($selectedCurrencyStore === key)}
 						<li>
-							<button on:click={() => selectedRateStore.add(key)} class="rounded-sm">
+							<button on:click={() => selectedCurrencyStore.add(key)} class="rounded-sm">
 								{value.name}
 							</button>
 						</li>

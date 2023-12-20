@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { exchangeRatesStore, selectedRateStore } from '$lib/stores/cartStore';
+	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import type { GetSalesReports } from '$lib/trpc/routes/reports/reports.drizzle';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
@@ -78,20 +78,20 @@
 										{format(
 											converter(
 												item.order_details_unit_price,
-												$selectedRateStore,
+												$selectedCurrencyStore,
 												$exchangeRatesStore
 											),
-											$selectedRateStore
+											$selectedCurrencyStore
 										)}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black font-semibold text-right truncate">
 										{format(
 											converter(
 												currency(item.order_details_unit_price).multiply(item.order_details_quantity),
-												$selectedRateStore,
+												$selectedCurrencyStore,
 												$exchangeRatesStore
 											),
-											$selectedRateStore
+											$selectedCurrencyStore
 										)}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">

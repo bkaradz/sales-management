@@ -36,18 +36,18 @@ export const selectedOrdersPaymentStore = selectedOrdersPayment();
 
 
 function amountTendered() {
-	const { subscribe, set, update } = writable<Map<string, NewPaymentsDetails>>(new Map());
+	const { subscribe, set, update } = writable<Map<currencyTypeUnion, NewPaymentsDetails>>(new Map());
 
 	return {
 		subscribe,
 		add: (amount: NewPaymentsDetails) => {
-			const key = uuidv4()
+			const key = amount.currency
 			update((paymentStore) => {
 				paymentStore.set(key, amount)
 				return paymentStore
 			})
 		},
-		remove: (key: string) => {
+		remove: (key: currencyTypeUnion) => {
 			update((paymentStore) => {
 				paymentStore.delete(key)
 				return paymentStore

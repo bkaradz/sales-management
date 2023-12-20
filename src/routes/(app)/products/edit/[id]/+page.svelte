@@ -7,7 +7,7 @@
 		enteredAmountValue,
 		exchangeRatesStore,
 		selectedProductCategoryStore,
-		selectedRateStore
+		selectedCurrencyStore
 	} from '$lib/stores/cartStore';
 	import { toasts } from '$lib/stores/toasts.store';
 	import { format } from '$lib/utility/calculateCart.util';
@@ -191,8 +191,8 @@
 											id="unit_price_label"
 											name="unit_price_label"
 											value={format(
-												converter($enteredAmountValue, $selectedRateStore, $exchangeRatesStore),
-												$selectedRateStore
+												converter($enteredAmountValue, $selectedCurrencyStore, $exchangeRatesStore),
+												$selectedCurrencyStore
 											)}
 											placeholder="Unit Price"
 										/>

@@ -17,7 +17,7 @@
 		cartStore,
 		cartTotalsStore,
 		exchangeRatesStore,
-		selectedRateStore
+		selectedCurrencyStore
 	} from '$lib/stores/cartStore';
 	import { debounceSearch } from '$lib/utility/debounceSearch.util';
 	import { converter } from '$lib/utility/currencyConvertor.util';
@@ -56,8 +56,8 @@
 							<div class="text-xs text-gray-400 dark:text-gray-400">Sub Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.sub_total, $selectedRateStore, $exchangeRatesStore),
-									$selectedRateStore
+									converter($cartTotalsStore.sub_total, $selectedCurrencyStore, $exchangeRatesStore),
+									$selectedCurrencyStore
 								)}
 							</div>
 						</div>
@@ -65,8 +65,8 @@
 							<div class="text-xs text-gray-400 dark:text-gray-400">Tax:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.vat, $selectedRateStore, $exchangeRatesStore),
-									$selectedRateStore
+									converter($cartTotalsStore.vat, $selectedCurrencyStore, $exchangeRatesStore),
+									$selectedCurrencyStore
 								)}
 							</div>
 						</div>
@@ -74,8 +74,8 @@
 							<div class="text-xs text-gray-400 dark:text-gray-400">Net Total:</div>
 							<div class="text-gray-900 text-lg dark:text-white">
 								{format(
-									converter($cartTotalsStore.grand_total, $selectedRateStore, $exchangeRatesStore),
-									$selectedRateStore
+									converter($cartTotalsStore.grand_total, $selectedCurrencyStore, $exchangeRatesStore),
+									$selectedCurrencyStore
 								)}
 							</div>
 						</div>
@@ -255,10 +255,10 @@
 									{format(
 										converter(
 											$cartStore.get(product.id)?.orders_details?.unit_price || '0',
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</td>
 								<td
@@ -269,10 +269,10 @@
 											currency(
 												$cartStore.get(product.id)?.orders_details?.unit_price || '0'
 											).multiply($cartStore.get(product.id)?.orders_details?.quantity || '0'),
-											$selectedRateStore,
+											$selectedCurrencyStore,
 											$exchangeRatesStore
 										),
-										$selectedRateStore
+										$selectedCurrencyStore
 									)}
 								</td>
 								<td
