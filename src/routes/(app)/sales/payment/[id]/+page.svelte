@@ -680,41 +680,61 @@
 								>
 									Add
 								</button>
-								{#if $amountTenderedStore.size !== 0}
-									<div class="mb-6 bg-slate-900 text-lg px-3 py-1 rounded-md">
-										{#each $amountTenderedStore.entries() as [key, value] (key)}
-											<div class="grid grid-cols-3 bg-slate-800 rounded-l-md my-2">
-												<div class="col-span-2 grid grid-cols-3">
-													<span class="ml-2">{format(value.cash_paid, value.currency)}</span>
-													<span>{value.currency}</span>
-													<span>{value.payment_method}</span>
-												</div>
 
+								<div class="mb-6 bg-slate-900 text-lg px-3 py-1 rounded-md">
+									{#each $amountTenderedStore.entries() as [key, value] (key)}
+										<div class="grid grid-cols-3 bg-slate-800 rounded-l-md my-2">
+											<div class="col-span-2 grid grid-cols-3">
+												<span class="ml-2">{format(value.cash_paid, value.currency)}</span>
+												<span>{value.currency}</span>
+												<span>{value.payment_method}</span>
+											</div>
+
+											<div
+												class="mr-8 w-full rounded-r-md text-white bg-blue-500 flex justify-between"
+											>
+												<span class="ml-4">{format(value.default_currency_equivalent, 'USD')}</span>
+												<span class="mr-2 text-red-900">
+													<button on:click={() => amountTenderedStore.remove(key)}>
+														{@html svgBin}
+													</button>
+												</span>
+											</div>
+										</div>
+									{/each}
+
+									{#if data?.contact?.contact?.amount}
+										{#if +data?.contact?.contact?.amount > 0}
+											<div class="grid grid-cols-3 bg-slate-800 rounded-l-md my-2">
+												<div class="col-span-2">
+													<span class="ml-2">Customer Deposit</span>
+												</div>
 												<div
 													class="mr-8 w-full rounded-r-md text-white bg-blue-500 flex justify-between"
 												>
-													<span class="ml-4"
-														>{format(value.default_currency_equivalent, 'USD')}</span
-													>
-													<span class="mr-2 text-red-900">
-														<button on:click={() => amountTenderedStore.remove(key)}>
-															{@html svgBin}
-														</button>
+													<span class="ml-4">
+														{format(
+															convertFx(
+																data?.contact?.contact?.amount,
+																$exchangeRatesStore,
+																$selectedCurrencyStore
+															),
+															$selectedCurrencyStore
+														)}
 													</span>
 												</div>
 											</div>
-										{/each}
-									</div>
-								{/if}
+										{/if}
+									{/if}
 
-								<!--Grand Total-->
-								<div class="mb-8">
-									<div class="grid grid-cols-2">
-										<div class="relative">
-											<span class="pointer-events-none">Grand Total </span>
+									<div class="grid grid-cols-3 bg-slate-800 rounded-l-md my-2">
+										<div class="col-span-2">
+											<span class="ml-2">Grand Total</span>
 										</div>
-										<div class="relative">
-											<span>
+										<div
+											class="mr-8 w-full rounded-r-md text-white bg-blue-500 flex justify-between"
+										>
+											<span class="ml-4">
 												{format(
 													convertFx(
 														$selectedOrdersPaymentTotals.selectedOrdersTotal,
@@ -726,65 +746,15 @@
 											</span>
 										</div>
 									</div>
-								</div>
 
-								<div class="mb-8">
-									<div class="grid grid-cols-2">
-										<div class="relative">
-											<span class="pointer-events-none">Customer Deposit</span>
+									<div class="grid grid-cols-3 bg-slate-800 rounded-l-md my-2">
+										<div class="col-span-2">
+											<span class="ml-2">Total Due</span>
 										</div>
-										<div class="relative">
-											<span>
-												{format(
-													convertFx(
-														$selectedOrdersPaymentTotals.customerDeposit,
-														$exchangeRatesStore,
-														$selectedCurrencyStore
-													),
-													$selectedCurrencyStore
-												)}
-											</span>
-										</div>
-									</div>
-								</div>
-
-								<!--Amount Tendered-->
-								<div class="mb-8">
-									<div class="grid grid-cols-2">
-										<div class="relative">
-											<span class="pointer-events-none">Amount Tender </span>
-										</div>
-										<div class="relative">
-											<!-- <input
-												type="number"
-												min="1"
-												step=".01"
-												class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-												id="unit_price_label"
-												name="unit_price_label"
-												value={$amountTenderedStore}
-												placeholder="Amount"
-												use:selectTextOnFocus
-												on:change|preventDefault={(e) => changeAmountTenderedStore(e)}
-												on:input|preventDefault={(e) => changeAmountTenderedStore(e)}
-											/> -->
-											<label
-												for="unit_price_label"
-												class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
-												>Amount
-											</label>
-										</div>
-									</div>
-								</div>
-
-								<!--Total Due-->
-								<div class="mb-8">
-									<div class="grid grid-cols-2">
-										<div class="relative">
-											<span class="pointer-events-none">Total Due </span>
-										</div>
-										<div class="relative">
-											<span>
+										<div
+											class="mr-8 w-full rounded-r-md text-white bg-blue-500 flex justify-between"
+										>
+											<span class="ml-4">
 												{format(
 													convertFx(
 														$selectedOrdersPaymentTotals.totalDue,

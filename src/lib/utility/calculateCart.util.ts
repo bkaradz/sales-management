@@ -9,12 +9,12 @@ import { max } from "lodash-es";
 export const addMany = (addends: (currency | string )[]) => {
   let accumulator = 0 as unknown as currency
   addends.forEach((value) => accumulator = currency(accumulator).add(value))
-  return accumulator
+  return accumulator.toString()
 };
 export const subtractMany = (subtrahends: (currency | string )[]) => {
   let accumulator = 0 as unknown as currency
   subtrahends.forEach((value) => accumulator = currency(accumulator).subtract(value))
-  return accumulator
+  return accumulator.toString()
 };
 /**
  * input products

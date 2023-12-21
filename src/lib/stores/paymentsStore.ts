@@ -2,7 +2,7 @@ import type { Contacts, NewPaymentsDetails, Orders } from '$lib/server/drizzle/s
 import type { OrdersByUserId } from '$lib/trpc/routes/orders/orders.drizzle';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
 import type { PaymentMethodUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
-import type currency from 'currency.js';
+import currency from 'currency.js';
 import { writable, derived } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -77,10 +77,13 @@ export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, 
 	const totalArray = ['0'] as unknown as currency[]
 	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => item.sales_amount) as unknown as currency[]
 	const selectedOrdersTotal = addMany([...totalArray, ...ordersTotalsArray])
-	const amountTendered = $amountTenderedStore
-	const customerDeposit = $customerStore?.amount || '0'
+	console.log("🚀 ~ file: paymentsStore.ts:80 ~ selectedOrdersPaymentTotals ~ selectedOrdersTotal:", selectedOrdersTotal)
+	const amountTendered = [...$amountTenderedStore.values()].reduce((accumulator, currentValue) => { return currency(accumulator).add(currentValue.default_currency_equivalent).toString()}, '0')
+	console.log("🚀 ~ file: paymentsStore.ts:81 ~ selectedOrdersPaymentTotals ~ amountTendered:", amountTendered)
+	const customerDeposit = +($customerStore?.amount || '0') > 0 ? ($customerStore?.amount || '0') : '0'
+	console.log("🚀 ~ file: paymentsStore.ts:82 ~ selectedOrdersPaymentTotals ~ customerDeposit:", customerDeposit)
 	const customerTotalTendered = addMany([customerDeposit, amountTendered.toString()])
-	const totalDue = subtractMany([selectedOrdersTotal, customerTotalTendered ])
+	const totalDue = subtractMany([ customerTotalTendered, selectedOrdersTotal,  ])
 	const totalProducts = [...$selectedOrdersPaymentStore.values()].reduce((accumulator, currentValue) => accumulator + currentValue.total_products, 0)
 
 	return {
