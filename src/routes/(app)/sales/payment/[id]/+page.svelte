@@ -8,7 +8,6 @@
 		svgForwardArrow,
 		svgSearch
 	} from '$lib/assets/svgLogos';
-
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { convertFx } from '$lib/utility/currencyConvertor.util';
@@ -76,11 +75,6 @@
 		}
 	};
 
-	// const changeAmountTenderedStore = (e: Event) => {
-	// 	const target = e.target as HTMLInputElement;
-	// 	amountTenderedStore.add(+target.value);
-	// };
-
 	export let form;
 
 	$: if (form?.success) {
@@ -116,6 +110,7 @@
 			});
 			return;
 		}
+
 		if (!customer_id) {
 			toasts.add({
 				message: `Please select customer`,
@@ -123,6 +118,15 @@
 			});
 			return;
 		}
+
+		if (!paymentPart) {
+			toasts.add({
+				message: `Please enter amount`,
+				type: 'error'
+			});
+			return;
+		}
+
 		amountTenderedStore.add({
 			user_id,
 			customer_id,
@@ -140,6 +144,14 @@
 
 		paymentPart = '';
 	};
+
+	const onKeydown = (event: KeyboardEvent) => {
+
+		if (event.key === 'Enter') {
+			amountTendered()
+		}
+		
+	}
 </script>
 
 <svelte:head>
@@ -269,9 +281,9 @@
 							<form action="?/submit" method="post" use:enhance>
 								<input
 									hidden
-									name="amount_tendered"
+									name="payments"
 									type="text"
-									value={JSON.stringify($selectedOrdersPaymentTotals.amountTendered)}
+									value={JSON.stringify([...$amountTenderedStore.values()])}
 								/>
 								<input
 									hidden
@@ -288,12 +300,6 @@
 									)}
 								/>
 								<input hidden name="customer_id" type="number" value={data?.contact?.contact?.id} />
-								<input
-									hidden
-									name="payment_method"
-									type="number"
-									value={$paymentMethodSelectedStore}
-								/>
 
 								{#if $selectedOrdersPaymentStore.size >= 1 && currency($selectedOrdersPaymentTotals.totalDue).value <= 0}
 									<button
@@ -594,6 +600,7 @@
 									<div class="grid grid-cols-3">
 										<input
 											use:selectTextOnFocus
+											on:keydown={(e) => onKeydown(e)}
 											bind:value={paymentPart}
 											type="number"
 											class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
@@ -693,7 +700,16 @@
 											<div
 												class="mr-8 w-full rounded-r-md text-white bg-blue-500 flex justify-between"
 											>
-												<span class="ml-4">{format(value.default_currency_equivalent, 'USD')}</span>
+												<span class="ml-4">
+													{format(
+														convertFx(
+															value.default_currency_equivalent,
+															$exchangeRatesStore,
+															$selectedCurrencyStore
+														),
+														$selectedCurrencyStore
+													)}
+												</span>
 												<span class="mr-2 text-red-900">
 													<button on:click={() => amountTenderedStore.remove(key)}>
 														{@html svgBin}

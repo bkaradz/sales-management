@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { makePayment } from './payments.drizzle';
 
 export const payments = router({
-	makePayment: protectedProcedure.query(async ({ ctx }) => {
-		return await makePayment(ctx);
+	makePayment: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
+		return await makePayment(input, ctx);
 	}),
 	getById: protectedProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
 		// return await getById(input, ctx);

@@ -77,13 +77,10 @@ export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, 
 	const totalArray = ['0'] as unknown as currency[]
 	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => item.sales_amount) as unknown as currency[]
 	const selectedOrdersTotal = addMany([...totalArray, ...ordersTotalsArray])
-	console.log("🚀 ~ file: paymentsStore.ts:80 ~ selectedOrdersPaymentTotals ~ selectedOrdersTotal:", selectedOrdersTotal)
 	const amountTendered = [...$amountTenderedStore.values()].reduce((accumulator, currentValue) => { return currency(accumulator).add(currentValue.default_currency_equivalent).toString()}, '0')
-	console.log("🚀 ~ file: paymentsStore.ts:81 ~ selectedOrdersPaymentTotals ~ amountTendered:", amountTendered)
 	const customerDeposit = +($customerStore?.amount || '0') > 0 ? ($customerStore?.amount || '0') : '0'
-	console.log("🚀 ~ file: paymentsStore.ts:82 ~ selectedOrdersPaymentTotals ~ customerDeposit:", customerDeposit)
 	const customerTotalTendered = addMany([customerDeposit, amountTendered.toString()])
-	const totalDue = subtractMany([ customerTotalTendered, selectedOrdersTotal,  ])
+	const totalDue = subtractMany([ selectedOrdersTotal, customerTotalTendered, ])
 	const totalProducts = [...$selectedOrdersPaymentStore.values()].reduce((accumulator, currentValue) => accumulator + currentValue.total_products, 0)
 
 	return {

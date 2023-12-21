@@ -4,7 +4,7 @@ import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { savePaymentSchema } from '$lib/validation/payment.zod';
-import type { PaymentMethodUnion } from '$lib/utility/lists.utility';
+import type { NewPaymentsDetails } from '$lib/server/drizzle/schema/schema';
 
 export const load = (async (event) => {
 
@@ -33,18 +33,16 @@ export const load = (async (event) => {
 }) satisfies PageServerLoad;
 
 export type transactionInput = {
-    amount_tendered: number,
+    payments: NewPaymentsDetails,
     selected_orders_total: number,
     selected_orders_ids: number[],
-    payment_method: PaymentMethodUnion,
     customer_id: number
 }
 
 type data = {
-    amount_tendered: string,
+    payments: string,
     selected_orders_total: string,
     selected_orders_ids: string,
-    payment_method: string,
     customer_id: string
 }
 
@@ -61,10 +59,9 @@ export const actions: Actions = {
         const formData = Object.fromEntries(data) as unknown as data
 
         const dataResults: transactionInput = {
-            amount_tendered: JSON.parse(formData.amount_tendered),
+            payments: JSON.parse(formData.payments),
             selected_orders_total: JSON.parse(formData.selected_orders_total),
             selected_orders_ids: JSON.parse(formData.selected_orders_ids),
-            payment_method: formData.payment_method as PaymentMethodUnion,
             customer_id: +formData.customer_id
         }
 
@@ -80,7 +77,7 @@ export const actions: Actions = {
                 })
             }
 
-            return await router.createCaller(await createContext(event)).transactions.createTransaction(parsedPayment.data)
+            return await router.createCaller(await createContext(event)).payments.makePayment(parsedPayment.data)
 
         } catch (error) {
             return fail(400, {

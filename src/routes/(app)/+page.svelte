@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import {
 		svgDashboardCart,
 		svgDashboardCashFlow,

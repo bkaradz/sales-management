@@ -11,11 +11,14 @@ export const addMany = (addends: (currency | string )[]) => {
   addends.forEach((value) => accumulator = currency(accumulator).add(value))
   return accumulator.toString()
 };
+
 export const subtractMany = (subtrahends: (currency | string )[]) => {
-  let accumulator = 0 as unknown as currency
-  subtrahends.forEach((value) => accumulator = currency(accumulator).subtract(value))
+  let accumulator = subtrahends.shift()
+  if (!accumulator) throw new Error("Array is empty")
+  subtrahends.forEach((value) => accumulator = (currency(accumulator as string).subtract(value)).toString())
   return accumulator.toString()
 };
+
 /**
  * input products
  * calculate using pricelist(Function)

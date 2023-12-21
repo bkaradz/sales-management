@@ -1,11 +1,11 @@
+import { InsertPaymentsSchema } from '$lib/server/drizzle/schema/schema';
 import { z } from 'zod';
 
 export const savePaymentSchema = z
   .object({
-    cash_paid: z.string(),
+    payments: z.array(InsertPaymentsSchema),
     selected_orders_total: z.string(),
     selected_orders_ids: z.array(z.number()),
-    payment_method: z.string({ required_error: 'Payment Method is required' }),
     customer_id: z.number(),
   })
 
