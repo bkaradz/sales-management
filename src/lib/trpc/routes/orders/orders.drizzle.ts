@@ -451,7 +451,7 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
             )
 
           const allPaymentsTotals = await tx2.select({
-            payments_totals: sql<string>`sum(${payments.cash_paid})`
+            payments_totals: sql<string>`sum(${payments.default_currency_equivalent_total})`
           }).from(payments)
             .where(eq(payments.customer_id, input.order.customer_id))
 

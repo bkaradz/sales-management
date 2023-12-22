@@ -281,7 +281,7 @@
 							<form action="?/submit" method="post" use:enhance>
 								<input
 									hidden
-									name="payments"
+									name="payments_details"
 									type="text"
 									value={JSON.stringify([...$amountTenderedStore.values()])}
 								/>

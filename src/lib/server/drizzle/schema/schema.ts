@@ -4,6 +4,7 @@ import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, integer, numeric, pgEnum, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 
 export const users = pgTable('auth_user', {
@@ -251,8 +252,8 @@ export const transactions_details = pgTable('transactions_details', {
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
 
-export type TransactionsDetailsDetails = InferSelectModel<typeof transactions_details>;
-export type NewTransactionsDetailsDetails = InferInsertModel<typeof transactions_details>;
+export type TransactionsDetails = InferSelectModel<typeof transactions_details>;
+export type NewTransactionsDetails = InferInsertModel<typeof transactions_details>;
 
 export const InsertTransactionsDetailsSchema = createInsertSchema(transactions_details);
 export const SelectTransactionsDetailsSchema = createSelectSchema(transactions_details);
@@ -268,14 +269,31 @@ export const transactions = pgTable('transactions', {
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
 
-export type TransactionDetails = InferSelectModel<typeof transactions>;
-export type NewTransactionDetails = InferInsertModel<typeof transactions>;
+export type Transaction = InferSelectModel<typeof transactions>;
+export type NewTransaction = InferInsertModel<typeof transactions>;
 
 export const InsertTransactionSchema = createInsertSchema(transactions);
 export const SelectTransactionSchema = createSelectSchema(transactions);
 
 export const payments = pgTable('payments', {
   id: serial('id').primaryKey(),
+  user_id: text('user_id').notNull().references(() => users.id),
+  customer_id: integer('customer_id').notNull().references(() => contacts.id),
+  exchange_rate_id: integer('exchange_rate_id').notNull().references(() => exchange_rates.id),
+  default_currency_equivalent_total: numeric('default_currency_equivalent_total', { precision: 100, scale: 10 }).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type Payments = InferSelectModel<typeof payments>;
+export type NewPayments = InferInsertModel<typeof payments>;
+
+export const InsertPaymentsSchema = createInsertSchema(payments);
+export const SelectPaymentsSchema = createSelectSchema(payments);
+
+export const payments_details = pgTable('payments_details', {
+  id: serial('id').primaryKey(),
+  payments_id: integer('payments_id').notNull().references(() => payments.id),
   user_id: text('user_id').notNull().references(() => users.id),
   customer_id: integer('customer_id').notNull().references(() => contacts.id),
   exchange_rate_id: integer('exchange_rate_id').notNull().references(() => exchange_rates.id),
@@ -287,8 +305,10 @@ export const payments = pgTable('payments', {
   updated_at: timestamp('updated_at').defaultNow().notNull()
 })
 
-export type PaymentsDetails = InferSelectModel<typeof payments>;
-export type NewPaymentsDetails = InferInsertModel<typeof payments>;
+export type PaymentsDetails = InferSelectModel<typeof payments_details>;
+export type NewPaymentsDetails = Omit<InferInsertModel<typeof payments_details>, 'payments_id'>;
 
-export const InsertPaymentsSchema = createInsertSchema(payments);
-export const SelectPaymentsSchema = createSelectSchema(payments);
+export const InsertPaymentsDetailsSchema = createInsertSchema(payments_details);
+export const SelectPaymentsDetailsSchema = createSelectSchema(payments_details);
+
+export const RequestInsertPaymentsDetailsSchema = InsertPaymentsDetailsSchema.omit({ payments_id: true })

@@ -3,7 +3,7 @@ import { router } from '$lib/trpc/router';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { savePaymentSchema } from '$lib/validation/payment.zod';
+import { savePaymentSchema, type SavePayment } from '$lib/validation/payment.zod';
 import type { NewPaymentsDetails } from '$lib/server/drizzle/schema/schema';
 
 export const load = (async (event) => {
@@ -32,15 +32,10 @@ export const load = (async (event) => {
     };
 }) satisfies PageServerLoad;
 
-export type transactionInput = {
-    payments: NewPaymentsDetails,
-    selected_orders_total: number,
-    selected_orders_ids: number[],
-    customer_id: number
-}
+
 
 type data = {
-    payments: string,
+    payments_details: string,
     selected_orders_total: string,
     selected_orders_ids: string,
     customer_id: string
@@ -58,8 +53,8 @@ export const actions: Actions = {
         const data = await event.request.formData();
         const formData = Object.fromEntries(data) as unknown as data
 
-        const dataResults: transactionInput = {
-            payments: JSON.parse(formData.payments),
+        const dataResults: SavePayment = {
+            payments_details: JSON.parse(formData.payments_details),
             selected_orders_total: JSON.parse(formData.selected_orders_total),
             selected_orders_ids: JSON.parse(formData.selected_orders_ids),
             customer_id: +formData.customer_id
