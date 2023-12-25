@@ -38,7 +38,8 @@ type data = {
     payments_details: string,
     selected_orders_total: string,
     selected_orders_ids: string,
-    customer_id: string
+    customer_id: string,
+    exchange_rate_id: string
 }
 
 export const actions: Actions = {
@@ -57,7 +58,8 @@ export const actions: Actions = {
             payments_details: JSON.parse(formData.payments_details),
             selected_orders_total: JSON.parse(formData.selected_orders_total),
             selected_orders_ids: JSON.parse(formData.selected_orders_ids),
-            customer_id: +formData.customer_id
+            customer_id: +formData.customer_id,
+            exchange_rate_id: +formData.exchange_rate_id
         }
 
         try {

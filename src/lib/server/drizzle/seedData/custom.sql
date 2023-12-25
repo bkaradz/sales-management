@@ -126,3 +126,8 @@ CREATE TRIGGER payments_audit_trigger
   AFTER INSERT OR UPDATE OR DELETE ON payments
   FOR each ROW
   EXECUTE PROCEDURE universal_audit_information('payments_audit');
+
+CREATE TRIGGER payments_details_audit_trigger
+  AFTER INSERT OR UPDATE OR DELETE ON payments_details
+  FOR each ROW
+  EXECUTE PROCEDURE universal_audit_information('payments_details_audit');

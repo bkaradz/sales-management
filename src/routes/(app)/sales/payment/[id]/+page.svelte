@@ -281,6 +281,12 @@
 							<form action="?/submit" method="post" use:enhance>
 								<input
 									hidden
+									name="exchange_rate_id"
+									type="text"
+									value={$exchangeRatesStore.exchange_rates.id}
+								/>
+								<input
+									hidden
 									name="payments_details"
 									type="text"
 									value={JSON.stringify([...$amountTenderedStore.values()])}
@@ -377,7 +383,7 @@
 									/>
 									<input
 										use:selectTextOnFocus
-										type="text"
+										type="search"
 										name="search"
 										class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
 										placeholder="Search"

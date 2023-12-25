@@ -312,3 +312,18 @@ export const InsertPaymentsDetailsSchema = createInsertSchema(payments_details);
 export const SelectPaymentsDetailsSchema = createSelectSchema(payments_details);
 
 export const RequestInsertPaymentsDetailsSchema = InsertPaymentsDetailsSchema.omit({ payments_id: true })
+
+export const expenses = pgTable('payments', {
+  id: serial('id').primaryKey(),
+  user_id: text('user_id').notNull().references(() => users.id),
+  name: integer('name').notNull().references(() => exchange_rates.id),
+  amount: numeric('amount', { precision: 100, scale: 10 }).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull()
+})
+
+export type Expenses = InferSelectModel<typeof expenses>;
+export type NewExpenses = InferInsertModel<typeof expenses>;
+
+export const InsertExpensesSchema = createInsertSchema(expenses);
+export const SelectExpensesSchema = createSelectSchema(expenses);

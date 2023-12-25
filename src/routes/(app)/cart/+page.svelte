@@ -22,7 +22,6 @@
 	import { embroideryType, garmentPlacement, salesStatus } from '$lib/utility/lists.utility';
 	import { datePicker } from 'svelte-flatpickr-plus';
 	import currency from 'currency.js';
-	import { multiply } from 'lodash-es';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -118,7 +117,7 @@
 			<form data-sveltekit-keepfocus data-sveltekit-replacestate method="get">
 				<input
 					use:selectTextOnFocus
-					type="text"
+					type="search"
 					name="search"
 					id="search"
 					class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
@@ -217,7 +216,7 @@
 							hidden
 							name="sales_amount"
 							type="text"
-							value={JSON.stringify($cartTotalsStore.sub_total)}
+							value={$cartTotalsStore.sub_total}
 						/>
 						<input hidden name="total_products" type="text" value={$cartTotalsStore.totalProduct} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />

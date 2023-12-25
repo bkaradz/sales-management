@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import {
 		svgDashboardCart,
 		svgDashboardCashFlow,
@@ -8,7 +7,11 @@
 		svgDashboardUser
 	} from '$lib/assets/svgLogos';
 	import { activitiesTabs } from '$lib/data/tabsData';
+	import { entries } from 'lodash-es';
+	import type { ActionData, PageData } from './$types';
+	import { format } from '$lib/utility/calculateCart.util';
 
+	export let data: PageData;
 </script>
 
 <svelte:head>
@@ -50,7 +53,20 @@
 					</div>
 					<div>
 						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income Today</p>
-						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">6389</p>
+						{#if data.incomeToday}
+							{#each Array.from(data.incomeToday.entries()) as values}
+								<div
+									class="grid grid-cols-2  text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+								>
+									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+										{values[0]}
+									</div>
+									<div class="ml-6 text-xs text-gray-500">
+										{format(values[1], values[0] === 'Total Amount' ? 'USD' : values[0])}
+									</div>
+								</div>
+							{/each}
+						{/if}
 					</div>
 				</div>
 				<!-- Card -->
@@ -98,12 +114,22 @@
 					>
 						{@html svgDashboardOrders}
 					</div>
-
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-							Income this Month
-						</p>
-						<p class="text-lg font-semibold text-gray-700 dark:text-gray-200">6389</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income this Month</p>
+						{#if data.incomeMonth}
+							{#each Array.from(data.incomeMonth.entries()) as values}
+								<div
+									class="grid grid-cols-2  text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+								>
+									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
+										{values[0]}
+									</div>
+									<div class="ml-6 text-xs text-gray-500">
+										{format(values[1], values[0] === 'Total Amount' ? 'USD' : values[0])}
+									</div>
+								</div>
+							{/each}
+						{/if}
 					</div>
 				</div>
 				<!-- Card -->

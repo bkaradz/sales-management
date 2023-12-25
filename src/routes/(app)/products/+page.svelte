@@ -114,7 +114,7 @@
 							/>
 							<input
 								use:selectTextOnFocus
-								type="text"
+								type="search"
 								name="search"
 								class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
 								placeholder="Search"

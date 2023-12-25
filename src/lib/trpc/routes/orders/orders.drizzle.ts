@@ -455,7 +455,7 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
           }).from(payments)
             .where(eq(payments.customer_id, input.order.customer_id))
 
-          const amount = subtractMany([allPaymentsTotals[0].payments_totals, allShopOrdersTotals[0].shop_orders_totals])
+          const amount = subtractMany([(allPaymentsTotals[0].payments_totals || '0'), allShopOrdersTotals[0].shop_orders_totals])
 
           await tx2.update(contacts).set({ orders_totals: ordersTotals[0].shop_orders_totals, amount: amount.toString() }).where(eq(contacts.id, input.order.customer_id))
         }

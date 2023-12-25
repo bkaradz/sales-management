@@ -8,7 +8,6 @@ import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveCartOrderSchema, type SaveOrderDetails } from '$lib/validation/cart.zod';
 import { saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
-import type { Pricelist } from '$lib/server/drizzle/schema/schema';
 import type { PricelistsAll } from '$lib/trpc/routes/pricelist/pricelists.drizzle';
 import type { ratesAll } from '$lib/trpc/routes/exchangeRates/rates.drizzle';
 
