@@ -40,7 +40,7 @@ export const incomeToday = async (ctx: Context) => {
 
 }
 
-export const incomeWeekley = async (ctx: Context) => {
+export const incomeDaily = async (ctx: Context) => {
 
   if (!ctx.session.sessionId) {
     error(404, 'User not found');

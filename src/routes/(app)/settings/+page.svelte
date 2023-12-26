@@ -1,7 +1,19 @@
-<script>
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import { svgSearch } from '$lib/assets/svgLogos';
 	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
+	import { onMount } from 'svelte'; 
+	
+	let pdf: any; 
+	
+	onMount(async () => { 
+		pdf = await import('html2pdf.js'); 
+	}); 
+
+	async function toPDF() { 
+		let _html = `<h1 class="bg-blue-500 ">hello</h1>` 
+		await pdf.default(_html); 
+	}
 
 	let isModalOpen = false;
 
@@ -51,3 +63,5 @@
 		</div>
 	</div>
 </dialog>
+
+<button class="btn btn-primary" on:click={toPDF}>test pdf</button>

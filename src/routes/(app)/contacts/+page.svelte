@@ -20,10 +20,22 @@
 	import { exchangeRatesStore, selectedCurrencyStore } from '$lib/stores/cartStore';
 	import { invalidateAll } from '$app/navigation';
 	import { toasts } from '$lib/stores/toasts.store';
-	import { page } from '$app/stores';
 
 	export let data: PageData;
 	export let form: ActionData;
+
+	const returnColour = (number: string) => {
+		if (+number === 0) {
+			// return `text-orange-500`
+			return `text-gray-500`
+		}
+		if (+number > 0) {
+			return `text-green-500`
+		}
+		if (+number < 0) {
+			return `text-red-500`
+		}
+	}
 
 	let isModalOpen = false;
 	let deletedContact = { contactId: null, contactName: null } as {
@@ -190,10 +202,7 @@
 									{contact.full_name}
 								</td>
 								<td
-									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 {+contact.amount <
-									0
-										? 'text-red-500'
-										: 'text-green-500'}"
+									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 {returnColour(contact.amount)}"
 								>
 									{format(
 										convertFx(contact.amount, $exchangeRatesStore, $selectedCurrencyStore),

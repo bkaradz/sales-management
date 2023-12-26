@@ -20,17 +20,21 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
     await db.transaction(async (tx) => {
 
       // arrange orders from smallest to highest amount and drop the ones that do not fit the amount paid
+      const customers = await tx.select().from(contacts).where(eq(contacts.id, input.customer_id))
       const paymentOrdersDetails = await tx.select().from(orders_details).where(inArray(orders_details.shop_orders_id, input.selected_orders_ids));
       let paymentShopOrders = await tx.select().from(shop_orders).where(inArray(shop_orders.id, input.selected_orders_ids));
-      const totalPaidAmount = addMany(input.payments_details.map((item) => item.default_currency_equivalent))
+      let totalPaidAmount = addMany(input.payments_details.map((item) => item.default_currency_equivalent))
       // check that the paid balance is equivalent to the orders balance
       const totalOrdersAmount = addMany(paymentOrdersDetails.map((item) => currency(item.unit_price).multiply(item.quantity)))
-      const paidMore = currency(totalPaidAmount).dollars() < currency(totalOrdersAmount).dollars()
 
+      if (+customers[0].amount > 0) {
+        totalPaidAmount = currency(customers[0].amount).add(totalPaidAmount).toString()
+      }
+
+      const paidMore = currency(totalPaidAmount).dollars() < currency(totalOrdersAmount).dollars()
 
       const sortedOrders = sortBy(paymentShopOrders, ['sales_amount'])
 
-      
       if (paidMore) {
         const sortedPaymentShopOrders = []
         
@@ -60,11 +64,15 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
 
       // Write transactions to database
       // create payments for the orders
+      const default_currency_equivalent_total = input.payments_details.reduce((accumulator, currentValue) => {
+        return currency(accumulator).add(currentValue.default_currency_equivalent).toString()
+      }, '0')
+
       const paymentId = await tx.insert(payments).values({
         user_id: ctx.session.user.userId,
         customer_id: input.customer_id,
         exchange_rate_id: input.exchange_rate_id,
-        default_currency_equivalent_total: input.selected_orders_total,
+        default_currency_equivalent_total,
       }).returning({ id: payments.id })
 
       await tx.transaction(async (tx2) => {
