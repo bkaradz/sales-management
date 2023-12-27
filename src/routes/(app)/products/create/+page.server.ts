@@ -35,9 +35,7 @@ export const actions: Actions = {
 
 		const productsArray = (await parseCsv(csvString)) as any[]
 
-
 		let productsResultsArray: Products[] = []
-
 
 		productsArray.forEach((product: Products) => {
 			let formResults = {}

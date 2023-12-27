@@ -203,7 +203,7 @@
 										type="text"
 										id="product_unit_price"
 										name="product_unit_price"
-										value={JSON.stringify($enteredAmountValue)}
+										value={$enteredAmountValue}
 									/>
 									<label
 										for="unit_price_label"

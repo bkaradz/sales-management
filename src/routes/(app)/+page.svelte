@@ -6,12 +6,19 @@
 		svgDashboardOrders,
 		svgDashboardUser
 	} from '$lib/assets/svgLogos';
-	import { activitiesTabs } from '$lib/data/tabsData';
-	import { entries } from 'lodash-es';
-	import type { ActionData, PageData } from './$types';
+	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
+	import { v4 as uuidv4 } from 'uuid';
 
 	export let data: PageData;
+
+	const activitiesTabs = [
+  { id: uuidv4(), name: 'Activities', selected: true },
+  { id: uuidv4(), name: 'Transfer', selected: false },
+  { id: uuidv4(), name: 'Budgets', selected: false },
+  { id: uuidv4(), name: 'Notifications', selected: false },
+  { id: uuidv4(), name: 'Cards', selected: false }
+];
 </script>
 
 <svelte:head>

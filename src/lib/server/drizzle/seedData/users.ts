@@ -1,8 +1,8 @@
 export const usersList = [
 	{
-		full_name: 'John Doe',
-		username: 'john',
-		password: 'johndoe123',
+		full_name: 'Brian Karadzangare',
+		username: 'karadz',
+		password: 'karadz?',
 		active: true
 	}
 ];
