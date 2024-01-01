@@ -9,16 +9,55 @@
 	import type { PageData } from './$types';
 	import { format } from '$lib/utility/calculateCart.util';
 	import { v4 as uuidv4 } from 'uuid';
+	import { onMount } from 'svelte';
+	import currency from 'currency.js';
+	import { createChart } from '$lib/utility/chartFunction.util';
 
 	export let data: PageData;
 
+	const chartValuesIncomeDailyTotals = data.incomeDailyTotals?.map(
+		(item) => currency(format(item.total, 'USD')).value
+	);
+	const chartLabelsIncomeDailyTotals = data.incomeDailyTotals?.map((item) => {
+		const date = new Date(item.day_of_month as string);
+		return date.toDateString();
+	});
+
+	const chartValuesIncomeMonthTotals = data.incomeMonthTotals?.map((item) => {
+		return currency(format(item.total, 'USD')).value;
+	});
+	const chartLabelsIncomeMonthTotals = data.incomeMonthTotals?.map((item) => {
+		return item.month.trim().replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
+	});
+
+	let ctxIncomeDailyTotals: any;
+	let chartCanvasIncomeDailyTotals: HTMLCanvasElement;
+
+	let ctxIncomeIncomeMonthTotals: any;
+	let chartCanvasIncomeMonthTotals: HTMLCanvasElement;
+
+	onMount(async () => {
+		createChart(
+			ctxIncomeDailyTotals,
+			chartCanvasIncomeDailyTotals,
+			chartLabelsIncomeDailyTotals || [],
+			chartValuesIncomeDailyTotals || []
+		);
+		createChart(
+			ctxIncomeIncomeMonthTotals,
+			chartCanvasIncomeMonthTotals,
+			chartLabelsIncomeMonthTotals || [],
+			chartValuesIncomeMonthTotals || []
+		);
+	});
+
 	const activitiesTabs = [
-  { id: uuidv4(), name: 'Activities', selected: true },
-  { id: uuidv4(), name: 'Transfer', selected: false },
-  { id: uuidv4(), name: 'Budgets', selected: false },
-  { id: uuidv4(), name: 'Notifications', selected: false },
-  { id: uuidv4(), name: 'Cards', selected: false }
-];
+		{ id: uuidv4(), name: 'Activities', selected: true },
+		{ id: uuidv4(), name: 'Transfer', selected: false },
+		{ id: uuidv4(), name: 'Budgets', selected: false },
+		{ id: uuidv4(), name: 'Notifications', selected: false },
+		{ id: uuidv4(), name: 'Cards', selected: false }
+	];
 </script>
 
 <svelte:head>
@@ -63,7 +102,7 @@
 						{#if data.incomeToday}
 							{#each Array.from(data.incomeToday.entries()) as values}
 								<div
-									class="grid grid-cols-2  text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									class="grid grid-cols-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 								>
 									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 										{values[0]}
@@ -122,11 +161,13 @@
 						{@html svgDashboardOrders}
 					</div>
 					<div>
-						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income this Month</p>
+						<p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+							Income this Month
+						</p>
 						{#if data.incomeMonth}
 							{#each Array.from(data.incomeMonth.entries()) as values}
 								<div
-									class="grid grid-cols-2  text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
+									class="grid grid-cols-2 text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 								>
 									<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 										{values[0]}
@@ -186,39 +227,13 @@
 			<div class="grid gap-6 mb-8 md:grid-cols-2">
 				<!-- Card -->
 				<div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-					<h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">Revenue</h4>
-					<canvas id="pie" />
-					<div class="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400">
-						<!-- Chart legend -->
-						<div class="flex items-center">
-							<span class="inline-block w-3 h-3 mr-1 bg-blue-500 rounded-full" />
-							<span>Shirts</span>
-						</div>
-						<div class="flex items-center">
-							<span class="inline-block w-3 h-3 mr-1 bg-teal-600 rounded-full" />
-							<span>Shoes</span>
-						</div>
-						<div class="flex items-center">
-							<span class="inline-block w-3 h-3 mr-1 bg-purple-600 rounded-full" />
-							<span>Bags</span>
-						</div>
-					</div>
+					<h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">Weekly Income</h4>
+					<canvas bind:this={chartCanvasIncomeDailyTotals} id="myChart" />
 				</div>
 				<!-- Card -->
 				<div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-					<h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">Traffic</h4>
-					<canvas id="line" />
-					<div class="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400">
-						<!-- Chart legend -->
-						<div class="flex items-center">
-							<span class="inline-block w-3 h-3 mr-1 bg-teal-600 rounded-full" />
-							<span>Organic</span>
-						</div>
-						<div class="flex items-center">
-							<span class="inline-block w-3 h-3 mr-1 bg-purple-600 rounded-full" />
-							<span>Paid</span>
-						</div>
-					</div>
+					<h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">Monthly Income</h4>
+					<canvas bind:this={chartCanvasIncomeMonthTotals} id="myChart" />
 				</div>
 				<!-- Card -->
 				<div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">

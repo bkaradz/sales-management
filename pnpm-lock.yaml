@@ -71,6 +71,9 @@ devDependencies:
   daisyui:
     specifier: ^3.9.4
     version: 3.9.4(ts-node@10.9.2)
+  date-fns:
+    specifier: ^3.0.6
+    version: 3.0.6
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
@@ -1935,6 +1938,10 @@ packages:
   /data-uri-to-buffer@6.0.1:
     resolution: {integrity: sha512-MZd3VlchQkp8rdend6vrx7MmVDJzSNTBvghvKjirLkD+WTChA3KUf0jkE68Q4UyctNqI11zZO9/x2Yx+ub5Cvg==}
     engines: {node: '>= 14'}
+    dev: true
+
+  /date-fns@3.0.6:
+    resolution: {integrity: sha512-W+G99rycpKMMF2/YD064b2lE7jJGUe+EjOES7Q8BIGY8sbNdbgcs9XFTZwvzc9Jx1f3k7LB7gZaZa7f8Agzljg==}
     dev: true
 
   /debug@4.3.4:
