@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GetDailyProductionReport } from '$lib/trpc/routes/reports/reports.drizzle';
+	import { generatePDF } from '$lib/utility/print.util';
 
 	export let heading: string;
 	export let dataResults: {
@@ -8,7 +9,7 @@
 		};
 </script>
 
-<div class="pageLandscape text-black">
+<div id="production" class="pageLandscape text-black">
 	<div class="border-b-2 border-blue-500 absolute top-0 left-0 w-full pl-10">
 		<div class="flex justify-between items-center pt-6">
 			<div class="w-1/3">
@@ -85,3 +86,4 @@
 		</div>
 	</div>
 </div>
+<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400" on:click={() => generatePDF("production", "production")}>Click for PDF</button>

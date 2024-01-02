@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';	
-	import { enhance } from '$app/forms';
 	import { longPress } from '$lib/utility/inputSelectDirective.js';
 
 	let counter = 0
