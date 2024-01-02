@@ -4,15 +4,38 @@
 	import { format } from '$lib/utility/calculateCart.util';
 	import { convertFx } from '$lib/utility/currencyConvertor.util';
 	import currency from 'currency.js';
+	import { jsPDF } from 'jspdf';
 
 	export let heading: string;
 	export let dataResults: {
 		data: NonNullable<GetSalesReports>['shop_orders'];
 		pageNumber: number;
 	};
+
+	async function handleClick() {
+		const doc = new jsPDF({
+			orientation: 'landscape',
+			unit: 'pt',
+			format: 'letter',
+			putOnlyUsedFonts: true,
+			compress: true
+		});
+
+		const source = document.getElementById('sales');
+
+		if (!source) throw new Error('Doc Element not found');
+
+		await doc.html(source, {
+			width: 842,
+			windowWidth: 1123,
+			// margin: 10
+		});
+
+		doc.save('a4.pdf');
+	}
 </script>
 
-<div class="pageLandscape text-black">
+<div id="sales" class="pageLandscape text-black">
 	<div class="border-b-2 border-blue-500 absolute top-0 left-0 w-full pl-10">
 		<div class="flex justify-between items-center pt-10">
 			<div class="w-1/3">
@@ -113,3 +136,4 @@
 		</div>
 	</div>
 </div>
+<button class="h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400" on:click={handleClick}>Click for PDF</button>

@@ -1,67 +1,34 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { svgSearch } from '$lib/assets/svgLogos';
-	import { selectTextOnFocus } from '$lib/utility/inputSelectDirective';
-	import { onMount } from 'svelte'; 
-	
-	let pdf: any; 
-	
-	onMount(async () => { 
-		pdf = await import('html2pdf.js'); 
-	}); 
+	import { jsPDF } from 'jspdf';
 
-	async function toPDF() { 
-		let _html = `<h1 class="bg-blue-500 ">hello</h1>` 
-		await pdf.default(_html); 
+	async function handleClick() {
+		const doc = new jsPDF({
+			orientation: 'p',
+			unit: 'pt',
+			format: 'letter',
+			putOnlyUsedFonts: true,
+			compress: true
+		});
+		const source = document.getElementById('customers');
+
+		if (!source) throw new Error('Doc Element not found');
+
+		await doc.html(source, {
+			width: 580,
+			windowWidth: 580,
+			margin: 15
+		});
+
+		doc.save('a4.pdf');
 	}
-
-	let isModalOpen = false;
-
 </script>
 
-<form
-	id="myForm"
-	data-sveltekit-keepfocus
-	data-sveltekit-replacestate
-	action="?/submit"
-	method="post"
-	use:enhance
->
-	<input
-		use:selectTextOnFocus
-		type="search"
-		name="search"
-		class="pl-8 h-8 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm"
-		placeholder="Search"
-	/>
-	{@html svgSearch}
-</form>
-<button class="btn modal-button rounded-md" on:click={() => (isModalOpen = true)}>Submit</button>
-
-<!-- <button class="btn modal-button rounded-md" on:click={()=>isModalOpen = true}>open modal</button> -->
-
-<dialog class="modal" class:modal-open={isModalOpen}>
-	<div class="modal-box bg-white p-3 w-full flex flex-col rounded-md dark:bg-gray-800">
-		<h3 class="font-bold text-lg">Delete product!</h3>
-		<p class="py-4">Are you sure you want to delete the product!!!</p>
-		<div class="modal-action">
-			<input
-				name="cancel"
-				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
-				type="button"
-				value="Cancel"
-				on:click={() => (isModalOpen = false)}
-			/>
-			<input
-				name="submit"
-				class="btn rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 border-none"
-				form="myForm"
-				value="Save"
-				type="submit"
-				on:click={() => (isModalOpen = false)}
-			/>
-		</div>
+<div id="customers" class="flex flex-col w-full h-full space-y-1">
+	<div class="flex flex-row bg-blue-200 justify-center">
+		<p class="m-1 text-primary text-xl">APPLICANT GENERAL INFORMATION</p>
 	</div>
-</dialog>
-
-<button class="btn btn-primary" on:click={toPDF}>test pdf</button>
+	<div class="flex bg-primary justify-center">
+		<p class="text-white">Primary Information</p>
+	</div>
+</div>
+<button class="btn btn-primary" on:click={handleClick}>Click for PDF</button>
