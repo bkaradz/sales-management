@@ -18,6 +18,6 @@ export async function generatePDF(elementId: string, documentName: string) {
     windowWidth: 1123,
     // margin: 10
   });
-
+  // doc.output('dataurlnewwindow');
   doc.save(`${documentName}.pdf`);
 }
