@@ -5,12 +5,16 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const connectionString = process.env.DATABASE_URL
+const hostString = process.env.DB_HOST
+const databaseString = process.env.DB_NAME
+const usernameString = process.env.DB_USER
+const passwordString = process.env.DB_PASSWORD
 
-if (!connectionString) {
-    throw new Error("Database not found");
-}
-
-// export const sql = postgres(connectionString, { max: 1, onnotice: () => {} })
-export const sql = postgres(connectionString)
+export const sql = postgres({
+    host                 : hostString,            
+    port                 : 5432,          
+    database             : databaseString,            
+    username             : usernameString,            
+    password             : passwordString, 
+})
 export const db = drizzle(sql, { schema });

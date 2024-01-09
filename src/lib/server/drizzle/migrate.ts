@@ -5,16 +5,24 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const connectionString = process.env.DATABASE_URL
+const hostString = process.env.DB_HOST
+const databaseString = process.env.DB_NAME
+const usernameString = process.env.DB_USER
+const passwordString = process.env.DB_PASSWORD
 
 async function main() {
-    if (!connectionString) {
-        throw new Error("Database not found");
-    }
 
     console.info("migrations started......");
 
-    const migrationClient = postgres(connectionString, { max: 1,  onnotice: () => {} });
+    const migrationClient = postgres({ 
+        max: 1,  
+        onnotice: () => {},
+        host                 : hostString,            
+        port                 : 5432,          
+        database             : databaseString,            
+        username             : usernameString,            
+        password             : passwordString, 
+    });
     await migrate(drizzle(migrationClient), { migrationsFolder: "drizzle/migrations" })
 
     console.info("migrations finished......");
