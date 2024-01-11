@@ -41,7 +41,18 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 
 		} else {
 
-			// const data = `%${input.search}%`
+			const data = `${input.search}`
+			console.log("🚀 ~ getProducts ~ data:", data)
+
+			const test = await db.execute(sql`
+					SELECT * FROM products_idx.search(${data}, fuzzy_fields => 'name, id, stitches') LIMIT 2`
+				)
+			console.log("🚀 ~ getProducts ~ test:", test)
+
+			const test2 = await db.execute(sql`
+					SELECT * FROM products WHERE name @@@ 'jet'`
+				)
+			console.log("🚀 ~ getProducts ~ test:", test2)
 
 			totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(products)

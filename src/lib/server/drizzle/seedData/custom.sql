@@ -1,4 +1,25 @@
 -- Custom SQL migration file, put you code below! --
+
+-- Products search index using bm25
+CALL paradedb.create_bm25(
+  index_name => 'products_idx',
+  schema_name => 'public',
+  table_name => 'products',
+  key_field => 'id',
+  text_fields => '{name: {}}',
+  numeric_fields => '{id: {}, stitches: {}}'
+);
+
+-- Contacts search index using bm25
+CALL paradedb.create_bm25(
+        index_name => 'contacts_idx',
+        schema_name => 'public',
+        table_name => 'contacts',
+        key_field => 'id',
+        text_fields => '{full_name: {}}',
+  			numeric_fields => '{id: {}}'
+);
+
 -- Products search index
 CREATE INDEX products_index ON products (name, CAST(id AS text), CAST(stitches AS text) text_pattern_ops);
 
