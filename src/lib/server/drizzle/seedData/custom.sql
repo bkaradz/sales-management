@@ -6,18 +6,20 @@ CALL paradedb.create_bm25(
   schema_name => 'public',
   table_name => 'products',
   key_field => 'id',
-  text_fields => '{name: {}}',
-  numeric_fields => '{id: {}, stitches: {}}'
+  text_fields => '{name: {}, product_category: {}',
+  numeric_fields => '{id: {}, stitches: {}}',
+  boolean_fields => '{active: {}}'
 );
 
 -- Contacts search index using bm25
 CALL paradedb.create_bm25(
-        index_name => 'contacts_idx',
-        schema_name => 'public',
-        table_name => 'contacts',
-        key_field => 'id',
-        text_fields => '{full_name: {}}',
-  			numeric_fields => '{id: {}}'
+  index_name => 'contacts_idx',
+  schema_name => 'public',
+  table_name => 'contacts',
+  key_field => 'id',
+  text_fields => '{full_name: {}}',
+  numeric_fields => '{id: {}}',
+  boolean_fields => '{active: {}}'
 );
 
 -- Products search index

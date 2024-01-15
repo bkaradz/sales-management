@@ -15,6 +15,8 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 	}
 
 	const pagination = getPagination(input);
+	const limitRows = pagination.limit;
+	const offsetRows = (pagination.page - 1) * limitRows;
 
 	try {
 
@@ -41,38 +43,43 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 
 		} else {
 
-			const data = `${input.search}`
-			console.log("🚀 ~ getProducts ~ data:", data)
+			const data = `${input.search} AND active:true`
 
-			const test = await db.execute(sql`
-					SELECT * FROM products_idx.search(${data}, fuzzy_fields => 'name, id, stitches') LIMIT 2`
-				)
-			console.log("🚀 ~ getProducts ~ test:", test)
+			// totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
+			// 	.from(products)
+			// 	.where(and((sql`to_tsvector('simple', products.name ||' '|| CAST(products.id AS text) ||' '|| coalesce(CAST(products.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))));
 
-			const test2 = await db.execute(sql`
-					SELECT * FROM products WHERE name @@@ 'jet'`
-				)
-			console.log("🚀 ~ getProducts ~ test:", test2)
+			// productsQuery = await db.select({
+			// 	id: products.id,
+			// 	name: products.name,
+			// 	product_category: products.product_category,
+			// 	stitches: products.stitches,
+			// 	stork_quantity: products.stork_quantity,
+			// 	product_unit_price: products.product_unit_price
+			// }).from(products)
+			// 	.orderBy(asc(products.name))
+			// 	.where(and((sql`to_tsvector('simple', products.name ||' '|| CAST(products.id AS text) ||' '|| coalesce(CAST(products.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))))
+			// 	.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
-			totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
-				.from(products)
-				.where(and((sql`to_tsvector('simple', products.name ||' '|| CAST(products.id AS text) ||' '|| coalesce(CAST(products.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))));
+			totalProductsRecords = await db.execute(sql`SELECT count(*)	FROM products_idx.search(${data}, fuzzy_fields => 'name, id, stitches')`) as { count: string }[]
 
-			productsQuery = await db.select({
-				id: products.id,
-				name: products.name,
-				product_category: products.product_category,
-				stitches: products.stitches,
-				stork_quantity: products.stork_quantity,
-				product_unit_price: products.product_unit_price
-			}).from(products)
-				.orderBy(asc(products.name))
-				.where(and((sql`to_tsvector('simple', products.name ||' '|| CAST(products.id AS text) ||' '|| coalesce(CAST(products.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))))
-				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
+			productsQuery = await db.execute(sql`
+				SELECT 
+				products.id as id,
+				products.name as name,
+				products.product_category as product_category,
+				products.stitches as stitches,
+				products.stork_quantity as stork_quantity,
+				products.product_unit_price as product_unit_price, 
+				rank.rank_bm25 AS ranking
+				FROM products_idx.search(${data}, fuzzy_fields => 'name, id, stitches', limit_rows => ${limitRows}, offset_rows => ${offsetRows}) as products
+				LEFT JOIN products_idx.rank(${data}, fuzzy_fields => 'name, id, stitches', limit_rows => ${limitRows}, offset_rows => ${offsetRows}) as rank ON products.id = rank.id
+				ORDER BY rank.rank_bm25 DESC;
+			`)
 
 		}
 
-    pagination.totalRecords = totalProductsRecords.length === 0 ? 0 : +totalProductsRecords[0]?.count
+		pagination.totalRecords = totalProductsRecords.length === 0 ? 0 : +totalProductsRecords[0]?.count
 
 		pagination.totalPages = Math.ceil(pagination.totalRecords / pagination.limit);
 
