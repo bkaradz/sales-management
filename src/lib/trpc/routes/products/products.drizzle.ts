@@ -7,6 +7,7 @@ import { orders_details, products } from '$lib/server/drizzle/schema/schema';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import trim from 'lodash-es/trim';
 import type { saveProduct, saveProductArray } from '$lib/validation/product.zod';
+import type { ProductCategoriesUnion } from '$lib/utility/lists.utility';
 
 export const getProducts = async (input: SearchParams, ctx: Context) => {
 
@@ -20,14 +21,14 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 
 	try {
 
-		let totalProductsRecords
+		let totalProductsRecords: { count: string }[]
 		let productsQuery
 
 		if (!trim(input.search)) {
 
-			totalProductsRecords = await db.select({ count: sql<number>`count(*)` })
+			totalProductsRecords = await db.select({ count: sql<string>`count(*)` })
 				.from(products)
-				.where(eq(products.active, true))
+				.where(eq(products.active, true)) as { count: string }[]
 
 			productsQuery = await db.select({
 				id: products.id,
@@ -75,8 +76,7 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 				FROM products_idx.search(${data}, fuzzy_fields => 'name, id, stitches', limit_rows => ${limitRows}, offset_rows => ${offsetRows}) as products
 				LEFT JOIN products_idx.rank(${data}, fuzzy_fields => 'name, id, stitches', limit_rows => ${limitRows}, offset_rows => ${offsetRows}) as rank ON products.id = rank.id
 				ORDER BY rank.rank_bm25 DESC;
-			`)
-
+			`) as unknown as { id: number, name: string, product_category: ProductCategoriesUnion, stitches: number, stork_quantity: number | null, product_unit_price: string, ranking: number }[]
 		}
 
 		pagination.totalRecords = totalProductsRecords.length === 0 ? 0 : +totalProductsRecords[0]?.count
