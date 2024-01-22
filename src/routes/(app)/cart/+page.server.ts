@@ -1,5 +1,5 @@
 import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/trpc/router';
+import { router } from '$lib/server/routes/router';
 import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
@@ -8,8 +8,8 @@ import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveCartOrderSchema, type SaveOrderDetails } from '$lib/validation/cart.zod';
 import { saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
-import type { PricelistsAll } from '$lib/trpc/routes/pricelist/pricelists.drizzle';
-import type { ratesAll } from '$lib/trpc/routes/exchangeRates/rates.drizzle';
+import type { PricelistsAll } from '$lib/server/routes/pricelist/pricelists.drizzle';
+import type { ratesAll } from '$lib/server/routes/exchangeRates/rates.drizzle';
 
 export const load = (async (event) => {
 

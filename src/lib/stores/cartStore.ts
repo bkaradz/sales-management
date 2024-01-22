@@ -5,7 +5,7 @@ import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.ut
 import type { EmbroideryTypeUnion, GarmentPlacementUnion, PaymentStatusUnion, ProductCategoriesUnion, ProductionStatusUnion, SalesStatusUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import { get, writable, derived } from 'svelte/store';
 import currency from 'currency.js';
-import type { GetProducts } from '$lib/trpc/routes/products/products.drizzle';
+import type { GetProducts } from '$lib/server/routes/products/products.drizzle';
 
 
 export type CartTypes = { product: GetProducts['products'][0], orders_details: Partial<NewOrdersDetails> }

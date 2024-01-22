@@ -1,6 +1,6 @@
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { router } from '$lib/trpc/router';
+import { router } from '$lib/server/routes/router';
 import { createContext } from '$lib/trpc/context';
 import parseCsv from '$lib/utility/parseCsv';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';

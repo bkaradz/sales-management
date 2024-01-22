@@ -1,5 +1,5 @@
 import type { Contacts, NewPaymentsDetails, Orders } from '$lib/server/drizzle/schema/schema';
-import type { OrdersByUserId } from '$lib/trpc/routes/orders/orders.drizzle';
+import type { OrdersByUserId } from '$lib/server/routes/orders/orders.drizzle';
 import { addMany, subtractMany } from '$lib/utility/calculateCart.util';
 import type { PaymentMethodUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 import currency from 'currency.js';

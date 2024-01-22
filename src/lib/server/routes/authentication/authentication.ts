@@ -1,5 +1,5 @@
 import { router } from '$lib/trpc/t';
-import { loginCredentialsSchema, userRegisterSchema } from '$lib/trpc/routes/authentication/authentication.validate';
+import { loginCredentialsSchema, userRegisterSchema } from '$lib/server/routes/authentication/authentication.validate';
 import { protectedProcedure, publicProcedure } from '$lib/trpc/middleware/auth';
 import { getUsers, loginUser, logoutUser, registerUser, getById, deleteById } from './authentication.drizzle';
 import { z } from 'zod';

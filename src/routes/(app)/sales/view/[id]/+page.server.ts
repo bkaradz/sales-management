@@ -1,7 +1,7 @@
 import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/trpc/router';
-import type { ratesAll } from '$lib/trpc/routes/exchangeRates/rates.drizzle';
-import type { PricelistsAll } from '$lib/trpc/routes/pricelist/pricelists.drizzle';
+import { router } from '$lib/server/routes/router';
+import type { ratesAll } from '$lib/server/routes/exchangeRates/rates.drizzle';
+import type { PricelistsAll } from '$lib/server/routes/pricelist/pricelists.drizzle';
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';
 import type { PageServerLoad } from './$types';
 

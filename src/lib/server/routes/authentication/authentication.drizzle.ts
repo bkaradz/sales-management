@@ -1,5 +1,5 @@
 import { auth } from "$lib/server/lucia/client"
-import type { LoginCredentials, UserRegister } from "$lib/trpc/routes/authentication/authentication.validate"
+import type { LoginCredentials, UserRegister } from "$lib/server/routes/authentication/authentication.validate"
 import { error, redirect } from "@sveltejs/kit"
 import type { Context } from "$lib/trpc/context"
 import { db } from "$lib/server/drizzle/client"

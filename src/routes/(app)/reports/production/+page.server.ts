@@ -1,5 +1,5 @@
 import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/trpc/router';
+import { router } from '$lib/server/routes/router';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {

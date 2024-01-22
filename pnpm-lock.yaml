@@ -79,6 +79,9 @@ devDependencies:
   date-fns:
     specifier: ^3.3.0
     version: 3.3.0
+  devalue:
+    specifier: ^4.3.2
+    version: 4.3.2
   dotenv:
     specifier: ^16.3.2
     version: 16.3.2

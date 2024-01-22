@@ -1,4 +1,4 @@
-import { router } from '$lib/trpc/router';
+import { router } from '$lib/server/routes/router';
 import type { PageServerLoad } from './$types';
 import { createContext } from '$lib/trpc/context';
 import { fail, redirect, type Actions } from '@sveltejs/kit';

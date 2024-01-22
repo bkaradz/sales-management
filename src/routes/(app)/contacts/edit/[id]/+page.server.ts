@@ -1,11 +1,11 @@
 import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/trpc/router';
+import { router } from '$lib/server/routes/router';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 import { updateContactsSchema } from '$lib/validation/contacts.zod';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import type { GetContactsById } from '$lib/trpc/routes/contacts/contacts.drizzle';
+import type { GetContactsById } from '$lib/server/routes/contacts/contacts.drizzle';
 
 export const load = (async (event) => {
 

@@ -1,8 +1,8 @@
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import { userRegisterSchema } from '$lib/trpc/routes/authentication/authentication.validate';
+import { userRegisterSchema } from '$lib/server/routes/authentication/authentication.validate';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { router } from '$lib/trpc/router';
+import { router } from '$lib/server/routes/router';
 import { createContext } from '$lib/trpc/context';
 
 export const load = (async ({ locals }) => {
