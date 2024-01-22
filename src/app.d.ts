@@ -1,10 +1,13 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
+import type { TrpcServer } from "$lib/server/server";
+
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
 			auth: import("lucia").AuthRequest;
+			trpc: TrpcServer;
 		}
 		// interface PageData {}
 		// interface Platform {}

@@ -1,14 +1,13 @@
-import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/server/routes/router';
+import { trpcServer } from '$lib/server/server';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
 
     const [incomeToday, incomeMonth, incomeDailyTotals, incomeMonthTotals] = await Promise.all([
-        await router.createCaller(await createContext(event)).dashboard.incomeToday(),
-        await router.createCaller(await createContext(event)).dashboard.incomeMonth(),
-        await router.createCaller(await createContext(event)).dashboard.incomeDailyTotals(),
-        await router.createCaller(await createContext(event)).dashboard.incomeMonthTotals(),
+        await trpcServer.dashboard.incomeToday.ssr(event),
+        await trpcServer.dashboard.incomeMonth.ssr(event),
+        await trpcServer.dashboard.incomeDailyTotals.ssr(event),
+        await trpcServer.dashboard.incomeMonthTotals.ssr(event),
     ]);
 
     return {

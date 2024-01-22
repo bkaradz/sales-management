@@ -1,5 +1,3 @@
-import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/server/routes/router';
 import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
@@ -10,6 +8,8 @@ import { saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 import type { PricelistsAll } from '$lib/server/routes/pricelist/pricelists.drizzle';
 import type { ratesAll } from '$lib/server/routes/exchangeRates/rates.drizzle';
+import { trpcServer } from '$lib/server/server';
+import { trpc } from '$lib/trpc';
 
 export const load = (async (event) => {
 
@@ -50,9 +50,9 @@ export const load = (async (event) => {
     };
 
     const [contactsPromise, pricelistPromise, exchangeRatePromise] = await Promise.all([
-        await router.createCaller(await createContext(event)).contacts.getContacts(query),
-        await router.createCaller(await createContext(event)).pricelists.getAllPricelists(),
-        await router.createCaller(await createContext(event)).rates.getAllRates()
+        await trpcServer.contacts.getContacts.ssr(query, event),
+        await trpcServer.pricelists.getAllPricelists.ssr(event),
+        await trpcServer.rates.getAllRates.ssr(event),
     ]);
 
     return {
@@ -118,7 +118,10 @@ export const actions: Actions = {
                 })
             }
 
-            return await router.createCaller(await createContext(event)).shop_orders.createOrder(parsedCartOrder.data)
+            // return await trpcServer.shop_orders.createOrder.ssr.mutation(parsedCartOrder.data, event)
+            // return await trpcServer.shop_orders.createOrder.mutation(parsedCartOrder.data, event)
+            // .mutation(parsedCartOrder.data, event),
+            // return await router.createCaller(await createContext(event)).shop_orders.createOrder(parsedCartOrder.data)
 
         } catch (error) {
             return fail(400, {
