@@ -1,12 +1,10 @@
 import { auth } from "$lib/server/lucia/client";
 import type { Handle } from "@sveltejs/kit";
-import { createTRPCHandle } from "trpc-sveltekit";
-import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/server/routes/router';
 import { sequence } from "@sveltejs/kit/hooks";
+// import { router } from "$lib/server/trpc";
 
 
-export const first: Handle = createTRPCHandle({ router, createContext });
+// export const first: Handle = createTRPCHandle({ router, createContext });
 
 export const second: Handle = async ({ event, resolve }) => {
 
@@ -19,4 +17,4 @@ export const second: Handle = async ({ event, resolve }) => {
 	});
 };
 
-export const handle: Handle = sequence(first, second);
+export const handle: Handle = sequence(second);

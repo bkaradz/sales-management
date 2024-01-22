@@ -1,7 +1,6 @@
-import { router } from '$lib/trpc/t';
 import { searchParamsSchema } from '$lib/validation/searchParams.validate';
 import { z } from 'zod';
-import { protectedProcedure } from '$lib/trpc/middleware/auth';
+import { protectedProcedure, router } from "$lib/server/trpc";
 import { createProduct, deleteById, getById, getProducts, updateProduct, uploadProducts } from './products.drizzle';
 
 

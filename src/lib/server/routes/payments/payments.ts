@@ -1,5 +1,4 @@
-import { protectedProcedure } from '$lib/trpc/middleware/auth';
-import { router } from '$lib/trpc/t';
+import { protectedProcedure, router } from "$lib/server/trpc";
 import { z } from 'zod';
 import { makePayment } from './payments.drizzle';
 

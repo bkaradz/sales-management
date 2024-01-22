@@ -1,6 +1,5 @@
-import { router } from "$lib/trpc/t";
 import { z } from "zod";
-import { protectedProcedure, publicProcedure } from '$lib/trpc/middleware/auth';
+import { protectedProcedure, publicProcedure, router } from '$lib/server/trpc';
 import { getDefaultRates, createRate, deleteById, getById, getAllRates } from "./rates.drizzle";
 
 

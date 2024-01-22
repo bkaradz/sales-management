@@ -1,6 +1,5 @@
-import { router } from "$lib/trpc/t";
 import { z } from "zod";
-import { protectedProcedure } from '$lib/trpc/middleware/auth';
+import { protectedProcedure, router } from "$lib/server/trpc";
 import { getProductionOrders, changeProductionStatusById } from "./production.drizzle";
 import { PaymentStatusZod, ProductionStatusZod, SalesStatusZod } from "$lib/validation/types.zod.typescript";
 

@@ -1,8 +1,7 @@
-import { router } from "$lib/trpc/t";
 import { z } from "zod";
-import { protectedProcedure } from '$lib/trpc/middleware/auth';
 import { searchParamsSchema } from "$lib/validation/searchParams.validate";
 import { getContacts, createContact, deleteById, getById, uploadContacts, updateContact, getContactsList } from "./contacts.drizzle";
+import { protectedProcedure, router } from "$lib/server/trpc";
 
 
 export const contacts = router({

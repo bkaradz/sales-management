@@ -1,5 +1,4 @@
-import { protectedProcedure } from '$lib/trpc/middleware/auth';
-import { router } from '$lib/trpc/t';
+import { protectedProcedure, router} from "$lib/server/trpc";
 import { incomeDailyTotals, incomeMonth, incomeMonthTotals, incomeToday } from './dashboard.drizzle';
 
 export const dashboard = router({
