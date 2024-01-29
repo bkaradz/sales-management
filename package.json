@@ -22,15 +22,9 @@
 		"@fast-csv/parse": "^4.3.6",
 		"@lucia-auth/adapter-postgresql": "^2.0.2",
 		"@sveltejs/adapter-auto": "^3.1.1",
-<<<<<<< HEAD
-		"@sveltejs/adapter-node": "^2.1.1",
-		"@sveltejs/kit": "^2.4.1",
-		"@sveltejs/vite-plugin-svelte": "^3.0.1",
-=======
 		"@sveltejs/adapter-node": "^2.1.2",
 		"@sveltejs/kit": "^2.5.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.2",
->>>>>>> origin/main
 		"@tailwindcss/forms": "^0.5.7",
 		"@trpc/client": "^10.45.0",
 		"@trpc/server": "^10.45.0",
@@ -79,11 +73,7 @@
 		"uuid": "^9.0.1",
 		"vite": "^5.0.12",
 		"vite-node": "^0.34.7",
-<<<<<<< HEAD
-		"vitest": "^1.2.1",
-=======
 		"vitest": "^1.2.2",
->>>>>>> origin/main
 		"zod": "^3.22.4"
 	},
 	"dependencies": {
