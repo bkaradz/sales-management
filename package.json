@@ -46,14 +46,9 @@
 		"chart.js": "^4.4.1",
 		"currency.js": "^2.0.4",
 		"daisyui": "^3.9.4",
-<<<<<<< HEAD
 		"date-fns": "^3.3.0",
 		"devalue": "^4.3.2",
 		"dotenv": "^16.3.2",
-=======
-		"date-fns": "^3.3.1",
-		"dotenv": "^16.4.1",
->>>>>>> origin/main
 		"drizzle-kit": "^0.19.13",
 		"drizzle-orm": "^0.28.6",
 		"drizzle-zod": "^0.5.1",

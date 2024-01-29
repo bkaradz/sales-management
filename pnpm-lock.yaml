@@ -21,7 +21,6 @@ devDependencies:
     version: 2.0.2(lucia@2.7.7)(pg@8.11.3)(postgres@3.4.3)
   '@sveltejs/adapter-auto':
     specifier: ^3.1.1
-<<<<<<< HEAD
     version: 3.1.1(@sveltejs/kit@2.4.1)
   '@sveltejs/adapter-node':
     specifier: ^2.1.1
@@ -32,18 +31,6 @@ devDependencies:
   '@sveltejs/vite-plugin-svelte':
     specifier: ^3.0.1
     version: 3.0.1(svelte@4.2.9)(vite@5.0.12)
-=======
-    version: 3.1.1(@sveltejs/kit@2.5.0)
-  '@sveltejs/adapter-node':
-    specifier: ^2.1.2
-    version: 2.1.2(@sveltejs/kit@2.5.0)
-  '@sveltejs/kit':
-    specifier: ^2.5.0
-    version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.9)(vite@5.0.12)
-  '@sveltejs/vite-plugin-svelte':
-    specifier: ^3.0.2
-    version: 3.0.2(svelte@4.2.9)(vite@5.0.12)
->>>>>>> origin/main
   '@tailwindcss/forms':
     specifier: ^0.5.7
     version: 0.5.7(tailwindcss@3.4.1)
