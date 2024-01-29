@@ -22,16 +22,22 @@
 		"@fast-csv/parse": "^4.3.6",
 		"@lucia-auth/adapter-postgresql": "^2.0.2",
 		"@sveltejs/adapter-auto": "^3.1.1",
+<<<<<<< HEAD
 		"@sveltejs/adapter-node": "^2.1.1",
 		"@sveltejs/kit": "^2.4.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
+=======
+		"@sveltejs/adapter-node": "^2.1.2",
+		"@sveltejs/kit": "^2.5.0",
+		"@sveltejs/vite-plugin-svelte": "^3.0.2",
+>>>>>>> origin/main
 		"@tailwindcss/forms": "^0.5.7",
 		"@trpc/client": "^10.45.0",
 		"@trpc/server": "^10.45.0",
 		"@types/lodash-es": "^4.17.12",
 		"@types/money": "^0.2.3",
-		"@types/pg": "^8.10.9",
-		"@types/uuid": "^9.0.7",
+		"@types/pg": "^8.11.0",
+		"@types/uuid": "^9.0.8",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/parser": "^5.62.0",
 		"autoprefixer": "^10.4.17",
@@ -40,9 +46,14 @@
 		"chart.js": "^4.4.1",
 		"currency.js": "^2.0.4",
 		"daisyui": "^3.9.4",
+<<<<<<< HEAD
 		"date-fns": "^3.3.0",
 		"devalue": "^4.3.2",
 		"dotenv": "^16.3.2",
+=======
+		"date-fns": "^3.3.1",
+		"dotenv": "^16.4.1",
+>>>>>>> origin/main
 		"drizzle-kit": "^0.19.13",
 		"drizzle-orm": "^0.28.6",
 		"drizzle-zod": "^0.5.1",
@@ -52,7 +63,7 @@
 		"eslint-plugin-svelte": "^2.35.1",
 		"jspdf": "^2.5.1",
 		"lodash-es": "^4.17.21",
-		"lucia": "^2.7.6",
+		"lucia": "^2.7.7",
 		"money": "^0.2.0",
 		"pg": "^8.11.3",
 		"postcss": "^8.4.33",
@@ -73,7 +84,11 @@
 		"uuid": "^9.0.1",
 		"vite": "^5.0.12",
 		"vite-node": "^0.34.7",
+<<<<<<< HEAD
 		"vitest": "^1.2.1",
+=======
+		"vitest": "^1.2.2",
+>>>>>>> origin/main
 		"zod": "^3.22.4"
 	},
 	"dependencies": {
