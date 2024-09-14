@@ -49,7 +49,7 @@
 <!-- Info -->
 
 <div
-	transition:fade={{ duration: 2000 }}
+	transition:fade|global={{ duration: 2000 }}
 	style="--progress: {progress}"
 	class="{style} progress relative m-1 flex h-16 w-[700px] items-center justify-between overflow-hidden text-slate-900 rounded-none"
 >
