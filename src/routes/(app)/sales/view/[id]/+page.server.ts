@@ -1,5 +1,5 @@
-import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/server/routes/router';
+import { createContext } from '$lib/server/context';
+import { router } from '$lib/server/trpc';
 import type { ratesAll } from '$lib/server/routes/exchangeRates/rates.drizzle';
 import type { PricelistsAll } from '$lib/server/routes/pricelist/pricelists.drizzle';
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';

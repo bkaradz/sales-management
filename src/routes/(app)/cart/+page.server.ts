@@ -1,5 +1,5 @@
-import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/server/routes/router';
+import { createContext } from '$lib/server/context';
+import { router } from '$lib/server/trpc';
 import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { redirect, type Actions, fail } from '@sveltejs/kit';

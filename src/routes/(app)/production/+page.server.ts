@@ -1,5 +1,5 @@
-import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/server/routes/router';
+import { createContext } from '$lib/server/context';
+import { router } from '$lib/server/trpc';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { PaymentStatusUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
