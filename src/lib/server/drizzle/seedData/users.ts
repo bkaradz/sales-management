@@ -1,6 +1,6 @@
 export const usersList = [
 	{
-		full_name: 'Brian Karadzangare',
+		fullName: 'Brian Karadzangare',
 		username: 'karadz',
 		password: 'karadz?',
 		active: true

@@ -1,12 +1,14 @@
-import { router } from '$lib/server/trpc';
+
 import type { PageServerLoad } from './$types';
-import { createContext } from '$lib/server/context';
+
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import parseCsv from '$lib/utility/parseCsv';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveContactsArraySchema, saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 import type { Contacts } from '$lib/server/drizzle/schema/schema';
+import { createContact, uploadContacts } from '$lib/server/routes/contacts/contacts.drizzle';
+import { lucia } from '$lib/server/lucia/client';
 
 export const load = (async (event) => {
 	return {};
@@ -15,7 +17,7 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	upload: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
@@ -40,12 +42,12 @@ export const actions: Actions = {
 		contactsArray.forEach((customer) => {
 			let formResults = {}
 
-			if (customer?.full_name) formResults = { ...formResults, full_name: customer.full_name }
+			if (customer?.fullName) formResults = { ...formResults, fullName: customer.fullName }
 			if (customer?.email) formResults = { ...formResults, email: normalizeEmail(customer.email as string) }
 			if (customer?.phone) formResults = { ...formResults, phone: normalizePhone(customer.phone as string) }
 			if (customer?.address) formResults = { ...formResults, address: normalizeAddress(customer.address as string) }
-			if (customer?.is_corporate) formResults = { ...formResults, is_corporate: customer.is_corporate }
-			if (customer?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: customer.vat_or_bp_number }
+			if (customer?.isCorporate) formResults = { ...formResults, isCorporate: customer.isCorporate }
+			if (customer?.vatOrBpNumber) formResults = { ...formResults, vatOrBpNumber: customer.vatOrBpNumber }
 
 			contactsResultsArray.push(formResults as Contacts)
 		})
@@ -63,7 +65,7 @@ export const actions: Actions = {
 				})
 			}
 
-			return await router.createCaller(await createContext(event)).contacts.uploadContacts(parsedContact.data)
+			return await uploadContacts(parsedContact.data, event)
 
 		} catch (error) {
 			return fail(400, {
@@ -78,7 +80,7 @@ export const actions: Actions = {
 
 	create: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
@@ -89,12 +91,12 @@ export const actions: Actions = {
 
 		let formResults = {}
 
-		if (formData?.full_name) formResults = { ...formResults, full_name: formData.full_name }
+		if (formData?.fullName) formResults = { ...formResults, fullName: formData.fullName }
 		if (formData?.email) formResults = { ...formResults, email: normalizeEmail(formData.email as string) }
 		if (formData?.phone) formResults = { ...formResults, phone: normalizePhone(formData.phone as string) }
 		if (formData?.address) formResults = { ...formResults, addresses: normalizeAddress(formData.address as string) }
-		if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
-		if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
+		if (formData?.isCorporate) formResults = { ...formResults, isCorporate: formData.isCorporate === 'on' ? true : false }
+		if (formData?.vatOrBpNumber) formResults = { ...formResults, vatOrBpNumber: formData.vatOrBpNumber }
 
 		try {
 
@@ -109,7 +111,7 @@ export const actions: Actions = {
 				})
 			}
 
-			return await router.createCaller(await createContext(event)).contacts.createContact(parsedContact.data)
+			return await createContact(parsedContact.data, event)
 
 		} catch (error) {
 			return fail(400, {

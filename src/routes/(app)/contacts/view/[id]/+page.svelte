@@ -40,7 +40,7 @@
 					<div
 						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						{data.contact.contact.full_name}
+						{data.contact.contact.fullName}
 					</div>
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -54,7 +54,7 @@
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 							Corporate
 						</div>
-						<div class="ml-auto text-xs text-gray-500">{data.contact.contact.is_corporate}</div>
+						<div class="ml-auto text-xs text-gray-500">{data.contact.contact.isCorporate}</div>
 					</div>
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -86,7 +86,7 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								convertFx(
-									data.contact.contact.total_receipts,
+									data.contact.contact.totalReceipts,
 									$exchangeRatesStore,
 									$selectedCurrencyStore
 								),
@@ -297,41 +297,41 @@
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.pricelist_id}
+											{ordersArray.pricelistId}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.exchange_rates_id}
+											{ordersArray.exchangeRatesId}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.sales_status}
+											{ordersArray.salesStatus}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.payment_status}
+											{ordersArray.paymentStatus}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										{ordersArray.total_products}
+										{ordersArray.totalProducts}
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										{format(
 											convertFx(
-												ordersArray.sales_amount,
+												ordersArray.salesAmount,
 												$exchangeRatesStore,
 												$selectedCurrencyStore
 											),

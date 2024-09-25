@@ -52,7 +52,10 @@
 				class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 			>
 				<span class="ml-2">
-					{$exchangeRatesStore.exchange_rate_details.get($selectedCurrencyStore)?.name}
+          {#if $exchangeRatesStore?.exchangeRateDetails.entries()}
+            
+					{$exchangeRatesStore.exchangeRateDetails.get($selectedCurrencyStore)?.name}
+          {/if}
 				</span>
 				{@html svgDropdown}
 			</button>
@@ -61,15 +64,18 @@
 				tabindex="0"
 				class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 			>
-				{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
-					{#if !($selectedCurrencyStore === key)}
-						<li>
-							<button on:click={() => selectedCurrencyStore.add(key)} class="rounded-sm">
-								{value.name}
-							</button>
-						</li>
-					{/if}
-				{/each}
+      {#if $exchangeRatesStore?.exchangeRateDetails.entries()}
+        
+      {#each $exchangeRatesStore.exchangeRateDetails.entries() as [key, value]}
+        {#if !($selectedCurrencyStore === key)}
+          <li>
+            <button on:click={() => selectedCurrencyStore.add(key)} class="rounded-sm">
+              {value.name}
+            </button>
+          </li>
+        {/if}
+      {/each}
+      {/if}
 			</ul>
 		</div>
 
@@ -87,7 +93,7 @@
 						class="absolute right-0 -mb-0.5 bottom-0 w-2 h-2 rounded-full bg-green-500 border border-white dark:border-gray-900"
 					/>
 				</span>
-				<span class="ml-2">{data?.user?.full_name}</span>
+				<span class="ml-2">{data?.user?.fullName}</span>
 				{@html svgDropdown}
 			</button>
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->

@@ -1,6 +1,6 @@
 import { db } from "$lib/server/drizzle/client";
 import { pricelist, pricelist_details, type Pricelist, type PricelistDetails } from "$lib/server/drizzle/schema/schema";
-import type { Context } from "$lib/trpc/context";
+import type { Context } from "$lib/server/context";
 import { pricelistToMapObj } from "$lib/utility/monetary.util";
 import { error } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
@@ -13,7 +13,7 @@ export const getDefaultPricelists = async () => {
       pricelist,
       pricelist_details
     }).from(pricelist)
-      .leftJoin(pricelist_details, eq(pricelist_details.pricelist_id, pricelist.id))
+      .leftJoin(pricelist_details, eq(pricelist_details.pricelistId, pricelist.id))
       .where(eq(pricelist.default, true))
 
     const result = pricelistResults.reduce<Record<number, { pricelist: Pricelist; pricelist_details: PricelistDetails[]; }>>(
@@ -43,7 +43,7 @@ export const getDefaultPricelists = async () => {
 
 export const getAllPricelists = async (ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -53,7 +53,7 @@ export const getAllPricelists = async (ctx: Context) => {
       pricelist,
       pricelist_details
     }).from(pricelist)
-      .leftJoin(pricelist_details, eq(pricelist_details.pricelist_id, pricelist.id))
+      .leftJoin(pricelist_details, eq(pricelist_details.pricelistId, pricelist.id))
       .where(eq(pricelist.active, true))
 
     const result = pricelistResults.reduce<Record<number, { pricelist: Pricelist; pricelist_details: PricelistDetails[]; }>>(
@@ -82,7 +82,7 @@ export type PricelistsAll = NonNullable<Awaited<ReturnType<typeof getAllPricelis
 
 export const getById = async (input: number, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -92,7 +92,7 @@ export const getById = async (input: number, ctx: Context) => {
       pricelist,
       pricelist_details
     }).from(pricelist)
-      .leftJoin(pricelist_details, eq(pricelist_details.pricelist_id, pricelist.id))
+      .leftJoin(pricelist_details, eq(pricelist_details.pricelistId, pricelist.id))
       .where(eq(pricelist.id, input))
 
       const result = pricelistResults.reduce<Record<number, { pricelist: Pricelist; pricelist_details: PricelistDetails[]; }>>(
@@ -118,7 +118,7 @@ export const getById = async (input: number, ctx: Context) => {
 
 export const deleteById = async (input: number, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -139,7 +139,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 export const createPricelist = async (input: any, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -149,10 +149,10 @@ export const createPricelist = async (input: any, ctx: Context) => {
 
     const descriptionPricelist = input?.description || null
 
-    const pricelistResult = await db.insert(pricelist).values({ user_id: ctx.session.user.userId, name: input.name, default: defaultPricelist, description: descriptionPricelist }).returning({ id: pricelist.id });
+    const pricelistResult = await db.insert(pricelist).values({ userId: ctx.session.user.userId, name: input.name, default: defaultPricelist, description: descriptionPricelist }).returning({ id: pricelist.id });
 
     input.pricelist_details.forEach(async (item: any) => {
-      await db.insert(pricelist_details).values({ pricelist_id: pricelistResult[0].id, ...item })
+      await db.insert(pricelist_details).values({ pricelistId: pricelistResult[0].id, ...item })
     })
 
     return { success: true }

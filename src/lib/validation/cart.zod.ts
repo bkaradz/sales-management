@@ -3,14 +3,14 @@ import { EmbroideryTypeZod, GarmentPlacementZod, ProductCategoriesZod, SalesStat
 
 export const saveOrderSchema = z
   .object({
-    customer_id: z.number(),
-    pricelist_id: z.number(),
-    exchange_rates_id: z.number(),
-    sales_status: SalesStatusZod,
+    customerId: z.number(),
+    pricelistId: z.number(),
+    exchangeRatesId: z.number(),
+    salesStatus: SalesStatusZod,
     description: z.string().optional(),
-    delivery_date: z.string().datetime(),
-    sales_amount: z.string(),
-    total_products: z.number(),
+    deliveryDate: z.string().datetime(),
+    salesAmount: z.string(),
+    totalProducts: z.number(),
   })
 
 export type SaveOrder = z.infer<typeof saveOrderSchema>;
@@ -18,18 +18,18 @@ export type SaveOrderKeys = keyof SaveOrder;
 
 export const saveOrderDetailsSchema = z
   .object({
-    unit_price: z.string(),
+    unitPrice: z.string(),
     quantity: z.number(),
-    product_id: z.number(),
-    product_category: ProductCategoriesZod,
-		price_calculated: z.boolean(),
+    productId: z.number(),
+    productCategory: ProductCategoriesZod,
+		priceCalculated: z.boolean(),
 
     stitches: z.number().optional(),
-    embroidery_type: EmbroideryTypeZod.optional(),
-    garment_placement: GarmentPlacementZod.optional(),
-    pricelist_id: z.number().optional(),
+    embroideryType: EmbroideryTypeZod.optional(),
+    garmentPlacement: GarmentPlacementZod.optional(),
+    pricelistId: z.number().optional(),
   }).superRefine((data, ctx) => {
-		if (data.product_category === 'Embroidery' && !data.stitches) {
+		if (data.productCategory === 'Embroidery' && !data.stitches) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Stitches are required`,
@@ -37,25 +37,25 @@ export const saveOrderDetailsSchema = z
 			});
 			z.NEVER;
 		}
-		if (data.product_category === 'Embroidery' && !(data.embroidery_type)) {
+		if (data.productCategory === 'Embroidery' && !(data.embroideryType)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Embroidery Type is required`,
-				path: ['embroidery_type']
+				path: ['embroideryType']
 			});
 		}
-		if (data.product_category === 'Embroidery' && !(data.garment_placement)) {
+		if (data.productCategory === 'Embroidery' && !(data.garmentPlacement)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Garment Placement is required`,
-				path: ['garment_placement']
+				path: ['garmentPlacement']
 			});
 		}
-		if (data.product_category === 'Embroidery' && !(data.pricelist_id)) {
+		if (data.productCategory === 'Embroidery' && !(data.pricelistId)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Pricelist id is required`,
-				path: ['pricelist_id']
+				path: ['pricelistId']
 			});
 		}
 	});

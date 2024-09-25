@@ -1,8 +1,11 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { PaymentStatusUnion, ProductionStatusUnion, SalesStatusUnion } from '$lib/utility/lists.utility';
+import { trpcServer } from '$lib/server/server';
+import { lucia } from '$lib/server/lucia/client';
+import { deleteById as shopOrdersDeleteById} from '$lib/server/routes/orders/orders.drizzle';
 
 export const load = (async (event) => {
 
@@ -18,7 +21,7 @@ export const load = (async (event) => {
 	if (search) query = { ...query, search }
 
 	const [shopOrdersPromise] = await Promise.all([
-		await router.createCaller(await createContext(event)).production.getProductionOrders(query)
+		await trpcServer.production.getProductionOrders.ssr(query, event)
 	]);
 
 	return {
@@ -29,29 +32,29 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	delete: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
 		}
 
 		const data = await event.request.formData();
-		const formData = Object.fromEntries(data) as { id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion, production_status: ProductionStatusUnion }
+		const formData = Object.fromEntries(data) as { id: string, paymentStatus: PaymentStatusUnion, salesStatus: SalesStatusUnion, productionStatus: ProductionStatusUnion }
 
-
-		// return await router.createCaller(await createContext(event)).shop_orders.deleteById(+formData.delete)
+		// Todo: correct args
+		return await shopOrdersDeleteById(+formData.delete, event)
 	},
 	productionStatus: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
 		}
 
 		const data = await event.request.formData();
-		const formData = Object.fromEntries(data) as { id: string, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion, production_status: ProductionStatusUnion }
+		const formData = Object.fromEntries(data) as { id: string, paymentStatus: PaymentStatusUnion, salesStatus: SalesStatusUnion, productionStatus: ProductionStatusUnion }
 
-		return await router.createCaller(await createContext(event)).production.changeProductionStatusById({ ...formData, id: +formData.id })
+		return await trpcServer.production.changeProductionStatusById.ssr({ ...formData, id: +formData.id }, event)
 	}
 }

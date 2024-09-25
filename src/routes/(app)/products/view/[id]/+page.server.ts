@@ -1,5 +1,6 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
+import { trpcServer } from '$lib/server/server';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
@@ -15,8 +16,8 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const [productPromise, shopOrdersPromise] = await Promise.all([
-        await router.createCaller(await createContext(event)).products.getById(parseInt(event.params.id, 10)),
-        await router.createCaller(await createContext(event)).shop_orders.getOrdersByProductId({ ...query, product_id: parseInt(event.params.id, 10) }),
+        await trpcServer.products.getById.ssr(parseInt(event.params.id, 10), event),
+        await trpcServer.shop_orders.getOrdersByProductId.ssr({ ...query, productId: parseInt(event.params.id, 10) }, event),
     ]);
 
     return {

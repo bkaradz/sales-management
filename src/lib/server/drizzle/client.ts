@@ -1,20 +1,23 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import * as schema from './schema/schema';
-import postgres from "postgres";
+import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
+
+import sqlite from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+
 import * as dotenv from 'dotenv';
+import { session, user } from "../drizzle/schema/schema";
 
 dotenv.config();
 
-const hostString = process.env.DB_HOST
-const databaseString = process.env.DB_NAME
-const usernameString = process.env.DB_USER
-const passwordString = process.env.DB_PASSWORD
+// const sqliteDB = sqlite(":memory:");
+const sqliteDB = new sqlite(process.env.DB_URL);
+export const db = drizzle(sqliteDB);
 
-export const sql = postgres({
-    host                 : hostString,            
-    port                 : 5432,          
-    database             : databaseString,            
-    username             : usernameString,            
-    password             : passwordString, 
-})
-export const db = drizzle(sql, { schema });
+export const adapter = new DrizzleSQLiteAdapter(db, session, user);
+
+export interface DatabaseUser {
+	id: string;
+	username: string;
+	password_hash: string;
+	fullName: string;
+	active: number;
+}

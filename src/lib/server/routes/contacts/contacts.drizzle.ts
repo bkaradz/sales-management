@@ -1,6 +1,6 @@
 import { getPagination } from '$lib/utility/pagination.util';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
-import type { Context } from "$lib/trpc/context"
+import type { Context } from "$lib/server/context"
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, asc, eq, sql } from 'drizzle-orm';
@@ -10,7 +10,7 @@ import type { SaveContacts, saveContactsArray } from '$lib/validation/contacts.z
 
 export const getContactsList = async (input: SearchParams, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
@@ -27,22 +27,22 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 				.from(contacts)
 				.groupBy(contacts.id)
 				.where(eq(contacts.active, true))
-				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)))
+				.leftJoin(shop_orders, and(eq(shop_orders.customerId, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.shopOrdersId, shop_orders.id), eq(orders_details.active, true)))
 
 			contactsQuery = await db.select({
 				id: contacts.id,
-				full_name: contacts.full_name,
+				fullName: contacts.fullName,
 				amount: contacts.amount,
-				sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-				total_products: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
+				salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+				totalProducts: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
 				total_orders: sql<string>`count(DISTINCT ${shop_orders.id})`
 			}).from(contacts)
-				.orderBy(asc(contacts.full_name))
+				.orderBy(asc(contacts.fullName))
 				.groupBy(contacts.id)
 				.where(eq(contacts.active, true))
-				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)))
+				.leftJoin(shop_orders, and(eq(shop_orders.customerId, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.shopOrdersId, shop_orders.id), eq(orders_details.active, true)))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		} else {
@@ -52,23 +52,23 @@ export const getContactsList = async (input: SearchParams, ctx: Context) => {
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
 				.groupBy(contacts.id)
-				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
-				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)));
+				.where(and((sql`(contacts.fullName ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.leftJoin(shop_orders, and(eq(shop_orders.customerId, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.shopOrdersId, shop_orders.id), eq(orders_details.active, true)));
 
 			contactsQuery = await db.select({
 				id: contacts.id,
-				full_name: contacts.full_name,
+				fullName: contacts.fullName,
 				amount: contacts.amount,
-				sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-				total_products: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
+				salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+				totalProducts: sql<string>`COALESCE(sum(${orders_details.quantity}), '0')`,
 				total_orders: sql<string>`count(DISTINCT ${shop_orders.id})`
 			}).from(contacts)
-				.orderBy(asc(contacts.full_name))
+				.orderBy(asc(contacts.fullName))
 				.groupBy(contacts.id)
-				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
-				.leftJoin(shop_orders, and(eq(shop_orders.customer_id, contacts.id), eq(shop_orders.active, true)))
-				.leftJoin(orders_details, and(eq(orders_details.shop_orders_id, shop_orders.id), eq(orders_details.active, true)))
+				.where(and((sql`(contacts.fullName ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.leftJoin(shop_orders, and(eq(shop_orders.customerId, contacts.id), eq(shop_orders.active, true)))
+				.leftJoin(orders_details, and(eq(orders_details.shopOrdersId, shop_orders.id), eq(orders_details.active, true)))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 		}
 
@@ -93,7 +93,7 @@ export type GetContactsList = NonNullable<Awaited<ReturnType<typeof getContactsL
 
 export const getContacts = async (input: SearchParams, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
@@ -111,7 +111,7 @@ export const getContacts = async (input: SearchParams, ctx: Context) => {
 				.where(eq(contacts.active, true))
 
 			contactsQuery = await db.select().from(contacts)
-				.orderBy(asc(contacts.full_name))
+				.orderBy(asc(contacts.fullName))
 				.where(eq(contacts.active, true))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
@@ -121,11 +121,11 @@ export const getContacts = async (input: SearchParams, ctx: Context) => {
 
 			totalContactsRecords = await db.select({ count: sql<number>`count(*)` })
 				.from(contacts)
-				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))));
+				.where(and((sql`(contacts.fullName ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))));
 
 			contactsQuery = await db.select().from(contacts)
-				.orderBy(asc(contacts.full_name))
-				.where(and((sql`(contacts.full_name ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
+				.orderBy(asc(contacts.fullName))
+				.where(and((sql`(contacts.fullName ||' '|| CAST(contacts.id AS text)) ILIKE(${data})`), (eq(contacts.active, true))))
 				.limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
 
 		}
@@ -149,7 +149,7 @@ export const getContacts = async (input: SearchParams, ctx: Context) => {
 
 export const getById = async (input: number, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
@@ -162,21 +162,21 @@ export const getById = async (input: number, ctx: Context) => {
 			(await db.select({
 				contact: contacts, phones
 			}).from(contacts)
-				.leftJoin(phones, eq(contacts.id, phones.contact_id))
+				.leftJoin(phones, eq(contacts.id, phones.contactId))
 				.where(eq(contacts.id, input)))
 		)]
 		contactsQuery = [...contactsQuery, ...(
 			(await db.select({
 				contact: contacts, address2: address
 			}).from(contacts)
-				.leftJoin(address, eq(contacts.id, address.contact_id))
+				.leftJoin(address, eq(contacts.id, address.contactId))
 				.where(eq(contacts.id, input)))
 		)]
 		contactsQuery = [...contactsQuery, ...(
 			(await db.select({
 				contact: contacts, emails
 			}).from(contacts)
-				.leftJoin(emails, eq(contacts.id, emails.contact_id))
+				.leftJoin(emails, eq(contacts.id, emails.contactId))
 				.where(eq(contacts.id, input)))
 		)]
 
@@ -210,22 +210,22 @@ export type GetContactsById = NonNullable<Awaited<ReturnType<typeof getById>>>
 
 export const deleteById = async (input: number, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
 	try {
 
 		// check that the customer does not have shop_orders
-		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders).where(eq(shop_orders.customer_id, input))
+		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders).where(eq(shop_orders.customerId, input))
 
 		if (+totalOrdersRecords[0].count !== 0) {
 			await db.update(contacts).set({ active: false }).where(eq(contacts.id, input));
 		} else {
 			await db.transaction(async (tx) => {
-				await tx.delete(emails).where(eq(emails.contact_id, input));
-				await tx.delete(phones).where(eq(phones.contact_id, input));
-				await tx.delete(address).where(eq(address.contact_id, input));
+				await tx.delete(emails).where(eq(emails.contactId, input));
+				await tx.delete(phones).where(eq(phones.contactId, input));
+				await tx.delete(address).where(eq(address.contactId, input));
 				await tx.delete(contacts).where(eq(contacts.id, input));
 			});
 		}
@@ -239,7 +239,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 export const createContact = async (input: SaveContacts, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
@@ -249,22 +249,22 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 			let contactResult: { id: number }[]
 			const { email, phone, addresses, ...rest } = input
 
-			contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
+			contactResult = await tx.insert(contacts).values({ userId: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
 
 			await tx.transaction(async (tx2) => {
 				if (phone) {
 					phone.forEach(async (item: string) => {
-						await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+						await tx2.insert(phones).values({ contactId: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 					})
 				}
 				if (email) {
 					email.forEach(async (item: string) => {
-						await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+						await tx2.insert(emails).values({ contactId: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 					})
 				}
 				if (input?.addresses) {
 					input.addresses.forEach(async (item: string) => {
-						await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+						await tx2.insert(address).values({ contactId: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 					})
 				}
 			});
@@ -280,7 +280,7 @@ export const createContact = async (input: SaveContacts, ctx: Context) => {
 
 export const updateContact = async (input: SaveContacts & { id: number }, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
@@ -290,9 +290,9 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 			const deleteWait = []
 
 			// delete address, phone and email with contact id from database then add new details
-			deleteWait.push(await tx.delete(phones).where(eq(phones.contact_id, input.id)).returning({ id: phones.id }))
-			deleteWait.push(await tx.delete(emails).where(eq(emails.contact_id, input.id)).returning({ id: emails.id }))
-			deleteWait.push(await tx.delete(address).where(eq(address.contact_id, input.id)).returning({ id: address.id }))
+			deleteWait.push(await tx.delete(phones).where(eq(phones.contactId, input.id)).returning({ id: phones.id }))
+			deleteWait.push(await tx.delete(emails).where(eq(emails.contactId, input.id)).returning({ id: emails.id }))
+			deleteWait.push(await tx.delete(address).where(eq(address.contactId, input.id)).returning({ id: address.id }))
 
 			await Promise.all(deleteWait)
 
@@ -300,24 +300,24 @@ export const updateContact = async (input: SaveContacts & { id: number }, ctx: C
 			const { email, phone, addresses, ...rest } = input
 
 			contactResult = await tx.update(contacts)
-				.set({ user_id: ctx.session.user.userId, active: true, ...rest })
+				.set({ userId: ctx.session.user.userId, active: true, ...rest })
 				.where(eq(contacts.id, input.id))
 				.returning({ id: contacts.id });
 
 			await tx.transaction(async (tx2) => {
 				if (phone) {
 					phone.forEach(async (item: string) => {
-						await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+						await tx2.insert(phones).values({ contactId: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 					})
 				}
 				if (email) {
 					email.forEach(async (item: string) => {
-						await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+						await tx2.insert(emails).values({ contactId: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 					})
 				}
 				if (input?.addresses) {
 					input.addresses.forEach(async (item: string) => {
-						await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+						await tx2.insert(address).values({ contactId: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 					})
 				}
 			});
@@ -346,22 +346,22 @@ export const uploadContacts = async (input: saveContactsArray, ctx: Context) => 
 					let contactResult: { id: number }[]
 					const { email, phone, addresses, ...rest } = contact
 		
-					contactResult = await tx.insert(contacts).values({ user_id: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
+					contactResult = await tx.insert(contacts).values({ userId: ctx.session.user.userId, ...rest }).returning({ id: contacts.id });
 		
 					await tx.transaction(async (tx2) => {
 						if (phone) {
 							phone.forEach(async (item: string) => {
-								await tx2.insert(phones).values({ contact_id: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
+								await tx2.insert(phones).values({ contactId: contactResult[0].id, phone: item.trim() }).onConflictDoNothing()
 							})
 						}
 						if (email) {
 							email.forEach(async (item: string) => {
-								await tx2.insert(emails).values({ contact_id: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
+								await tx2.insert(emails).values({ contactId: contactResult[0].id, email: item.trim() }).onConflictDoNothing()
 							})
 						}
 						if (contact?.addresses) {
 							contact.addresses.forEach(async (item: string) => {
-								await tx2.insert(address).values({ contact_id: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
+								await tx2.insert(address).values({ contactId: contactResult[0].id, address: item.trim() }).onConflictDoNothing()
 							})
 						}
 					});

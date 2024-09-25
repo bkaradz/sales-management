@@ -10,8 +10,8 @@ export const production = router({
     }),
     changeProductionStatusById: protectedProcedure.input(z.object({
         id: z.number(),
-        sales_status: SalesStatusZod,
-        payment_status: PaymentStatusZod,
-        production_status: ProductionStatusZod
+        salesStatus: SalesStatusZod,
+        paymentStatus: PaymentStatusZod,
+        productionStatus: ProductionStatusZod
     })).query(async ({ input, ctx }) => { return await changeProductionStatusById(input, ctx); }),
 });

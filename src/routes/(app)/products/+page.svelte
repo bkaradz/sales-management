@@ -237,11 +237,11 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{product.name}
-									{#if product.stork_quantity}
+									{#if product.storkQuantity}
 										<span
 											class="text-xs py-1 px-2 leading-none bg-green-100 text-green-600 dark:bg-gray-800 rounded-md"
 										>
-											{product.stork_quantity}
+											{product.storkQuantity}
 										</span>
 									{/if}
 								</td>
@@ -262,7 +262,7 @@
 								>
 									{format(
 										convertFx(
-											$cartStore.get(product.id)?.orders_details?.unit_price || '0',
+											$cartStore.get(product.id)?.orders_details?.unitPrice || '0',
 											$exchangeRatesStore,
 											$selectedCurrencyStore
 										),
@@ -275,7 +275,7 @@
 									{format(
 										convertFx(
 											currency(
-												$cartStore.get(product.id)?.orders_details?.unit_price || '0'
+												$cartStore.get(product.id)?.orders_details?.unitPrice || '0'
 											).multiply($cartStore.get(product.id)?.orders_details?.quantity || '0'),
 											$exchangeRatesStore,
 											$selectedCurrencyStore
@@ -286,7 +286,7 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{product.product_category}
+									{product.productCategory}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">

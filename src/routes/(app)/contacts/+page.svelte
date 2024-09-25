@@ -199,7 +199,7 @@
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{contact.full_name}
+									{contact.fullName}
 								</td>
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 {returnColour(contact.amount)}"
@@ -211,12 +211,12 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
-										convertFx(contact.sales_amount, $exchangeRatesStore, $selectedCurrencyStore),
+										convertFx(contact.salesAmount, $exchangeRatesStore, $selectedCurrencyStore),
 										$selectedCurrencyStore
 									)}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{contact.total_products}
+									{contact.totalProducts}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
@@ -234,7 +234,7 @@
 													isModalOpen = true;
 													deletedContact = {
 														contactId: contact.id,
-														contactName: contact.full_name
+														contactName: contact.fullName
 													};
 												}}
 											>

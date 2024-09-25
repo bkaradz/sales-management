@@ -1,8 +1,8 @@
 
 import { contactsList, productsList, usersList, pricelistData, exchangeRates } from './seedData';
-import { auth } from '../lucia/clientSeed';
+import { lucia } from '../lucia/client';
 import { db } from './client';
-import { address, contacts, emails, exchange_rate_details, exchange_rates, key, phones, pricelist, pricelist_details, products, session, users } from './schema/schema';
+import { address, contacts, emails, exchangeRateDetails, exchangeRates, phones, pricelist, pricelist_details, products, session, user } from './schema/schema';
 import type { EmbroideryTypeUnion, currencyTypeUnion } from '$lib/utility/lists.utility';
 
 const contactArray: any[] = []
@@ -17,30 +17,29 @@ async function main() {
   const deleteArray = []
   deleteArray.push(await db.delete(pricelist))
   deleteArray.push(await db.delete(pricelist_details))
-  deleteArray.push(await db.delete(exchange_rates))
-  deleteArray.push(await db.delete(exchange_rate_details))
-  deleteArray.push(await db.delete(key))
+  deleteArray.push(await db.delete(exchangeRates))
+  deleteArray.push(await db.delete(exchangeRateDetails))
   deleteArray.push(await db.delete(session))
   deleteArray.push(await db.delete(phones))
   deleteArray.push(await db.delete(emails))
   deleteArray.push(await db.delete(address))
   deleteArray.push(await db.delete(contacts))
   deleteArray.push(await db.delete(products))
-  deleteArray.push(await db.delete(users))
+  deleteArray.push(await db.delete(user))
 
   await Promise.all(deleteArray);
 
   usersList.forEach(async (user) => {
-    const { full_name, username, password, active } = user
+    const { fullName, username, password, active } = user
 
-    const newUser = await auth.createUser({
+    const newUser = await lucia.createUser({
       key: {
         providerId: 'username',
         providerUserId: username,
         password
       },
       attributes: {
-        full_name,
+        fullName,
         username,
         active
       }
@@ -50,24 +49,24 @@ async function main() {
     const adminId = admin[0].userId;
 
     contactsList.forEach(async (contact) => {
-      const contactResult = await db.insert(contacts).values({ user_id: adminId, full_name: contact.full_name, active: true, is_corporate: false, }).returning({ id: contacts.id });
+      const contactResult = await db.insert(contacts).values({ userId: adminId, fullName: contact.fullName, active: true, isCorporate: false, }).returning({ id: contacts.id });
       contactArray.push(contactResult)
       
       if (contact?.phone) {
         contact.phone.forEach(async (item) => {
-          const phoneResult = await db.insert(phones).values({ contact_id: contactResult[0].id, phone: item.phone })
+          const phoneResult = await db.insert(phones).values({ contactId: contactResult[0].id, phone: item.phone })
           phonesArray.push(phoneResult)
         })
       }
       if (contact?.email) {
         contact.email.forEach(async (item) => {
-          const emailResult = await db.insert(emails).values({ contact_id: contactResult[0].id, email: item.email })
+          const emailResult = await db.insert(emails).values({ contactId: contactResult[0].id, email: item.email })
           emailsArray.push(emailResult)
         })
       }
       if (contact?.address) {
         contact.address.forEach(async (item) => {
-          const addressResult = await db.insert(address).values({ contact_id: contactResult[0].id, address: item.address })
+          const addressResult = await db.insert(address).values({ contactId: contactResult[0].id, address: item.address })
           addressArray.push(addressResult)
         })
       }
@@ -75,26 +74,26 @@ async function main() {
 
     pricelistData.forEach(async (priceList) => {
 
-      const pricelistResult = await db.insert(pricelist).values({ user_id: adminId, name: priceList.name, active: priceList.active, default: priceList.default }).returning({ id: pricelist.id });
+      const pricelistResult = await db.insert(pricelist).values({ userId: adminId, name: priceList.name, active: priceList.active, default: priceList.default }).returning({ id: pricelist.id });
 
       priceList.pricelist_details.forEach(async (detail) => {
         await db.insert(pricelist_details).values({
-          pricelist_id: pricelistResult[0].id,
-          embroidery_types: detail.embroidery_types as EmbroideryTypeUnion,
-          minimum_quantity: detail.minimum_quantity,
-          minimum_price: detail.minimum_price.toString(),
-          price_per_thousand_stitches: detail.price_per_thousand_stitches.toString()
+          pricelistId: pricelistResult[0].id,
+          embroideryTypes: detail.embroideryTypes as EmbroideryTypeUnion,
+          minimumQuantity: detail.minimumQuantity,
+          minimumPrice: detail.minimum_price.toString(),
+          pricePerThousandStitches: detail.pricePerThousandStitches.toString()
         })
       })
     });
 
     exchangeRates.forEach(async (rates) => {
 
-      const exchangeRatesResult = await db.insert(exchange_rates).values({ user_id: adminId, active: rates.active, default: rates.default }).returning({ id: exchange_rates.id });
+      const exchangeRatesResult = await db.insert(exchangeRates).values({ userId: adminId, active: rates.active, default: rates.default }).returning({ id: exchangeRates.id });
 
-      rates.exchange_rate_details.forEach(async (detail) => {
-        await db.insert(exchange_rate_details).values({
-          exchange_rates_id: exchangeRatesResult[0].id,
+      rates.exchangeRateDetails.forEach(async (detail) => {
+        await db.insert(exchangeRateDetails).values({
+          exchangeRatesId: exchangeRatesResult[0].id,
           name: detail.name,
           currency: detail.currency as currencyTypeUnion,
           rate: detail.rate.toString()
@@ -103,7 +102,7 @@ async function main() {
     });
 
     productsList.forEach(async (product) => {
-      const productsResults = await db.insert(products).values({ user_id: adminId, ...product }).returning()
+      const productsResults = await db.insert(products).values({ userId: adminId, ...product }).returning()
       productsArray.push(productsResults)
     });
 
@@ -124,12 +123,3 @@ main().then(async(data) => {
   console.error(`Error: ${e}`)
   process.exit(0);
 })
-// .finally(async () => {
-//   await Promise.all(contactArray);
-//   await Promise.all(phonesArray);
-//   await Promise.all(emailsArray);
-//   await Promise.all(addressArray);
-//   await Promise.all(productsArray);
-//   console.info("Done seeding.....");
-//   // process.exit(0);
-// });

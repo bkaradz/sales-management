@@ -65,13 +65,13 @@
 										{item.orders_details_id}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
-										{item.contact_full_name}
+										{item.contact_fullName}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
 										{item.product_name}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
-										{item.product_category}
+										{item.productCategory}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
 										{item.order_details_quantity}
@@ -79,7 +79,7 @@
 									<td class="px-2 py-1 text-[0.63rem] text-black text-right truncate">
 										{format(
 											convertFx(
-												item.order_details_unit_price,
+												item.order_details_unitPrice,
 												$exchangeRatesStore,
 												$selectedCurrencyStore
 											),
@@ -89,7 +89,7 @@
 									<td class="px-2 py-1 text-[0.63rem] text-black font-semibold text-right truncate">
 										{format(
 											convertFx(
-												currency(item.order_details_unit_price).multiply(item.order_details_quantity),
+												currency(item.order_details_unitPrice).multiply(item.order_details_quantity),
 												$exchangeRatesStore,
 												$selectedCurrencyStore
 											),
@@ -97,7 +97,7 @@
 										)}
 									</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
-										{item.order_payment_status}
+										{item.order_paymentStatus}
 									</td>
 								</tr>
 							{/each}

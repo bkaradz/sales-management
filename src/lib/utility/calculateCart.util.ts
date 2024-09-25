@@ -40,7 +40,7 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroi
 
   if (!majorPricelist) throw new Error("Embroidery Type not found");
 
-  const results = majorPricelist.find((list) => list.minimum_quantity >= quantity)
+  const results = majorPricelist.find((list) => list.minimumQuantity >= quantity)
 
   if (!results) throw new Error("Pricelist was not found");
 
@@ -48,8 +48,8 @@ export const getPricelist = (pricelist: PricelistToMap, quantity: number, embroi
 
 }
 
-// check that the product_category is Embroidery first
-// Should return date, product_id, pricelist_id, stitches, quantity, unit_price, total_price
+// check that the productCategory is Embroidery first
+// Should return date, productId, pricelistId, stitches, quantity, unitPrice, total_price
 
 export const calcProductPrices = (product: Products, pricelist: PricelistToMap, quantity: number, embroideryType: EmbroideryTypeUnion = 'Flat') => {
 
@@ -63,10 +63,10 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
   if (!product) throw new Error("product not found");
 
 
-  if (product.product_category !== 'Embroidery') {
-    const unit_price = product.product_unit_price
-    if (!unit_price) throw new Error("Unit price not found");
-    return unit_price
+  if (product.productCategory !== 'Embroidery') {
+    const unitPrice = product.productUnitPrice
+    if (!unitPrice) throw new Error("Unit price not found");
+    return unitPrice
   }
 
   // Get pricelist
@@ -75,19 +75,19 @@ export const calcProductPrices = (product: Products, pricelist: PricelistToMap, 
   if (!product.stitches) throw new Error("Stitches not found");
 
   // Calculate price per 1000 stitches
-  const unitPricePerThousand = currency(pricelistCalc.price_per_thousand_stitches).multiply(product.stitches)
+  const unitPricePerThousand = currency(pricelistCalc.pricePerThousandStitches).multiply(product.stitches)
 
-  let unit_price = max([unitPricePerThousand, currency(pricelistCalc.minimum_price).value])
+  let unitPrice = max([unitPricePerThousand, currency(pricelistCalc.minimumPrice).value])
 
-  if (!unit_price) throw new Error("Unit price not found");
+  if (!unitPrice) throw new Error("Unit price not found");
 
-  return unit_price.toString()
+  return unitPrice.toString()
 
 }
 
 export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
 
-  let embroideryType = values.orders_details.embroidery_type
+  let embroideryType = values.orders_details.embroideryType
 
   if (!embroideryType) {
     embroideryType = 'Flat'
@@ -102,7 +102,7 @@ export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
   if (!product) throw new Error("product not found");
 
 
-  if (!values.orders_details.price_calculated) {
+  if (!values.orders_details.priceCalculated) {
     return calcNonEmbroidery(values)
   }
 
@@ -112,25 +112,25 @@ export const calcPrice = (values: CartTypes, pricelist: PricelistToMap) => {
   if (!product.stitches) throw new Error("Stitches not found");
 
   // Calculate price per 1000 stitches
-  const unitPricePerThousand = currency(pricelistCalc.price_per_thousand_stitches).multiply((product.stitches / 1000))
+  const unitPricePerThousand = currency(pricelistCalc.pricePerThousandStitches).multiply((product.stitches / 1000))
 
-  const unit_price = max([unitPricePerThousand, currency(pricelistCalc.minimum_price).value])
+  const unitPrice = max([unitPricePerThousand, currency(pricelistCalc.minimumPrice).value])
 
-  if (!unit_price) throw new Error("Unit price not found");
+  if (!unitPrice) throw new Error("Unit price not found");
 
-  const total_price = currency(unit_price).multiply(quantity) as currency | string
+  const total_price = currency(unitPrice).multiply(quantity) as currency | string
 
   return {
     total_price,
-    unit_price,
+    unitPrice,
     quantity,
-    product_id: product.id,
-    product_category: product.product_category,
+    productId: product.id,
+    productCategory: product.productCategory,
 
-    embroidery_type: values.orders_details.embroidery_type,
-    garment_placement: values.orders_details.garment_placement,
+    embroideryType: values.orders_details.embroideryType,
+    garmentPlacement: values.orders_details.garmentPlacement,
     stitches: product.stitches,
-    pricelist_id: pricelist.pricelist.id,
+    pricelistId: pricelist.pricelist.id,
   }
 
 }
@@ -139,24 +139,24 @@ export type CalcPriceReturn = ReturnType<typeof calcPrice>
 
 const calcNonEmbroidery = (values: CartTypes) => {
 
-  const unit_price = values.orders_details.unit_price
+  const unitPrice = values.orders_details.unitPrice
 
-  if (!unit_price) throw new Error("Unit price not found");
+  if (!unitPrice) throw new Error("Unit price not found");
 
   const quantity = values.orders_details.quantity
 
   if (!quantity) throw new Error("quantity not found");
 
-  // const unit_price = unitPrice
+  // const unitPrice = unitPrice
 
-  const total_price = currency(unit_price).multiply(quantity)
+  const total_price = currency(unitPrice).multiply(quantity)
 
   return {
     total_price,
-    unit_price,
+    unitPrice,
     quantity,
-    product_id: values.orders_details.product_id,
-    product_category: values.orders_details.product_category,
+    productId: values.orders_details.productId,
+    productCategory: values.orders_details.productCategory,
   }
 }
 

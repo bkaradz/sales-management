@@ -1,14 +1,17 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveProductsSchema } from '$lib/validation/product.zod';
+import { trpcServer } from '$lib/server/server';
+import { lucia } from '$lib/server/lucia/client';
+import { uploadProducts } from '$lib/server/routes/products/products.drizzle';
 
 export const load = (async (event) => {
 
 	const [productsPromise] = await Promise.all([
-		await router.createCaller(await createContext(event)).products.getById(+event.params.id),
+		await trpcServer.products.getById.ssr(+event.params.id, event)
 	]);
 
 	return {
@@ -19,7 +22,7 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	update: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
@@ -34,13 +37,13 @@ export const actions: Actions = {
 		if (formData?.stitches) formResults = { ...formResults, stitches: +formData.stitches }
 		if (formData?.description) formResults = { ...formResults, description: formData.description }
 		if (formData?.quantity) formResults = { ...formResults, quantity: +formData.quantity }
-		if (formData?.product_category) formResults = { ...formResults, product_category: formData.product_category }
+		if (formData?.productCategory) formResults = { ...formResults, productCategory: formData.productCategory }
 		if (formData?.name) formResults = { ...formResults, name: formData.name }
-		if (formData?.unit_price) {
-			const unitPrice = formData.unit_price
+		if (formData?.unitPrice) {
+			const unitPrice = formData.unitPrice
 
 			if (+unitPrice > 0) {
-				formResults = { ...formResults, unit_price: unitPrice }
+				formResults = { ...formResults, unitPrice: unitPrice }
 			}
 		}
 
@@ -55,8 +58,8 @@ export const actions: Actions = {
 					errors: errorMap
 				})
 			}
-
-			return await router.createCaller(await createContext(event)).products.updateProduct(parsedProduct.data)
+			// Todo: Correct args
+			return await uploadProducts(parsedProduct.data, event)
 
 		} catch (error) {
 			return fail(400, {

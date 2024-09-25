@@ -1,6 +1,6 @@
 import { db } from "$lib/server/drizzle/client";
-import { exchange_rates, exchange_rate_details, type ExchangeRate, type ExchangeRateDetails } from "$lib/server/drizzle/schema/schema";
-import type { Context } from "$lib/trpc/context";
+import { exchangeRates, exchangeRateDetails, type ExchangeRate, type ExchangeRateDetails } from "$lib/server/drizzle/schema/schema";
+import type { Context } from "$lib/server/context";
 import { exchangeRateToMapObj } from "$lib/utility/monetary.util";
 import { error } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
@@ -10,27 +10,27 @@ export const getDefaultRates = async () => {
   try {
 
     const rateResults = await db.select({
-      exchange_rates,
-      exchange_rate_details
-    }).from(exchange_rates)
-      .leftJoin(exchange_rate_details, eq(exchange_rate_details.exchange_rates_id, exchange_rates.id))
-      .where(eq(exchange_rates.default, true))
+      exchangeRates,
+      exchangeRateDetails
+    }).from(exchangeRates)
+      .leftJoin(exchangeRateDetails, eq(exchangeRateDetails.exchangeRatesId, exchangeRates.id))
+      .where(eq(exchangeRates.default, true))
 
-    const result = rateResults.reduce<Record<number, { exchange_rates: ExchangeRate; exchange_rate_details: ExchangeRateDetails[]; }>>(
+    const result = rateResults.reduce<Record<number, { exchangeRates: ExchangeRate; exchangeRateDetails: ExchangeRateDetails[]; }>>(
       (acc, row) => {
-        const exchange_rates = row.exchange_rates;
-        const exchange_rate_details = row.exchange_rate_details;
+        const exchangeRates = row.exchangeRates;
+        const exchangeRateDetails = row.exchangeRateDetails;
 
 
-        if (!acc[exchange_rates.id]) acc[exchange_rates.id] = { exchange_rates, exchange_rate_details: [] };
+        if (!acc[exchangeRates.id]) acc[exchangeRates.id] = { exchangeRates, exchangeRateDetails: [] };
 
-        if (exchange_rate_details) acc[exchange_rates.id].exchange_rate_details.push(exchange_rate_details);
+        if (exchangeRateDetails) acc[exchangeRates.id].exchangeRateDetails.push(exchangeRateDetails);
 
         return acc;
       }, {},
     );
 
-    const rateId = rateResults[0].exchange_rates.id
+    const rateId = rateResults[0].exchangeRates.id
 
     const exchangeRateMap = exchangeRateToMapObj(result[rateId])
 
@@ -43,7 +43,7 @@ export const getDefaultRates = async () => {
 
 export const getAllRates = async (ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -51,20 +51,20 @@ export const getAllRates = async (ctx: Context) => {
   try {
 
     const rateResults = await db.select({
-      exchange_rates,
-      exchange_rate_details
-    }).from(exchange_rates)
-      .leftJoin(exchange_rate_details, eq(exchange_rate_details.exchange_rates_id, exchange_rates.id))
-      .where(eq(exchange_rates.active, true))
+      exchangeRates,
+      exchangeRateDetails
+    }).from(exchangeRates)
+      .leftJoin(exchangeRateDetails, eq(exchangeRateDetails.exchangeRatesId, exchangeRates.id))
+      .where(eq(exchangeRates.active, true))
 
-    const result = rateResults.reduce<Record<number, { exchange_rates: ExchangeRate; exchange_rate_details: ExchangeRateDetails[]; }>>(
+    const result = rateResults.reduce<Record<number, { exchangeRates: ExchangeRate; exchangeRateDetails: ExchangeRateDetails[]; }>>(
       (acc, row) => {
-        const exchange_rates = row.exchange_rates;
-        const exchange_rate_details = row.exchange_rate_details;
+        const exchangeRates = row.exchangeRates;
+        const exchangeRateDetails = row.exchangeRateDetails;
 
-        if (!acc[exchange_rates.id]) acc[exchange_rates.id] = { exchange_rates, exchange_rate_details: [] };
+        if (!acc[exchangeRates.id]) acc[exchangeRates.id] = { exchangeRates, exchangeRateDetails: [] };
 
-        if (exchange_rate_details) acc[exchange_rates.id].exchange_rate_details.push(exchange_rate_details);
+        if (exchangeRateDetails) acc[exchangeRates.id].exchangeRateDetails.push(exchangeRateDetails);
 
         return acc;
       }, {},
@@ -81,27 +81,27 @@ export type ratesAll = NonNullable<Awaited<ReturnType<typeof getAllRates>>>
 
 export const getById = async (input: number, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
   try {
 
     const rateResults = await db.select({
-      exchange_rates,
-      exchange_rate_details
-    }).from(exchange_rates)
-      .leftJoin(exchange_rate_details, eq(exchange_rate_details.exchange_rates_id, exchange_rates.id))
-      .where(eq(exchange_rates.id, input))
+      exchangeRates,
+      exchangeRateDetails
+    }).from(exchangeRates)
+      .leftJoin(exchangeRateDetails, eq(exchangeRateDetails.exchangeRatesId, exchangeRates.id))
+      .where(eq(exchangeRates.id, input))
 
-    const result = rateResults.reduce<Record<number, { exchange_rates: ExchangeRate; exchange_rate_details: ExchangeRateDetails[]; }>>(
+    const result = rateResults.reduce<Record<number, { exchangeRates: ExchangeRate; exchangeRateDetails: ExchangeRateDetails[]; }>>(
       (acc, row) => {
-        const exchange_rates = row.exchange_rates;
-        const exchange_rate_details = row.exchange_rate_details;
+        const exchangeRates = row.exchangeRates;
+        const exchangeRateDetails = row.exchangeRateDetails;
 
-        if (!acc[exchange_rates.id]) acc[exchange_rates.id] = { exchange_rates, exchange_rate_details: [] };
+        if (!acc[exchangeRates.id]) acc[exchangeRates.id] = { exchangeRates, exchangeRateDetails: [] };
 
-        if (exchange_rate_details) acc[exchange_rates.id].exchange_rate_details.push(exchange_rate_details);
+        if (exchangeRateDetails) acc[exchangeRates.id].exchangeRateDetails.push(exchangeRateDetails);
 
         return acc;
       }, {},
@@ -116,16 +116,16 @@ export const getById = async (input: number, ctx: Context) => {
 
 export const deleteById = async (input: number, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
 
   try {
 
-    await db.update(exchange_rates)
+    await db.update(exchangeRates)
       .set({ active: false })
-      .where(eq(exchange_rates.id, input));
+      .where(eq(exchangeRates.id, input));
 
     return {
       message: "success",
@@ -138,7 +138,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 export const createRate = async (input: any, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -148,10 +148,10 @@ export const createRate = async (input: any, ctx: Context) => {
 
     const descriptionRate = input?.description || null
 
-    const rateResult = await db.insert(exchange_rates).values({ user_id: ctx.session.user.userId, default: defaultRate, description: descriptionRate, }).returning({ id: exchange_rates.id });
+    const rateResult = await db.insert(exchangeRates).values({ userId: ctx.session.user.userId, default: defaultRate, description: descriptionRate, }).returning({ id: exchangeRates.id });
 
-    input.exchange_rate_details.forEach(async (item: any) => {
-      await db.insert(exchange_rate_details).values({ exchange_rates_id: rateResult[0].id, ...item })
+    input.exchangeRateDetails.forEach(async (item: any) => {
+      await db.insert(exchangeRateDetails).values({ exchangeRatesId: rateResult[0].id, ...item })
     })
 
     return { success: true }

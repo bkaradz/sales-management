@@ -1,11 +1,13 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 import { updateContactsSchema } from '$lib/validation/contacts.zod';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
-import type { GetContactsById } from '$lib/server/routes/contacts/contacts.drizzle';
+import { updateContact, type GetContactsById } from '$lib/server/routes/contacts/contacts.drizzle';
+import { trpcServer } from '$lib/server/server';
+import { lucia } from '$lib/server/lucia/client';
 
 export const load = (async (event) => {
 
@@ -31,7 +33,7 @@ export const load = (async (event) => {
 	}
 
 	const [contactPromise] = await Promise.all([
-		await router.createCaller(await createContext(event)).contacts.getById(+event.params.id),
+		await trpcServer.contacts.getById.ssr(+event.params.id, event)
 	]);
 
 	return {
@@ -43,7 +45,7 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	update: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
@@ -55,12 +57,12 @@ export const actions: Actions = {
 		let formResults = {}
 
 		if (formData?.id) formResults = { ...formResults, id: +formData.id }
-		if (formData?.full_name) formResults = { ...formResults, full_name: formData.full_name }
+		if (formData?.fullName) formResults = { ...formResults, fullName: formData.fullName }
 		if (formData?.email) formResults = { ...formResults, email: normalizeEmail(formData.email as string) }
 		if (formData?.phone) formResults = { ...formResults, phone: normalizePhone(formData.phone as string) }
 		if (formData?.address) formResults = { ...formResults, address: normalizeAddress(formData.address as string) }
-		if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
-		if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
+		if (formData?.isCorporate) formResults = { ...formResults, isCorporate: formData.isCorporate === 'on' ? true : false }
+		if (formData?.vatOrBpNumber) formResults = { ...formResults, vatOrBpNumber: formData.vatOrBpNumber }
 
 		try {
 
@@ -75,7 +77,7 @@ export const actions: Actions = {
 				})
 			}
 
-			return await router.createCaller(await createContext(event)).contacts.updateContact(parsedContact.data)
+			return await updateContact(parsedContact.data, event)
 
 		} catch (error) {
 			return fail(400, {

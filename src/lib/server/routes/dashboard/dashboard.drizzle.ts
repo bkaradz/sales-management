@@ -1,6 +1,6 @@
 import { db } from "$lib/server/drizzle/client";
 import { payments_details } from "$lib/server/drizzle/schema/schema";
-import type { Context } from "$lib/trpc/context";
+import type { Context } from "$lib/server/context";
 import type { currencyTypeUnion } from "$lib/utility/lists.utility";
 import { error } from "@sveltejs/kit";
 import currency from "currency.js";
@@ -11,25 +11,25 @@ import { eq, sql } from "drizzle-orm";
 
 export const incomeToday = async (ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
   try {
 
-    const incomeToday = await db.select().from(payments_details).where(eq(sql`payments_details.created_at::timestamp::date`, sql`CURRENT_DATE`))
+    const incomeToday = await db.select().from(payments_details).where(eq(sql`payments_details.createdAt::timestamp::date`, sql`CURRENT_DATE`))
 
     const incomeTodayMap = new Map<currencyTypeUnion | 'Total Amount', string>()
     let totalAmount = '0'
 
     incomeToday.forEach((values) => {
-      totalAmount = currency(totalAmount).add(values.default_currency_equivalent).toString()
+      totalAmount = currency(totalAmount).add(values.defaultCurrencyEquivalent).toString()
       incomeTodayMap.set('Total Amount', totalAmount)
 
       if (incomeTodayMap.has(values.currency)) {
-        incomeTodayMap.set(values.currency, currency(incomeTodayMap.get(values.currency) || '0').add(values.cash_paid).toString())
+        incomeTodayMap.set(values.currency, currency(incomeTodayMap.get(values.currency) || '0').add(values.cashPaid).toString())
       } else {
-        incomeTodayMap.set(values.currency, values.cash_paid)
+        incomeTodayMap.set(values.currency, values.cashPaid)
       }
     })
 
@@ -43,7 +43,7 @@ export const incomeToday = async (ctx: Context) => {
 
 export const incomeDailyTotals = async (ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -53,11 +53,11 @@ export const incomeDailyTotals = async (ctx: Context) => {
     const end = endOfWeek(new Date());
 
     const incomeToday = await db.select({
-      total: sql<string>`SUM(payments_details.default_currency_equivalent)`,
-      day_of_month: sql<string>`DATE_TRUNC('day', payments_details.created_at)`,
+      total: sql<string>`SUM(payments_details.defaultCurrencyEquivalent)`,
+      day_of_month: sql<string>`DATE_TRUNC('day', payments_details.createdAt)`,
     }).from(payments_details)
-      .groupBy(sql`DATE_TRUNC('day', payments_details.created_at)`)
-      .where(sql`payments_details.created_at BETWEEN ${start} AND ${end}`)
+      .groupBy(sql`DATE_TRUNC('day', payments_details.createdAt)`)
+      .where(sql`payments_details.createdAt BETWEEN ${start} AND ${end}`)
 
     return incomeToday
 
@@ -68,7 +68,7 @@ export const incomeDailyTotals = async (ctx: Context) => {
 }
 export const incomeMonthTotals = async (ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -78,11 +78,11 @@ export const incomeMonthTotals = async (ctx: Context) => {
     const end = endOfYear(new Date());
 
     const incomeMonth = await db.select({
-      total: sql<string>`SUM(payments_details.default_currency_equivalent)`,
-      month: sql<string>`TO_CHAR(payments_details.created_at, 'month')`,
+      total: sql<string>`SUM(payments_details.defaultCurrencyEquivalent)`,
+      month: sql<string>`TO_CHAR(payments_details.createdAt, 'month')`,
     }).from(payments_details)
-      .groupBy(sql`TO_CHAR(payments_details.created_at, 'month')`)
-      .where(sql`payments_details.created_at BETWEEN ${start} AND ${end}`)
+      .groupBy(sql`TO_CHAR(payments_details.createdAt, 'month')`)
+      .where(sql`payments_details.createdAt BETWEEN ${start} AND ${end}`)
 
     return incomeMonth
 
@@ -94,25 +94,25 @@ export const incomeMonthTotals = async (ctx: Context) => {
 
 export const incomeMonth = async (ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
   try {
 
-    const incomeMonth = await db.select().from(payments_details).where(eq(sql`DATE_TRUNC('month', payments_details.created_at)`, sql`DATE_TRUNC('month', NOW())`))
+    const incomeMonth = await db.select().from(payments_details).where(eq(sql`DATE_TRUNC('month', payments_details.createdAt)`, sql`DATE_TRUNC('month', NOW())`))
 
     const incomeMonthMap = new Map<currencyTypeUnion | 'Total Amount', string>()
     let totalAmount = '0'
 
     incomeMonth.forEach((values) => {
-      totalAmount = currency(totalAmount).add(values.default_currency_equivalent).toString()
+      totalAmount = currency(totalAmount).add(values.defaultCurrencyEquivalent).toString()
       incomeMonthMap.set('Total Amount', totalAmount)
 
       if (incomeMonthMap.has(values.currency)) {
-        incomeMonthMap.set(values.currency, currency(incomeMonthMap.get(values.currency) || '0').add(values.cash_paid).toString())
+        incomeMonthMap.set(values.currency, currency(incomeMonthMap.get(values.currency) || '0').add(values.cashPaid).toString())
       } else {
-        incomeMonthMap.set(values.currency, values.cash_paid)
+        incomeMonthMap.set(values.currency, values.cashPaid)
       }
     })
 

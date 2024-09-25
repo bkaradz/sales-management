@@ -1,7 +1,8 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
 import type { ratesAll } from '$lib/server/routes/exchangeRates/rates.drizzle';
 import type { PricelistsAll } from '$lib/server/routes/pricelist/pricelists.drizzle';
+import { trpcServer } from '$lib/server/server';
 import { pricelistToMapObj, type PricelistToMap, type ExchangeRateToMap, exchangeRateToMapObj } from '$lib/utility/monetary.util';
 import type { PageServerLoad } from './$types';
 
@@ -32,9 +33,9 @@ export const load = (async (event) => {
     };
 
     const [shopOrdersPromise, pricelistPromise, ratesPromise] = await Promise.all([
-        await router.createCaller(await createContext(event)).shop_orders.getById(parseInt(event.params.id, 10)),
-        await router.createCaller(await createContext(event)).pricelists.getAllPricelists(),
-        await router.createCaller(await createContext(event)).rates.getAllRates()
+        await trpcServer.shop_orders.getById.ssr(parseInt(event.params.id, 10), event),
+        await trpcServer.pricelists.getAllPricelists.ssr(event),
+        await trpcServer.rates.getAllRates.ssr(event),
     ]);
 
     return {

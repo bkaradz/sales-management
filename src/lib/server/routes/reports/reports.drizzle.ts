@@ -1,5 +1,5 @@
 import type { SearchParams } from '$lib/validation/searchParams.validate';
-import type { Context } from "$lib/trpc/context"
+import type { Context } from "$lib/server/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, desc, eq, ne, sql } from 'drizzle-orm';
@@ -9,7 +9,7 @@ import trim from 'lodash-es/trim';
 
 export const getSalesReports = async (input: SearchParams, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -21,20 +21,20 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
 
       ordersQuery = await db.select({
         orders_details_id: orders_details.id,
-        contact_full_name: contacts.full_name,
+        contact_fullName: contacts.fullName,
         product_name: products.name,
-        product_category: products.product_category,
+        productCategory: products.productCategory,
         order_details_quantity: orders_details.quantity,
-        order_details_unit_price: orders_details.unit_price,
-        order_payment_status: shop_orders.payment_status
+        order_details_unitPrice: orders_details.unitPrice,
+        order_paymentStatus: shop_orders.paymentStatus
       }).from(shop_orders)
         .where(
           and(eq(shop_orders.active, true),
-            and(ne(shop_orders.sales_status, 'Quotation'),
-              ne(orders_details.production_status, 'Collected'))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
-        .innerJoin(products, eq(products.id, orders_details.product_id))
+            and(ne(shop_orders.salesStatus, 'Quotation'),
+              ne(orders_details.productionStatus, 'Collected'))))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
+        .innerJoin(products, eq(products.id, orders_details.productId))
         .orderBy(desc(shop_orders.id))
 
     } else {
@@ -43,21 +43,21 @@ export const getSalesReports = async (input: SearchParams, ctx: Context) => {
 
       ordersQuery = await db.select({
         orders_details_id: orders_details.id,
-        contact_full_name: contacts.full_name,
+        contact_fullName: contacts.fullName,
         product_name: products.name,
-        product_category: products.product_category,
+        productCategory: products.productCategory,
         order_details_quantity: orders_details.quantity,
-        order_details_unit_price: orders_details.unit_price,
-        order_payment_status: shop_orders.payment_status
+        order_details_unitPrice: orders_details.unitPrice,
+        order_paymentStatus: shop_orders.paymentStatus
       }).from(shop_orders)
         .where(
-          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
-              and(ne(shop_orders.sales_status, 'Quotation'),
-                ne(orders_details.production_status, 'Collected')))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
-        .innerJoin(products, eq(products.id, orders_details.product_id))
+              and(ne(shop_orders.salesStatus, 'Quotation'),
+                ne(orders_details.productionStatus, 'Collected')))))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
+        .innerJoin(products, eq(products.id, orders_details.productId))
         .orderBy(desc(shop_orders.id))
     }
 
@@ -74,7 +74,7 @@ export type GetSalesReports = Awaited<ReturnType<typeof getSalesReports>>
 
 export const getDailyProductionReport = async (input: SearchParams, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -86,23 +86,23 @@ export const getDailyProductionReport = async (input: SearchParams, ctx: Context
 
       ordersQuery = await db.select({
         orders_details_id: orders_details.id,
-        contact_full_name: contacts.full_name,
+        contact_fullName: contacts.fullName,
         product_name: products.name,
-        product_category: products.product_category,
+        productCategory: products.productCategory,
         product_stitches: products.stitches,
         order_details_quantity: orders_details.quantity,
-        order_details_garment_placement: orders_details.garment_placement,
-        order_details_unit_price: orders_details.unit_price,
-        order_payment_status: shop_orders.payment_status
+        order_details_garmentPlacement: orders_details.garmentPlacement,
+        order_details_unitPrice: orders_details.unitPrice,
+        order_paymentStatus: shop_orders.paymentStatus
       }).from(shop_orders)
         .where(
           and(eq(shop_orders.active, true),
-            and(eq(products.product_category, 'Embroidery'),
-              and(ne(shop_orders.sales_status, 'Quotation'),
-                ne(orders_details.production_status, 'Collected')))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
-        .innerJoin(products, eq(products.id, orders_details.product_id))
+            and(eq(products.productCategory, 'Embroidery'),
+              and(ne(shop_orders.salesStatus, 'Quotation'),
+                ne(orders_details.productionStatus, 'Collected')))))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
+        .innerJoin(products, eq(products.id, orders_details.productId))
         .orderBy(desc(shop_orders.id))
 
     } else {
@@ -111,24 +111,24 @@ export const getDailyProductionReport = async (input: SearchParams, ctx: Context
 
       ordersQuery = await db.select({
         orders_details_id: orders_details.id,
-        contact_full_name: contacts.full_name,
+        contact_fullName: contacts.fullName,
         product_name: products.name,
-        product_category: products.product_category,
+        productCategory: products.productCategory,
         product_stitches: products.stitches,
         order_details_quantity: orders_details.quantity,
-        order_details_garment_placement: orders_details.garment_placement,
-        order_details_unit_price: orders_details.unit_price,
-        order_payment_status: shop_orders.payment_status
+        order_details_garmentPlacement: orders_details.garmentPlacement,
+        order_details_unitPrice: orders_details.unitPrice,
+        order_paymentStatus: shop_orders.paymentStatus
       }).from(shop_orders)
         .where(
-          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
-              and(eq(products.product_category, 'Embroidery'),
-                and(ne(shop_orders.sales_status, 'Quotation'),
-                  ne(orders_details.production_status, 'Collected'))))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
-        .innerJoin(products, eq(products.id, orders_details.product_id))
+              and(eq(products.productCategory, 'Embroidery'),
+                and(ne(shop_orders.salesStatus, 'Quotation'),
+                  ne(orders_details.productionStatus, 'Collected'))))))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
+        .innerJoin(products, eq(products.id, orders_details.productId))
         .orderBy(desc(shop_orders.id))
     }
 

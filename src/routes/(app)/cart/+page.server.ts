@@ -1,5 +1,3 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
 import { exchangeRateToMapObj, pricelistToMapObj } from '$lib/utility/monetary.util';
 import type { ExchangeRateToMap, PricelistToMap } from '$lib/utility/monetary.util';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
@@ -10,6 +8,10 @@ import { saveContactsSchema } from '$lib/validation/contacts.zod';
 import { normalizeAddress, normalizeEmail, normalizePhone } from '$lib/utility/normalizePhone.util';
 import type { PricelistsAll } from '$lib/server/routes/pricelist/pricelists.drizzle';
 import type { ratesAll } from '$lib/server/routes/exchangeRates/rates.drizzle';
+import { trpcServer } from '$lib/server/server';
+import { lucia } from '$lib/server/lucia/client';
+import { createOrder as shopOrdersCreateOrder } from '$lib/server/routes/orders/orders.drizzle';
+import { createContact } from '$lib/server/routes/contacts/contacts.drizzle';
 
 export const load = (async (event) => {
 
@@ -50,9 +52,9 @@ export const load = (async (event) => {
     };
 
     const [contactsPromise, pricelistPromise, exchangeRatePromise] = await Promise.all([
-        await router.createCaller(await createContext(event)).contacts.getContacts(query),
-        await router.createCaller(await createContext(event)).pricelists.getAllPricelists(),
-        await router.createCaller(await createContext(event)).rates.getAllRates()
+        await trpcServer.contacts.getContacts.ssr(query, event),
+        await trpcServer.pricelists.getAllPricelists.ssr(event),
+        await trpcServer.rates.getAllRates.ssr(event)
     ]);
 
     return {
@@ -63,21 +65,21 @@ export const load = (async (event) => {
 }) satisfies PageServerLoad;
 
 type dataType = {
-    customer_id: string;
-    pricelist_id: string;
-    exchange_rates_id: string;
+    customerId: string;
+    pricelistId: string;
+    exchangeRatesId: string;
     description?: string;
-    delivery_date: string;
+    deliveryDate: string;
     orders_details: string
-    sales_status: string
-    sales_amount: string
-    total_products: string
+    salesStatus: string
+    salesAmount: string
+    totalProducts: string
 }
 
 export const actions: Actions = {
     submit: async (event) => {
 
-        const session = await event.locals.auth.validate()
+        const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
         if (!session) {
             redirect(303, "/auth/login");
@@ -88,14 +90,14 @@ export const actions: Actions = {
 
         const cartOrderSubmit = {
             order: {
-                customer_id: +formData.customer_id,
-                pricelist_id: +formData.pricelist_id,
-                exchange_rates_id: +formData.exchange_rates_id,
-                sales_status: formData.sales_status,
+                customerId: +formData.customerId,
+                pricelistId: +formData.pricelistId,
+                exchangeRatesId: +formData.exchangeRatesId,
+                salesStatus: formData.salesStatus,
                 description: formData.description,
-                delivery_date: new Date(formData.delivery_date).toISOString(),
-                sales_amount: formData.sales_amount,
-                total_products: +formData.total_products
+                deliveryDate: new Date(formData.deliveryDate).toISOString(),
+                salesAmount: formData.salesAmount,
+                totalProducts: +formData.totalProducts
             },
             orders_details: JSON.parse(formData.orders_details)
         };
@@ -118,7 +120,7 @@ export const actions: Actions = {
                 })
             }
 
-            return await router.createCaller(await createContext(event)).shop_orders.createOrder(parsedCartOrder.data)
+            return await shopOrdersCreateOrder(parsedCartOrder.data, event)
 
         } catch (error) {
             return fail(400, {
@@ -129,7 +131,7 @@ export const actions: Actions = {
     },
     createContact: async (event) => {
 
-        const session = await event.locals.auth.validate()
+        const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
         if (!session) {
             redirect(303, "/auth/login");
@@ -140,12 +142,12 @@ export const actions: Actions = {
 
         let formResults = {}
 
-        if (formData?.full_name) formResults = { ...formResults, full_name: formData.full_name }
+        if (formData?.fullName) formResults = { ...formResults, fullName: formData.fullName }
         if (formData?.email) formResults = { ...formResults, email: normalizeEmail(formData.email as string) }
         if (formData?.phone) formResults = { ...formResults, phone: normalizePhone(formData.phone as string) }
         if (formData?.address) formResults = { ...formResults, address: normalizeAddress(formData.address as string) }
-        if (formData?.is_corporate) formResults = { ...formResults, is_corporate: formData.is_corporate === 'on' ? true : false }
-        if (formData?.vat_or_bp_number) formResults = { ...formResults, vat_or_bp_number: formData.vat_or_bp_number }
+        if (formData?.isCorporate) formResults = { ...formResults, isCorporate: formData.isCorporate === 'on' ? true : false }
+        if (formData?.vatOrBpNumber) formResults = { ...formResults, vatOrBpNumber: formData.vatOrBpNumber }
 
         try {
 
@@ -160,7 +162,7 @@ export const actions: Actions = {
                 })
             }
 
-            return await router.createCaller(await createContext(event)).contacts.createContact(parsedContact.data)
+            return await createContact(parsedContact.data, event)
 
         } catch (error) {
             return fail(400, {

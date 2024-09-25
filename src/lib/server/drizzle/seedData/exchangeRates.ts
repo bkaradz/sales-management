@@ -2,7 +2,7 @@ export const exchangeRates = [
 	{
 		active: true,
 		default: false,
-		exchange_rate_details: [
+		exchangeRateDetails: [
 			{
 				name: 'US Dollar',
 				currency: 'USD',
@@ -33,7 +33,7 @@ export const exchangeRates = [
 	{
 		active: true,
 		default: true,
-		exchange_rate_details: [
+		exchangeRateDetails: [
 			{
 				name: 'US Dollar',
 				currency: 'USD',

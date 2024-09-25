@@ -28,7 +28,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { paymentMethod } from '$lib/utility/lists.utility';
 	import currency from 'currency.js';
-	import type { OrdersByUserId } from '$lib/trpc/routes/orders/orders.drizzle';
+	import type { OrdersByUserId } from '$lib/server/routes/orders/orders.drizzle';
 
 	export let data: PageData;
 
@@ -100,10 +100,10 @@
 	let paymentPart = '';
 
 	const amountTendered = () => {
-		const user_id = data?.user?.id;
-		const customer_id = $customerStore?.id;
+		const userId = data?.user?.id;
+		const customerId = $customerStore?.id;
 
-		if (!user_id) {
+		if (!userId) {
 			toasts.add({
 				message: `User Not found`,
 				type: 'error'
@@ -111,7 +111,7 @@
 			return;
 		}
 
-		if (!customer_id) {
+		if (!customerId) {
 			toasts.add({
 				message: `Please select customer`,
 				type: 'error'
@@ -128,13 +128,13 @@
 		}
 
 		amountTenderedStore.add({
-			user_id,
-			customer_id,
-			exchange_rate_id: $exchangeRatesStore.exchange_rates.id,
-			payment_method: $paymentMethodSelectedStore,
+			userId,
+			customerId,
+			exchangeRateId: $exchangeRatesStore.exchangeRates.id,
+			paymentMethod: $paymentMethodSelectedStore,
 			currency: $paymentCurrencyStore,
-			cash_paid: paymentPart.toString(),
-			default_currency_equivalent: convertFx(
+			cashPaid: paymentPart.toString(),
+			defaultCurrencyEquivalent: convertFx(
 				paymentPart.toString(),
 				$exchangeRatesStore,
 				'USD',
@@ -171,7 +171,7 @@
 					<div
 						class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 					>
-						{data.contact.contact.full_name}
+						{data.contact.contact.fullName}
 					</div>
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -185,7 +185,7 @@
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
 							Corporate
 						</div>
-						<div class="ml-auto text-xs text-gray-500">{data.contact.contact.is_corporate}</div>
+						<div class="ml-auto text-xs text-gray-500">{data.contact.contact.isCorporate}</div>
 					</div>
 					<div
 						class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -217,7 +217,7 @@
 						<div class="ml-auto text-xs text-gray-500">
 							{format(
 								convertFx(
-									data.contact.contact.total_receipts,
+									data.contact.contact.totalReceipts,
 									$exchangeRatesStore,
 									$selectedCurrencyStore
 								),
@@ -281,9 +281,9 @@
 							<form action="?/submit" method="post" use:enhance>
 								<input
 									hidden
-									name="exchange_rate_id"
+									name="exchangeRateId"
 									type="text"
-									value={$exchangeRatesStore.exchange_rates.id}
+									value={$exchangeRatesStore.exchangeRates.id}
 								/>
 								<input
 									hidden
@@ -305,7 +305,7 @@
 										[...$selectedOrdersPaymentStore.values()].map((item) => item.id)
 									)}
 								/>
-								<input hidden name="customer_id" type="number" value={data?.contact?.contact?.id} />
+								<input hidden name="customerId" type="number" value={data?.contact?.contact?.id} />
 
 								{#if $selectedOrdersPaymentStore.size >= 1 && currency($selectedOrdersPaymentTotals.totalDue).value <= 0}
 									<button
@@ -539,7 +539,7 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.pricelist_id}
+												{ordersArray.pricelistId}
 											</span>
 										</td>
 										<td
@@ -548,7 +548,7 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.exchange_rates_id}
+												{ordersArray.exchangeRatesId}
 											</span>
 										</td>
 										<td
@@ -557,7 +557,7 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.sales_status}
+												{ordersArray.salesStatus}
 											</span>
 										</td>
 										<td
@@ -566,20 +566,20 @@
 											<span
 												class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md"
 											>
-												{ordersArray.payment_status}
+												{ordersArray.paymentStatus}
 											</span>
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
-											{ordersArray.total_products}
+											{ordersArray.totalProducts}
 										</td>
 										<td
 											class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 										>
 											{format(
 												convertFx(
-													ordersArray.sales_amount,
+													ordersArray.salesAmount,
 													$exchangeRatesStore,
 													$selectedCurrencyStore
 												),
@@ -610,8 +610,8 @@
 											bind:value={paymentPart}
 											type="number"
 											class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
-											id="cash_paid"
-											name="cash_paid"
+											id="cashPaid"
+											name="cashPaid"
 											placeholder="Enter Cash Paid"
 										/>
 
@@ -621,7 +621,7 @@
 												class="flex items-center h-8 px-3 rounded-r-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
 												<span class="ml-2">
-													{$exchangeRatesStore.exchange_rate_details.get($paymentCurrencyStore)
+													{$exchangeRatesStore.exchangeRateDetails.get($paymentCurrencyStore)
 														?.name}
 												</span>
 												{@html svgDropdown}
@@ -631,7 +631,7 @@
 												tabindex="0"
 												class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
-												{#each $exchangeRatesStore.exchange_rate_details.entries() as [key, value]}
+												{#each $exchangeRatesStore.exchangeRateDetails.entries() as [key, value]}
 													{#if !($paymentCurrencyStore === key)}
 														<li>
 															<button
@@ -653,8 +653,8 @@
 											disabled
 											type="number"
 											class="h-8 col-span-2 grid grid-cols-3 bg-slate-950 rounded-l-md min-h-[auto] w-full border-0 bg-transparent px-3 py-[0.32rem]"
-											id="cash_paid"
-											name="cash_paid"
+											id="cashPaid"
+											name="cashPaid"
 											placeholder="Payment Method"
 										/>
 
@@ -698,9 +698,9 @@
 									{#each $amountTenderedStore.entries() as [key, value] (key)}
 										<div class="grid grid-cols-3 bg-slate-800 rounded-l-md my-2">
 											<div class="col-span-2 grid grid-cols-3">
-												<span class="ml-2">{format(value.cash_paid, value.currency)}</span>
+												<span class="ml-2">{format(value.cashPaid, value.currency)}</span>
 												<span>{value.currency}</span>
-												<span>{value.payment_method}</span>
+												<span>{value.paymentMethod}</span>
 											</div>
 
 											<div
@@ -709,7 +709,7 @@
 												<span class="ml-4">
 													{format(
 														convertFx(
-															value.default_currency_equivalent,
+															value.defaultCurrencyEquivalent,
 															$exchangeRatesStore,
 															$selectedCurrencyStore
 														),

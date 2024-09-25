@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 export const saveContactsSchema = z
   .object({
-    full_name: z.string({ required_error: 'Full Name is required' }).min(3).trim(),
+    fullName: z.string({ required_error: 'Full Name is required' }).min(3).trim(),
     email: z.array(z.string().email()).optional(),
     phone: z.array(z.string()).optional(),
     addresses: z.array(z.string()).optional(),
-    is_corporate: z.boolean().optional(),
-    vat_or_bp_number: z.string().optional()
-  }).required({ full_name: true })
+    isCorporate: z.boolean().optional(),
+    vatOrBpNumber: z.string().optional()
+  }).required({ fullName: true })
 
 export type SaveContacts = z.infer<typeof saveContactsSchema>;
 export type SaveContactsKeys = keyof SaveContacts;

@@ -1,6 +1,9 @@
+import { lucia } from '$lib/server/lucia/client';
+import { deleteById as productsDeleteById } from '$lib/server/routes/products/products.drizzle';
+import { trpcServer } from '$lib/server/server';
 import type { Actions, PageServerLoad } from './$types';
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
 import { redirect } from '@sveltejs/kit';
 
 export const load = (async (event) => {
@@ -17,7 +20,7 @@ export const load = (async (event) => {
 	if (search) query = { ...query, search }
 
 	const [productsPromise] = await Promise.all([
-		await router.createCaller(await createContext(event)).products.getProducts(query),
+		await trpcServer.products.getProducts.ssr(query, event)
 	]);
 
 	return {
@@ -28,7 +31,7 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	delete: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
@@ -37,7 +40,7 @@ export const actions: Actions = {
 		const data = await event.request.formData();
 		const formData = Object.fromEntries(data)
 
-		return await router.createCaller(await createContext(event)).products.deleteById(+formData.delete)
+		return await productsDeleteById(+formData.delete, event)
 
 	}
 }

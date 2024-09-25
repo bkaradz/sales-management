@@ -5,52 +5,52 @@ export const pricelistData = [
 		active: true,
 		pricelist_details: [
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 3,
-				price_per_thousand_stitches: 0.2,
-				minimum_price: 1
+				embroideryTypes: 'Flat',
+				minimumQuantity: 3,
+				pricePerThousandStitches: 0.2,
+				minimumPrice: 1
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 30,
-				price_per_thousand_stitches: 0.16,
-				minimum_price: 0.75
+				embroideryTypes: 'Flat',
+				minimumQuantity: 30,
+				pricePerThousandStitches: 0.16,
+				minimumPrice: 0.75
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.15,
-				minimum_price: 0.675
+				embroideryTypes: 'Flat',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.15,
+				minimumPrice: 0.675
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.14,
-				minimum_price: 0.6
+				embroideryTypes: 'Flat',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.14,
+				minimumPrice: 0.6
 			},
 			{
-				embroidery_types: 'Cap',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.2,
-				minimum_price: 1.5
+				embroideryTypes: 'Cap',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.2,
+				minimumPrice: 1.5
 			},
 			{
-				embroidery_types: 'Cap',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.175,
-				minimum_price: 1
+				embroideryTypes: 'Cap',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.175,
+				minimumPrice: 1
 			},
 			{
-				embroidery_types: 'Applique',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.2,
-				minimum_price: 1.25
+				embroideryTypes: 'Applique',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.2,
+				minimumPrice: 1.25
 			},
 			{
-				embroidery_types: 'Applique',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.175,
-				minimum_price: 1
+				embroideryTypes: 'Applique',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.175,
+				minimumPrice: 1
 			}
 		]
 	},
@@ -60,52 +60,52 @@ export const pricelistData = [
 		active: true,
 		pricelist_details: [
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 3,
-				price_per_thousand_stitches: 0.25,
-				minimum_price: 2
+				embroideryTypes: 'Flat',
+				minimumQuantity: 3,
+				pricePerThousandStitches: 0.25,
+				minimumPrice: 2
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.2,
-				minimum_price: 1
+				embroideryTypes: 'Flat',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.2,
+				minimumPrice: 1
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.18,
-				minimum_price: 0.8
+				embroideryTypes: 'Flat',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.18,
+				minimumPrice: 0.8
 			},
 			{
-				embroidery_types: 'Cap',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.25,
-				minimum_price: 2
+				embroideryTypes: 'Cap',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.25,
+				minimumPrice: 2
 			},
 			{
-				embroidery_types: 'Cap',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.2,
-				minimum_price: 1.75
+				embroideryTypes: 'Cap',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.2,
+				minimumPrice: 1.75
 			},
 			{
-				embroidery_types: 'Applique',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.25,
-				minimum_price: 2
+				embroideryTypes: 'Applique',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.25,
+				minimumPrice: 2
 			},
 			{
-				embroidery_types: 'Applique',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.2,
-				minimum_price: 1.75
+				embroideryTypes: 'Applique',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.2,
+				minimumPrice: 1.75
 			},
 			{
-				embroidery_types: 'Name Tag',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.25,
-				minimum_price: 2
+				embroideryTypes: 'Name Tag',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.25,
+				minimumPrice: 2
 			}
 		]
 	},
@@ -115,64 +115,64 @@ export const pricelistData = [
 		active: true,
 		pricelist_details: [
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 3,
-				price_per_thousand_stitches: 0.20,
-				minimum_price: 1.5
+				embroideryTypes: 'Flat',
+				minimumQuantity: 3,
+				pricePerThousandStitches: 0.20,
+				minimumPrice: 1.5
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 20,
-				price_per_thousand_stitches: 0.18,
-				minimum_price: 1
+				embroideryTypes: 'Flat',
+				minimumQuantity: 20,
+				pricePerThousandStitches: 0.18,
+				minimumPrice: 1
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.16,
-				minimum_price: 1
+				embroideryTypes: 'Flat',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.16,
+				minimumPrice: 1
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 100,
-				price_per_thousand_stitches: 0.15,
-				minimum_price: 0.95
+				embroideryTypes: 'Flat',
+				minimumQuantity: 100,
+				pricePerThousandStitches: 0.15,
+				minimumPrice: 0.95
 			},
 			{
-				embroidery_types: 'Flat',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.14,
-				minimum_price: 0.9
+				embroideryTypes: 'Flat',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.14,
+				minimumPrice: 0.9
 			},
 			{
-				embroidery_types: 'Cap',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.25,
-				minimum_price: 2
+				embroideryTypes: 'Cap',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.25,
+				minimumPrice: 2
 			},
 			{
-				embroidery_types: 'Cap',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.2,
-				minimum_price: 1.75
+				embroideryTypes: 'Cap',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.2,
+				minimumPrice: 1.75
 			},
 			{
-				embroidery_types: 'Applique',
-				minimum_quantity: 50,
-				price_per_thousand_stitches: 0.25,
-				minimum_price: 2
+				embroideryTypes: 'Applique',
+				minimumQuantity: 50,
+				pricePerThousandStitches: 0.25,
+				minimumPrice: 2
 			},
 			{
-				embroidery_types: 'Applique',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.23,
-				minimum_price: 1.5
+				embroideryTypes: 'Applique',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.23,
+				minimumPrice: 1.5
 			},
 			{
-				embroidery_types: 'Name Tag',
-				minimum_quantity: 100000,
-				price_per_thousand_stitches: 0.25,
-				minimum_price: 2
+				embroideryTypes: 'Name Tag',
+				minimumQuantity: 100000,
+				pricePerThousandStitches: 0.25,
+				minimumPrice: 2
 			}
 		]
 	}

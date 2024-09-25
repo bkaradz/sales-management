@@ -1,68 +1,119 @@
-import { auth } from "$lib/server/lucia/client"
+import { lucia } from "$lib/server/lucia/client"
 import type { LoginCredentials, UserRegister } from "$lib/server/routes/authentication/authentication.validate"
-import { error, redirect } from "@sveltejs/kit"
-import type { Context } from "$lib/trpc/context"
+import { error, fail, redirect } from "@sveltejs/kit"
 import { db } from "$lib/server/drizzle/client"
 import { eq, sql } from "drizzle-orm"
-import { users } from "$lib/server/drizzle/schema/schema"
+import { user } from "$lib/server/drizzle/schema/schema"
+import { hash, verify } from "@node-rs/argon2";
+import { generateId } from "lucia";
+import type { Context } from "$lib/server/context"
 
 
 export const registerUser = async (input: UserRegister) => {
 
-  const { full_name, username, password } = input
+  const { fullName, username, password } = input
 
-  const usersCount = await db.select({ count: sql<number>`count(*)` }).from(users)
+  // Check if username already exist
+  const existingUser = await db.select().from(user).where(eq(user.username,  username))
+
+  if (existingUser.length > 0) {
+    return fail(400, {
+      message: "Username not available"
+    });
+  }
+
+  const usersCount = await db.select({ count: sql<number>`count(*)` }).from(user)
 
   let active = false
 
   if (usersCount[0].count < 1) active = true // if no user exist create Admin user
 
-  await auth.createUser({
-    key: {
-      providerId: 'username',
-      providerUserId: username,
-      password
-    },
-    attributes: {
-      full_name,
-      username,
-      active
-    }
-  })
+  const passwordHash = await hash(password, {
+    // recommended minimum parameters
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1
+  });
+  const userId = generateId(15);
+
+  await db.insert(user).values({
+    id: userId,
+    fullName: fullName,
+    username,
+    passwordHash,
+    active
+  });
+
+  return { success: true }
 
 }
 
 export const loginUser = async (input: LoginCredentials, ctx: Context) => {
+  console.log("🚀 ~ loginUser ~ ctx:", ctx)
+  console.log("🚀 ~ loginUser ~ input:", input)
 
   const { username, password } = input
 
-  const key = await auth.useKey('username', username, password)
-  const session = await auth.createSession({ userId: key.userId, attributes: {} })
-  ctx.event.locals.auth.setSession(session)
+  const existingUser = await db.select().from(user).where(eq(user.username,  username))
+
+  if (!existingUser) {
+    return fail(400, {
+      message: "Incorrect username or password"
+    });
+  }
+
+  const validPassword = await verify(existingUser[0].passwordHash, password, {
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1
+  });
+
+  if (!validPassword) {
+    return fail(400, {
+      message: "Incorrect username or password"
+    });
+  }
+
+  const session = await lucia.createSession(existingUser[0].id, {});
+	const sessionCookie = lucia.createSessionCookie(session.id);
+	ctx.event.cookies.set(sessionCookie.name, sessionCookie.value, {
+    path: ".",
+    ...sessionCookie.attributes
+  });
+
+	return redirect(302, "/");
 }
 
 export const logoutUser = async (ctx: Context) => {
 
-  const session = await ctx.event.locals.auth.validate()
-
-  if (!session) {
-    redirect(302, `/`);
+  if (!ctx.event.locals.session) {
+    return fail(401, {
+      message: "Session not found"
+    });
   }
 
-  await auth.invalidateSession(session.sessionId)
-  ctx.event.locals.auth.setSession(null)
+  await lucia.invalidateSession(ctx.event.locals.session.id);
+  const sessionCookie = lucia.createBlankSessionCookie();
+  ctx.event.cookies.set(sessionCookie.name, sessionCookie.value, {
+    path: ".",
+    ...sessionCookie.attributes
+  });
+
+  return redirect(302, "/login");
 
 }
 
 export const getUsers = async (ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
  
   try {
 
-		const userQuery = await db.select().from(users)
+		const userQuery = await db.select().from(user)
 
 		return {
 			users: userQuery,
@@ -76,13 +127,13 @@ export const getUsers = async (ctx: Context) => {
 
 export const getById = async (input: string, ctx: Context ) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
   try {
 
-		const userQuery = await db.select().from(users).where(eq(users.id, input))
+		const userQuery = await db.select().from(user).where(eq(user.id, input))
 
 		return userQuery[0]
 		
@@ -93,13 +144,13 @@ export const getById = async (input: string, ctx: Context ) => {
 
 export const deleteById = async (input: string, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
   
   try {
 
-		await db.update(users).set({ active: false }).where(eq(users.id, input));
+		await db.update(user).set({ active: false }).where(eq(user.id, input));
 
 		return {
 			message: "success",

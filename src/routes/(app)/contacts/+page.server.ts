@@ -1,7 +1,10 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { trpcServer } from '$lib/server/server';
+import { lucia } from '$lib/server/lucia/client';
+import { deleteById as contactsDeleteById} from '$lib/server/routes/contacts/contacts.drizzle';
 
 export const load = (async (event) => {
 
@@ -17,7 +20,7 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const [contacts] = await Promise.all([
-        await router.createCaller(await createContext(event)).contacts.getContactsList(query),
+        await trpcServer.contacts.getContactsList.ssr(query, event)
     ]);
 
     return {
@@ -28,7 +31,7 @@ export const load = (async (event) => {
 export const actions: Actions = {
     delete: async (event) => {
 
-        const session = await event.locals.auth.validate()
+        const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
         if (!session) {
             redirect(303, "/auth/login");
@@ -37,7 +40,7 @@ export const actions: Actions = {
         const data = await event.request.formData();
         const formData = Object.fromEntries(data)
 
-        return await router.createCaller(await createContext(event)).contacts.deleteById(+formData.delete)
+        return await contactsDeleteById(+formData.delete, event)
 
     }
 }

@@ -14,13 +14,13 @@ export const saveProductsSchema = z
 			.min(3)
 			.trim(),
 		description: z.string().optional(),
-		product_category: ProductCategoriesZod,
+		productCategory: ProductCategoriesZod,
 		stitches: z.number().optional(),
-		product_unit_price: z.string().optional(),
-		stork_quantity: z.number().optional()
+		productUnitPrice: z.string().optional(),
+		storkQuantity: z.number().optional()
 	})
 	.superRefine((data, ctx) => {
-		if (data.product_category === 'Embroidery' && !data.stitches) {
+		if (data.productCategory === 'Embroidery' && !data.stitches) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Stitches are required`,
@@ -28,14 +28,14 @@ export const saveProductsSchema = z
 			});
 			z.NEVER;
 		}
-		if (data.product_category !== 'Embroidery' && !(data.product_unit_price)) {
+		if (data.productCategory !== 'Embroidery' && !(data.productUnitPrice)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Unit Price is required`,
-				path: ['unit_price']
+				path: ['unitPrice']
 			});
 		}
-		if (data.product_category !== 'Embroidery' && !(data.stork_quantity)) {
+		if (data.productCategory !== 'Embroidery' && !(data.storkQuantity)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: `Quantity is required`,

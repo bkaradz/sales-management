@@ -2,16 +2,17 @@ import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { userRegisterSchema } from '$lib/server/routes/authentication/authentication.validate';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { router } from '$lib/server/trpc';
-import { createContext } from '$lib/server/context';
+import { trpcServer } from '$lib/server/server';
+import { registerUser } from '$lib/server/routes/authentication/authentication.drizzle';
 
-export const load = (async ({ locals }) => {
 
-    const session = await locals.auth.validate()
 
-    if (session) redirect(302, "/");
+export const load = (async (event) => {
 
-    return {};
+    if (event.locals.user) {
+		return redirect(302, "/");
+	}
+	return {};
 
 }) satisfies PageServerLoad;
 
@@ -30,7 +31,7 @@ export const actions = {
                 })
             }
 
-            await router.createCaller(await createContext(event)).authentication.registerUser(parsedUser.data)
+            await registerUser(parsedUser.data)
 
         } catch (error) {
             return fail(400, {
@@ -42,6 +43,6 @@ export const actions = {
         redirect(302, "/login");
     },
     logout: async (event) => {
-        await router.createCaller(await createContext(event)).authentication.logoutUser()
+        await trpcServer.authentication.logoutUser.ssr(event)
     }
 };

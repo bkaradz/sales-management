@@ -13,4 +13,4 @@ envVars.*
 docker-compose.*
 Dockerfile
 /drizzle
-
+*.db

@@ -4,7 +4,9 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			auth: import("lucia").AuthRequest;
+			// auth: import("lucia").AuthRequest;
+			user: import("lucia").User | null;
+			session: import("lucia").Session | null;
 		}
 		// interface PageData {}
 		// interface Platform {}
@@ -13,7 +15,7 @@ declare global {
 		type Auth = import("$lib/server/lucia").Auth;
 		type UserAttributes = {
 			username: string
-			full_name: string
+			fullName: string
 			active: boolean
 		};
 	}

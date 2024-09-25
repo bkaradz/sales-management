@@ -75,13 +75,13 @@ export const customerStore = customer();
 
 export const selectedOrdersPaymentTotals = derived([selectedOrdersPaymentStore, amountTenderedStore, customerStore], ([$selectedOrdersPaymentStore, $amountTenderedStore, $customerStore]) => {
 	const totalArray = ['0'] as unknown as currency[]
-	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => item.sales_amount) as unknown as currency[]
+	const ordersTotalsArray = [...$selectedOrdersPaymentStore.values()].map((item) => item.salesAmount) as unknown as currency[]
 	const selectedOrdersTotal = addMany([...totalArray, ...ordersTotalsArray])
-	const amountTendered = [...$amountTenderedStore.values()].reduce((accumulator, currentValue) => { return currency(accumulator).add(currentValue.default_currency_equivalent).toString()}, '0')
+	const amountTendered = [...$amountTenderedStore.values()].reduce((accumulator, currentValue) => { return currency(accumulator).add(currentValue.defaultCurrencyEquivalent).toString()}, '0')
 	const customerDeposit = +($customerStore?.amount || '0') > 0 ? ($customerStore?.amount || '0') : '0'
 	const customerTotalTendered = addMany([customerDeposit, amountTendered.toString()])
 	const totalDue = subtractMany([ selectedOrdersTotal, customerTotalTendered, ])
-	const totalProducts = [...$selectedOrdersPaymentStore.values()].reduce((accumulator, currentValue) => accumulator + currentValue.total_products, 0)
+	const totalProducts = [...$selectedOrdersPaymentStore.values()].reduce((accumulator, currentValue) => accumulator + currentValue.totalProducts, 0)
 
 	return {
 		selectedOrdersTotal,

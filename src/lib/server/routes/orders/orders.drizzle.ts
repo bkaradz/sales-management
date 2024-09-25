@@ -1,6 +1,6 @@
 import { getPagination } from '$lib/utility/pagination.util';
 import type { SearchParams } from '$lib/validation/searchParams.validate';
-import type { Context } from "$lib/trpc/context"
+import type { Context } from "$lib/server/context"
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/drizzle/client';
 import { and, desc, eq, ne, sql } from 'drizzle-orm';
@@ -19,7 +19,7 @@ import type { SaveCartOrder } from '$lib/validation/cart.zod';
 
 export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -34,27 +34,27 @@ export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
         .where(eq(shop_orders.active, true))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shop_orders_id))
+        .innerJoin(contacts, eq(shop_orders.customerId, contacts.id))
+        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shopOrdersId))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        fullName: contacts.fullName,
+        contactId: contacts.id,
+        salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+        totalProducts: sql<string>`sum(${orders_details.quantity})`
       }).from(shop_orders)
         .where(eq(shop_orders.active, true))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shop_orders_id))
+        .innerJoin(contacts, eq(shop_orders.customerId, contacts.id))
+        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shopOrdersId))
         .orderBy(desc(shop_orders.id))
 
     } else {
@@ -62,27 +62,27 @@ export const getOrdersLine = async (input: SearchParams, ctx: Context) => {
       const data = `%${input.search}%`
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shop_orders_id))
+        .where(and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
+        .innerJoin(contacts, eq(shop_orders.customerId, contacts.id))
+        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shopOrdersId))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        fullName: contacts.fullName,
+        contactId: contacts.id,
+        salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+        totalProducts: sql<string>`sum(${orders_details.quantity})`
       }).from(shop_orders)
-        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
+        .where(and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), (eq(shop_orders.active, true))))
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
-        .innerJoin(contacts, eq(shop_orders.customer_id, contacts.id))
-        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shop_orders_id))
+        .innerJoin(contacts, eq(shop_orders.customerId, contacts.id))
+        .innerJoin(orders_details, eq(shop_orders.id, orders_details.shopOrdersId))
         .orderBy(desc(shop_orders.id))
     }
 
@@ -110,7 +110,7 @@ export const getOrdersByUserId = async (input: {
   id: number
 }, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -124,26 +124,26 @@ export const getOrdersByUserId = async (input: {
     if (!trim(input.search)) {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id)))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
+        .where(and(eq(shop_orders.active, true), eq(shop_orders.customerId, input.id)))
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        fullName: contacts.fullName,
+        contactId: contacts.id,
+        salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+        totalProducts: sql<string>`sum(${orders_details.quantity})`
       }).from(shop_orders)
-        .where(and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id)))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
+        .where(and(eq(shop_orders.active, true), eq(shop_orders.customerId, input.id)))
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
@@ -152,26 +152,26 @@ export const getOrdersByUserId = async (input: {
       const data = `%${input.search}%`
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
-        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id))))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
+        .where(and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customerId, input.id))))
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        fullName: contacts.fullName,
+        contactId: contacts.id,
+        salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+        totalProducts: sql<string>`sum(${orders_details.quantity})`
       }).from(shop_orders)
-        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customer_id, input.id))))
-        .groupBy(contacts.full_name, shop_orders.id, contacts.id)
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
-        .innerJoin(orders_details, eq(orders_details.shop_orders_id, shop_orders.id))
+        .where(and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(shop_orders.customerId, input.id))))
+        .groupBy(contacts.fullName, shop_orders.id, contacts.id)
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
+        .innerJoin(orders_details, eq(orders_details.shopOrdersId, shop_orders.id))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
@@ -200,7 +200,7 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
   id: number
 }, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -216,29 +216,29 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
         .where(
           and(eq(shop_orders.active, true),
-            and(eq(shop_orders.customer_id, input.id),
-              eq(shop_orders.payment_status, 'Awaiting Payment')
+            and(eq(shop_orders.customerId, input.id),
+              eq(shop_orders.paymentStatus, 'Awaiting Payment')
             )))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        user_id: shop_orders.user_id,
-        customer_id: shop_orders.customer_id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        sales_amount: shop_orders.sales_amount,
-        total_products: shop_orders.total_products,
+        userId: shop_orders.userId,
+        customerId: shop_orders.customerId,
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        salesAmount: shop_orders.salesAmount,
+        totalProducts: shop_orders.totalProducts,
         active: shop_orders.active,
       }).from(shop_orders)
         .where(
           and(eq(shop_orders.active, true),
-            and(eq(shop_orders.customer_id, input.id),
-              eq(shop_orders.payment_status, 'Awaiting Payment')
+            and(eq(shop_orders.customerId, input.id),
+              eq(shop_orders.paymentStatus, 'Awaiting Payment')
             )))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
     } else {
@@ -247,32 +247,32 @@ export const getOrdersAwaitingPaymentByUserId = async (input: {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(shop_orders)
         .where(
-          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
-              and(eq(shop_orders.customer_id, input.id),
-                eq(shop_orders.payment_status, 'Awaiting Payment')
+              and(eq(shop_orders.customerId, input.id),
+                eq(shop_orders.paymentStatus, 'Awaiting Payment')
               ))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        user_id: shop_orders.user_id,
-        customer_id: shop_orders.customer_id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        sales_amount: shop_orders.sales_amount,
-        total_products: shop_orders.total_products,
+        userId: shop_orders.userId,
+        customerId: shop_orders.customerId,
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        salesAmount: shop_orders.salesAmount,
+        totalProducts: shop_orders.totalProducts,
         active: shop_orders.active,
       }).from(shop_orders)
         .where(
-          and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
+          and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`),
             and(eq(shop_orders.active, true),
-              and(eq(shop_orders.customer_id, input.id),
-                eq(shop_orders.payment_status, 'Awaiting Payment')
+              and(eq(shop_orders.customerId, input.id),
+                eq(shop_orders.paymentStatus, 'Awaiting Payment')
               ))))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit);
     }
@@ -300,10 +300,10 @@ export const getOrdersByProductId = async (input: {
   limit?: number | undefined;
   page?: number | undefined;
   search?: string | undefined;
-  product_id: number
+  productId: number
 }, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -317,26 +317,26 @@ export const getOrdersByProductId = async (input: {
     if (!trim(input.search)) {
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details)
-        .where(and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id)))
-        .groupBy(shop_orders.id, contacts.full_name, contacts.id)
-        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shop_orders_id))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .where(and(eq(shop_orders.active, true), eq(orders_details.productId, input.productId)))
+        .groupBy(shop_orders.id, contacts.fullName, contacts.id)
+        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shopOrdersId))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        fullName: contacts.fullName,
+        contactId: contacts.id,
+        salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+        totalProducts: sql<string>`sum(${orders_details.quantity})`
       }).from(orders_details)
-        .where(and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id)))
-        .groupBy(shop_orders.id, contacts.full_name, contacts.id)
-        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shop_orders_id))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .where(and(eq(shop_orders.active, true), eq(orders_details.productId, input.productId)))
+        .groupBy(shop_orders.id, contacts.fullName, contacts.id)
+        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shopOrdersId))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
 
@@ -345,26 +345,26 @@ export const getOrdersByProductId = async (input: {
       const data = `%${input.search}%`
 
       totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details)
-        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
-        .groupBy(shop_orders.id, contacts.full_name, contacts.id)
-        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shop_orders_id))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .where(and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.productId, input.productId))))
+        .groupBy(shop_orders.id, contacts.fullName, contacts.id)
+        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shopOrdersId))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
 
       ordersQuery = await db.select({
         id: shop_orders.id,
-        pricelist_id: shop_orders.pricelist_id,
-        exchange_rates_id: shop_orders.exchange_rates_id,
-        sales_status: shop_orders.sales_status,
-        payment_status: shop_orders.payment_status,
-        full_name: contacts.full_name,
-        contact_id: contacts.id,
-        sales_amount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unit_price}), '0')`,
-        total_products: sql<string>`sum(${orders_details.quantity})`
+        pricelistId: shop_orders.pricelistId,
+        exchangeRatesId: shop_orders.exchangeRatesId,
+        salesStatus: shop_orders.salesStatus,
+        paymentStatus: shop_orders.paymentStatus,
+        fullName: contacts.fullName,
+        contactId: contacts.id,
+        salesAmount: sql<string>`COALESCE(sum(${orders_details.quantity} * ${orders_details.unitPrice}), '0')`,
+        totalProducts: sql<string>`sum(${orders_details.quantity})`
       }).from(orders_details)
-        .where(and((sql`(contacts.full_name ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.product_id, input.product_id))))
-        .groupBy(shop_orders.id, contacts.full_name, contacts.id)
-        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shop_orders_id))
-        .innerJoin(contacts, eq(contacts.id, shop_orders.customer_id))
+        .where(and((sql`(contacts.fullName ||' '|| CAST(shop_orders.id AS text)) ILIKE(${data})`), and(eq(shop_orders.active, true), eq(orders_details.productId, input.productId))))
+        .groupBy(shop_orders.id, contacts.fullName, contacts.id)
+        .innerJoin(shop_orders, eq(shop_orders.id, orders_details.shopOrdersId))
+        .innerJoin(contacts, eq(contacts.id, shop_orders.customerId))
         .orderBy(desc(shop_orders.id))
         .limit(pagination.limit).offset((pagination.page - 1) * pagination.limit)
     }
@@ -388,7 +388,7 @@ export const getOrdersByProductId = async (input: {
 
 export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -401,71 +401,71 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
     await db.transaction(async (tx) => {
       let paymentStatus: PaymentStatusUnion = 'Awaiting Sales Order'
 
-      if (!(input.order.sales_status === 'Quotation')) {
+      if (!(input.order.salesStatus === 'Quotation')) {
         paymentStatus = 'Awaiting Payment'
       }
 
-      const orderResult = await tx.insert(shop_orders).values({ user_id: ctx.session.user.userId, ...input.order, delivery_date: new Date(input.order.delivery_date), payment_status: paymentStatus }).returning({ id: shop_orders.id });
+      const orderResult = await tx.insert(shop_orders).values({ userId: ctx.session.user.userId, ...input.order, deliveryDate: new Date(input.order.deliveryDate), paymentStatus: paymentStatus }).returning({ id: shop_orders.id });
 
       await tx.transaction(async (tx2) => {
         if (input.orders_details) {
           input.orders_details.forEach(async (item) => {
-            const productId = item.product_id
+            const productId = item.productId
             if (!productId) throw new Error("Product Id not found");
-            await tx2.insert(orders_details).values({ ...item, shop_orders_id: orderResult[0].id, product_id: productId })
+            await tx2.insert(orders_details).values({ ...item, shopOrdersId: orderResult[0].id, productId: productId })
           })
         }
 
         // create transaction
 
-        if (!(input.order.sales_status === 'Quotation')) {
+        if (!(input.order.salesStatus === 'Quotation')) {
           await tx2.insert(transactions).values({
-            user_id: ctx.session.user.userId,
-            customer_id: input.order.customer_id,
-            shop_orders_id: orderResult[0].id,
+            userId: ctx.session.user.userId,
+            customerId: input.order.customerId,
+            shopOrdersId: orderResult[0].id,
           })
         }
 
         // Update contact amount 
 
-        if (!(input.order.sales_status === 'Quotation')) {
+        if (!(input.order.salesStatus === 'Quotation')) {
 
           const allShopOrdersTotals = await tx2.select({
-            shop_orders_totals: sql<string>`sum(${shop_orders.sales_amount})`
+            shop_ordersTotals: sql<string>`sum(${shop_orders.salesAmount})`
           }).from(shop_orders)
             .where(
               and(
-                and(eq(shop_orders.customer_id, input.order.customer_id), ne(shop_orders.sales_status, 'Quotation')),
-                ne(shop_orders.sales_status, 'Cancelled')
+                and(eq(shop_orders.customerId, input.order.customerId), ne(shop_orders.salesStatus, 'Quotation')),
+                ne(shop_orders.salesStatus, 'Cancelled')
               ))
 
           const ordersTotals = await tx2.select({
-            shop_orders_totals: sql<string>`sum(${shop_orders.sales_amount})`
+            shop_ordersTotals: sql<string>`sum(${shop_orders.salesAmount})`
           }).from(shop_orders)
             .where(
-              and(and(and(eq(shop_orders.customer_id, input.order.customer_id), ne(shop_orders.sales_status, 'Quotation')),
-                ne(shop_orders.sales_status, 'Cancelled')
+              and(and(and(eq(shop_orders.customerId, input.order.customerId), ne(shop_orders.salesStatus, 'Quotation')),
+                ne(shop_orders.salesStatus, 'Cancelled')
               ),
-                ne(shop_orders.payment_status, 'Paid')
+                ne(shop_orders.paymentStatus, 'Paid')
               ),
             )
 
           const allPaymentsTotals = await tx2.select({
-            payments_totals: sql<string>`sum(${payments.default_currency_equivalent_total})`
+            payments_totals: sql<string>`sum(${payments.defaultCurrencyEquivalentTotal})`
           }).from(payments)
-            .where(eq(payments.customer_id, input.order.customer_id))
+            .where(eq(payments.customerId, input.order.customerId))
 
           let amount = '0'
 
-          const customers = await tx.select().from(contacts).where(eq(contacts.id, input.order.customer_id))
+          const customers = await tx.select().from(contacts).where(eq(contacts.id, input.order.customerId))
 
           if (+customers[0].amount > 0) {
             amount = customers[0].amount
           } else {
-            amount = subtractMany([(allPaymentsTotals[0].payments_totals || '0'), allShopOrdersTotals[0].shop_orders_totals])
+            amount = subtractMany([(allPaymentsTotals[0].payments_totals || '0'), allShopOrdersTotals[0].shop_ordersTotals])
           }
 
-          await tx2.update(contacts).set({ orders_totals: ordersTotals[0].shop_orders_totals, amount: amount.toString() }).where(eq(contacts.id, input.order.customer_id))
+          await tx2.update(contacts).set({ ordersTotals: ordersTotals[0].shop_ordersTotals, amount: amount.toString() }).where(eq(contacts.id, input.order.customerId))
         }
       });
     });
@@ -478,42 +478,42 @@ export const createOrder = async (input: SaveCartOrder, ctx: Context) => {
 
 };
 
-export const deleteById = async (input: { id: number, payment_status: PaymentStatusUnion, sales_status: SalesStatusUnion }, ctx: Context) => {
+export const deleteById = async (input: { id: number, paymentStatus: PaymentStatusUnion, salesStatus: SalesStatusUnion }, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
   try {
-    if (input.sales_status === 'Cancelled') throw new Error("The order was Cancelled");
+    if (input.salesStatus === 'Cancelled') throw new Error("The order was Cancelled");
 
     let paymentStatus: PaymentStatusUnion = 'Cancelled'
 
-    if (input.payment_status === 'Paid') {
+    if (input.paymentStatus === 'Paid') {
       paymentStatus = 'Refunded'
     }
 
     const orderResult = await db.update(shop_orders)
-      .set({ active: false, payment_status: paymentStatus, sales_status: 'Cancelled' })
+      .set({ active: false, paymentStatus: paymentStatus, salesStatus: 'Cancelled' })
       .where(eq(shop_orders.id, input.id))
-      .returning({ id: shop_orders.id, sales_amount: shop_orders.sales_amount, customer_id: shop_orders.customer_id });
+      .returning({ id: shop_orders.id, salesAmount: shop_orders.salesAmount, customerId: shop_orders.customerId });
 
-    await db.update(orders_details).set({ active: false }).where(eq(orders_details.shop_orders_id, input.id)).returning({ id: shop_orders.id });
+    await db.update(orders_details).set({ active: false }).where(eq(orders_details.shopOrdersId, input.id)).returning({ id: shop_orders.id });
 
-    if (input.sales_status === 'Quotation') return { message: "success", }
+    if (input.salesStatus === 'Quotation') return { message: "success", }
 
-    if (input.payment_status === 'Paid') {
-      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
+    if (input.paymentStatus === 'Paid') {
+      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customerId))
       // Paid order totals was already removed
-      const ordersTotals = contact[0].orders_totals
-      const totalReceipt = subtractMany([contact[0].total_receipts, orderResult[0].sales_amount])
-      await db.update(contacts).set({ orders_totals: ordersTotals, total_receipts: totalReceipt.toString() })
-        .where(eq(contacts.id, orderResult[0].customer_id))
+      const ordersTotals = contact[0].ordersTotals
+      const totalReceipt = subtractMany([contact[0].totalReceipts, orderResult[0].salesAmount])
+      await db.update(contacts).set({ ordersTotals: ordersTotals, totalReceipts: totalReceipt.toString() })
+        .where(eq(contacts.id, orderResult[0].customerId))
     } else {
-      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const ordersTotals = subtractMany([contact[0].orders_totals, orderResult[0].sales_amount])
-      await db.update(contacts).set({ orders_totals: ordersTotals.toString() })
-        .where(eq(contacts.id, orderResult[0].customer_id))
+      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customerId))
+      const ordersTotals = subtractMany([contact[0].ordersTotals, orderResult[0].salesAmount])
+      await db.update(contacts).set({ ordersTotals: ordersTotals.toString() })
+        .where(eq(contacts.id, orderResult[0].customerId))
     }
 
     return {
@@ -525,31 +525,31 @@ export const deleteById = async (input: { id: number, payment_status: PaymentSta
   }
 };
 
-export const changeSalesStatusById = async (input: { id: number, sales_status: string }, ctx: Context) => {
+export const changeSalesStatusById = async (input: { id: number, salesStatus: string }, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
   try {
 
-    const salesStatus = input.sales_status as SalesStatusUnion
+    const salesStatus = input.salesStatus as SalesStatusUnion
 
     let paymentStatus: PaymentStatusUnion = 'Awaiting Sales Order'
 
-    if (!(input.sales_status === 'Quotation')) {
+    if (!(input.salesStatus === 'Quotation')) {
       paymentStatus = 'Awaiting Payment'
     }
 
     const orderResult = await db.update(shop_orders)
-      .set({ user_id: ctx.session.user.userId, sales_status: salesStatus, payment_status: paymentStatus })
+      .set({ userId: ctx.session.user.userId, salesStatus: salesStatus, paymentStatus: paymentStatus })
       .where(eq(shop_orders.id, input.id))
-      .returning({ id: shop_orders.id, sales_amount: shop_orders.sales_amount, customer_id: shop_orders.customer_id });
+      .returning({ id: shop_orders.id, salesAmount: shop_orders.salesAmount, customerId: shop_orders.customerId });
 
-    if (!(input.sales_status === 'Quotation')) {
-      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customer_id))
-      const ordersTotals = addMany([orderResult[0].sales_amount, contact[0].orders_totals])
-      await db.update(contacts).set({ orders_totals: ordersTotals.toString() }).where(eq(contacts.id, orderResult[0].customer_id))
+    if (!(input.salesStatus === 'Quotation')) {
+      const contact = await db.select().from(contacts).where(eq(contacts.id, orderResult[0].customerId))
+      const ordersTotals = addMany([orderResult[0].salesAmount, contact[0].ordersTotals])
+      await db.update(contacts).set({ ordersTotals: ordersTotals.toString() }).where(eq(contacts.id, orderResult[0].customerId))
     }
 
     return {
@@ -563,7 +563,7 @@ export const changeSalesStatusById = async (input: { id: number, sales_status: s
 
 export const getById = async (input: number, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -574,16 +574,16 @@ export const getById = async (input: number, ctx: Context) => {
 
     const ordersQuery = (await db.select().from(shop_orders).where(and(eq(shop_orders.active, true), eq(shop_orders.id, input))))[0]
     if (!ordersQuery) throw new Error("Order not found");
-    const customerQuery = await getContactById(ordersQuery.customer_id, ctx)
+    const customerQuery = await getContactById(ordersQuery.customerId, ctx)
     if (!customerQuery) throw new Error("Customer not found");
-    const pricelistQuery = await getPricelistById(ordersQuery.pricelist_id, ctx)
+    const pricelistQuery = await getPricelistById(ordersQuery.pricelistId, ctx)
     if (!pricelistQuery) throw new Error("Pricelist not found");
     pricelistMap = pricelistToMapObj(pricelistQuery)
-    const exchangeRateQuery = await getExchangeRateById(ordersQuery.exchange_rates_id, ctx)
+    const exchangeRateQuery = await getExchangeRateById(ordersQuery.exchangeRatesId, ctx)
     if (!exchangeRateQuery) throw new Error("Exchange rate not found");
     exchangeRateMap = exchangeRateToMapObj(exchangeRateQuery)
-    const ordersDetailsQuery = await db.select().from(orders_details).where(eq(orders_details.shop_orders_id, input))
-    const productsArray = ordersDetailsQuery.map((item) => item.product_id)
+    const ordersDetailsQuery = await db.select().from(orders_details).where(eq(orders_details.shopOrdersId, input))
+    const productsArray = ordersDetailsQuery.map((item) => item.productId)
     // const productsQuery = await db.select().from(products).where(inArray(products.id, productsArray))
     const productsQuery = await db.select().from(products).where(sql`${products.id} IN ${productsArray}`)
 
@@ -591,7 +591,7 @@ export const getById = async (input: number, ctx: Context) => {
 
     return {
       pricelist: pricelistMap,
-      exchange_rate: exchangeRateMap,
+      exchangeRate: exchangeRateMap,
       customer: customerQuery.contact,
       products: productsQuery,
       orders_details: ordersDetailsQuery,

@@ -1,6 +1,6 @@
 import { db } from "$lib/server/drizzle/client";
 import { contacts, orders_details, payments, payments_details, shop_orders, transactions, transactions_details, type Orders } from "$lib/server/drizzle/schema/schema";
-import type { Context } from "$lib/trpc/context";
+import type { Context } from "$lib/server/context";
 import { addMany } from "$lib/utility/calculateCart.util";
 import type { SavePayment } from "$lib/validation/payment.zod";
 import { error } from "@sveltejs/kit";
@@ -11,7 +11,7 @@ import { gt, sortBy } from "lodash-es";
 
 export const makePayment = async (input: SavePayment, ctx: Context) => {
 
-  if (!ctx.session.sessionId) {
+  if (!ctx?.session?.id) {
     error(404, 'User not found');
   }
 
@@ -20,12 +20,12 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
     await db.transaction(async (tx) => {
 
       // arrange orders from smallest to highest amount and drop the ones that do not fit the amount paid
-      const customers = await tx.select().from(contacts).where(eq(contacts.id, input.customer_id))
-      const paymentOrdersDetails = await tx.select().from(orders_details).where(inArray(orders_details.shop_orders_id, input.selected_orders_ids));
+      const customers = await tx.select().from(contacts).where(eq(contacts.id, input.customerId))
+      const paymentOrdersDetails = await tx.select().from(orders_details).where(inArray(orders_details.shopOrdersId, input.selected_orders_ids));
       let paymentShopOrders = await tx.select().from(shop_orders).where(inArray(shop_orders.id, input.selected_orders_ids));
-      let totalPaidAmount = addMany(input.payments_details.map((item) => item.default_currency_equivalent))
+      let totalPaidAmount = addMany(input.payments_details.map((item) => item.defaultCurrencyEquivalent))
       // check that the paid balance is equivalent to the orders balance
-      const totalOrdersAmount = addMany(paymentOrdersDetails.map((item) => currency(item.unit_price).multiply(item.quantity)))
+      const totalOrdersAmount = addMany(paymentOrdersDetails.map((item) => currency(item.unitPrice).multiply(item.quantity)))
 
       if (+customers[0].amount > 0) {
         totalPaidAmount = currency(customers[0].amount).add(totalPaidAmount).toString()
@@ -33,7 +33,7 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
 
       const paidMore = currency(totalPaidAmount).dollars() < currency(totalOrdersAmount).dollars()
 
-      const sortedOrders = sortBy(paymentShopOrders, ['sales_amount'])
+      const sortedOrders = sortBy(paymentShopOrders, ['salesAmount'])
 
       if (paidMore) {
         const sortedPaymentShopOrders = []
@@ -46,7 +46,7 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
   
           if (!firstElement) throw new Error("Order Element not found");
   
-          accumulator = currency(accumulator).add(firstElement.sales_amount).toString()
+          accumulator = currency(accumulator).add(firstElement.salesAmount).toString()
   
           sortedPaymentShopOrders.push(firstElement)
   
@@ -60,24 +60,24 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
       const paymentShopOrdersMap = new Map<number, Orders>()
       paymentShopOrders.forEach((values) => paymentShopOrdersMap.set(values.id, values))
 
-      const paymentTransactions = await tx.select().from(transactions).where(inArray(transactions.shop_orders_id, input.selected_orders_ids));
+      const paymentTransactions = await tx.select().from(transactions).where(inArray(transactions.shopOrdersId, input.selected_orders_ids));
 
       // Write transactions to database
       // create payments for the orders
-      const default_currency_equivalent_total = input.payments_details.reduce((accumulator, currentValue) => {
-        return currency(accumulator).add(currentValue.default_currency_equivalent).toString()
+      const defaultCurrencyEquivalentTotal = input.payments_details.reduce((accumulator, currentValue) => {
+        return currency(accumulator).add(currentValue.defaultCurrencyEquivalent).toString()
       }, '0')
 
       const paymentId = await tx.insert(payments).values({
-        user_id: ctx.session.user.userId,
-        customer_id: input.customer_id,
-        exchange_rate_id: input.exchange_rate_id,
-        default_currency_equivalent_total,
+        userId: ctx.session.user.userId,
+        customerId: input.customerId,
+        exchangeRateId: input.exchangeRateId,
+        defaultCurrencyEquivalentTotal,
       }).returning({ id: payments.id })
 
       await tx.transaction(async (tx2) => {
         input.payments_details.forEach(async (values) => {
-          await tx2.insert(payments_details).values({ ...values, payments_id: paymentId[0].id, user_id: ctx.session.user.userId })
+          await tx2.insert(payments_details).values({ ...values, paymentsId: paymentId[0].id, userId: ctx.session.user.userId })
         })
       });
 
@@ -87,14 +87,14 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
       await tx.transaction(async (tx2) => {
         paymentTransactions.forEach(async (values) => {
 
-          const currentOrder = paymentShopOrdersMap.get(values.shop_orders_id)
+          const currentOrder = paymentShopOrdersMap.get(values.shopOrdersId)
           if (!currentOrder) throw new Error("Transaction Shop Order not found");
 
           await tx2.insert(transactions_details).values({
-            user_id: ctx.session.user.userId,
+            userId: ctx.session.user.userId,
             transactions_id: values.id,
-            payments_id: paymentId[0].id,
-            amount_paid: currentOrder.sales_amount,
+            paymentsId: paymentId[0].id,
+            amount_paid: currentOrder.salesAmount,
             fully_paid: true,
             active: true,
           })
@@ -108,8 +108,8 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
         paymentShopOrders.forEach(async (values) => {
 
           await tx2.update(shop_orders).set({
-            payment_status: 'Paid',
-            sales_status: 'Receipt',
+            paymentStatus: 'Paid',
+            salesStatus: 'Receipt',
           }).where(eq(shop_orders.id, values.id))
         })
       });
@@ -117,23 +117,23 @@ export const makePayment = async (input: SavePayment, ctx: Context) => {
       // Update contact amount
 
       const orderTotals = await tx.select({
-        orders_totals: sql<string>`COALESCE(sum(${shop_orders.sales_amount}), '0')`
+        ordersTotals: sql<string>`COALESCE(sum(${shop_orders.salesAmount}), '0')`
       }).from(shop_orders).where(
-        and(eq(shop_orders.customer_id, input.customer_id),
-          and(ne(shop_orders.sales_status, 'Quotation'), ne(shop_orders.sales_status, 'Cancelled'))
+        and(eq(shop_orders.customerId, input.customerId),
+          and(ne(shop_orders.salesStatus, 'Quotation'), ne(shop_orders.salesStatus, 'Cancelled'))
         ))
 
       const totalSalesPaid = await tx.select({
-        total_receipts: sql<string>`COALESCE(sum(${payments.default_currency_equivalent_total}), '0')`
-      }).from(payments).where(eq(payments.customer_id, input.customer_id))
+        totalReceipts: sql<string>`COALESCE(sum(${payments.defaultCurrencyEquivalentTotal}), '0')`
+      }).from(payments).where(eq(payments.customerId, input.customerId))
 
-      const amount = currency(totalSalesPaid[0].total_receipts).subtract(orderTotals[0].orders_totals).toString()
+      const amount = currency(totalSalesPaid[0].totalReceipts).subtract(orderTotals[0].ordersTotals).toString()
 
       await tx.update(contacts).set({
         amount,
-        orders_totals: orderTotals[0].orders_totals,
-        total_receipts: totalSalesPaid[0].total_receipts
-      }).where(eq(contacts.id, input.customer_id))
+        ordersTotals: orderTotals[0].ordersTotals,
+        totalReceipts: totalSalesPaid[0].totalReceipts
+      }).where(eq(contacts.id, input.customerId))
 
     });
 

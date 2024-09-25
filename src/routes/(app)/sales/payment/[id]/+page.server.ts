@@ -1,10 +1,13 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { savePaymentSchema, type SavePayment } from '$lib/validation/payment.zod';
 import type { NewPaymentsDetails } from '$lib/server/drizzle/schema/schema';
+import { trpcServer } from '$lib/server/server';
+import { lucia } from '$lib/server/lucia/client';
+import { makePayment } from '$lib/server/routes/payments/payments.drizzle';
 
 export const load = (async (event) => {
 
@@ -20,8 +23,8 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const [shopOrdersPromise, contactPromise] = await Promise.all([
-        await router.createCaller(await createContext(event)).shop_orders.getOrdersAwaitingPaymentByUserId({ ...query, id: parseInt(event.params.id, 10) }),
-        await router.createCaller(await createContext(event)).contacts.getById(parseInt(event.params.id, 10)),
+        await trpcServer.shop_orders.getOrdersAwaitingPaymentByUserId.ssr({ ...query, id: parseInt(event.params.id, 10) }, event),
+        await trpcServer.contacts.getById.ssr(parseInt(event.params.id, 10), event),
     ]);
 
     if (!shopOrdersPromise) throw new Error("Order not found");
@@ -38,14 +41,14 @@ type data = {
     payments_details: string,
     selected_orders_total: string,
     selected_orders_ids: string,
-    customer_id: string,
-    exchange_rate_id: string
+    customerId: string,
+    exchangeRateId: string
 }
 
 export const actions: Actions = {
     submit: async (event) => {
 
-        const session = await event.locals.auth.validate()
+        const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
         if (!session) {
             redirect(303, "/auth/login");
@@ -58,8 +61,8 @@ export const actions: Actions = {
             payments_details: JSON.parse(formData.payments_details),
             selected_orders_total: JSON.parse(formData.selected_orders_total),
             selected_orders_ids: JSON.parse(formData.selected_orders_ids),
-            customer_id: +formData.customer_id,
-            exchange_rate_id: +formData.exchange_rate_id
+            customerId: +formData.customerId,
+            exchangeRateId: +formData.exchangeRateId
         }
 
         try {
@@ -74,7 +77,7 @@ export const actions: Actions = {
                 })
             }
 
-            return await router.createCaller(await createContext(event)).payments.makePayment(parsedPayment.data)
+            return await makePayment(parsedPayment.data, event)
 
         } catch (error) {
             return fail(400, {

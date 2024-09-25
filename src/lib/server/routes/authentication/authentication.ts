@@ -7,7 +7,7 @@ export const authentication = router({
 	getUsers: protectedProcedure.query(async ({ ctx }) => {
 		return await getUsers(ctx);
 	}),
-	getById: protectedProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+	getById: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
 		return await getById(input, ctx);
 	}),
 	deleteById: protectedProcedure.input(z.string()).mutation(async ({ input, ctx }) => {

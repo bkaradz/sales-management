@@ -2,23 +2,23 @@ import type { ExchangeRate, ExchangeRateDetails, Pricelist, PricelistDetails } f
 import sortBy from "lodash-es/sortBy"
 import type { EmbroideryTypeUnion, currencyTypeUnion } from "./lists.utility"
 
-export type ExchangeRateCombinedArray = { exchange_rates: ExchangeRate, exchange_rate_details: ExchangeRateDetails[] }
+export type ExchangeRateCombinedArray = { exchangeRates: ExchangeRate, exchangeRateDetails: ExchangeRateDetails[] }
 
 export const exchangeRateToMapObj = (list: ExchangeRateCombinedArray) => {
-  const exchange_rate_details = new Map<currencyTypeUnion, ExchangeRateDetails>()
+  const exchangeRateDetails = new Map<currencyTypeUnion, ExchangeRateDetails>()
 
-  list.exchange_rate_details.forEach((item) => {
+  list.exchangeRateDetails.forEach((item) => {
 
-    if (exchange_rate_details.has(item.currency)) {
-      exchange_rate_details.set(item.currency, item)
+    if (exchangeRateDetails.has(item.currency)) {
+      exchangeRateDetails.set(item.currency, item)
     } else {
-      exchange_rate_details.set(item.currency, item)
+      exchangeRateDetails.set(item.currency, item)
     }
   })
 
   return {
-    exchange_rates: { ...list.exchange_rates },
-    exchange_rate_details: exchange_rate_details
+    exchangeRates: { ...list.exchangeRates },
+    exchangeRateDetails: exchangeRateDetails
   }
 }
 
@@ -30,16 +30,16 @@ export const pricelistToMapObj = (list: { pricelist: Pricelist, pricelist_detail
 
   list.pricelist_details.forEach((item) => {
 
-    if (pricelist_details.has(item.embroidery_types)) {
-      const tempItem = pricelist_details.get(item.embroidery_types) || []
-      pricelist_details.set(item.embroidery_types, [...tempItem, item])
+    if (pricelist_details.has(item.embroideryTypes)) {
+      const tempItem = pricelist_details.get(item.embroideryTypes) || []
+      pricelist_details.set(item.embroideryTypes, [...tempItem, item])
     } else {
-      pricelist_details.set(item.embroidery_types, [item])
+      pricelist_details.set(item.embroideryTypes, [item])
     }
   })
 
   pricelist_details.forEach((value, key) => {
-    const sortedArray = sortBy(value, ['minimum_quantity']);
+    const sortedArray = sortBy(value, ['minimumQuantity']);
     pricelist_details.set(key, sortedArray)
   });
 

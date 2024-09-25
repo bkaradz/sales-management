@@ -59,13 +59,13 @@
 							<input
 								type="text"
 								class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-								id="full_name"
-								name="full_name"
+								id="fullName"
+								name="fullName"
 								placeholder="Full Name"
-								bind:value={data.results.full_name}
+								bind:value={data.results.fullName}
 							/>
 							<label
-								for="full_name"
+								for="fullName"
 								class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
 								>Full Name
 							</label>
@@ -75,11 +75,11 @@
 						<div class=" mb-4 ml-3">
 							<label class="">
 								<input
-									name="is_corporate"
+									name="isCorporate"
 									type="checkbox"
-									bind:checked={data.results.is_corporate}
+									bind:checked={data.results.isCorporate}
 								/>
-								{#if data.results.is_corporate}
+								{#if data.results.isCorporate}
 									<span class="text-neutral-500 ml-2">Corporate</span>
 								{:else}
 									<span class="text-neutral-500 ml-2">Individual</span>
@@ -87,19 +87,19 @@
 							</label>
 						</div>
 
-						{#if data.results.is_corporate}
+						{#if data.results.isCorporate}
 							<!--Vat No or Bp Number-->
 							<div class="relative mb-4">
 								<input
 									type="text"
 									class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-									id="vat_or_bp_number"
-									name="vat_or_bp_number"
+									id="vatOrBpNumber"
+									name="vatOrBpNumber"
 									placeholder="Vat No or Bp Number"
-									bind:value={data.results.vat_or_bp_number}
+									bind:value={data.results.vatOrBpNumber}
 								/>
 								<label
-									for="vat_or_bp_number"
+									for="vatOrBpNumber"
 									class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
 									>Vat No or Bp Number
 								</label>

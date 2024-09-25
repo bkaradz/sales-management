@@ -142,7 +142,7 @@
 						<div
 							class="flex xl:flex-row flex-col justify-between items-center font-medium text-gray-900 dark:text-white pb-2 mb-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 						>
-							{user.full_name}
+							{user.fullName}
 							<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md ml-3">
 								{user.id}
 							</span>
@@ -203,24 +203,24 @@
 					</div>
 
 					<form action="?/submit" method="post" use:enhance>
-						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
-						<input hidden name="pricelist_id" type="number" value={$pricelistStore.pricelist.id} />
+						<input hidden name="customerId" type="number" value={$customerSelectedStore?.id} />
+						<input hidden name="pricelistId" type="number" value={$pricelistStore.pricelist.id} />
 						<input
 							hidden
-							name="exchange_rates_id"
+							name="exchangeRatesId"
 							type="number"
-							value={$exchangeRatesStore.exchange_rates.id}
+							value={$exchangeRatesStore.exchangeRates.id}
 						/>
-						<input hidden name="sales_status" type="text" value={$salesStatusSelectedStore} />
+						<input hidden name="salesStatus" type="text" value={$salesStatusSelectedStore} />
 						<input
 							hidden
-							name="sales_amount"
+							name="salesAmount"
 							type="text"
 							value={$cartTotalsStore.sub_total}
 						/>
-						<input hidden name="total_products" type="text" value={$cartTotalsStore.totalProduct} />
+						<input hidden name="totalProducts" type="text" value={$cartTotalsStore.totalProduct} />
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
-						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
+						<input hidden name="deliveryDate" type="text" value={deliveryDate.toString()} />
 						<input
 							hidden
 							name="orders_details"
@@ -319,14 +319,14 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if productsOrderDetails.product.product_category === 'Embroidery'}
+									{#if productsOrderDetails.product.productCategory === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
 												<span class="ml-2"
-													>{productsOrderDetails.orders_details.garment_placement}</span
+													>{productsOrderDetails.orders_details.garmentPlacement}</span
 												>
 												{@html svgDropdown}
 											</button>
@@ -336,7 +336,7 @@
 												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each garmentPlacement as type (type)}
-													{#if !(type === productsOrderDetails.orders_details.garment_placement)}
+													{#if !(type === productsOrderDetails.orders_details.garmentPlacement)}
 														<li>
 															<button
 																on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
@@ -354,14 +354,14 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if productsOrderDetails.product.product_category === 'Embroidery'}
+									{#if productsOrderDetails.product.productCategory === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 											>
 												<span class="ml-2"
-													>{productsOrderDetails.orders_details.embroidery_type}</span
+													>{productsOrderDetails.orders_details.embroideryType}</span
 												>
 												{@html svgDropdown}
 											</button>
@@ -371,7 +371,7 @@
 												class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each embroideryType as type (type)}
-													{#if !(type === productsOrderDetails.orders_details.embroidery_type)}
+													{#if !(type === productsOrderDetails.orders_details.embroideryType)}
 														<li>
 															<button
 																on:click={() => cartStore.changeEmbType({ id: key, type })}
@@ -398,8 +398,8 @@
 											type="number"
 											min="1"
 											step=".01"
-											name="unit_price_input"
-											id="unit_price_input"
+											name="unitPrice_input"
+											id="unitPrice_input"
 											use:selectTextOnFocus
 											on:blur={() => doubleClickSelectStore.reset()}
 											on:change|preventDefault={(e) => changeEnteredAmountStore(e, key)}
@@ -411,11 +411,11 @@
 											on:dblclick={() => doubleClickSelectStore.add(key)}
 											class="block min-h-[auto] text-sm rounded border-0 bg-transparent px-3 py-1 outline-none m-0 text-right"
 											type="text"
-											name="unit_price_label"
-											id="unit_price_label"
+											name="unitPrice_label"
+											id="unitPrice_label"
 											value={format(
 												convertFx(
-													$cartStore.get(key)?.orders_details.unit_price,
+													$cartStore.get(key)?.orders_details.unitPrice,
 													$exchangeRatesStore,
 													$selectedCurrencyStore
 												),
@@ -429,7 +429,7 @@
 								>
 									{format(
 										convertFx(
-											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply(
+											currency($cartStore.get(key)?.orders_details.unitPrice || '0').multiply(
 												$cartStore.get(key)?.orders_details.quantity || '0'
 											),
 											$exchangeRatesStore,
@@ -554,7 +554,7 @@
 									<div
 										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
-										{$customerSelectedStore.full_name}
+										{$customerSelectedStore.fullName}
 									</div>
 									<div
 										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -571,7 +571,7 @@
 											Corporate
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$customerSelectedStore.is_corporate}
+											{$customerSelectedStore.isCorporate}
 										</div>
 									</div>
 									<div
@@ -612,7 +612,7 @@
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
 												convertFx(
-													$customerSelectedStore.total_receipts,
+													$customerSelectedStore.totalReceipts,
 													$exchangeRatesStore,
 													$selectedCurrencyStore
 												),
@@ -739,7 +739,7 @@
 											date created
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$pricelistStore.pricelist.created_at}
+											{$pricelistStore.pricelist.createdAt}
 										</div>
 									</div>
 									<div
@@ -763,7 +763,7 @@
 												class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 											>
 												<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-													{list.minimum_quantity}
+													{list.minimumQuantity}
 												</div>
 												<div class="ml-auto text-xs text-gray-500">
 													{format(
@@ -771,19 +771,19 @@
 															calcProductPrices(
 																{
 																	id: 19,
-																	user_id: 'ivk4l3dy6enbyjb',
+																	userId: 'ivk4l3dy6enbyjb',
 																	name: 'ADMIRABLE.EMB',
 																	description: null,
-																	product_category: 'Embroidery',
-																	product_unit_price: null,
+																	productCategory: 'Embroidery',
+																	productUnitPrice: null,
 																	stitches: 1537,
-																	stork_quantity: null,
+																	storkQuantity: null,
 																	active: true,
-																	created_at: new Date(),
+																	createdAt: new Date(),
 																	updated_at: new Date()
 																},
 																$pricelistStore,
-																list.minimum_quantity,
+																list.minimumQuantity,
 																key
 															),
 															$exchangeRatesStore,
@@ -812,7 +812,7 @@
 										tabindex="0"
 										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between"
 									>
-										<span class="ml-2">{$exchangeRatesStore.exchange_rates.id}</span>
+										<span class="ml-2">{$exchangeRatesStore.exchangeRates.id}</span>
 										{@html svgDropdown}
 									</button>
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -820,14 +820,14 @@
 										tabindex="0"
 										class="dropdown-content menu z-[1] p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 									>
-										{#each data.exchangeRateAll as exchange (exchange.exchange_rates.id)}
-											{#if !($exchangeRatesStore.exchange_rates.id === exchange.exchange_rates.id)}
+										{#each data.exchangeRateAll as exchange (exchange.exchangeRates.id)}
+											{#if !($exchangeRatesStore.exchangeRates.id === exchange.exchangeRates.id)}
 												<li>
 													<button
 														on:click={() => exchangeRatesStore.add(exchange)}
 														class="rounded-sm"
 													>
-														{exchange.exchange_rates.id}
+														{exchange.exchangeRates.id}
 													</button>
 												</li>
 											{/if}
@@ -842,7 +842,7 @@
 											Id
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$exchangeRatesStore.exchange_rates.id}
+											{$exchangeRatesStore.exchangeRates.id}
 										</div>
 									</div>
 
@@ -853,7 +853,7 @@
 											default
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$exchangeRatesStore.exchange_rates.default}
+											{$exchangeRatesStore.exchangeRates.default}
 										</div>
 									</div>
 									<div
@@ -863,13 +863,13 @@
 											date created
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$exchangeRatesStore.exchange_rates.created_at}
+											{$exchangeRatesStore.exchangeRates.createdAt}
 										</div>
 									</div>
 									<div
 										class="flex items-center text-gray-900 dark:text-white mt-0.5 xl:border-t border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									/>
-									{#each $exchangeRatesStore.exchange_rate_details as [key, value] (key)}
+									{#each $exchangeRatesStore.exchangeRateDetails as [key, value] (key)}
 										<div
 											class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 										>
@@ -905,12 +905,12 @@
 					<input
 						type="text"
 						class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-						id="full_name"
-						name="full_name"
+						id="fullName"
+						name="fullName"
 						placeholder="Full Name"
 					/>
 					<label
-						for="full_name"
+						for="fullName"
 						class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
 						>Full Name
 					</label>
@@ -919,7 +919,7 @@
 				<!-- Corporate  -->
 				<div class=" mb-4 ml-3">
 					<label class="">
-						<input name="is_corporate" type="checkbox" />
+						<input name="isCorporate" type="checkbox" />
 						<span class="text-neutral-500 ml-2"> Corporate </span>
 					</label>
 				</div>
@@ -929,12 +929,12 @@
 					<input
 						type="text"
 						class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-						id="vat_or_bp_number"
-						name="vat_or_bp_number"
+						id="vatOrBpNumber"
+						name="vatOrBpNumber"
 						placeholder="Vat No or Bp Number"
 					/>
 					<label
-						for="vat_or_bp_number"
+						for="vatOrBpNumber"
 						class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
 						>Vat No or Bp Number
 					</label>

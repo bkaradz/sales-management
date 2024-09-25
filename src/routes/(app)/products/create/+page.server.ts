@@ -1,11 +1,13 @@
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { router } from '$lib/server/trpc';
-import { createContext } from '$lib/server/context';
+
+
 import parseCsv from '$lib/utility/parseCsv';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { saveProductsArraySchema, saveProductsSchema } from '$lib/validation/product.zod';
 import type { Products } from '$lib/server/drizzle/schema/schema';
+import { createProduct, uploadProducts } from '$lib/server/routes/products/products.drizzle';
+import { lucia } from '$lib/server/lucia/client';
 
 export const load = (async () => {
 	return {};
@@ -15,7 +17,7 @@ export const load = (async () => {
 export const actions: Actions = {
 	upload: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
@@ -42,14 +44,14 @@ export const actions: Actions = {
 
 			if (product?.stitches) formResults = { ...formResults, stitches: +product.stitches }
 			if (product?.description) formResults = { ...formResults, description: product.description }
-			if (product?.stork_quantity) formResults = { ...formResults, stork_quantity: +product.stork_quantity }
-			if (product?.product_category) formResults = { ...formResults, product_category: product.product_category }
+			if (product?.storkQuantity) formResults = { ...formResults, storkQuantity: +product.storkQuantity }
+			if (product?.productCategory) formResults = { ...formResults, productCategory: product.productCategory }
 			if (product?.name) formResults = { ...formResults, name: product.name }
-			if (product?.product_unit_price) {
-				const unitPrice = product.product_unit_price
+			if (product?.productUnitPrice) {
+				const unitPrice = product.productUnitPrice
 
 				if (+unitPrice > 0) {
-					formResults = { ...formResults, product_unit_price: unitPrice }
+					formResults = { ...formResults, productUnitPrice: unitPrice }
 				}
 			}
 			productsResultsArray.push(formResults as Products)
@@ -67,7 +69,7 @@ export const actions: Actions = {
 				})
 			}
 
-			return await router.createCaller(await createContext(event)).products.uploadProducts(parsedProduct.data)
+			return await uploadProducts(parsedProduct.data, event)
 
 		} catch (error) {
 			return fail(400, {
@@ -80,7 +82,7 @@ export const actions: Actions = {
 
 	create: async (event) => {
 
-		const session = await event.locals.auth.validate()
+		const { session } = await lucia.validateSession(event.locals.session?.id || "");
 
 		if (!session) {
 			redirect(303, "/auth/login");
@@ -93,14 +95,14 @@ export const actions: Actions = {
 
 		if (formData?.stitches) formResults = { ...formResults, stitches: +formData.stitches }
 		if (formData?.description) formResults = { ...formResults, description: formData.description }
-		if (formData?.stork_quantity) formResults = { ...formResults, stork_quantity: +formData.stork_quantity }
-		if (formData?.product_category) formResults = { ...formResults, product_category: formData.product_category }
+		if (formData?.storkQuantity) formResults = { ...formResults, storkQuantity: +formData.storkQuantity }
+		if (formData?.productCategory) formResults = { ...formResults, productCategory: formData.productCategory }
 		if (formData?.name) formResults = { ...formResults, name: formData.name }
-		if (formData?.product_unit_price) {
-			const productUnitPrice = formData.product_unit_price
+		if (formData?.productUnitPrice) {
+			const productUnitPrice = formData.productUnitPrice
 
 			if ((+productUnitPrice > 0)) {
-				formResults = { ...formResults, product_unit_price: productUnitPrice }
+				formResults = { ...formResults, productUnitPrice: productUnitPrice }
 			}
 		}
 
@@ -116,7 +118,7 @@ export const actions: Actions = {
 				})
 			}
 
-			return await router.createCaller(await createContext(event)).products.createProduct(parsedProduct.data)
+			return await createProduct(parsedProduct.data, event)
 
 		} catch (error) {
 			return fail(400, {

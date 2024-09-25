@@ -8,5 +8,5 @@ export const trpc = createTRPCSvelte<AppRouter>({
 			url: '/api/trpc',
 		}),
 	],
-	transformer,
+	// transformer,
 });

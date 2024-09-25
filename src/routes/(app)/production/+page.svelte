@@ -107,13 +107,13 @@
 											{status.number}
 										</span>
 										<form action="?/productionStatus" method="post">
-											<input type="hidden" name="sales_status" value={$salesStatusSelectedStore} />
+											<input type="hidden" name="salesStatus" value={$salesStatusSelectedStore} />
 											<input
 												type="hidden"
-												name="payment_status"
+												name="paymentStatus"
 												value={$paymentStatusSelectedStore}
 											/>
-											<input type="hidden" name="production_status" value={status.status} />
+											<input type="hidden" name="productionStatus" value={status.status} />
 											<input
 												type="hidden"
 												name="id"
@@ -221,9 +221,9 @@
 											changeSelection(
 												event,
 												order.orders_details_id,
-												order.order_production_status,
-												order.order_sales_status,
-												order.order_payment_status
+												order.order_productionStatus,
+												order.order_salesStatus,
+												order.order_paymentStatus
 											)}
 									/>
 								</td>
@@ -233,7 +233,7 @@
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.full_name}
+									{order.fullName}
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
 										{order.contacts_id}
 									</span>
@@ -255,11 +255,11 @@
 									{order.order_quantity}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.order_garment_placement}
+									{order.order_garmentPlacement}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.order_production_status}
+										{order.order_productionStatus}
 									</span>
 								</td>
 							</tr>

@@ -109,8 +109,8 @@
 											{status.number}
 										</span>
 										<form action="?/salesStatus" method="post">
-											<input type="hidden" name="sales_status" value={status.status} />
-											<input type="hidden" name="payment_status" value={$paymentStatusSelectedStore} />
+											<input type="hidden" name="salesStatus" value={status.status} />
+											<input type="hidden" name="paymentStatus" value={$paymentStatusSelectedStore} />
 											<input type="hidden" name="id" value={Array.from(checkedMap.keys())[0] || 0} />
 											<button type="submit" class="hidden sm:inline-flex sm:ml-2 text-sm">{status.status}</button>
 										</form>
@@ -221,7 +221,7 @@
 										type="checkbox"
 										checked={checkedMap.has(order.id)}
 										on:click={(event) =>
-											changeSelection(event, order.id, order.sales_status, order.payment_status)}
+											changeSelection(event, order.id, order.salesStatus, order.paymentStatus)}
 									/>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
@@ -230,38 +230,38 @@
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order?.full_name}
+									{order?.fullName}
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.contact_id}
+										{order.contactId}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.pricelist_id}
+										{order.pricelistId}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-										{order.exchange_rates_id}
+										{order.exchangeRatesId}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.sales_status}
+										{order.salesStatus}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-full">
-										{order.payment_status}
+										{order.paymentStatus}
 									</span>
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
-									{order.total_products}
+									{order.totalProducts}
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									{format(
 										convertFx(
-											order.sales_amount,
+											order.salesAmount,
 											$exchangeRatesStore,
 											$selectedCurrencyStore
 										),
@@ -278,8 +278,8 @@
 										</a>
 										<form action="?/delete" method="post" use:enhance>
 											<input type="hidden" name="id" value={order.id} />
-											<input type="hidden" name="sales_status" value={order.sales_status} />
-											<input type="hidden" name="payment_status" value={order.payment_status} />
+											<input type="hidden" name="salesStatus" value={order.salesStatus} />
+											<input type="hidden" name="paymentStatus" value={order.paymentStatus} />
 											<button type="submit">
 												{@html svgBin}
 											</button>
@@ -288,7 +288,7 @@
 								</td>
 								<td class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800">
 									<div class="flex items-center">
-										<a href={`/sales/payment/${order.contact_id}`} class="pr-2">
+										<a href={`/sales/payment/${order.contactId}`} class="pr-2">
 											{@html svgCard}
 										</a>
 									</div>

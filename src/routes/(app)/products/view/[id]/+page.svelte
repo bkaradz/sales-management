@@ -59,7 +59,7 @@
 					>
 						<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>Category</div>
 						<div class="ml-auto text-xs text-gray-500">
-							{data.product?.product.product_category}
+							{data.product?.product.productCategory}
 						</div>
 					</div>
 
@@ -74,7 +74,7 @@
 								class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 							>
 								<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-									{list.minimum_quantity}
+									{list.minimumQuantity}
 								</div>
 								<div class="ml-auto text-xs text-gray-500">
 									{format(
@@ -82,7 +82,7 @@
 											calcProductPrices(
 												data.product.product,
 												$pricelistStore,
-												list.minimum_quantity,
+												list.minimumQuantity,
 												key
 											),
 											$exchangeRatesStore,
@@ -277,47 +277,47 @@
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										{ordersArray.full_name}
+										{ordersArray.fullName}
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.pricelist_id}
+											{ordersArray.pricelistId}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.exchange_rates_id}
+											{ordersArray.exchangeRatesId}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.sales_status}
+											{ordersArray.salesStatus}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 									>
 										<span class="text-xs py-1 px-2 leading-none bg-blue-500 text-white rounded-md">
-											{ordersArray.payment_status}
+											{ordersArray.paymentStatus}
 										</span>
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
-										{ordersArray.total_products}
+										{ordersArray.totalProducts}
 									</td>
 									<td
 										class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-right"
 									>
 										{format(
 											convertFx(
-												ordersArray.sales_amount,
+												ordersArray.salesAmount,
 												$exchangeRatesStore,
 												$selectedCurrencyStore
 											),

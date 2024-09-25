@@ -22,13 +22,13 @@ export const shop_orders = router({
     }),
     changeSalesStatusById: protectedProcedure.input(z.object({
         id: z.number(),
-        sales_status: SalesStatusZod,
-        payment_status: PaymentStatusZod
+        salesStatus: SalesStatusZod,
+        paymentStatus: PaymentStatusZod
     })).query(async ({ input, ctx }) => { return await changeSalesStatusById(input, ctx) }),
     deleteById: protectedProcedure.input(z.object({
         id: z.number(),
-        sales_status: SalesStatusZod,
-        payment_status: PaymentStatusZod
+        salesStatus: SalesStatusZod,
+        paymentStatus: PaymentStatusZod
     })).mutation(async ({ input, ctx }) => { return await deleteById(input, ctx) }),
     createOrder: protectedProcedure.input(z.any()).mutation(async ({ input, ctx }) => {
         return await createOrder(input, ctx);

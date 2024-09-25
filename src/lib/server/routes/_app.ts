@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { procedure, router } from '../trpc';
+import { router } from '../trpc';
 import { authentication } from '$lib/server/routes/authentication/authentication';
 import { contacts } from '$lib/server/routes/contacts/contacts';
 import { products } from '$lib/server/routes/products/products';

@@ -24,8 +24,8 @@
 		selectedProductCategoryStore.reset();
 	});
 
-	$: selectedProductCategoryStore.add(data.results?.product.product_category || 'Embroidery');
-	$: enteredAmountStore.addDinero(data.results?.product?.product_unit_price);
+	$: selectedProductCategoryStore.add(data.results?.product.productCategory || 'Embroidery');
+	$: enteredAmountStore.addDinero(data.results?.product?.productUnitPrice);
 
 	const changeEnteredAmountStore = (e: Event) => {
 		const target = e.target as HTMLInputElement;
@@ -101,7 +101,7 @@
 						<div class="mb-4">
 							<input
 								hidden
-								name="product_category"
+								name="productCategory"
 								type="text"
 								value={$selectedProductCategoryStore}
 							/>
@@ -164,8 +164,8 @@
 										<input
 											on:blur={() => (doubleClicked = false)}
 											class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-											id="enter_unit_price"
-											name="enter_unit_price"
+											id="enter_unitPrice"
+											name="enter_unitPrice"
 											type="number"
 											min="1"
 											step=".01"
@@ -176,7 +176,7 @@
 											on:input|preventDefault={(e) => changeEnteredAmountStore(e)}
 										/>
 										<label
-											for="enter_unit_price"
+											for="enter_unitPrice"
 											class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
 											>Enter Unit Price
 										</label>
@@ -188,8 +188,8 @@
 											on:dblclick={() => (doubleClicked = true)}
 											type="text"
 											class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
-											id="unit_price_label"
-											name="unit_price_label"
+											id="unitPrice_label"
+											name="unitPrice_label"
 											value={format(
 												convertFx($enteredAmountValue, $exchangeRatesStore, $selectedCurrencyStore),
 												$selectedCurrencyStore
@@ -199,12 +199,12 @@
 										<input
 											hidden
 											type="text"
-											id="unit_price"
-											name="unit_price"
+											id="unitPrice"
+											name="unitPrice"
 											value={JSON.stringify($enteredAmountValue)}
 										/>
 										<label
-											for="unit_price_label"
+											for="unitPrice_label"
 											class="pointer-events-none absolute left-3 top-0 -translate-y-[0.9rem] scale-[0.8] origin-[0_0] mb-0 max-w-[90%] pt-[0.37rem] leading-[1.6] truncate text-neutral-500 transition-all duration-200 ease-out dark:text-neutral-200 motion-reduce:transition-none peer-placeholder-shown:scale-[1] peer-placeholder-shown:pt-[1] peer-placeholder-shown:top-3.5 peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:left-3 peer-focus:top-0"
 											>Unit Price
 										</label>
@@ -219,7 +219,7 @@
 									class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear placeholder-transparent"
 									id="quantity"
 									name="quantity"
-									value={data.results.product.stork_quantity}
+									value={data.results.product.storkQuantity}
 									placeholder="Quantity"
 								/>
 								<label

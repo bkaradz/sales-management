@@ -33,10 +33,10 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 			productsQuery = await db.select({
 				id: products.id,
 				name: products.name,
-				product_category: products.product_category,
+				productCategory: products.productCategory,
 				stitches: products.stitches,
-				stork_quantity: products.stork_quantity,
-				product_unit_price: products.product_unit_price
+				storkQuantity: products.storkQuantity,
+				productUnitPrice: products.productUnitPrice
 			}).from(products)
 				.orderBy(asc(products.name))
 				.where(eq(products.active, true))
@@ -53,10 +53,10 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 			// productsQuery = await db.select({
 			// 	id: products.id,
 			// 	name: products.name,
-			// 	product_category: products.product_category,
+			// 	productCategory: products.productCategory,
 			// 	stitches: products.stitches,
-			// 	stork_quantity: products.stork_quantity,
-			// 	product_unit_price: products.product_unit_price
+			// 	storkQuantity: products.storkQuantity,
+			// 	productUnitPrice: products.productUnitPrice
 			// }).from(products)
 			// 	.orderBy(asc(products.name))
 			// 	.where(and((sql`to_tsvector('simple', products.name ||' '|| CAST(products.id AS text) ||' '|| coalesce(CAST(products.stitches AS text), '') ) @@ plainto_tsquery('simple', ${input.search})`), (eq(products.active, true))))
@@ -68,15 +68,15 @@ export const getProducts = async (input: SearchParams, ctx: Context) => {
 				SELECT 
 				products.id as id,
 				products.name as name,
-				products.product_category as product_category,
+				products.productCategory as productCategory,
 				products.stitches as stitches,
-				products.stork_quantity as stork_quantity,
-				products.product_unit_price as product_unit_price, 
+				products.storkQuantity as storkQuantity,
+				products.productUnitPrice as productUnitPrice, 
 				rank.rank_bm25 AS ranking
 				FROM products_idx.search(${data}, fuzzy_fields => 'name, id, stitches', limit_rows => ${limitRows}, offset_rows => ${offsetRows}) as products
 				LEFT JOIN products_idx.rank(${data}, fuzzy_fields => 'name, id, stitches', limit_rows => ${limitRows}, offset_rows => ${offsetRows}) as rank ON products.id = rank.id
 				ORDER BY rank.rank_bm25 DESC;
-			`) as unknown as { id: number, name: string, product_category: ProductCategoriesUnion, stitches: number, stork_quantity: number | null, product_unit_price: string, ranking: number }[]
+			`) as unknown as { id: number, name: string, productCategory: ProductCategoriesUnion, stitches: number, storkQuantity: number | null, productUnitPrice: string, ranking: number }[]
 		}
 
 		pagination.totalRecords = totalProductsRecords.length === 0 ? 0 : +totalProductsRecords[0]?.count
@@ -127,7 +127,7 @@ export const deleteById = async (input: number, ctx: Context) => {
 	try {
 
 		// check that the customer does not have shop_orders
-		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details).where(eq(orders_details.product_id, input))
+		const totalOrdersRecords = await db.select({ count: sql<number>`count(*)` }).from(orders_details).where(eq(orders_details.productId, input))
 
 		if (+totalOrdersRecords[0].count !== 0) {
 			await db.update(products).set({ active: false }).where(eq(products.id, input));
@@ -146,13 +146,13 @@ export const deleteById = async (input: number, ctx: Context) => {
 
 export const createProduct = async (input: saveProduct, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
 	try {
 
-		await db.insert(products).values({ user_id: ctx.session.user.userId, ...input });
+		await db.insert(products).values({ userId: ctx.session.user.userId, ...input });
 
 		return { success: true }
 
@@ -164,14 +164,14 @@ export const createProduct = async (input: saveProduct, ctx: Context) => {
 
 export const updateProduct = async (input: any, ctx: Context) => {
 
-	if (!ctx.session.sessionId) {
+	if (!ctx?.session?.id) {
 		error(404, 'User not found');
 	}
 
 	try {
 
 		await db.update(products)
-			.set({ user_id: ctx.session.user.userId, ...input })
+			.set({ userId: ctx.session.user.userId, ...input })
 			.where(eq(products.id, input.id))
 			.returning({ id: products.id });
 
@@ -197,7 +197,7 @@ export const uploadProducts = async (input: saveProductArray, ctx: Context) => {
 
 				const { name, ...rest } = product
 
-				await db.insert(products).values({ user_id: ctx.session.user.userId, ...product })
+				await db.insert(products).values({ userId: ctx.session.user.userId, ...product })
 					.onConflictDoUpdate({ target: products.id, set: { ...rest } });
 
 			} catch (err: unknown) {

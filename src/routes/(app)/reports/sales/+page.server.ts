@@ -1,5 +1,6 @@
-import { createContext } from '$lib/server/context';
-import { router } from '$lib/server/trpc';
+
+
+import { trpcServer } from '$lib/server/server';
 import type { PageServerLoad } from './$types';
 
 export const load = (async (event) => {
@@ -15,7 +16,7 @@ export const load = (async (event) => {
     if (search) query = { ...query, search }
 
     const [shopOrdersPromise] = await Promise.all([
-        await router.createCaller(await createContext(event)).reports.getSalesReports(query)
+        await trpcServer.reports.getSalesReports.ssr(query, event)
     ]);
 
     return {

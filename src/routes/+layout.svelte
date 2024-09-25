@@ -9,8 +9,8 @@
 
 	export let data: LayoutData;
 
-	$: pricelistStore.add(data.pricelists);
-	$: exchangeRatesStore.add(data.exchangeRates);
+	// $: pricelistStore.add(data.pricelists);
+	// $: exchangeRatesStore.add(data.exchangeRates);
 	$: queryClient = trpc.hydrateFromServer(data.trpc);
 </script>
 

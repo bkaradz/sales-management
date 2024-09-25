@@ -12,32 +12,32 @@ export type CartTypes = { product: GetProducts['products'][0], orders_details: P
 
 const getOrderDetailObj = (product: GetProducts['products'][0]) => {
 
-	if (product.product_category === 'Embroidery') {
+	if (product.productCategory === 'Embroidery') {
 		return {
 			// total_price: '0' as currency | string,
-			unit_price: '0' as currency | string,
-			price_calculated: true,
+			unitPrice: '0' as currency | string,
+			priceCalculated: true,
 			quantity: 1,
-			product_id: product.id,
-			product_category: product.product_category,
-			embroidery_type: "Flat" as EmbroideryTypeUnion,
-			garment_placement: "Front Left" as GarmentPlacementUnion,
+			productId: product.id,
+			productCategory: product.productCategory,
+			embroideryType: "Flat" as EmbroideryTypeUnion,
+			garmentPlacement: "Front Left" as GarmentPlacementUnion,
 			stitches: product.stitches,
-			pricelist_id: get(pricelistStore).pricelist.id,
+			pricelistId: get(pricelistStore).pricelist.id,
 		}
 	}
 
-	const unit_price = product.product_unit_price
+	const unitPrice = product.productUnitPrice
 
-	if (!unit_price) throw new Error("Unit Price not found");
+	if (!unitPrice) throw new Error("Unit Price not found");
 
 	return {
 		// total_price: '0' as currency | string,
-		unit_price: unit_price as currency | string,
-		price_calculated: false,
+		unitPrice: unitPrice as currency | string,
+		priceCalculated: false,
 		quantity: 1,
-		product_id: product.id,
-		product_category: product.product_category,
+		productId: product.id,
+		productCategory: product.productCategory,
 	}
 
 }
@@ -60,7 +60,7 @@ function cart() {
 				} else {
 					const orders_details = getOrderDetailObj(product)
 
-					productMap.set(product.id, { product, orders_details: {...orders_details, unit_price: orders_details.unit_price.toString()} })
+					productMap.set(product.id, { product, orders_details: {...orders_details, unitPrice: orders_details.unitPrice.toString()} })
 
 					return productMap
 				}
@@ -70,8 +70,8 @@ function cart() {
 			const orderDetailsMap = new Map<number, NewOrdersDetails>()
 			if (Array.isArray(order_details)) {
 				order_details.forEach((item) => {
-					const newItem = { ...item, unit_price: item.unit_price }
-					orderDetailsMap.set(item.product_id, newItem)
+					const newItem = { ...item, unitPrice: item.unitPrice }
+					orderDetailsMap.set(item.productId, newItem)
 				})
 			}
 			if (Array.isArray(productArray)) {
@@ -118,22 +118,22 @@ function cart() {
 		changeEmbType: ({ id, type }: { id: number, type: EmbroideryTypeUnion }) => {
 			update((productMap) => {
 				const getProductsOrderDetails = productMap.get(id) as CartTypes
-				getProductsOrderDetails.orders_details.embroidery_type = type
+				getProductsOrderDetails.orders_details.embroideryType = type
 				return productMap
 			})
 		},
 		changeGarmentPosition: ({ id, type }: { id: number, type: GarmentPlacementUnion }) => {
 			update((productMap) => {
 				const getProductsOrderDetails = productMap.get(id) as CartTypes
-				getProductsOrderDetails.orders_details.garment_placement = type
+				getProductsOrderDetails.orders_details.garmentPlacement = type
 				return productMap
 			})
 		},
 		changeUnitPrice: ({ id, unitPrice }: { id: number, unitPrice: string }) => {
 			update((productMap) => {
 				const getProductsOrderDetails = productMap.get(id) as CartTypes
-				getProductsOrderDetails.orders_details.unit_price = unitPrice.toString()
-				getProductsOrderDetails.orders_details.price_calculated = false
+				getProductsOrderDetails.orders_details.unitPrice = unitPrice.toString()
+				getProductsOrderDetails.orders_details.priceCalculated = false
 				return productMap
 			})
 		},
@@ -285,7 +285,7 @@ export const cartTotalsStore = derived([cartStore, pricelistStore, vatStore], ([
 
 	$cartStore.forEach((value, key) => {
 		const results = calcPrice(value, $pricelistStore)
-		value.orders_details = { ...value.orders_details, ...results, unit_price: results.unit_price.toString() }
+		value.orders_details = { ...value.orders_details, ...results, unitPrice: results.unitPrice.toString() }
 		cartResults.set(key, { ...value.orders_details, ...results })
 	})
 

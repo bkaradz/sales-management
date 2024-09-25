@@ -21,10 +21,10 @@
 	export let data: PageData;
 
 	$: pricelistStore.add(data.results?.pricelist);
-	$: exchangeRatesStore.add(data.results?.exchange_rate);
+	$: exchangeRatesStore.add(data.results?.exchangeRate);
 	$: customerSelectedStore.add(data.results?.customer);
 	$: cartStore.addProductsArray(data.results?.products, data.results?.orders_details);
-	$: salesStatusSelectedStore.add(data.results?.order.sales_status);
+	$: salesStatusSelectedStore.add(data.results?.order.salesStatus);
 
 	let activitiesTabs = [
 		{ id: uuidv4(), name: 'Products Details', selected: true },
@@ -111,16 +111,16 @@
 					</div>
 
 					<form action="?/submit" method="post" use:enhance>
-						<input hidden name="customer_id" type="number" value={$customerSelectedStore?.id} />
-						<input hidden name="pricelist_id" type="number" value={$pricelistStore.pricelist.id} />
+						<input hidden name="customerId" type="number" value={$customerSelectedStore?.id} />
+						<input hidden name="pricelistId" type="number" value={$pricelistStore.pricelist.id} />
 						<input
 							hidden
-							name="exchange_rates_id"
+							name="exchangeRatesId"
 							type="number"
-							value={$exchangeRatesStore.exchange_rates.id}
+							value={$exchangeRatesStore.exchangeRates.id}
 						/>
 						<input hidden name="description" type="text" value={$customerSelectedStore?.notes} />
-						<input hidden name="delivery_date" type="text" value={deliveryDate.toString()} />
+						<input hidden name="deliveryDate" type="text" value={deliveryDate.toString()} />
 						<input
 							hidden
 							name="orders_details"
@@ -218,7 +218,7 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if productsOrderDetails.product.product_category === 'Embroidery'}
+									{#if productsOrderDetails.product.productCategory === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
@@ -226,7 +226,7 @@
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between cursor-not-allowed"
 											>
 												<span class="ml-2"
-													>{productsOrderDetails.orders_details.garment_placement}</span
+													>{productsOrderDetails.orders_details.garmentPlacement}</span
 												>
 												{@html svgDropdown}
 											</button>
@@ -236,7 +236,7 @@
 												class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each garmentPlacement as type (type)}
-													{#if !(type === productsOrderDetails.orders_details.garment_placement)}
+													{#if !(type === productsOrderDetails.orders_details.garmentPlacement)}
 														<li>
 															<button
 																on:click={() => cartStore.changeGarmentPosition({ id: key, type })}
@@ -254,7 +254,7 @@
 								<td
 									class="sm:p-3 py-2 px-1 border-b border-gray-200 dark:border-gray-800 text-center"
 								>
-									{#if productsOrderDetails.product.product_category === 'Embroidery'}
+									{#if productsOrderDetails.product.productCategory === 'Embroidery'}
 										<div class="dropdown dropdown-bottom dropdown-end">
 											<button
 												tabindex="0"
@@ -262,7 +262,7 @@
 												class="flex items-center h-6 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between cursor-not-allowed"
 											>
 												<span class="ml-2"
-													>{productsOrderDetails.orders_details.embroidery_type}</span
+													>{productsOrderDetails.orders_details.embroideryType}</span
 												>
 												{@html svgDropdown}
 											</button>
@@ -272,7 +272,7 @@
 												class="dropdown-content z-[1] menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 											>
 												{#each embroideryType as type (type)}
-													{#if !(type === productsOrderDetails.orders_details.embroidery_type)}
+													{#if !(type === productsOrderDetails.orders_details.embroideryType)}
 														<li>
 															<button
 																on:click={() => cartStore.changeEmbType({ id: key, type })}
@@ -297,7 +297,7 @@
 								>
 									{format(
 										convertFx(
-											$cartStore.get(key)?.orders_details.unit_price,
+											$cartStore.get(key)?.orders_details.unitPrice,
 											$exchangeRatesStore,
 											$selectedCurrencyStore
 										),
@@ -309,7 +309,7 @@
 								>
 									{format(
 										convertFx(
-											currency($cartStore.get(key)?.orders_details.unit_price || '0').multiply(
+											currency($cartStore.get(key)?.orders_details.unitPrice || '0').multiply(
 												$cartStore.get(key)?.orders_details.quantity || '0'
 											),
 											$exchangeRatesStore,
@@ -424,7 +424,7 @@
 									<div
 										class="flex xl:flex-row flex-col items-center font-medium text-gray-900 dark:text-white pb-2 mb-1 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									>
-										{$customerSelectedStore.full_name}
+										{$customerSelectedStore.fullName}
 									</div>
 									<div
 										class="flex items-center text-gray-900 dark:text-white py-2 xl:border-y border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
@@ -441,7 +441,7 @@
 											Corporate
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$customerSelectedStore.is_corporate}
+											{$customerSelectedStore.isCorporate}
 										</div>
 									</div>
 									<div
@@ -461,7 +461,7 @@
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
 												convertFx(
-													$customerSelectedStore.orders_totals,
+													$customerSelectedStore.ordersTotals,
 													$exchangeRatesStore,
 													$selectedCurrencyStore
 												),
@@ -478,7 +478,7 @@
 										<div class="ml-auto text-xs text-gray-500">
 											{format(
 												convertFx(
-													$customerSelectedStore.total_receipts,
+													$customerSelectedStore.totalReceipts,
 													$exchangeRatesStore,
 													$selectedCurrencyStore
 												),
@@ -603,7 +603,7 @@
 											date created
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$pricelistStore.pricelist.created_at}
+											{$pricelistStore.pricelist.createdAt}
 										</div>
 									</div>
 									<div
@@ -627,7 +627,7 @@
 												class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 											>
 												<div class={`text-xs py-1 px-2 leading-none dark:bg-gray-900 rounded-md`}>
-													{list.minimum_quantity}
+													{list.minimumQuantity}
 												</div>
 												<div class="ml-auto text-xs text-gray-500">
 													{format(
@@ -635,19 +635,19 @@
 															calcProductPrices(
 																{
 																	id: 19,
-																	user_id: 'ivk4l3dy6enbyjb',
+																	userId: 'ivk4l3dy6enbyjb',
 																	name: 'ADMIRABLE.EMB',
 																	description: null,
-																	product_category: 'Embroidery',
-																	product_unit_price: null,
+																	productCategory: 'Embroidery',
+																	productUnitPrice: null,
 																	stitches: 1537,
-																	stork_quantity: null,
+																	storkQuantity: null,
 																	active: true,
-																	created_at: new Date(),
+																	createdAt: new Date(),
 																	updated_at: new Date()
 																},
 																$pricelistStore,
-																list.minimum_quantity,
+																list.minimumQuantity,
 																key
 															),
 															$exchangeRatesStore,
@@ -677,7 +677,7 @@
 										disabled
 										class="flex items-center h-8 px-3 rounded-md shadow text-white bg-blue-500 hover:bg-blue-400 w-full justify-between cursor-not-allowed"
 									>
-										<span class="ml-2">{$exchangeRatesStore.exchange_rates.id}</span>
+										<span class="ml-2">{$exchangeRatesStore.exchangeRates.id}</span>
 										{@html svgDropdown}
 									</button>
 									<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -685,14 +685,14 @@
 										tabindex="0"
 										class="dropdown-content menu p-2 shadow bg-gray-50 dark:bg-gray-800 rounded-sm w-52 mt-4"
 									>
-										{#each data.exchangeRateAll as exchange (exchange.exchange_rates.id)}
-											{#if !($exchangeRatesStore.exchange_rates.id === exchange.exchange_rates.id)}
+										{#each data.exchangeRateAll as exchange (exchange.exchangeRates.id)}
+											{#if !($exchangeRatesStore.exchangeRates.id === exchange.exchangeRates.id)}
 												<li>
 													<button
 														on:click={() => exchangeRatesStore.add(exchange)}
 														class="rounded-sm"
 													>
-														{exchange.exchange_rates.id}
+														{exchange.exchangeRates.id}
 													</button>
 												</li>
 											{/if}
@@ -707,7 +707,7 @@
 											Id
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$exchangeRatesStore.exchange_rates.id}
+											{$exchangeRatesStore.exchangeRates.id}
 										</div>
 									</div>
 
@@ -718,7 +718,7 @@
 											default
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$exchangeRatesStore.exchange_rates.default}
+											{$exchangeRatesStore.exchangeRates.default}
 										</div>
 									</div>
 									<div
@@ -728,13 +728,13 @@
 											date created
 										</div>
 										<div class="ml-auto text-xs text-gray-500">
-											{$exchangeRatesStore.exchange_rates.created_at}
+											{$exchangeRatesStore.exchangeRates.createdAt}
 										</div>
 									</div>
 									<div
 										class="flex items-center text-gray-900 dark:text-white mt-0.5 xl:border-t border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 									/>
-									{#each $exchangeRatesStore.exchange_rate_details as [key, value] (key)}
+									{#each $exchangeRatesStore.exchangeRateDetails as [key, value] (key)}
 										<div
 											class="flex items-center text-gray-900 dark:text-white py-2 xl:border-b border-gray-200 border-opacity-75 dark:border-gray-700 w-full"
 										>

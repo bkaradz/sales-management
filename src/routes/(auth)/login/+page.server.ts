@@ -2,15 +2,13 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { zodErrorMessagesMap } from '$lib/validation/format.zod.messages';
 import { loginCredentialsSchema } from '$lib/server/routes/authentication/authentication.validate';
-import { router } from '$lib/server/trpc';
-import { createContext } from '$lib/server/context';
+import { loginUser } from '$lib/server/routes/authentication/authentication.drizzle';
 
-export const load = (async ({ locals }) => {
+export const load = (async (event) => {
 
-    const session = await locals.auth.validate()
-
-    if (session) redirect(302, "/");
-
+    if (event.locals.user) {
+        return redirect(302, "/");
+    }
     return {};
 
 }) satisfies PageServerLoad;
@@ -31,7 +29,8 @@ export const actions = {
                 })
             }
 
-           const test = await router.createCaller(await createContext(event)).authentication.loginUser(parsedUser.data)
+            await loginUser(parsedUser.data, {event, session: null})
+
 
         } catch (error) {
             console.error("🚀 ~ file: +page.server.ts:37 ~ login: ~ error:", error)

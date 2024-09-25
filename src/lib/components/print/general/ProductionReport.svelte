@@ -58,9 +58,9 @@
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left"
 										>{index + 1 + 10 * (dataResults.pageNumber - 1)}</td
 									>
-									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.contact_full_name}</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.contact_fullName}</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.product_name}</td>
-									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.order_details_garment_placement}</td>
+									<td class="px-2 py-1 text-[0.63rem] text-black text-left">{item.order_details_garmentPlacement}</td>
 									<td class="px-2 py-1 text-[0.63rem] text-black text-left">
 										{item.order_details_quantity}
 									</td>
